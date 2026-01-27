@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Крепость Анапа - Виртуальный музей (прототип)</title>
+
+  <!--
+    ПРОТОТИП (единая HTML)
+    Как редактировать:
+    1) Найдите блок CONFIG ниже (в JS) - вставьте ссылки, цифры, тексты.
+    2) В блоке GALLERY (в JS) замените изображения на свои.
+    3) Можно без сборки и фреймворков - просто откройте файл в браузере.
+  -->
+
+  <style>
+    /* ==========================
+       ТЕМА / ПЕРЕМЕННЫЕ
+    ========================== */
+    :root{
+      --bg: #f7f7fb;
+      --panel: rgba(255,255,255,.80);
+      --panel2: rgba(255,255,255,.92);
+      --text: rgba(10,12,16,.92);
+      --muted: rgba(10,12,16,.62);
+      --muted2: rgba(10,12,16,.46);
+      --line: rgba(10,12,16,.12);
+      --line2: rgba(10,12,16,.18);
+      --accent: #3b82f6; /* основной акцент */
+      --accent2:#8b5cf6; /* второй акцент */
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+      --shadow2: 0 20px 60px rgba(0,0,0,.10);
+
+      --r: 22px;        /* скругление */
+      --r2: 28px;       /* скругление побольше */
+      --max: 1120px;    /* ширина контента */
+    }
+
+    /* Темная тема (переключатель + системная) */
+    :root[data-theme="dark"]{
+      --bg: #0b0c10;
+      --panel: rgba(20,22,28,.70);
+      --panel2: rgba(20,22,28,.86);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.66);
+      --muted2: rgba(255,255,255,.48);
+      --line: rgba(255,255,255,.12);
+      --line2: rgba(255,255,255,.18);
+
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --shadow2: 0 20px 70px rgba(0,0,0,.45);
+    }
+
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme="light"]){
+        --bg: #0b0c10;
+        --panel: rgba(20,22,28,.70);
+        --panel2: rgba(20,22,28,.86);
+        --text: rgba(255,255,255,.92);
+        --muted: rgba(255,255,255,.66);
+        --muted2: rgba(255,255,255,.48);
+        --line: rgba(255,255,255,.12);
+        --line2: rgba(255,255,255,.18);
+
+        --shadow: 0 10px 30px rgba(0,0,0,.35);
+        --shadow2: 0 20px 70px rgba(0,0,0,.45);
+      }
+    }
+
+    /* ==========================
+       БАЗА
+    ========================== */
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text);
+      background: var(--bg);
+      line-height:1.35;
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
+    img{ max-width:100%; display:block; }
+    .wrap{ max-width: var(--max); margin:0 auto; padding: 0 18px; }
+    .section{ padding: 72px 0; position:relative; }
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 8px 12px;
+      border:1px solid var(--line);
+      background: var(--panel);
+      border-radius: 999px;
+      color:var(--muted);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(59,130,246,.12);
+    }
+    h1,h2,h3{ margin:0; letter-spacing:-0.02em; }
+    h1{ font-size: clamp(32px, 4.8vw, 56px); line-height:1.05; }
+    h2{ font-size: clamp(24px, 3.2vw, 34px); line-height:1.12; }
+    h3{ font-size: 18px; line-height:1.18; }
+    p{ margin:0; color:var(--muted); }
+    .muted{ color:var(--muted); }
+    .muted2{ color:var(--muted2); }
+
+    /* ==========================
+       ФОН (мягкая сетка + свечение)
+    ========================== */
+    .bg{
+      position:fixed; inset:-40px;
+      z-index:-2;
+      background:
+        radial-gradient(900px 520px at 14% 12%, rgba(59,130,246,.18), transparent 60%),
+        radial-gradient(900px 520px at 86% 18%, rgba(139,92,246,.16), transparent 60%),
+        radial-gradient(1000px 700px at 50% 110%, rgba(16,185,129,.10), transparent 55%),
+        linear-gradient(180deg, transparent, rgba(0,0,0,.02));
+      filter: saturate(1.05);
+    }
+    :root[data-theme="dark"] .bg{
+      background:
+        radial-gradient(900px 520px at 14% 12%, rgba(59,130,246,.22), transparent 60%),
+        radial-gradient(900px 520px at 86% 18%, rgba(139,92,246,.20), transparent 60%),
+        radial-gradient(1000px 700px at 50% 110%, rgba(16,185,129,.12), transparent 55%),
+        linear-gradient(180deg, transparent, rgba(255,255,255,.03));
+    }
+    .grid{
+      position:fixed; inset:-40px;
+      z-index:-3;
+      opacity:.65;
+      background-image:
+        linear-gradient(to right, rgba(0,0,0,.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0,0,0,.05) 1px, transparent 1px);
+      background-size: 54px 54px;
+      transform: translateZ(0);
+      mask-image: radial-gradient(70% 55% at 50% 12%, rgba(0,0,0,1), transparent 70%);
+    }
+    :root[data-theme="dark"] .grid{
+      opacity:.55;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+    }
+
+    /* ==========================
+       HEADER
+    ========================== */
+    .topbar{
+      position:sticky; top:0;
+      z-index:50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, var(--panel2), rgba(255,255,255,.40));
+      border-bottom: 1px solid var(--line);
+    }
+    :root[data-theme="dark"] .topbar{
+      background: linear-gradient(180deg, var(--panel2), rgba(0,0,0,.20));
+    }
+    .topbarInner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px;
+      padding: 14px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 220px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 24px rgba(59,130,246,.25);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 50%);
+      transform: rotate(12deg);
+    }
+    .brandTitle{ font-weight:800; letter-spacing:-0.02em; }
+    .nav{
+      display:flex; align-items:center; gap:10px;
+    }
+    .nav a{
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: var(--muted);
+      border: 1px solid transparent;
+      transition: .2s ease;
+    }
+    .nav a:hover{
+      color: var(--text);
+      background: var(--panel);
+      border-color: var(--line);
+      box-shadow: var(--shadow);
+    }
+    .actions{
+      display:flex; align-items:center; gap:10px;
+      justify-content:flex-end;
+      min-width: 220px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: var(--shadow2);
+      border-color: var(--line2);
+    }
+    .btn.primary{
+      border-color: rgba(59,130,246,.35);
+      background: linear-gradient(135deg, rgba(59,130,246,.92), rgba(139,92,246,.92));
+      color: white;
+      box-shadow: 0 16px 40px rgba(59,130,246,.25);
+    }
+    .btnIcon{
+      width:18px; height:18px; display:inline-block;
+    }
+
+    /* Мобильное меню */
+    .burger{ display:none; }
+    .mobileNav{ display:none; }
+    @media (max-width: 920px){
+      .nav{ display:none; }
+      .actions{ min-width:auto; }
+      .brand{ min-width:auto; }
+      .burger{ display:inline-flex; }
+      .mobileNav{
+        display:block;
+        max-height:0;
+        overflow:hidden;
+        transition: max-height .25s ease;
+      }
+      .mobileNav.open{ max-height: 420px; }
+      .mobileNav .links{
+        display:grid;
+        gap:8px;
+        padding: 0 0 14px 0;
+      }
+      .mobileNav a{
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        color: var(--text);
+      }
+    }
+
+    /* ==========================
+       HERO
+    ========================== */
+    .hero{
+      padding: 54px 0 24px;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+    @media (max-width: 920px){
+      .heroGrid{ grid-template-columns: 1fr; }
+    }
+
+    .heroCard{
+      border-radius: var(--r2);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      position:relative;
+    }
+    .heroCard .inner{
+      padding: 26px;
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
+    }
+    .heroLead{
+      display:flex; flex-direction:column; gap: 12px;
+    }
+    .heroLead p{ font-size: 16px; max-width: 54ch; }
+    .chips{
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
+    .chip{
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      color: var(--muted);
+      border-radius: 999px;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+    }
+    :root[data-theme="dark"] .chip{
+      background: rgba(0,0,0,.20);
+    }
+    .heroBtns{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 6px;
+    }
+
+    .statRow{
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 6px;
+    }
+    @media (max-width: 520px){
+      .statRow{ grid-template-columns: 1fr; }
+    }
+    .stat{
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+    .stat .v{
+      font-weight: 850;
+      font-size: 20px;
+      letter-spacing:-0.02em;
+    }
+    .stat .k{ color: var(--muted2); font-size: 13px; margin-top: 2px; }
+
+    /* ==========================
+       3D КАРТОЧКА (CSS 3D)
+    ========================== */
+    .heroSide{
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
+    }
+    .scene{
+      border-radius: var(--r2);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      position:relative;
+      min-height: 300px;
+      display:grid;
+      place-items:center;
+    }
+    .scene:before{
+      content:"";
+      position:absolute; inset:-40%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(59,130,246,.22), transparent 42%),
+        radial-gradient(circle at 70% 70%, rgba(139,92,246,.18), transparent 45%);
+      filter: blur(0.2px);
+    }
+    .cubeWrap{
+      perspective: 900px;
+      width: 190px; height: 190px;
+      position:relative;
+      transform: translateZ(0);
+    }
+    .cube{
+      width:100%; height:100%;
+      position:absolute; inset:0;
+      transform-style: preserve-3d;
+      animation: spin 14s linear infinite;
+    }
+    @keyframes spin{
+      from{ transform: rotateX(12deg) rotateY(0deg); }
+      to{ transform: rotateX(12deg) rotateY(360deg); }
+    }
+    .face{
+      position:absolute; inset:0;
+      background: rgba(255,255,255,.55);
+      border: 1px solid var(--line);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+      display:grid;
+      place-items:center;
+      border-radius: 22px;
+      backdrop-filter: blur(10px);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    :root[data-theme="dark"] .face{
+      background: rgba(0,0,0,.20);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+    .face span{
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    /* 6 граней куба */
+    .f1{ transform: translateZ(95px); }
+    .f2{ transform: rotateY(90deg) translateZ(95px); }
+    .f3{ transform: rotateY(180deg) translateZ(95px); }
+    .f4{ transform: rotateY(-90deg) translateZ(95px); }
+    .f5{ transform: rotateX(90deg) translateZ(95px); }
+    .f6{ transform: rotateX(-90deg) translateZ(95px); }
+
+    .sideCard{
+      border-radius: var(--r2);
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .sideCard h3{ margin-bottom: 10px; }
+    .list{
+      display:grid; gap: 10px;
+      margin-top: 10px;
+    }
+    .li{
+      display:flex; gap: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .badge{
+      width: 34px; height: 34px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(59,130,246,.24), rgba(139,92,246,.20));
+      border: 1px solid rgba(59,130,246,.22);
+      display:grid;
+      place-items:center;
+      flex: 0 0 auto;
+      box-shadow: 0 14px 30px rgba(59,130,246,.10);
+    }
+    .badge svg{ width: 18px; height: 18px; }
+
+    /* ==========================
+       БЛОКИ / КАРТОЧКИ
+    ========================== */
+    .cards{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 920px){
+      .cards{ grid-template-columns: 1fr; }
+    }
+    .card{
+      border: 1px solid var(--line);
+      border-radius: var(--r2);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      box-shadow: var(--shadow);
+      padding: 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:-60%;
+      background: radial-gradient(circle at 30% 30%, rgba(59,130,246,.14), transparent 52%);
+      opacity:.7;
+      transform: rotate(10deg);
+      pointer-events:none;
+    }
+    .card h3{ position:relative; }
+    .card p{ position:relative; margin-top: 10px; }
+
+    /* ==========================
+       TIMELINE
+    ========================== */
+    .timeline{
+      margin-top: 18px;
+      display:grid;
+      gap: 12px;
+    }
+    .step{
+      display:grid;
+      grid-template-columns: 110px 1fr;
+      gap: 12px;
+      padding: 14px;
+      border-radius: var(--r2);
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      box-shadow: var(--shadow);
+    }
+    @media (max-width: 520px){
+      .step{ grid-template-columns: 1fr; }
+    }
+    .pill{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--muted);
+      width: fit-content;
+    }
+
+    /* ==========================
+       GALLERY
+    ========================== */
+    .gallery{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+    }
+    .gItem{
+      grid-column: span 4;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      cursor:pointer;
+      position:relative;
+      min-height: 160px;
+    }
+    .gItem .ph{
+      height: 100%;
+      background:
+        linear-gradient(135deg, rgba(59,130,246,.20), rgba(139,92,246,.14)),
+        radial-gradient(140px 120px at 20% 30%, rgba(255,255,255,.75), transparent 70%);
+    }
+    :root[data-theme="dark"] .gItem .ph{
+      background:
+        linear-gradient(135deg, rgba(59,130,246,.18), rgba(139,92,246,.12)),
+        radial-gradient(160px 120px at 20% 30%, rgba(255,255,255,.18), transparent 70%);
+    }
+    .gItem img{ width:100%; height:100%; object-fit:cover; }
+    .gItem .cap{
+      position:absolute; left:10px; right:10px; bottom:10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+      color: rgba(10,12,16,.85);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    :root[data-theme="dark"] .gItem .cap{
+      background: rgba(0,0,0,.45);
+      color: rgba(255,255,255,.86);
+    }
+    .cap small{ color: var(--muted2); }
+    .cap .arrow{
+      width: 28px; height: 28px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      display:grid;
+      place-items:center;
+    }
+    :root[data-theme="dark"] .cap .arrow{
+      background: rgba(0,0,0,.22);
+    }
+    .gItem.wide{ grid-column: span 6; }
+    .gItem.tall{ grid-column: span 3; min-height: 220px; }
+    @media (max-width: 920px){
+      .gallery{ grid-template-columns: repeat(6, 1fr); }
+      .gItem{ grid-column: span 6; }
+      .gItem.wide{ grid-column: span 6; }
+      .gItem.tall{ grid-column: span 6; min-height: 200px; }
+    }
+
+    /* Модалка */
+    .modal{
+      position:fixed; inset:0;
+      z-index:100;
+      display:none;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(12px);
+      padding: 18px;
+    }
+    .modal.open{ display:grid; place-items:center; }
+    .modalCard{
+      width:min(980px, 100%);
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(10,12,16,.68);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      overflow:hidden;
+      position:relative;
+    }
+    .modalTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      padding: 12px 12px 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .modalTop .title{
+      color: rgba(255,255,255,.92);
+      font-weight: 750;
+      letter-spacing:-0.01em;
+    }
+    .iconBtn{
+      width: 40px; height: 40px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.08);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      transition: .2s ease;
+    }
+    .iconBtn:hover{ background: rgba(255,255,255,.12); }
+    .modalBody{
+      padding: 12px;
+      background: rgba(0,0,0,.25);
+    }
+    .modalBody img{
+      width:100%;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      max-height: 72vh;
+      object-fit: contain;
+      background: rgba(0,0,0,.25);
+    }
+
+    /* ==========================
+       FOOTER
+    ========================== */
+    footer{
+      padding: 26px 0 44px;
+      border-top: 1px solid var(--line);
+      background: rgba(255,255,255,.22);
+    }
+    :root[data-theme="dark"] footer{
+      background: rgba(0,0,0,.20);
+    }
+    .footGrid{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap: 18px;
+      flex-wrap:wrap;
+    }
+    .footSmall{ color: var(--muted2); font-size: 13px; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+    /* ==========================
+       ANIMATIONS (reveal)
+    ========================== */
+    .reveal{
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Фоновые слои -->
+  <div class="grid" aria-hidden="true"></div>
+  <div class="bg" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="wrap">
+      <div class="topbarInner">
+        <a class="brand" href="#top" aria-label="На верх страницы">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div class="brandTitle">Крепость Анапа</div>
+            <div class="muted2" style="font-size:13px">Виртуальный музей (прототип)</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Навигация">
+          <a href="#about">О проекте</a>
+          <a href="#features">Возможности</a>
+          <a href="#timeline">Этапы</a>
+          <a href="#gallery">Галерея</a>
+          <a href="#team">Команда</a>
+        </nav>
+
+        <div class="actions">
+          <!-- Переключатель темы -->
+          <button class="btn" id="themeBtn" type="button" aria-label="Переключить тему">
+            <span class="btnIcon" aria-hidden="true">
+              <!-- Иконка -->
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            Тема
+          </button>
+
+          <a class="btn primary" id="museumBtn" href="#" target="_blank" rel="noopener">
+            <span class="btnIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 20V10.5a1 1 0 0 1 .55-.9l7-3.5a1 1 0 0 1 .9 0l7 3.5a1 1 0 0 1 .55.9V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M9 20v-6a3 3 0 1 1 6 0v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            Открыть музей
+          </a>
+
+          <button class="btn burger" id="burgerBtn" type="button" aria-label="Открыть меню">
+            <span class="btnIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Мобильная навигация -->
+      <div class="mobileNav" id="mobileNav">
+        <div class="links">
+          <a href="#about">О проекте</a>
+          <a href="#features">Возможности</a>
+          <a href="#timeline">Этапы</a>
+          <a href="#gallery">Галерея</a>
+          <a href="#team">Команда</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main id="top" class="hero">
+    <div class="wrap">
+      <div class="kicker reveal">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="kickerText">Проект школьников 10 "И" класса</span>
+      </div>
+
+      <div class="heroGrid">
+        <section class="heroCard reveal">
+          <div class="inner">
+            <div class="heroLead">
+              <h1>Виртуальный музей<br/>"Крепость Анапа"</h1>
+              <p>
+                Прототип сайта проекта.
+                Здесь коротко и наглядно:
+                что делаем, зачем, и как.
+              </p>
+            </div>
+
+            <div class="chips" aria-label="Теги проекта">
+              <div class="chip">3D-сканирование</div>
+              <div class="chip">3D-моделирование</div>
+              <div class="chip">VR</div>
+              <div class="chip">Веб-экспозиция</div>
+              <div class="chip">История и культура</div>
+            </div>
+
+            <div class="heroBtns">
+              <a class="btn primary" id="projectSiteBtn" href="#" target="_blank" rel="noopener">Сайт проекта</a>
+              <a class="btn" id="chatBtn" href="#" target="_blank" rel="noopener">Чат проекта</a>
+              <a class="btn" href="#gallery">Смотреть материалы</a>
+            </div>
+
+            <div class="statRow" aria-label="Ключевые показатели">
+              <div class="stat">
+                <div class="v" id="stat1v">6+</div>
+                <div class="k" id="stat1k">3D-объектов в работе</div>
+              </div>
+              <div class="stat">
+                <div class="v" id="stat2v">2</div>
+                <div class="k" id="stat2k">VR-сценария</div>
+              </div>
+              <div class="stat">
+                <div class="v" id="stat3v">2026</div>
+                <div class="k" id="stat3k">подача на конкурс</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="heroSide">
+          <div class="scene reveal" aria-label="Декоративный 3D блок">
+            <div class="cubeWrap" aria-hidden="true">
+              <div class="cube">
+                <div class="face f1"><span>VR</span></div>
+                <div class="face f2"><span>3D</span></div>
+                <div class="face f3"><span>MUSEUM</span></div>
+                <div class="face f4"><span>ANAPA</span></div>
+                <div class="face f5"><span>SCAN</span></div>
+                <div class="face f6"><span>WEB</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sideCard reveal">
+            <h3>Цель</h3>
+            <p>
+              Показать историю крепости
+              через интерактивный формат:
+              3D, VR и веб-экспозиция.
+            </p>
+
+            <div class="list" aria-label="Ключевые задачи">
+              <div class="li">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style="font-weight:750">Сценарий экспозиции</div>
+                  <div class="muted2" style="margin-top:3px; font-size:13px;">Маршрут, смыслы, навигация</div>
+                </div>
+              </div>
+
+              <div class="li">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3l9 4.5-9 4.5-9-4.5L12 3Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M3 7.5V16.5L12 21l9-4.5V7.5" stroke="currentColor" stroke-width="1.8"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style="font-weight:750">3D контент</div>
+                  <div class="muted2" style="margin-top:3px; font-size:13px;">Скан, чистка, оптимизация</div>
+                </div>
+              </div>
+
+              <div class="li">
+                <div class="badge" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M5 7h14M5 12h14M5 17h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M19 7v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style="font-weight:750">Веб и VR</div>
+                  <div class="muted2" style="margin-top:3px; font-size:13px;">Просмотр на телефоне и ПК</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">
+          <span class="dot" aria-hidden="true"></span>
+          О проекте
+        </div>
+        <h2 style="margin-top:14px">Что это за виртуальный музей</h2>
+        <p style="margin-top:12px; max-width:70ch">
+          Мы собираем материалы с экскурсии, создаем 3D модели,
+          и оформляем экспозицию в формате сайта и VR.
+          Задача - сделать историю "живой" и доступной.
+        </p>
+      </div>
+
+      <div class="cards">
+        <div class="card reveal">
+          <h3>Идея</h3>
+          <p>
+            Оцифровать элементы крепости.
+            Показать детали и контекст.
+            Дать маршрут изучения.
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Для кого</h3>
+          <p>
+            Школьники и учителя.
+            Жители и туристы.
+            Все, кому интересна история.
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Формат</h3>
+          <p>
+            Лендинг проекта.
+            Галерея материалов.
+            Встраиваемый 3D/VR просмотр.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">
+          <span class="dot" aria-hidden="true"></span>
+          Возможности
+        </div>
+        <h2 style="margin-top:14px">Что увидит пользователь</h2>
+        <p style="margin-top:12px; max-width:70ch">
+          Здесь все сделано как "витрина":
+          мало текста, больше визуала.
+          В любом месте можно добавить ссылки и медиа.
+        </p>
+      </div>
+
+      <div class="cards">
+        <div class="card reveal">
+          <h3>Интерактивный маршрут</h3>
+          <p>
+            Разделы по точкам.
+            Короткие подписи.
+            Понятная навигация.
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>3D просмотр</h3>
+          <p>
+            Встроенный iframe (например Sketchfab).
+            Легко заменить ссылку.
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>VR-сцены</h3>
+          <p>
+            Отдельная страница или кнопка.
+            Просмотр в браузере.
+            Поддержка мобильных устройств.
+          </p>
+        </div>
+      </div>
+
+      <!-- Блок с встраиванием (плейсхолдер) -->
+      <div class="heroCard reveal" style="margin-top:16px">
+        <div class="inner">
+          <h3>Встраиваемая сцена (плейсхолдер)</h3>
+          <p style="margin-top:10px">
+            Сюда можно вставить 3D/VR, видео, панораму или интерактив.
+            В CONFIG пропишите ссылку на iframe.
+          </p>
+
+          <div style="margin-top:14px; border:1px solid var(--line); border-radius:22px; overflow:hidden; background:var(--panel);">
+            <div style="padding:14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <div class="muted2">iframe preview</div>
+              <a class="btn" id="embedOpenBtn" href="#" target="_blank" rel="noopener">Открыть отдельно</a>
+            </div>
+
+            <!-- Вставка iframe: по умолчанию скрываем и показываем сообщение -->
+            <div id="embedBox" style="height: 380px; display:grid; place-items:center; padding: 18px;">
+              <div style="max-width: 70ch;">
+                <div style="font-weight:800; margin-bottom:8px;">Здесь будет 3D или VR</div>
+                <div class="muted">
+                  В CONFIG вставьте ссылку на iframe.
+                  Например, Sketchfab или панорама.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chips" style="margin-top:14px">
+            <div class="chip">Iframe в 1 строку</div>
+            <div class="chip">Поддержка телефона</div>
+            <div class="chip">Никаких фреймворков</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="timeline" class="section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">
+          <span class="dot" aria-hidden="true"></span>
+          Этапы
+        </div>
+        <h2 style="margin-top:14px">План работ</h2>
+        <p style="margin-top:12px; max-width:70ch">
+          Можно показать как "дорожную карту".
+          Это удобно для конкурса.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="step reveal">
+          <div><span class="pill">Этап 1</span></div>
+          <div>
+            <div style="font-weight:800">Сбор материалов</div>
+            <div class="muted2" style="margin-top:6px">Фото, видео, заметки, карта точек</div>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <div><span class="pill">Этап 2</span></div>
+          <div>
+            <div style="font-weight:800">3D контент</div>
+            <div class="muted2" style="margin-top:6px">Сканирование, ретопология, оптимизация</div>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <div><span class="pill">Этап 3</span></div>
+          <div>
+            <div style="font-weight:800">Веб-экспозиция</div>
+            <div class="muted2" style="margin-top:6px">Лендинг, галерея, просмотр 3D</div>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <div><span class="pill">Этап 4</span></div>
+          <div>
+            <div style="font-weight:800">VR сценарии</div>
+            <div class="muted2" style="margin-top:6px">Сцены, подсказки, тестирование</div>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <div><span class="pill">Этап 5</span></div>
+          <div>
+            <div style="font-weight:800">Презентация на конкурс</div>
+            <div class="muted2" style="margin-top:6px">Демонстрация, метрики, выводы</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery" class="section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">
+          <span class="dot" aria-hidden="true"></span>
+          Галерея
+        </div>
+        <h2 style="margin-top:14px">Материалы с экскурсии</h2>
+        <p style="margin-top:12px; max-width:70ch">
+          Плейсхолдеры уже готовы.
+          В JS замените картинки на свои.
+          Нажмите на карточку - откроется просмотр.
+        </p>
+      </div>
+
+      <div class="gallery" id="galleryGrid" aria-label="Галерея изображений">
+        <!-- Рендерится через JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="team" class="section">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">
+          <span class="dot" aria-hidden="true"></span>
+          Команда
+        </div>
+        <h2 style="margin-top:14px">Кто делает проект</h2>
+        <p style="margin-top:12px; max-width:70ch">
+          Блок можно использовать и в презентации.
+          Все коротко и понятно.
+        </p>
+      </div>
+
+      <div class="cards">
+        <div class="card reveal">
+          <h3>Участники</h3>
+          <p id="teamMembers" style="margin-top:10px">
+            Кудрявцев Владимир Олегович<br/>
+            Быков Артем Денисович
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Руководитель</h3>
+          <p id="teamLeader" style="margin-top:10px">
+            Соколова Светлана Юрьевна<br/>
+            педагог ГБОУ Школа 1288
+          </p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Город</h3>
+          <p id="teamCity" style="margin-top:10px">
+            Москва, 2026
+          </p>
+        </div>
+      </div>
+
+      <div class="heroCard reveal" style="margin-top:16px">
+        <div class="inner">
+          <h3>Ссылки (вставить и забыть)</h3>
+          <p style="margin-top:10px">
+            Здесь выделено место под ссылку на сайт и чат проекта.
+            Вставьте их в CONFIG - кнопки обновятся автоматически.
+          </p>
+
+          <div class="cards" style="margin-top:14px">
+            <div class="card" style="padding:16px">
+              <h3 style="font-size:16px">Сайт проекта</h3>
+              <p class="mono" id="projectSiteText" style="margin-top:10px; word-break:break-all;">не задан</p>
+            </div>
+            <div class="card" style="padding:16px">
+              <h3 style="font-size:16px">Чат проекта</h3>
+              <p class="mono" id="chatText" style="margin-top:10px; word-break:break-all;">не задан</p>
+            </div>
+            <div class="card" style="padding:16px">
+              <h3 style="font-size:16px">3D/VR встраивание</h3>
+              <p class="mono" id="embedText" style="margin-top:10px; word-break:break-all;">не задан</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="footGrid">
+        <div>
+          <div style="font-weight:850; letter-spacing:-0.02em">Крепость Анапа - Виртуальный музей</div>
+          <div class="footSmall" style="margin-top:6px">
+            Прототип сайта для конкурса и демонстрации.
+          </div>
+        </div>
+
+        <div class="footSmall">
+          <div>Версия: <span class="mono">1.0</span></div>
+          <div style="margin-top:6px">Без библиотек</div>
+          <div style="margin-top:6px">Единый HTML файл</div>
+        </div>
+      </div>
+
+      <div class="footSmall" style="margin-top:18px">
+        Подсказка: нажмите <span class="mono">Ctrl + F</span> и найдите <span class="mono">CONFIG</span>.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модальное окно галереи -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Просмотр изображения">
+    <div class="modalCard">
+      <div class="modalTop">
+        <div class="title" id="modalTitle">Просмотр</div>
+        <button class="iconBtn" id="modalClose" type="button" aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" fill="none" style="width:20px;height:20px;">
+            <path d="M6 6l12 12M18 6L6 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <img id="modalImg" alt="Изображение" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // CONFIG - редактируйте только здесь
+    // =========================================================
+    const CONFIG = {
+      // Название проекта (отображается в заголовках)
+      projectName: 'Крепость Анапа - Виртуальный музей',
+
+      // Короткая строка сверху (kicker)
+      kicker: 'Проект школьников 10 "И" класса',
+
+      // Ссылки (можно оставить пустыми, если еще нет)
+      links: {
+        // Основная кнопка "Открыть музей"
+        museum: '',
+
+        // Кнопка "Сайт проекта"
+        projectSite: '',
+
+        // Кнопка "Чат проекта" (Telegram, WhatsApp, Discord и т.д.)
+        projectChat: '',
+
+        // Ссылка на встраиваемую сцену/3D (для iframe)
+        embed: ''
+      },
+
+      // Статистика в hero (просто цифры и подписи)
+      stats: [
+        { value: '6+', label: '3D-объектов в работе' },
+        { value: '2',  label: 'VR-сценария' },
+        { value: '2026', label: 'подача на конкурс' }
+      ],
+
+      // Команда
+      team: {
+        membersHtml: 'Кудрявцев Владимир Олегович<br/>Быков Артем Денисович',
+        leaderHtml: 'Соколова Светлана Юрьевна<br/>педагог ГБОУ Школа 1288',
+        cityHtml: 'Москва, 2026'
+      }
+    };
+
+    // =========================================================
+    // GALLERY - замените изображения на свои
+    // Можно:
+    // 1) local file:  "assets/01.jpg"
+    // 2) url:         "https://site.ru/image.jpg"
+    // =========================================================
+    const GALLERY = [
+      { title: 'Фрагмент крепости', subtitle: 'Фото с экскурсии', src: '' , layout: 'wide' },
+      { title: 'Деталь стены',      subtitle: 'Фактура / следы времени', src: '' , layout: '' },
+      { title: 'Вид на объект',     subtitle: 'План для маршрута', src: '' , layout: 'tall' },
+      { title: 'Экспозиционная точка', subtitle: 'Подпись + 3D', src: '' , layout: '' },
+      { title: 'Артефакт',          subtitle: 'Для 3D модели', src: '' , layout: 'wide' },
+      { title: 'Панорама',          subtitle: 'Для VR сцены', src: '' , layout: '' },
+    ];
+
+    // =========================================================
+    // UI helpers
+    // =========================================================
+    const $ = (sel, root=document) => root.querySelector(sel);
+
+    function safeSetHref(el, href, fallbackText){
+      if(!el) return;
+      if(href && href.trim().length > 0){
+        el.href = href;
+        el.style.opacity = 1;
+        el.style.pointerEvents = 'auto';
+      }else{
+        el.href = '#';
+        el.style.opacity = .55;
+        el.style.pointerEvents = 'none';
+        if(fallbackText) el.title = fallbackText;
+      }
+    }
+
+    // =========================================================
+    // Apply CONFIG to page
+    // =========================================================
+    (function applyConfig(){
+      // Kicker
+      $('#kickerText').textContent = CONFIG.kicker;
+
+      // Stats
+      $('#stat1v').textContent = CONFIG.stats[0]?.value ?? '—';
+      $('#stat1k').textContent = CONFIG.stats[0]?.label ?? '';
+      $('#stat2v').textContent = CONFIG.stats[1]?.value ?? '—';
+      $('#stat2k').textContent = CONFIG.stats[1]?.label ?? '';
+      $('#stat3v').textContent = CONFIG.stats[2]?.value ?? '—';
+      $('#stat3k').textContent = CONFIG.stats[2]?.label ?? '';
+
+      // Team
+      $('#teamMembers').innerHTML = CONFIG.team.membersHtml;
+      $('#teamLeader').innerHTML = CONFIG.team.leaderHtml;
+      $('#teamCity').innerHTML = CONFIG.team.cityHtml;
+
+      // Links
+      safeSetHref($('#museumBtn'), CONFIG.links.museum, 'Ссылка пока не задана');
+      safeSetHref($('#projectSiteBtn'), CONFIG.links.projectSite, 'Ссылка пока не задана');
+      safeSetHref($('#chatBtn'), CONFIG.links.projectChat, 'Ссылка пока не задана');
+      safeSetHref($('#embedOpenBtn'), CONFIG.links.embed, 'Ссылка пока не задана');
+
+      // Text copies
+      $('#projectSiteText').textContent = CONFIG.links.projectSite || 'не задан';
+      $('#chatText').textContent = CONFIG.links.projectChat || 'не задан';
+      $('#embedText').textContent = CONFIG.links.embed || 'не задан';
+
+      // Embed iframe (если есть ссылка)
+      if(CONFIG.links.embed && CONFIG.links.embed.trim().length > 0){
+        const box = $('#embedBox');
+        box.innerHTML = `
+          <iframe
+            title="Встраиваемая сцена"
+            src="${CONFIG.links.embed.replaceAll('"','&quot;')}"
+            style="width:100%;height:100%;border:0;display:block;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allow="xr-spatial-tracking; fullscreen; autoplay"
+            allowfullscreen
+          ></iframe>
+        `;
+        box.style.padding = '0';
+      }
+    })();
+
+    // =========================================================
+    // Theme toggle
+    // =========================================================
+    (function themeInit(){
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme'); // "light" | "dark"
+      if(saved) root.setAttribute('data-theme', saved);
+
+      $('#themeBtn').addEventListener('click', () => {
+        const cur = root.getAttribute('data-theme');
+        const next = (cur === 'dark') ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    })();
+
+    // =========================================================
+    // Mobile nav
+    // =========================================================
+    (function mobileNav(){
+      const btn = $('#burgerBtn');
+      const nav = $('#mobileNav');
+      if(!btn || !nav) return;
+
+      btn.addEventListener('click', () => nav.classList.toggle('open'));
+      nav.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if(a) nav.classList.remove('open');
+      });
+    })();
+
+    // =========================================================
+    // Smooth scroll
+    // =========================================================
+    (function smoothScroll(){
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if(!a) return;
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if(!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    })();
+
+    // =========================================================
+    // Reveal animation (IntersectionObserver)
+    // =========================================================
+    (function revealInit(){
+      const nodes = Array.from(document.querySelectorAll('.reveal'));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if(en.isIntersecting){
+            en.target.classList.add('show');
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      nodes.forEach(n => io.observe(n));
+    })();
+
+    // =========================================================
+    // Render gallery + modal
+    // =========================================================
+    (function galleryInit(){
+      const grid = $('#galleryGrid');
+      const modal = $('#modal');
+      const modalImg = $('#modalImg');
+      const modalTitle = $('#modalTitle');
+      const modalClose = $('#modalClose');
+
+      function openModal(item){
+        modalTitle.textContent = item.title || 'Просмотр';
+        // Если нет src - показываем "плашку" вместо картинки
+        if(item.src && item.src.trim().length > 0){
+          modalImg.src = item.src;
+          modalImg.style.display = 'block';
+          modalImg.alt = item.title || 'Изображение';
+        }else{
+          // Фейковая картинка: SVG data uri (чтобы выглядело красиво)
+          const svg = encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700">
+              <defs>
+                <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stop-color="rgba(59,130,246,0.45)"/>
+                  <stop offset="1" stop-color="rgba(139,92,246,0.35)"/>
+                </linearGradient>
+              </defs>
+              <rect width="1200" height="700" fill="url(#g)"/>
+              <circle cx="320" cy="230" r="180" fill="rgba(255,255,255,0.22)"/>
+              <text x="60" y="600" font-family="Arial" font-size="44" fill="rgba(255,255,255,0.86)">Замените на ваше фото</text>
+              <text x="60" y="650" font-family="Arial" font-size="24" fill="rgba(255,255,255,0.70)">GALLERY: вставьте src</text>
+            </svg>
+          `).replaceAll('%0A','');
+          modalImg.src = `data:image/svg+xml;charset=utf-8,${svg}`;
+          modalImg.style.display = 'block';
+          modalImg.alt = 'Плейсхолдер';
+        }
+
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal(){
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      // Build cards
+      grid.innerHTML = GALLERY.map((it, idx) => {
+        const cls = ['gItem', it.layout].filter(Boolean).join(' ');
+        const hasImg = it.src && it.src.trim().length > 0;
+        const bg = hasImg ? `<img src="${it.src.replaceAll('"','&quot;')}" alt="${(it.title||'').replaceAll('"','&quot;')}"/>` : `<div class="ph" aria-hidden="true"></div>`;
+        return `
+          <div class="${cls}" data-idx="${idx}" role="button" tabindex="0" aria-label="Открыть: ${it.title}">
+            ${bg}
+            <div class="cap">
+              <div>
+                <div style="font-weight:800">${it.title || 'Без названия'}</div>
+                <small>${it.subtitle || ''}</small>
+              </div>
+              <div class="arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" style="width:18px;height:18px;">
+                  <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Click handlers
+      grid.addEventListener('click', (e) => {
+        const item = e.target.closest('.gItem');
+        if(!item) return;
+        const idx = Number(item.dataset.idx);
+        openModal(GALLERY[idx]);
+      });
+
+      // Keyboard open
+      grid.addEventListener('keydown', (e) => {
+        const item = e.target.closest('.gItem');
+        if(!item) return;
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          const idx = Number(item.dataset.idx);
+          openModal(GALLERY[idx]);
+        }
+      });
+
+      // Close
+      modalClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+        if(e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+      });
+    })();
+  </script>
+</body>
+</html>
