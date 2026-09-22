@@ -114,7 +114,8 @@ export function createCargoScene(onEvent: (message: string) => void) {
             hub.rotation.z = Math.PI / 2;
         }
     const shoulder = new T.Vector3(ARM.shoulder.x,ARM.shoulder.y,ARM.shoulder.z);
-    const elbow = new T.Vector3(), tip = new T.Vector3(0,1.25,-2.15);
+    const elbow = new T.Vector3(), tip = new T.Vector3(0,1.25,-3.45);
+    // Near-extended parking pose reads closer to the long folded boom in the supplied CAD views.
     const restTip=tip.clone(), deck=new T.Vector3(0,1.31,1.85), up=new T.Vector3(0,1,0);
     cylinder(robot,steel,0,1.29,-.85,.4,.16);
     const turret=cylinder(robot,red,0,1.46,-.85,.28,.3);
@@ -148,7 +149,10 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const nav=new T.Group();nav.name='cargo-nav';robot.add(nav);
     const navArrow=mesh(nav,new T.ConeGeometry(.18,.58,3),navMat,0,2.28,-.26);navArrow.rotation.x=-Math.PI/2;
     const navRing=mesh(nav,new T.TorusGeometry(.29,.026,6,28),navMat,0,2.28,0);navRing.rotation.x=Math.PI/2;
-    const baseBeacon=mesh(root,new T.TorusGeometry(3.18,.05,6,56),baseBeaconMat,0,.105,2);baseBeacon.rotation.x=Math.PI/2;baseBeacon.visible=false;
+    const baseBeacon=new T.Group();baseBeacon.name='cargo-base-beacon';baseBeacon.position.set(0,.105,2);root.add(baseBeacon);
+    for(const x of [-3,3])box(baseBeacon,baseBeaconMat,x,0,0,.11,.025,4.05);
+    for(const z of [-2,2])box(baseBeacon,baseBeaconMat,0,0,z,6.05,.025,.11);
+    baseBeacon.visible=false;
     starts.forEach((p,i)=>{
         const crate=box(root,i===1?lime:amber,p.x,p.y,p.z,.7,.7,.7);crate.name='cargo-package-'+i;crate.userData.dynamic=true;packages.push(crate);
         // Contrast straps make small loads readable from the fixed observation point.
