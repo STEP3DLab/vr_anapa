@@ -539,7 +539,7 @@ export function createExperience(host: HTMLElement, hooks: {
         if(mode!=='hub'){
             const title=mode==='cargo'?'03 · ПОЛИГОН ЛОСИНКА':mode==='robot'?'01 · РОБОТ-АРЕНА':'02 · ДРОН-ТИР';
             const state=paused()?'ПАУЗА':training?'ОБУЧЕНИЕ':ready?'ГОТОВ К СТАРТУ':countdown>0?'СТАРТ '+Math.ceil(countdown):ended?'ИТОГ':'МИССИЯ';
-            const detail=mode==='cargo'?cargo.progressText():mode==='robot'?`ЯЧЕЙКИ ${Math.min(score,5)}/5 · БЛОКИ ${6-blocks.filter(b=>b.visible).length}/6`:`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
+            const detail=mode==='cargo'?`ГРУЗЫ ${cargo.delivered}/3 · ${cargo.loaded?'НА ПЛАТФОРМЕ':'ЗАХВАТ СВОБОДЕН'}`:mode==='robot'?`ЯЧЕЙКИ ${Math.min(score,5)}/5 · БЛОКИ ${6-blocks.filter(b=>b.visible).length}/6`:`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
             beaconTop.write(title);beaconMain.write(state);beaconSub.write(detail);
         }
                 hooks.status(s);
