@@ -14,5 +14,5 @@ self.addEventListener('fetch',event=>{
   event.respondWith(fetch(request).then(response=>{
     if(response&&response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(request,copy)).catch(()=>{});}
     return response;
-  }).catch(()=>caches.match(request,{ignoreSearch:true}).then(hit=>hit||caches.match('./index.html'))));
+  }).catch(()=>caches.match(request,{ignoreSearch:true}).then(hit=>hit||(request.mode==='navigate'?caches.match('./index.html'):Response.error()))));
 });
