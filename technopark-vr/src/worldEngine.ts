@@ -19,6 +19,7 @@ export function createExperience(host: HTMLElement, hooks: {
     phase?: (phase:string)=>void;
     diagnostics?: (data:{fps:number;calls:number;triangles:number;geometries:number;textures:number;xr:boolean;scene:string})=>void;
     records?: (records:Record<string,number>)=>void;
+    autopilot?: (active:boolean)=>void;
 }) {
     const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: false });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -417,7 +418,10 @@ export function createExperience(host: HTMLElement, hooks: {
     let presentation = false, training = false, lessonStep = 0, lessonTravel = 0, lessonTurn = 0, lessonSpin = false, health = 3, rivalHealth = 3, duel = false, impactWait = 0, rivalRespawn = 0;
     const learned = { move: false, turn: false, spin: false, shoot: false, reload: false, cargo: false };
     let ready = true, countdown = 0, combo = 0, shots = 0, hits = 0, turnReady = true, muted = false, notice = '', noticeTime = 0;
-    let lastCargoCollisions=0,lastCargoDelivered=0;
+    let lastCargoCollisions=0,lastCargoDelivered=0,cargoAutopilot=false,cargoDemoStep=0;
+    const cargoDemoRoute:Array<{x?:number;z?:number;action?:true}>=[{x:-5,z:1},{x:-5,z:0},{action:true},{x:-5,z:1},{x:0,z:1},{x:0,z:2},{action:true},{x:6,z:2},{x:6,z:-7},{action:true},{x:6,z:2},{x:0,z:2},{action:true},{x:.55,z:2},{x:.55,z:-10},{x:-5,z:-10},{x:-5,z:-15},{action:true},{x:-5,z:-10},{x:.55,z:-10},{x:.55,z:2},{x:0,z:2},{action:true}];
+    const angleDelta=(a:number,b:number)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
+    function setCargoAutopilot(value:boolean){cargoAutopilot=value;if(value)cargoDemoStep=0;hooks.autopilot?.(value);}
     let bests: Record<string, number> = { robot: 0, drones: 0, cargo: 0 };
     try {
         bests = { ...bests, ...JSON.parse(localStorage.getItem('technopark-records') || '{}') };
@@ -452,7 +456,7 @@ export function createExperience(host: HTMLElement, hooks: {
     function notify(message: string) { notice = message; noticeTime = 2; }
     function setPresentation(value: boolean) { presentation = value; gameDemoLabel.write(value ? 'ПОКАЗ ∞: ВКЛ' : 'ПОКАЗ ∞: ВЫКЛ'); demoLabel.write(value ? 'ПРЕЗЕНТАЦИЯ: ВКЛ' : 'ПРЕЗЕНТАЦИЯ: ВЫКЛ'); hooks.presentation?.(value); restart(); }
     function welcome() { entranceAge = 0; audioFX.event('portal'); }
-    function nextVisitor() { pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());welcome(); Object.assign(learned, { move: false, turn: false, spin: false, shoot: false, reload: false, cargo:false }); go('hub'); }
+    function nextVisitor() { setCargoAutopilot(false);pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());welcome(); Object.assign(learned, { move: false, turn: false, spin: false, shoot: false, reload: false, cargo:false }); go('hub'); }
     function train() { if (mode === 'hub')
         return; if (mode === 'cargo') {
         restart();
@@ -506,7 +510,7 @@ export function createExperience(host: HTMLElement, hooks: {
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
-        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=firstScene?.18:next===mode?.22:.42;transition=transitionTotal;if(!(firstScene&&next==='hub'))startIntro(next);else{sceneIntro=0;introRoot.visible=false;}firstScene=false;audioFX.motor(0);audioFX.scene(next);if(next!==mode&&audioFX.ready())audioFX.event('portal');mode=next;
+        if(disposed)return;if(next!=='cargo'&&cargoAutopilot)setCargoAutopilot(false);scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=firstScene?.18:next===mode?.22:.42;transition=transitionTotal;if(!(firstScene&&next==='hub'))startIntro(next);else{sceneIntro=0;introRoot.visible=false;}firstScene=false;audioFX.motor(0);audioFX.scene(next);if(next!==mode&&audioFX.ready())audioFX.event('portal');mode=next;
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
         if(next!=='hub'&&!presentation){
@@ -514,7 +518,7 @@ export function createExperience(host: HTMLElement, hooks: {
             if(needsTraining)train();
         }
     }
-    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot)cargoDemoStep=0; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
         learned.spin = true;
@@ -880,11 +884,26 @@ export function createExperience(host: HTMLElement, hooks: {
                         turn = -x;
                 }
             const active = !paused()&&!ready && !countdown && !ended;
+            if(cargoAutopilot&&active&&!cargo.finished){
+                drive=0;turn=0;
+                if(!cargo.busy){
+                    const step=cargoDemoRoute[cargoDemoStep];
+                    if(step?.action){
+                        const e=angleDelta(0,cargo.robot.rotation.y);
+                        if(Math.abs(e)>.025)turn=T.MathUtils.clamp(e/(1.65*Math.max(dt,.001)),-1,1);
+                        else{const wasBusy=cargo.busy;cargo.interact();if(!wasBusy&&cargo.busy)cargoDemoStep++;}
+                    }else if(step){
+                        const dx=step.x!-cargo.robot.position.x,dz=step.z!-cargo.robot.position.z,d=Math.hypot(dx,dz);
+                        if(d<.07)cargoDemoStep++;
+                        else{const yaw=Math.atan2(-dx,-dz),e=angleDelta(yaw,cargo.robot.rotation.y);turn=T.MathUtils.clamp(e*3,-1,1);drive=Math.abs(e)>.55?0:Math.min(1,d*1.7);}
+                    }
+                }
+            }
             cargo.update(dt, drive, turn, active);
             if(cargo.collisions>lastCargoCollisions){controllers.forEach(ctrl=>pulse(ctrl,.3,70));lastCargoCollisions=cargo.collisions;}
             if(cargo.delivered>lastCargoDelivered){controllers.forEach(ctrl=>pulse(ctrl,.22,55));lastCargoDelivered=cargo.delivered;}
             audioFX.motor(active&&!cargo.busy?Math.abs(drive):0);
-            if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished)finish();}
+            if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished){if(cargoAutopilot)setCargoAutopilot(false);finish();}}
         }
         if (mode === 'drones'){
             trainingHalo.visible=training&&!drones[0].dead;trainingHalo.rotation.z+=dt*.45;
@@ -983,6 +1002,8 @@ export function createExperience(host: HTMLElement, hooks: {
         toggleSound(){muted=audioFX.toggle();return muted;},
         setDiagnosticsVisible(value:boolean){diagnosticsVisible=value;diagLabel.o.visible=value&&hudRoot.visible;},
         key(k:string,on:boolean){if(!paused()&&on)keys.add(k);else keys.delete(k);},
+        startCargoDemo(){setPresentation(true);go('cargo');setCargoAutopilot(true);start();},
+        stopCargoDemo(){setCargoAutopilot(false);},
         async enterVR(){
             if(sessionPending||renderer.xr.isPresenting||disposed)return;
             audioFX.unlock();
