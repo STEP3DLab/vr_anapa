@@ -133,6 +133,10 @@ export function createExperience(host: HTMLElement, hooks: {
     portal(-5.2, 'robot', 'КРАСНЫЙ ТРЕУГОЛЬНИК', '01 / РОБОТ-АРЕНА', cyan);
     portal(5.2, 'drones', 'ОХОТА НА ДРОНОВ', '02 / ВОЗДУШНЫЙ ТИР', orange);
     portal(8, 'cargo', 'ПОЛИГОН ЛОСИНКА', '03 / ГРУЗОВАЯ МИССИЯ', lime, -11, -Math.PI / 2);
+    const chevronShape=new T.Shape();chevronShape.moveTo(0,.42);chevronShape.lineTo(.34,-.28);chevronShape.lineTo(0,-.12);chevronShape.lineTo(-.34,-.28);chevronShape.closePath();
+    const chevronGeo=new T.ShapeGeometry(chevronShape);geometries.push(chevronGeo);
+    for(let i=0;i<5;i++){const p=i/4,marker=mesh(hub,chevronGeo,lime,2.4+p*4.1,.025,-4.7-p*4.7);marker.rotation.x=-Math.PI/2;marker.rotation.z=-.72;}
+    xrOnly(label(hub,'03 / ПОЛИГОН ЛОСИНКА  →',4.7,1.72,-5.6,3.5,.34,'#d8f3a7',1).o);
     const arena = worlds.robot;
     box(arena, navy, 0, .06, -7, 13, .12, 13);
     for (const x of [-6.7, 6.7]) {
