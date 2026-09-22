@@ -14,7 +14,8 @@ export function toWorld(x:number,z:number,yaw:number,point:Point):Point {
  return {x:x+c*point.x+s*point.z,y:point.y,z:z-s*point.x+c*point.z};
 }
 /** Two rigid links in a vertical plane. The elbow always takes the upper solution. */
-export function solveArm(goal:Point){
+export type ArmSolution={elbow:Point;wrist:Point;reachable:boolean};
+export function solveArm(goal:Point,out:ArmSolution={elbow:{x:0,y:0,z:0},wrist:{x:0,y:0,z:0},reachable:false}){
  const p=ARM.shoulder,dx=goal.x-p.x,dy=goal.y-p.y,dz=goal.z-p.z;
  const radial=Math.hypot(dx,dz),distance=Math.hypot(radial,dy);
  const min=Math.abs(ARM.fore-ARM.upper)+.001,max=ARM.upper+ARM.fore-.001;
@@ -23,8 +24,9 @@ export function solveArm(goal:Point){
  const a=(ARM.upper**2-ARM.fore**2+d*d)/(2*d),h=Math.sqrt(Math.max(0,ARM.upper**2-a*a));
  // Perpendicular to the target direction, pointing upwards in the arm plane.
  const px=radial>1e-8?-uy*dx/radial:1,py=radial>1e-8?radial/distance:0,pz=radial>1e-8?-uy*dz/radial:0;
- return {elbow:{x:p.x+a*ux+h*px,y:p.y+a*uy+h*py,z:p.z+a*uz+h*pz},
-  wrist:{x:p.x+d*ux,y:p.y+d*uy,z:p.z+d*uz},reachable:distance>=min&&distance<=max};
+ out.elbow.x=p.x+a*ux+h*px;out.elbow.y=p.y+a*uy+h*py;out.elbow.z=p.z+a*uz+h*pz;
+ out.wrist.x=p.x+d*ux;out.wrist.y=p.y+d*uy;out.wrist.z=p.z+d*uz;
+ out.reachable=distance>=min&&distance<=max;return out;
 }
 /** Separating-axis test for an oriented rover footprint and an axis-aligned barrier. */
 export function overlapsBarrier(x:number,z:number,yaw:number,o:Obstacle,margin=.035){
@@ -42,12 +44,14 @@ export function outsideField(x:number,z:number,yaw:number){
 }
 /** A gripper may not acquire a crate through a concrete barrier. */
 export function segmentBlocked(a:Point,b:Point,obstacles:Obstacle[]){
- return obstacles.some(o=>{
+ for(const o of obstacles){
   let near=0,far=1;
-  for(const [start,delta,min,max] of [[a.x,b.x-a.x,o.x-o.w/2-.12,o.x+o.w/2+.12],[a.z,b.z-a.z,o.z-o.d/2-.12,o.z+o.d/2+.12]]){
-   if(Math.abs(delta)<1e-8){if(start<min||start>max)return false;}
-   else {let t1=(min-start)/delta,t2=(max-start)/delta;if(t1>t2)[t1,t2]=[t2,t1];near=Math.max(near,t1);far=Math.min(far,t2);if(near>far)return false;}
+  let blocked=true;
+  for(let axis=0;axis<2;axis++){
+   const start=axis?a.z:a.x,delta=(axis?b.z:b.x)-start,center=axis?o.z:o.x,extent=(axis?o.d:o.w)/2+.12;
+   if(Math.abs(delta)<1e-8){if(start<center-extent||start>center+extent){blocked=false;break;}}
+   else {const t1=(center-extent-start)/delta,t2=(center+extent-start)/delta;near=Math.max(near,Math.min(t1,t2));far=Math.min(far,Math.max(t1,t2));if(near>far){blocked=false;break;}}
   }
-  return true;
- });
+  if(blocked)return true;
+ }return false;
 }

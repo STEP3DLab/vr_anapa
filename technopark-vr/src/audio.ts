@@ -1,7 +1,7 @@
 /** Synthesized soundscape; no downloads, microphones or autoplay. */
 export function createAudio(){
  let context:AudioContext|undefined,master:GainNode|undefined,engine:OscillatorNode|undefined,motor:GainNode|undefined,ambient:OscillatorNode|undefined,ambientGain:GainNode|undefined;
- let muted=false,desiredScene='hub';
+ let muted=false,suspended=false,disposed=false,desiredScene='hub',lastMotor=-1;
  const ambience={hub:[52,.006],robot:[68,.0055],drones:[92,.0045],cargo:[58,.005]} as Record<string,[number,number]>;
  function applyScene(){
   if(!context||!ambient||!ambientGain)return;
@@ -10,18 +10,21 @@ export function createAudio(){
   ambientGain.gain.setTargetAtTime(gain,context.currentTime,.8);
  }
  function init(){
+  if(disposed)return;
+  if(!context&&!navigator.userActivation?.isActive)return;
   try{
    if(!context){
     context=new AudioContext();
-    master=context.createGain();master.gain.value=muted?0:.35;master.connect(context.destination);
+    master=context.createGain();master.gain.value=muted||suspended?0:.35;master.connect(context.destination);
     engine=context.createOscillator();motor=context.createGain();engine.type='sawtooth';engine.frequency.value=65;motor.gain.value=0;engine.connect(motor);motor.connect(master);engine.start();
     ambient=context.createOscillator();ambientGain=context.createGain();ambient.type='sine';ambientGain.gain.value=0;ambient.connect(ambientGain);ambientGain.connect(master);ambient.start();applyScene();
    }
-   void context.resume();return context;
+   void context.resume().catch(()=>{});return context;
   }catch{return undefined;}
  }
  function tone(f:number,d=.12,type:OscillatorType='sine',volume=.15,delay=0){
-  const c=init();if(!c||!master)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;
+  // Only unlock() may create/resume audio, from an explicit visitor gesture.
+  const c=context;if(!c||!master||disposed||suspended||muted||c.state!=='running')return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;
   o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(Math.max(40,f*.6),t+d);
   g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+d);
   o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02);o.onended=()=>{o.disconnect();g.disconnect();};
@@ -39,8 +42,9 @@ export function createAudio(){
    else if(name==='reload'){tone(180,.09,'square',.05);tone(320,.08,'square',.05,.35);}
    else tone(540,.09);
   },
-  motor(speed:number){if(!context||!motor||!engine)return;motor.gain.setTargetAtTime(Math.min(.045,Math.abs(speed)*.02),context.currentTime,.12);engine.frequency.setTargetAtTime(65+Math.abs(speed)*65,context.currentTime,.1);},
-  toggle(){muted=!muted;if(master&&context)master.gain.setTargetAtTime(muted?0:.35,context.currentTime,.05);return muted;},
-  dispose(){void context?.close();}
+  motor(speed:number){const value=Math.round(Math.abs(speed)*20)/20;if(!context||!motor||!engine||value===lastMotor)return;lastMotor=value;motor.gain.setTargetAtTime(Math.min(.045,value*.02),context.currentTime,.12);engine.frequency.setTargetAtTime(65+value*65,context.currentTime,.1);},
+  pause(value:boolean){suspended=value;if(master&&context)master.gain.setTargetAtTime(muted||suspended?0:.35,context.currentTime,.04);},
+  toggle(){muted=!muted;if(!muted)init();if(master&&context)master.gain.setTargetAtTime(muted||suspended?0:.35,context.currentTime,.05);return muted;},
+  dispose(){disposed=true;engine?.stop();ambient?.stop();void context?.close().catch(()=>{});}
  };
 }

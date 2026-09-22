@@ -69,3 +69,7 @@
 .result-card{position:absolute;z-index:20;left:50%;top:50%;width:min(430px,calc(100% - 32px));transform:translate(-50%,-50%);padding:22px;border:1px solid #baffdf55;border-radius:18px;background:linear-gradient(150deg,#0e2832f5,#08171ff2 72%);box-shadow:0 24px 80px #000b,0 0 0 1px #071319 inset;text-align:center;backdrop-filter:blur(10px)}
 .result-card>span{font-size:8px;letter-spacing:2px;color:#8fb8b2}.result-card h2{margin:8px 0 7px;font-size:28px;letter-spacing:-.8px}.result-card p{margin:0;color:#cfe2dc;font-size:12px;line-height:1.55}.result-card>div{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:8px;margin-top:16px}.experience .result-card button{min-height:44px}.experience .result-card .result-primary{background:var(--mint);border-color:#d8fff0;color:#08251f;font-weight:760}
 @media(max-width:680px){.result-card{top:auto;bottom:92px;padding:16px}.result-card h2{font-size:22px}.result-card p{font-size:10px}.result-card>div{grid-template-columns:1fr}}
+
+.scene-drones .world canvas{cursor:crosshair}
+.main-menu button,.main-menu a{scroll-margin-top:55px;scroll-margin-bottom:150px}
+@media(max-height:560px){.result-card{max-height:calc(100dvh - 96px);overflow:auto}.result-card h2{font-size:22px}}

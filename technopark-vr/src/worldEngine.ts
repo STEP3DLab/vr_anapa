@@ -1,9 +1,11 @@
 import * as T from 'three';
 import { driveRobot, shotHits, falling } from './gameLogic';
 import { createCargoScene } from './cargoScene';
-import {batchStatic} from './staticBatch';
+import {batchStatic,batchPalette} from './staticBatch';
 import { createArt } from './art';
 import { createAudio } from './audio';
+import {alignStation,neutralGamepad,axisValue} from './xrComfort';
+import {contactShadow} from './contactShadow';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 type Mode = 'hub' | 'robot' | 'drones' | 'cargo';
 export function createExperience(host: HTMLElement, hooks: {
@@ -38,12 +40,13 @@ export function createExperience(host: HTMLElement, hooks: {
     const camera = new T.PerspectiveCamera(65, host.clientWidth / host.clientHeight, .05, 150), rig = new T.Group();
     rig.add(camera);
     scene.add(rig);
-    scene.add(new T.HemisphereLight(0xb9ecff, 0x273140, 3));
+    const hemisphere=new T.HemisphereLight(0xcbe6ef,0x263239,2);scene.add(hemisphere);
     const sun = new T.DirectionalLight(0xffcc9b, 3);
     sun.position.set(5, 15, 8);
     scene.add(sun);
     const pmrem = new T.PMREMGenerator(renderer), room = new RoomEnvironment(), environment = pmrem.fromScene(room, .04);
     scene.environment = environment.texture;
+    scene.environmentIntensity=.72;
     room.dispose();
     pmrem.dispose();
     const audioFX = createAudio();
@@ -89,7 +92,7 @@ export function createExperience(host: HTMLElement, hooks: {
         box(hub, cyan, 0, 6.5, z, 17, .025, .055);
     }
     // An open glass pavilion surrounded by a stylized technology campus.
-    const glass = new T.MeshPhysicalMaterial({ color: 0x4dbac9, transparent: true, opacity: .1, roughness: .15, side: T.DoubleSide, depthWrite: false });
+    const glass = new T.MeshBasicMaterial({ color: 0x609ca5, transparent: true, opacity: .065, side: T.DoubleSide, depthWrite: false });
     materials.push(glass);
     box(hub, glass, -10, 3, -8, .04, 6, 26);
     box(hub, glass, 10, 3, -8, .04, 6, 26);
@@ -132,12 +135,12 @@ export function createExperience(host: HTMLElement, hooks: {
     xrOnly(label(hub, 'ЛУЧ + КУРОК: ПОРТАЛ ИЛИ ТЕЛЕПОРТ НА ПОЛУ', 0, .8, -1.5, 4, .32).o);
     function portal(x: number, mode: Mode, title: string, num: string, m: T.Material, z = -6, yaw = 0) { const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = yaw; p.userData.baseY=0;p.userData.mode=mode;hub.add(p);portalGroups.push(p); cyl(p, black, 0, .13, 0, 2, .25);const floorRing=mesh(p,new T.TorusGeometry(1.76,.025,5,48),m,0,.27,0);floorRing.rotation.x=Math.PI/2;for(const lane of [-.62,.62])box(p,m,lane,.025,2.1,.045,.018,2.6); for (const a of [-1, 1])
         box(p, m, a * 1.55, 1.9, 0, .12, 3.8, .25); box(p, m, 0, 3.8, 0, 3.2, .12, .25); const pm = new T.ShaderMaterial({ transparent: true, side: T.DoubleSide, uniforms: { time: { value: 0 }, color: { value: new T.Color(mode === 'robot' ? '#27ebca' : mode === 'cargo' ? '#bbdf79' : '#ff883a') } }, vertexShader: 'varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}', fragmentShader: 'varying vec2 v;uniform float time;uniform vec3 color;void main(){vec2 p=v-.5;float r=length(p*vec2(1.,.75));float a=atan(p.y,p.x);float wave=pow(.5+.5*sin(r*42.-time*2.+a*3.),3.);wave+=.3*pow(.5+.5*sin(a*5.+time*.5+r*22.),8.);float edge=pow(abs(v.x-.5)*2.,5.);gl_FragColor=vec4(color*(.25+wave*.4+edge),.48+edge*.3);}' }); materials.push(pm); const surface = mesh(p, new T.PlaneGeometry(3, 3.6), pm, 0, 1.95, 0); portals.push(surface); action(surface, () => go(mode)); label(p, title, 0, 4.3, .05, 3.7, .55); label(p, num, 0, .65, .08, 2.7, .38); }
-    portal(-5.2, 'robot', 'КРАСНЫЙ ТРЕУГОЛЬНИК', '01 / РОБОТ-АРЕНА', cyan);
-    portal(5.2, 'drones', 'ОХОТА НА ДРОНОВ', '02 / ВОЗДУШНЫЙ ТИР', orange);
-    portal(8, 'cargo', 'ПОЛИГОН ЛОСИНКА', '03 / ГРУЗОВАЯ МИССИЯ', lime, -11, -Math.PI / 2);
+    portal(-5.2, 'robot', 'РОБОТ-АРЕНА', '01 / УПРАВЛЯЙТЕ РОБОТОМ', cyan);
+    portal(7.8, 'drones', 'ДРОН-ТИР', '02 / ПОПАДАЙТЕ В ЦЕЛИ', orange);
+    portal(5.1, 'cargo', 'ПОЛИГОН ЛОСИНКА', '03 / ДОСТАВЬТЕ 3 ГРУЗА', lime, -14, -.3);
     const chevronShape=new T.Shape();chevronShape.moveTo(0,.42);chevronShape.lineTo(.34,-.28);chevronShape.lineTo(0,-.12);chevronShape.lineTo(-.34,-.28);chevronShape.closePath();
     const chevronGeo=new T.ShapeGeometry(chevronShape);geometries.push(chevronGeo);
-    for(let i=0;i<5;i++){const p=i/4,marker=mesh(hub,chevronGeo,lime,2.4+p*4.1,.025,-4.7-p*4.7);marker.rotation.x=-Math.PI/2;marker.rotation.z=-.72;}
+    for(let i=0;i<6;i++){const p=i/5,marker=mesh(hub,chevronGeo,lime,3.4+p*1.7,.025,-4.7-p*7.7);marker.rotation.x=-Math.PI/2;marker.rotation.z=-.22;}
     xrOnly(label(hub,'03 / ПОЛИГОН ЛОСИНКА  →',4.7,1.72,-5.6,3.5,.34,'#d8f3a7',1).o);
     const arena = worlds.robot;
     box(arena, navy, 0, .06, -7, 13, .12, 13);
@@ -153,6 +156,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const robot = new T.Group();
     robot.name = 'player-robot';
     arena.add(robot);
+    const arenaShadow=contactShadow(2.8,2.8);arena.add(arenaShadow.mesh);
     robot.scale.setScalar(1.12);
     cyl(robot, black, 0, .23, 0, .73, .3);
     cyl(robot, steel, 0, .42, 0, .67, .15);
@@ -232,8 +236,13 @@ export function createExperience(host: HTMLElement, hooks: {
         maxHP: number;
         kind: string;
         value: number;
+        rotors:T.InstancedMesh;
+        rotorAngle:number;
+        healthBar:T.Mesh;
     };
     const drones: Drone[] = [],droneDisposers:Array<()=>void>=[];
+    const rotorGeometry=new T.BoxGeometry(.49,.012,.04),rotorDummy=new T.Object3D();geometries.push(rotorGeometry);
+    const rotorOffsets=[[-.65,-.6],[-.65,.6],[.65,-.6],[.65,.6]];
     for (let i = 0; i < 9; i++) {
         const g = new T.Group();
         g.name = i === 8 ? 'boss-drone' : 'game-drone';
@@ -242,12 +251,11 @@ export function createExperience(host: HTMLElement, hooks: {
         box(g, orange, 0, 0, .28, .4, .08, .06);
         box(g, black, 0, 0, 0, 1.6, .08, .1);
         box(g, black, 0, 0, 0, .1, .08, 1.5);
-        const propellers:T.Mesh[]=[];
+        const rotors=new T.InstancedMesh(rotorGeometry,cyan,4);rotors.name='drone-rotors';rotors.boundingSphere=new T.Sphere(new T.Vector3(0,.1,0),1.3);rotors.instanceMatrix.setUsage(T.DynamicDrawUsage);g.add(rotors);
+        rotorOffsets.forEach(([x,z],index)=>{rotorDummy.position.set(x,.1,z);rotorDummy.rotation.set(0,0,0);rotorDummy.updateMatrix();rotors.setMatrixAt(index,rotorDummy.matrix);});
         for (const x of [-.65, .65])
             for (const z of [-.6, .6]) {
                 cyl(g, black, x, .06, z, .31, .06, 12);
-                const prop = box(g, cyan, x, .1, z, .49, .012, .04);
-                prop.name = 'propeller';propellers.push(prop);
             }
         const boss = i === 8, armored = i % 3 === 2;
         const maxHP = boss ? 6 : armored ? 2 : 1;
@@ -256,8 +264,9 @@ export function createExperience(host: HTMLElement, hooks: {
             box(g, navy, 0, .2, 0, .85, .16, .6);
             box(g, boss ? red : orange, 0, .3, 0, .65, .04, .4);
         }
-        droneDisposers.push(batchStatic(g,new Set<T.Object3D>([hit,...propellers])));
-        drones.push({ g, hit, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
+        const healthBar=box(g,boss?red:orange,0,.53,.1,.85,.055,.055);healthBar.name='drone-health';healthBar.visible=maxHP>1;
+        droneDisposers.push(batchPalette(g,new Set<T.Object3D>([rotors,healthBar])));
+        drones.push({ g, hit,rotors,rotorAngle:0,healthBar, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
     }
     const trainingHalo=mesh(range,new T.TorusGeometry(.92,.028,6,48),orange,0,2.6,-7);trainingHalo.userData.dynamic=true;trainingHalo.visible=false;
     const ammoLamps:T.Mesh[]=[];for(let i=0;i<6;i++){const lamp=box(range,cyan,-2.25+i*.9,1.05,-4.25,.62,.12,.06);lamp.name='ammo-lamp';lamp.userData.dynamic=true;ammoLamps.push(lamp);}
@@ -281,7 +290,7 @@ export function createExperience(host: HTMLElement, hooks: {
     }
     // A third exhibit beside the cargo portal makes the supplied 6×6 rover visible before entering the mission.
     {
-        const x=7.55,z=-7.35;
+        const x=7.4,z=-10.4;
         cyl(hub,black,x,.42,z,1.3,.84,40);cyl(hub,lime,x,.855,z,1.31,.055,40);
         const rim=mesh(hub,new T.TorusGeometry(1.25,.025,6,56),lime,x,.9,z);rim.rotation.x=Math.PI/2;
         const copy=cargo.robot.clone(true);copy.traverse(o=>{if(o.name==='cargo-nav')o.visible=false;o.name='exhibit';});copy.name='cargo-exhibit';copy.position.set(x,1.02,z);copy.scale.setScalar(.62);copy.rotation.y=-.55;hub.add(copy);exhibits.push(copy);exhibitDisposers.push(batchStatic(copy));
@@ -390,8 +399,8 @@ export function createExperience(host: HTMLElement, hooks: {
         c.add(weapon);
         guns.push(weapon);
         c.addEventListener('connected', (e: any) => { sources.set(c, e.data);neutral.add(e.data); weapon.visible = e.data.handedness === 'right' && mode === 'drones'; });
-        c.addEventListener('disconnected', () => {sources.delete(c);hoverTargets[i]=null;});
-        c.addEventListener('selectstart', () => { if([...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return;controllerRay(c); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit) {
+        c.addEventListener('disconnected', () => {sources.delete(c);hoverTargets[i]=null;weapon.visible=false;tips[i].visible=false;clearInput();});
+        c.addEventListener('selectstart', () => { const source=sources.get(c);if(!source||inputBlocked(source)||gestureTimes.get(c)===previous)return;gestureTimes.set(c,previous);if([...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return;audioFX.unlock();controllerRay(c); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit) {
             hit.object.userData.action();
             return;
         } if (sources.get(c)?.handedness === 'right') {
@@ -409,7 +418,7 @@ export function createExperience(host: HTMLElement, hooks: {
                 const wasBusy=cargo.busy;cargoAction();if(!wasBusy&&cargo.busy)pulse(c);
             }
         } });
-        c.addEventListener('squeezestart', () => { if (sources.get(c)?.handedness === 'left')
+        c.addEventListener('squeezestart', () => {const source=sources.get(c);if(!source||inputBlocked(source)||[...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return; if (source.handedness === 'left')
             go('hub');
         else if (mode === 'drones')
             reload(); });
@@ -430,31 +439,32 @@ export function createExperience(host: HTMLElement, hooks: {
     hooks.records?.({...bests});
     let mode: Mode = 'hub', seconds = 60, score = 0, ammo = 6, reloading = 0, cooldown = 0, spinning = false, ended = false, elapsed = 0, lastHUD = '', flashTime = 0;
     const keys = new Set<string>();
-    const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>();
+    const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>(),gestureTimes=new WeakMap<T.Group,number>();
+    const stickSample=[0,0];
     let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0,diagnosticsVisible=false;
-    let observedSession:XRSession|null=null;
+    let observedSession:XRSession|null=null,observedSpace:XRReferenceSpace|null=null,pendingRecenter=false;
     const paused=()=>pauseReasons.size>0;
     function clearInput(){keys.clear();cargo.stop();audioFX.motor(0);for(const source of sources.values())neutral.add(source);}
     function inputBlocked(source:XRInputSource){
         if(!neutral.has(source))return false;
-        if(source.gamepad&&source.gamepad.axes.some(a=>Number.isFinite(a)&&Math.abs(a)>.25))return true;
+        if(!neutralGamepad(source.gamepad))return true;
         neutral.delete(source);return false;
     }
     function stick(source:XRInputSource){
-        if(paused()||inputBlocked(source))return [0,0];
+        if(paused()||inputBlocked(source)){stickSample[0]=stickSample[1]=0;return stickSample;}
         const a=source.gamepad?.axes??[],offset=a.length>=4?2:0;
-        return [a[offset]??0,a[offset+1]??0].map(v=>Number.isFinite(v)?T.MathUtils.clamp(v,-1,1):0);
+        stickSample[0]=axisValue(a[offset]);stickSample[1]=axisValue(a[offset+1]);return stickSample;
     }
     function pause(reason:string,value:boolean){
         const before=paused();if(value)pauseReasons.add(reason);else pauseReasons.delete(reason);
-        if(before!==paused()){clearInput();previous=0;hooks.paused?.(paused());updateHUD();}
+        if(before!==paused()){clearInput();audioFX.pause(paused());previous=0;hooks.paused?.(paused());updateHUD();}
     }
-    function resume(){pauseReasons.delete('manual');pauseReasons.delete('focus');clearInput();previous=0;hooks.paused?.(paused());audioFX.unlock();updateHUD();}
+    function resume(){pauseReasons.delete('manual');pauseReasons.delete('focus');clearInput();audioFX.pause(paused());previous=0;hooks.paused?.(paused());audioFX.unlock();updateHUD();}
     function pulse(controller:T.Group,strength=.3,duration=65){try{const actuator=(sources.get(controller)?.gamepad as any)?.hapticActuators?.[0];if(actuator)Promise.resolve(actuator.pulse(strength,duration)).catch(()=>{});}catch{}}
 
     function sound(f: number, d = .08) { audioFX.tone(f, d, 'triangle'); }
     function notify(message: string) { notice = message; noticeTime = 2; }
-    function setPresentation(value: boolean) { presentation = value; gameDemoLabel.write(value ? 'ПОКАЗ ∞: ВКЛ' : 'ПОКАЗ ∞: ВЫКЛ'); demoLabel.write(value ? 'ПРЕЗЕНТАЦИЯ: ВКЛ' : 'ПРЕЗЕНТАЦИЯ: ВЫКЛ'); hooks.presentation?.(value); restart(); }
+    function setPresentation(value: boolean) { if(presentation===value)return;if(!value)setCargoAutopilot(false);presentation = value; gameDemoLabel.write(value ? 'ПОКАЗ ∞: ВКЛ' : 'ПОКАЗ ∞: ВЫКЛ'); demoLabel.write(value ? 'ПРЕЗЕНТАЦИЯ: ВКЛ' : 'ПРЕЗЕНТАЦИЯ: ВЫКЛ'); hooks.presentation?.(value); restart(); }
     function welcome() { entranceAge = 0; audioFX.event('portal'); }
     function nextVisitor() { setCargoAutopilot(false);pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());welcome(); Object.assign(learned, { move: false, turn: false, spin: false, shoot: false, reload: false, cargo:false }); go('hub'); }
     function train() { if (mode === 'hub')
@@ -468,7 +478,7 @@ export function createExperience(host: HTMLElement, hooks: {
     } restart(); training = true; ready = false; lessonStep = 0; lessonTravel = 0; lessonTurn = 0; lessonSpin = false; audioFX.unlock(); updateHUD(); }
     function completeLesson() { if(mode==='cargo')learned.cargo=true;restart(); notify('ОБУЧЕНИЕ ПРОЙДЕНО / МОЖНО НАЧИНАТЬ'); sound(880); updateHUD(); }
     function lessonText() { return mode === 'cargo' ? (cargo.loaded ? 'УРОК: ВЕРНИТЕСЬ НА БАЗУ / КУРОК: ВЫГРУЗИТЬ' : 'УРОК: НАЙДИТЕ ГРУЗ / ОСТАНОВИТЕСЬ / КУРОК: ЗАХВАТ') : mode === 'robot' ? (lessonStep === 0 ? 'ОБУЧЕНИЕ 1/2: ПРОЕДЬТЕ И ПОВЕРНИТЕ РОБОТА' : 'ОБУЧЕНИЕ 2/2: ВКЛЮЧИТЕ СПИННЕР / КУРОК ИЛИ ПРОБЕЛ') : (lessonStep === 0 ? 'ОБУЧЕНИЕ 1/2: ПОПАДИТЕ В НЕПОДВИЖНЫЙ ДРОН' : 'ОБУЧЕНИЕ 2/2: ПЕРЕЗАРЯДИТЕ / БОКОВАЯ КНОПКА ИЛИ R'); }
-    function start() { if(paused())return; if (mode === 'hub' || (!training && !ready && !ended))
+    function start() { if([...pauseReasons].some(reason=>reason!=='menu'))return; if (mode === 'hub' || (!training && !ready && !ended))
         return; restart(); audioFX.unlock(); ready = false; countdown = 3; startLabel.o.visible = false; sound(660); updateHUD(); }
     const won=()=>mode==='cargo'?cargo.finished:mode==='robot'?rivalHealth<=0:drones[8].hp<=0;
     const resultScore=()=>mode==='cargo'?Math.max(0,cargo.delivered*500+(cargo.finished?Math.ceil(seconds)*5:0)-cargo.collisions*25):mode==='robot'?score*100+(rivalHealth<=0?Math.ceil(seconds)*10:0):score;
@@ -482,6 +492,7 @@ export function createExperience(host: HTMLElement, hooks: {
     function cargoAction(){if(paused()||cargoAutopilot)return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
     function snap(dir: number) { learned.turn = true; const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(headScratch); const a = -dir * Math.PI / 6; rig.position.sub(head).applyAxisAngle(upAxis, a).add(head); rig.rotation.y += a; }
     function placeView(){
+        pendingRecenter=renderer.xr.isPresenting;
         clearInput();rig.position.set(0,0,0);rig.rotation.set(0,0,0);
         if(!renderer.xr.isPresenting){
             camera.position.set(0,mode==='cargo'?11:mode==='robot'?5.6:2.7,mode==='cargo'?12:mode==='robot'?6.6:7);
@@ -511,8 +522,8 @@ export function createExperience(host: HTMLElement, hooks: {
     }
     function go(next:Mode){
         if(disposed)return;if(next!=='cargo'&&cargoAutopilot)setCargoAutopilot(false);scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=firstScene?.18:next===mode?.22:.42;transition=transitionTotal;if(!(firstScene&&next==='hub'))startIntro(next);else{sceneIntro=0;introRoot.visible=false;}firstScene=false;audioFX.motor(0);audioFX.scene(next);if(next!==mode&&audioFX.ready())audioFX.event('portal');mode=next;
-        pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
-        Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
+        pauseReasons.delete('manual');pauseReasons.delete('focus');audioFX.pause(paused());hooks.paused?.(paused());
+        Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);hooks.scene(next);restart();placeView();
         if(next!=='hub'&&!presentation){
             const needsTraining=next==='cargo'?!learned.cargo:next==='robot'?!(learned.move&&learned.spin):!(learned.shoot&&learned.reload);
             if(needsTraining)train();
@@ -604,7 +615,8 @@ export function createExperience(host: HTMLElement, hooks: {
         if(target?.closest?.('input,textarea,select,[contenteditable]'))return;
         if(target?.closest?.('button,a')&&(e.code==='Space'||e.key==='Enter'))return;
         if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
-        if(paused()){if(!e.repeat&&(e.code==='Space'||e.key==='Enter'))resume();return;}
+        if(paused()){if(!e.repeat&&(e.code==='Space'||e.key==='Enter'||e.key.toLowerCase()==='p'))resume();return;}
+        audioFX.unlock();
         keys.add(keyName(e.key));if(e.repeat)return;
         if(e.code==='Space'){if(mode==='cargo')cargoAction();else if(ready&&mode!=='hub')start();else spin();}
         if(e.key.toLowerCase()==='q')snap(-1);if(e.key.toLowerCase()==='e')snap(1);if(e.key.toLowerCase()==='r')reload();
@@ -647,7 +659,7 @@ export function createExperience(host: HTMLElement, hooks: {
     renderer.domElement.addEventListener('pointermove', pointerMove);
     renderer.domElement.addEventListener('pointerup', pointerUp);
     renderer.domElement.addEventListener('pointercancel', pointerCancel);
-    const resize = () => { if (renderer.xr.isPresenting)
+    const resize = () => { if (renderer.xr.isPresenting||!host.clientWidth||!host.clientHeight)
         return; camera.aspect = host.clientWidth / host.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(host.clientWidth, host.clientHeight); };
     const ro = new ResizeObserver(resize);
     ro.observe(host);
@@ -658,10 +670,13 @@ export function createExperience(host: HTMLElement, hooks: {
     }
     function sessionStart(){
         observedSession=renderer.xr.getSession();observedSession?.addEventListener('visibilitychange',xrVisibility);
-        pauseReasons.delete('focus');pauseReasons.delete('xr-switch');placeView();previous=0;hooks.xr?.(true);hooks.paused?.(paused());updateHUD();
+        observedSpace=renderer.xr.getReferenceSpace();observedSpace?.addEventListener('reset',referenceReset);
+        pauseReasons.delete('focus');pauseReasons.delete('xr-switch');pauseReasons.delete('menu');pauseReasons.delete('help');audioFX.pause(paused());placeView();previous=0;hooks.xr?.(true);hooks.paused?.(paused());updateHUD();
     }
+    function referenceReset(){clearInput();pendingRecenter=true;if(mode!=='hub')pause('manual',true);}
     function sessionEnd(){
         observedSession?.removeEventListener('visibilitychange',xrVisibility);observedSession=null;
+        observedSpace?.removeEventListener('reset',referenceReset);observedSpace=null;pendingRecenter=false;
         pauseReasons.delete('xr');pauseReasons.delete('xr-switch');if(mode!=='hub')pause('manual',true);
         placeView();previous=0;resize();hooks.xr?.(false);updateHUD();
     }
@@ -673,16 +688,20 @@ export function createExperience(host: HTMLElement, hooks: {
         navigator.xr.isSessionSupported('immersive-vr').then(value=>{supported=value;if(!disposed)hooks.support?.(value);}).catch(()=>{if(!disposed)hooks.support?.(false);});
     }else{supported=false;hooks.support?.(false);}
     const disposeBatches=[batchStatic(hub),batchStatic(robot),batchStatic(rival),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...droneDisposers,...exhibitDisposers];
-    renderer.setAnimationLoop((t) => {
-        const dt = paused()?0:Math.min(previous?(t-previous)/1000:.016,.05);
+    renderer.setAnimationLoop((t,frame) => {
+        if(pendingRecenter&&frame&&observedSpace){const pose=frame.getViewerPose(observedSpace);if(pose){alignStation(rig,pose.transform.position,pose.transform.orientation,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?7:mode==='robot'?4:1);pendingRecenter=false;}}
+        // Re-arm only after all held controls return to neutral, including triggers.
+        for(const source of sources.values())if(neutral.has(source))inputBlocked(source);
+        const uiDt=paused()?0:Math.min(previous?Math.max(0,(t-previous)/1000):.016,.25);
+        const dt = Math.min(uiDt,.05);
         previous = t;
         elapsed += dt;
-        transition = Math.max(0, transition - dt);
+        transition = Math.max(0, transition - uiDt);
         const fadeProgress=transitionTotal?transition/transitionTotal:0;fadeMat.opacity=Math.min(.94,fadeProgress*1.12);fade.visible=transition>0;
-        sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(.72-sceneIntro)/.16),out=Math.min(1,sceneIntro/.2),s=.96+.04*q;introRoot.scale.setScalar(s);introRoot.position.y=.02*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out)*.92;}});}
+        sceneIntro=Math.max(0,sceneIntro-uiDt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting&&mode!=='hub';if(introRoot.visible){const q=Math.min(1,(.72-sceneIntro)/.16),out=Math.min(1,sceneIntro/.2),s=(.96+.04*q)*Math.min(1,camera.aspect*1.05);introRoot.scale.setScalar(s);introRoot.position.y=.02*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out)*.92;}});}
         if(missionBeacon.visible){const pulseScale=ended&&won()?.98+.045*(.5+.5*Math.sin(elapsed*6)):.98;missionBeacon.scale.setScalar(pulseScale);}
-        if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
-        sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):mode==='robot'?4.15:mode==='drones'?3.85:3.5;
+        if(mode==='hub'){entranceAge=Math.min(4,entranceAge+uiDt);art.update(elapsed,entranceAge/4);}
+        sun.intensity = mode==='hub'?1+1.4*T.MathUtils.smoothstep(entranceAge,0,4):mode==='robot'?3.1:mode==='drones'?2.8:2.3;
         if(mode==='hub')exhibits.forEach((e, i) => { e.rotation.y = elapsed * .22; e.position.y = 1.2 + Math.sin(elapsed + i) * .06; });
         if (mode !== 'hub' && !ready && !training && !ended && !countdown) {
             roundAge += dt;
@@ -782,6 +801,7 @@ export function createExperience(host: HTMLElement, hooks: {
             robot.rotation.y = moved.yaw;
             robot.position.x = moved.x;
             robot.position.z = moved.z;
+            arenaShadow.mesh.position.set(robot.position.x,.135,robot.position.z);
             arenaCellLamps.forEach((lamp,i)=>{const on=cells[i]?.visible!==false;lamp.visible=on;});
             arenaBlockLamps.forEach((lamp,i)=>{const on=blocks[i]?.visible!==false;lamp.visible=on;});
             spinGlow.visible=spinning&&!ended;spinGlow.scale.setScalar(1+.045*Math.sin(elapsed*12));
@@ -869,7 +889,7 @@ export function createExperience(host: HTMLElement, hooks: {
         for (let i = 0; i < controllers.length; i++) {
             const hand = sources.get(controllers[i])?.handedness;
             const hint = handHints[i];
-            const text = mode!=='hub'&&hand==='left' ? (mode==='cargo' ? `${cargo.delivered}/3 · ${presentation?'ПОКАЗ ∞':Math.ceil(seconds)+' С'} / ПУЛЬТ СЛЕВА` : 'ПУЛЬТ СЛЕВА / БОКОВАЯ: ХОЛЛ') : mode === 'cargo' ? (hand === 'left' ? 'ЛЕВЫЙ СТИК: ХОД И ПОВОРОТ' : 'КУРОК: ЗАХВАТ / ВЫГРУЗКА') : hand === 'left' ? (learned.move ? 'БОКОВАЯ: ХОЛЛ' : 'ЛЕВЫЙ СТИК: ДВИЖЕНИЕ') : mode === 'drones' ? (training && lessonStep === 1 ? 'БОКОВАЯ: ПЕРЕЗАРЯДКА' : !learned.shoot ? 'КУРОК: ВЫСТРЕЛ' : !learned.reload ? 'БОКОВАЯ: ПЕРЕЗАРЯДКА' : !learned.turn ? 'СТИК: ПОВОРОТ 30°' : '') : mode === 'robot' ? (!learned.spin ? 'КУРОК: СПИННЕР' : !learned.turn ? 'СТИК: ПОВОРОТ 30°' : '') : (!learned.turn ? 'СТИК: ПОВОРОТ 30°' : 'КУРОК: ВЫБРАТЬ');
+            const text = hand==='left'?(mode==='drones'?'БОКОВАЯ: ХОЛЛ / ПУЛЬТ СЛЕВА':'СТИК: '+(mode==='hub'?'ХОД':'РОБОТ')+' / БОКОВАЯ: ХОЛЛ'):paused()?'КУРОК: ПРОДОЛЖИТЬ':mode==='cargo'?'КУРОК: '+(cargo.loaded?'ВЫГРУЗКА':'ЗАХВАТ')+' / СТИК: ПОВОРОТ':mode==='drones'?'КУРОК: ВЫСТРЕЛ / БОКОВАЯ: ЗАРЯДИТЬ':mode==='robot'?'КУРОК: СПИННЕР / СТИК: ПОВОРОТ':'КУРОК: ВЫБРАТЬ / СТИК: ПОВОРОТ';
             hint.o.visible = !!text;
             hint.write(text);
         }
@@ -925,9 +945,8 @@ export function createExperience(host: HTMLElement, hooks: {
                     }
                     continue;
                 }
-                for (const part of d.g.children)
-                    if (part.name === 'propeller')
-                        part.rotation.y += dt * (d.dead ? 4 : 35);
+                d.healthBar.visible=d.maxHP>1&&!d.dead;d.healthBar.scale.x=Math.max(0,d.hp/d.maxHP);
+                if(dt>0&&d.g.visible){d.rotorAngle+=dt*(d.dead?4:35);rotorOffsets.forEach(([x,z],index)=>{rotorDummy.position.set(x,.1,z);rotorDummy.rotation.set(0,d.rotorAngle,0);rotorDummy.updateMatrix();d.rotors.setMatrixAt(index,rotorDummy.matrix);});d.rotors.instanceMatrix.needsUpdate=true;}
                 if (d.dead) {
                     const fall = falling(d.g.position.y, d.velocity, dt);
                     d.velocity = fall.velocity;
@@ -970,16 +989,15 @@ export function createExperience(host: HTMLElement, hooks: {
             if (move.length() > 1)
                 move.normalize();
             const candidate = candidateScratch.copy(head).addScaledVector(move, dt * 2);
-            if (Math.hypot(candidate.x, candidate.z + 11.5) > 3)
-                rig.position.addScaledVector(move, dt * 2);
-            rig.position.x = T.MathUtils.clamp(rig.position.x, -8, 8);
-            rig.position.z = T.MathUtils.clamp(rig.position.z, -10, 5);
-            if (head.x > 6.6 && Math.abs(head.z + 11) < 1.5)
+            if (Math.hypot(candidate.x, candidate.z + 11.5) <= 3)candidate.copy(head);
+            if(move.lengthSq()>0){candidate.x=T.MathUtils.clamp(candidate.x,-8.8,8.8);candidate.z=T.MathUtils.clamp(candidate.z,-17,8);
+                rig.position.x+=candidate.x-head.x;rig.position.z+=candidate.z-head.z;}
+            if (Math.abs(candidate.x-5.1)<1.5 && Math.abs(candidate.z + 14) < 1.3)
                 go('cargo');
-            else if (head.z < -5 && head.z > -7) {
-                if (Math.abs(head.x + 5.2) < 1.5)
+            else if (candidate.z < -5 && candidate.z > -7) {
+                if (Math.abs(candidate.x + 5.2) < 1.5)
                     go('robot');
-                else if (Math.abs(head.x - 5.2) < 1.5)
+                else if (Math.abs(candidate.x - 7.8) < 1.5)
                     go('drones');
             }
         }
@@ -999,12 +1017,12 @@ export function createExperience(host: HTMLElement, hooks: {
     });
     go('hub');
     return {go,restart,welcome,train,cargoAction,setPresentation,nextVisitor,spin,reload,start,turn:snap,
-        setPaused(value:boolean){pause('manual',value);},setHelpOpen(value:boolean){pause('help',value);},resume,
+        setPaused(value:boolean){pause('manual',value);},setHelpOpen(value:boolean){pause('help',value);},setMenuOpen(value:boolean){pause('menu',value);},resume,recenter:placeView,
         toggleSound(){muted=audioFX.toggle();return muted;},
         setDiagnosticsVisible(value:boolean){diagnosticsVisible=value;diagLabel.o.visible=value&&hudRoot.visible;},
-        key(k:string,on:boolean){if(!paused()&&on)keys.add(k);else keys.delete(k);},
+        key(k:string,on:boolean){if(on)audioFX.unlock();if(!paused()&&on)keys.add(k);else keys.delete(k);},
         startCargoDemo(){setPresentation(true);go('cargo');setCargoAutopilot(true);start();},
-        stopCargoDemo(){setCargoAutopilot(false);},
+        stopCargoDemo(){setCargoAutopilot(false);clearInput();},
         async enterVR(){
             if(sessionPending||renderer.xr.isPresenting||disposed)return;
             audioFX.unlock();
@@ -1022,12 +1040,13 @@ export function createExperience(host: HTMLElement, hooks: {
             disposed=true;renderer.setAnimationLoop(null);
             renderer.xr.removeEventListener('sessionstart',sessionStart);renderer.xr.removeEventListener('sessionend',sessionEnd);
             observedSession?.removeEventListener('visibilitychange',xrVisibility);void renderer.xr.getSession()?.end();
+            observedSpace?.removeEventListener('reset',referenceReset);
             ro.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);window.removeEventListener('focus',focus);
             document.removeEventListener('visibilitychange',visibility);
             renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);
             renderer.domElement.removeEventListener('webglcontextlost',contextLost);renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);
             disposeBatches.forEach(dispose=>dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());
-            cargo.dispose();art.dispose();environment.dispose();audioFX.dispose();renderer.dispose();renderer.domElement.remove();
+            arenaShadow.dispose();cargo.dispose();art.dispose();environment.dispose();audioFX.dispose();renderer.dispose();renderer.domElement.remove();
         }
     };
 }
