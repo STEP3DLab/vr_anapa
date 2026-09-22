@@ -184,6 +184,8 @@ export function createExperience(host: HTMLElement, hooks: {
             wheel.rotation.z = Math.PI / 2;
         }
     const rivalName = label(arena, 'СОПЕРНИК / БУЛЬДОЗЕР', 0, 1.3, -11, 2.8, .3);
+    const duelGate=new T.Group();duelGate.name='arena-duel-gate';arena.add(duelGate);duelGate.position.set(0,0,-13.15);duelGate.visible=false;
+    for(const x of [-2.8,0,2.8])box(duelGate,red,x,1.25,0,.12,2.5,.08);box(duelGate,red,0,2.45,0,5.7,.08,.08);label(duelGate,'ФИНАЛ / ДУЭЛЬ',0,2.9,.02,3,.32,'#ffb5bd',1);
     rival.visible = false;
     rivalName.o.visible = false;
     const cells: T.Mesh[] = [], blocks: T.Mesh[] = [];
@@ -503,7 +505,7 @@ export function createExperience(host: HTMLElement, hooks: {
             if(needsTraining)train();
         }
     }
-    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
         learned.spin = true;
@@ -796,7 +798,7 @@ export function createExperience(host: HTMLElement, hooks: {
             if (!training && score === 11 && !duel) {
                 duel = true;
                 rival.visible = true;
-                rivalName.o.visible = true;
+                rivalName.o.visible = true;duelGate.visible=true;
                 seconds = Math.max(seconds, 35);
                 notify('ФИНАЛ: ПОБЕДИТЕ БУЛЬДОЗЕР СПИННЕРОМ');
                 audioFX.event('portal');
