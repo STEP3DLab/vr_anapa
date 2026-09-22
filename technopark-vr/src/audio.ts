@@ -1,6 +1,45 @@
 /** Synthesized soundscape; no downloads, microphones or autoplay. */
-export function createAudio(){let context:AudioContext|undefined,master:GainNode|undefined,engine:OscillatorNode|undefined,motor:GainNode|undefined;let muted=false;
- function init(){try{if(!context){context=new AudioContext();master=context.createGain();master.gain.value=muted?0:.35;master.connect(context.destination);engine=context.createOscillator();motor=context.createGain();engine.type='sawtooth';engine.frequency.value=65;motor.gain.value=0;engine.connect(motor);motor.connect(master);engine.start();}void context.resume();return context;}catch{return undefined;}}
- function tone(f:number,d=.12,type:OscillatorType='sine',volume=.15,delay=0){const c=init();if(!c||!master)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(Math.max(40,f*.6),t+d);g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02);o.onended=()=>{o.disconnect();g.disconnect();};}
- return {unlock:init,tone,event(name:string){if(name==='portal'){[220,330,440,660].forEach((f,i)=>tone(f,.5,'sine',.13,i*.065));}else if(name==='win'){[392,494,587,784].forEach((f,i)=>tone(f,.6,'sine',.16,i*.12));}else if(name==='shot'){tone(90,.22,'sawtooth',.35);tone(650,.055,'triangle',.14);}else if(name==='hit'){tone(880,.1,'square',.07);tone(110,.16,'triangle',.2);}else if(name==='reload'){tone(180,.09,'square',.05);tone(320,.08,'square',.05,.35);}else tone(540,.09);},motor(speed:number){if(!context||!motor||!engine)return;motor.gain.setTargetAtTime(Math.min(.045,Math.abs(speed)*.02),context.currentTime,.12);engine.frequency.setTargetAtTime(65+Math.abs(speed)*65,context.currentTime,.1);},toggle(){muted=!muted;if(master&&context)master.gain.setTargetAtTime(muted?0:.35,context.currentTime,.05);return muted;},dispose(){void context?.close();}};
+export function createAudio(){
+ let context:AudioContext|undefined,master:GainNode|undefined,engine:OscillatorNode|undefined,motor:GainNode|undefined,ambient:OscillatorNode|undefined,ambientGain:GainNode|undefined;
+ let muted=false,desiredScene='hub';
+ const ambience={hub:[52,.006],robot:[68,.0055],drones:[92,.0045],cargo:[58,.005]} as Record<string,[number,number]>;
+ function applyScene(){
+  if(!context||!ambient||!ambientGain)return;
+  const [frequency,gain]=ambience[desiredScene]??ambience.hub;
+  ambient.frequency.setTargetAtTime(frequency,context.currentTime,.7);
+  ambientGain.gain.setTargetAtTime(gain,context.currentTime,.8);
+ }
+ function init(){
+  try{
+   if(!context){
+    context=new AudioContext();
+    master=context.createGain();master.gain.value=muted?0:.35;master.connect(context.destination);
+    engine=context.createOscillator();motor=context.createGain();engine.type='sawtooth';engine.frequency.value=65;motor.gain.value=0;engine.connect(motor);motor.connect(master);engine.start();
+    ambient=context.createOscillator();ambientGain=context.createGain();ambient.type='sine';ambientGain.gain.value=0;ambient.connect(ambientGain);ambientGain.connect(master);ambient.start();applyScene();
+   }
+   void context.resume();return context;
+  }catch{return undefined;}
+ }
+ function tone(f:number,d=.12,type:OscillatorType='sine',volume=.15,delay=0){
+  const c=init();if(!c||!master)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;
+  o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(Math.max(40,f*.6),t+d);
+  g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+d);
+  o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02);o.onended=()=>{o.disconnect();g.disconnect();};
+ }
+ return {
+  unlock(){const c=init();applyScene();return c;},
+  scene(name:string){desiredScene=name;applyScene();},
+  tone,
+  event(name:string){
+   if(name==='portal'){[220,330,440,660].forEach((f,i)=>tone(f,.5,'sine',.13,i*.065));}
+   else if(name==='win'){[392,494,587,784].forEach((f,i)=>tone(f,.6,'sine',.16,i*.12));}
+   else if(name==='shot'){tone(90,.22,'sawtooth',.35);tone(650,.055,'triangle',.14);}
+   else if(name==='hit'){tone(880,.1,'square',.07);tone(110,.16,'triangle',.2);}
+   else if(name==='reload'){tone(180,.09,'square',.05);tone(320,.08,'square',.05,.35);}
+   else tone(540,.09);
+  },
+  motor(speed:number){if(!context||!motor||!engine)return;motor.gain.setTargetAtTime(Math.min(.045,Math.abs(speed)*.02),context.currentTime,.12);engine.frequency.setTargetAtTime(65+Math.abs(speed)*65,context.currentTime,.1);},
+  toggle(){muted=!muted;if(master&&context)master.gain.setTargetAtTime(muted?0:.35,context.currentTime,.05);return muted;},
+  dispose(){void context?.close();}
+ };
 }
