@@ -8,6 +8,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const geometries: T.BufferGeometry[] = [], materials: T.Material[] = [], textures: T.Texture[] = [];
     function material(color: T.ColorRepresentation, metalness = .1) { const m = new T.MeshStandardMaterial({ color, metalness, roughness: .65 }); materials.push(m); return m; }
     const earth = material('#706b50'), sand = material('#a29372'), asphalt = material('#39464a'), steel = material('#b2b8b5', .65), darkSteel = material('#30383b', .75), body = material('#66665c', .5), red = material('#bb3823', .5), tire = material('#151d1d'), amber = material('#ddaf2f'), lime = material('#bddb76'), forest = material('#41625b');
+    const workLight=new T.MeshBasicMaterial({color:0xffce69,toneMapped:false}),statusMat=new T.MeshBasicMaterial({color:0x8fffbd,toneMapped:false});materials.push(workLight,statusMat);
     function mesh(parent: T.Group, geometry: T.BufferGeometry, mat: T.Material, x = 0, y = 0, z = 0) { geometries.push(geometry); const m = new T.Mesh(geometry, mat); m.position.set(x, y, z); parent.add(m); return m; }
     const box = (p: T.Group, m: T.Material, x: number, y: number, z: number, w: number, h: number, d: number) => mesh(p, new T.BoxGeometry(w, h, d), m, x, y, z);
     const cylinder = (p: T.Group, m: T.Material, x: number, y: number, z: number, r: number, h: number) => mesh(p, new T.CylinderGeometry(r, r, h, 16), m, x, y, z);
@@ -86,6 +87,10 @@ export function createCargoScene(onEvent: (message: string) => void) {
     box(robot,darkSteel,0,1.29,.72,1.08,.08,.86);
     box(robot,steel,0,1.35,.72,.9,.045,.68);
     for(const x of [-.28,.28])for(const z of [.52,.92])cylinder(robot,darkSteel,x,1.44,z,.025,.14);
+    // Front grille, work lights and a compact status beacon improve recognisability from the fixed VR viewpoint.
+    box(robot,darkSteel,0,.9,-1.48,1.62,.46,.07);for(const x of [-.58,-.29,0,.29,.58])box(robot,steel,x,.9,-1.525,.055,.32,.025);
+    for(const x of [-.56,.56]){const light=cylinder(robot,workLight,x,1.08,-1.53,.085,.035);light.rotation.x=Math.PI/2;}
+    const statusLamp=mesh(robot,new T.SphereGeometry(.075,10,6),statusMat,0,1.5,.72);statusLamp.name='cargo-status-lamp';
     box(robot, amber, 0, .9, 1.85, 1.8, .12, 1.05);
     for(const x of [-.9,.9])box(robot, amber, x, 1.02, 1.85, .06,.2,1.05);
     box(robot, amber, 0,1.02,2.35,1.8,.2,.06);
@@ -308,6 +313,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
         hydraulic(barrel1,rod1,shoulder.clone().add(offset).addScaledVector(up,-.12),elbow.clone().add(offset).lerp(shoulder,.22));
         hydraulic(barrel2,rod2,elbow.clone().add(offset).lerp(shoulder,.26),elbow.clone().add(offset).lerp(tip,.45));
         claw.position.copy(tip);claw.rotation.y=turretYaw;jaws[0].position.x=-jawOpening;jaws[1].position.x=jawOpening;
+        statusMat.color.set(job?0xffb45f:carried?0x8fffbd:finished?0x72ffe2:0xffd56e);statusLamp.scale.setScalar(job?1+.22*Math.sin(navTime*8):1);
         const target=!carried&&!job?pickupTarget():null;
         markers.forEach((m,i)=>{const available=!packages[i].userData.delivered&&packages[i]!==carried&&job?.item!==packages[i];m.beacon.visible=available;m.label.visible=available;m.beacon.material=packages[i]===target&&isStopped()?markerReady:markerWaiting;});
         readyBase.visible=!!carried&&!job&&isStopped()&&!!unloadPoint();
