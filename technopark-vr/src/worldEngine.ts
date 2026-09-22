@@ -50,7 +50,7 @@ export function createExperience(host: HTMLElement, hooks: {
     Object.values(worlds).forEach(g => scene.add(g));
     const materials: T.Material[] = [], geometries: T.BufferGeometry[] = [], textures: T.Texture[] = [];
     function mat(color: T.ColorRepresentation, metal = .3, glow = false) { const m = new T.MeshStandardMaterial({ color, metalness: metal, roughness: .4, emissive: glow ? color : 0, emissiveIntensity: glow ? 2 : 0 }); materials.push(m); return m; }
-    const navy = mat('#142d39'), steel = mat('#98aab7', .8), black = mat('#080f17'), cyan = mat('#52ffe0', .2, true), orange = mat('#ff8b3d', .2, true), lime = mat('#bfe879', .15, true), red = mat('#fa263e'), white = mat('#d9faff');
+    const navy = mat('#142d39'), steel = mat('#98aab7', .8), black = mat('#080f17'), cyan = mat('#52ffe0', .2, true), orange = mat('#ff8b3d', .2, true), lime = mat('#bfe879', .15, true), red = mat('#fa263e'), white = mat('#d9faff'), treeA=mat('#347e78'), treeB=mat('#32755d');
     function mesh(g: T.Group, geo: T.BufferGeometry, m: T.Material, x = 0, y = 0, z = 0) { geometries.push(geo); const o = new T.Mesh(geo, m); o.position.set(x, y, z); g.add(o); return o; }
     const box = (g: T.Group, m: T.Material, x: number, y: number, z: number, w: number, h: number, d: number) => mesh(g, new T.BoxGeometry(w, h, d), m, x, y, z);
     const cyl = (g: T.Group, m: T.Material, x: number, y: number, z: number, r: number, h: number, n = 32) => mesh(g, new T.CylinderGeometry(r, r, h, n), m, x, y, z);
@@ -100,7 +100,7 @@ export function createExperience(host: HTMLElement, hooks: {
     for (let i = 0; i < 14; i++) {
         let x = i % 2 ? 11.5 : -11.5, z = 5 - Math.floor(i / 2) * 4;
         cyl(hub, steel, x, .5, z, .09, 1);
-        mesh(hub, new T.IcosahedronGeometry(.85, 0), mat(i % 2 ? '#347e78' : '#32755d'), x, 1.5, z);
+        mesh(hub, new T.IcosahedronGeometry(.85, 0), i % 2 ? treeA : treeB, x, 1.5, z);
     }
     label(hub, 'Т Е Х Н О П А Р К  /  Р Г С У', 0, 6.1, -17, 9, .65);
     label(hub, 'Я Д Р О  /  КИНЕТИЧЕСКАЯ СКУЛЬПТУРА', 0, .7, -8.6, 3.6, .32);
