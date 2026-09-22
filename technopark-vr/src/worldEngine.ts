@@ -19,7 +19,7 @@ export function createExperience(host: HTMLElement, hooks: {
     phase?: (phase:string)=>void;
     diagnostics?: (data:{fps:number;calls:number;triangles:number;geometries:number;textures:number;xr:boolean;scene:string})=>void;
 }) {
-    const renderer = new T.WebGLRenderer({ antialias: true });
+    const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: false });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     renderer.setSize(host.clientWidth, host.clientHeight);
     renderer.xr.enabled = true;
@@ -308,7 +308,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
     const raycaster = new T.Raycaster(), rotation = new T.Matrix4();
-    const rays:T.Line[]=[];const tips:T.Mesh[]=[];
+    const rays:T.Line[]=[];const tips:T.Mesh[]=[];const hoverTargets:Array<T.Object3D|null>=[null,null];
     function visible(o: T.Object3D) { for (let p: T.Object3D | null = o; p; p = p.parent)
         if (!p.visible)
             return false; return true; }
@@ -317,6 +317,10 @@ export function createExperience(host: HTMLElement, hooks: {
         const c = renderer.xr.getController(i);
         rig.add(c);
         controllers.push(c);
+        // Lightweight procedural controller proxy: no external model download and only a few polygons.
+        const grip=cyl(c,black,0,-.075,.035,.038,.17,10);grip.rotation.x=.22;
+        const gripRing=mesh(c,new T.TorusGeometry(.066,.012,5,18),steel,0,.035,-.005);gripRing.rotation.x=Math.PI/2;
+        box(c,i===0?cyan:orange,0,.012,-.075,.055,.018,.055);
         const hint = label(c, '', 0, .15, -.34, .56, .16,'#e2fff6',2);
         hint.o.rotation.x = -.3;
         handHints.push(hint);
@@ -330,7 +334,7 @@ export function createExperience(host: HTMLElement, hooks: {
         c.add(weapon);
         guns.push(weapon);
         c.addEventListener('connected', (e: any) => { sources.set(c, e.data);neutral.add(e.data); weapon.visible = e.data.handedness === 'right' && mode === 'drones'; });
-        c.addEventListener('disconnected', () => sources.delete(c));
+        c.addEventListener('disconnected', () => {sources.delete(c);hoverTargets[i]=null;});
         c.addEventListener('selectstart', () => { if([...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return;controllerRay(c); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit) {
             hit.object.userData.action();
             return;
@@ -385,7 +389,7 @@ export function createExperience(host: HTMLElement, hooks: {
         if(before!==paused()){clearInput();previous=0;hooks.paused?.(paused());updateHUD();}
     }
     function resume(){pauseReasons.delete('manual');pauseReasons.delete('focus');clearInput();previous=0;hooks.paused?.(paused());audioFX.unlock();updateHUD();}
-    function pulse(controller:T.Group){try{const actuator=(sources.get(controller)?.gamepad as any)?.hapticActuators?.[0];if(actuator)Promise.resolve(actuator.pulse(.3,65)).catch(()=>{});}catch{}}
+    function pulse(controller:T.Group,strength=.3,duration=65){try{const actuator=(sources.get(controller)?.gamepad as any)?.hapticActuators?.[0];if(actuator)Promise.resolve(actuator.pulse(strength,duration)).catch(()=>{});}catch{}}
 
     function sound(f: number, d = .08) { audioFX.tone(f, d, 'triangle'); }
     function notify(message: string) { notice = message; noticeTime = 2; }
@@ -872,8 +876,9 @@ export function createExperience(host: HTMLElement, hooks: {
             }
         }
         for(let i=0;i<controllers.length;i++)if(sources.has(controllers[i])&&controllers[i].visible){
-            controllerRay(controllers[i]);const hit=raycaster.intersectObjects(actions.filter(visible),false)[0];
-            rays[i].scale.z=hit?Math.min(12,hit.distance):8;tips[i].visible=!!hit;
+            controllerRay(controllers[i]);const hit=raycaster.intersectObjects(actions.filter(visible),false)[0],target=hit?.object??null;
+            if(target!==hoverTargets[i]){hoverTargets[i]=target;if(target)pulse(controllers[i],.08,20);}
+            rays[i].scale.z=hit?Math.min(12,hit.distance):8;(rays[i].material as T.LineBasicMaterial).opacity=hit?.9:.42;tips[i].visible=!!hit;
             if(hit){tips[i].position.z=-hit.distance;tips[i].scale.setScalar(Math.max(1,hit.distance*.3));}
         }
         const hintText=mode==='cargo'?cargo.hint():'';if(hintText!==lastHint){lastHint=hintText;hooks.hint?.(hintText);}
