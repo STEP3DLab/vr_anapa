@@ -119,7 +119,7 @@ export function createExperience(host: HTMLElement, hooks: {
         box(hub, steel, x, .73, -1, 2.1, .08, 3.6);
     }
     const actions: T.Object3D[] = [], portals: T.Mesh[] = [], portalGroups:T.Group[] = [], xrOnlyHub:T.Object3D[]=[];
-    const portalMode:Mode[]=['robot','drones','cargo'];let portalFocus=-1;
+    let portalFocus=-1;
     const xrOnly=(o:T.Object3D)=>{xrOnlyHub.push(o);return o;};
     function action(o: T.Object3D, f: () => void) { o.userData.action = f; actions.push(o); }
     for (const [x, z] of [[0, -3], [-5, -3], [5, -3], [0, 3], [5, -9]]) {
@@ -293,6 +293,9 @@ export function createExperience(host: HTMLElement, hooks: {
     function startIntro(next:Mode){const d=introData[next];introKicker.write(d[0]);introTitle.write(d[1]);introHint.write(d[2]);introRoot.position.set(0,0,0);introRoot.rotation.set(0,0,0);camera.add(introRoot);sceneIntro=1.75;introRoot.visible=true;}
     const hudRoot = new T.Group();
     scene.add(hudRoot);
+    // Minimal spatial mission beacon: one glance shows scene, state and progress without opening a menu.
+    const missionBeacon=new T.Group();scene.add(missionBeacon);missionBeacon.visible=false;
+    const beaconTop=label(missionBeacon,'',0,.42,0,2.8,.28,'#baffdf',1),beaconMain=label(missionBeacon,'',0,0,0,3.2,.42,'#f4fff9',1),beaconSub=label(missionBeacon,'',0,-.38,0,3,.24,'#9dbab6',1);
     const consoleCue=label(hudRoot,'← ПУЛЬТ И ЗАДАНИЕ',0,0,0,1.6,.24);scene.add(consoleCue.o);
     const hud = label(hudRoot, '', 0, 2.9, -3, 4.6, .92,'#e2fff6',3);
     const guidance = label(hudRoot, '', 0, 1.85, -3, 4.6, .68,'#e2fff6',2);
@@ -442,7 +445,7 @@ export function createExperience(host: HTMLElement, hooks: {
         guns.forEach((g,i)=>g.visible=mode==='drones'&&sources.get(controllers[i])?.handedness==='right');
         xrOnlyHub.forEach(o=>o.visible=renderer.xr.isPresenting);
         // The desktop already has HTML controls. In VR the console is fixed to the observation station, not the head.
-        hudRoot.visible=mode!=='hub'&&renderer.xr.isPresenting;
+        hudRoot.visible=mode!=='hub'&&renderer.xr.isPresenting;missionBeacon.visible=mode!=='hub'&&renderer.xr.isPresenting;
         const stationY=mode==='cargo'?2.8:mode==='robot'?1.5:0,stationZ=mode==='cargo'?7:mode==='robot'?4:1;
         // Fixed side console: the centre sight line and ground remain unobstructed.
         const consoleYaw=Math.atan2(4.4,3.4),consoleScale=.8;
@@ -454,6 +457,7 @@ export function createExperience(host: HTMLElement, hooks: {
         startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.7,-1.13,-3);again.o.position.set(1.7,-1.13,-3);
         lessonLabel.o.position.set(0,-1.65,-3);gameDemoLabel.o.position.set(1.7,-1.65,-3);newGuest.o.position.set(-1.7,-1.65,-3);
         pauseLabel.o.position.set(0,-1.13,-3);
+        const beaconY=mode==='cargo'?4.6:mode==='robot'?3.5:2.35,beaconZ=mode==='cargo'?-6.5:mode==='robot'?-10.8:-10.5;missionBeacon.position.set(4.7,beaconY,beaconZ);missionBeacon.rotation.y=-.32;missionBeacon.scale.setScalar(.82);
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
@@ -532,7 +536,13 @@ export function createExperience(host: HTMLElement, hooks: {
     const action=mode==='cargo'?cargo.actionLabel():'';if(action!==lastAction){lastAction=action;hooks.action?.(action);}
     if (s !== lastHUD) {
         lastHUD = s;
-        hooks.status(s);
+        if(mode!=='hub'){
+            const title=mode==='cargo'?'03 · ПОЛИГОН ЛОСИНКА':mode==='robot'?'01 · РОБОТ-АРЕНА':'02 · ДРОН-ТИР';
+            const state=paused()?'ПАУЗА':training?'ОБУЧЕНИЕ':ready?'ГОТОВ К СТАРТУ':countdown>0?'СТАРТ '+Math.ceil(countdown):ended?'ИТОГ':'МИССИЯ';
+            const detail=mode==='cargo'?cargo.progressText():mode==='robot'?`ЯЧЕЙКИ ${Math.min(score,5)}/5 · БЛОКИ ${6-blocks.filter(b=>b.visible).length}/6`:`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
+            beaconTop.write(title);beaconMain.write(state);beaconSub.write(detail);
+        }
+                hooks.status(s);
         hud.write(s); // Text wraps without horizontal glyph distortion.
 
     } }
