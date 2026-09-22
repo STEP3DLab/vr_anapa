@@ -284,6 +284,7 @@ export function createExperience(host: HTMLElement, hooks: {
     let transition = 0;
     const hudRoot = new T.Group();
     scene.add(hudRoot);
+    const consoleCue=label(hudRoot,'← ПУЛЬТ И ЗАДАНИЕ',0,0,0,1.6,.24);scene.add(consoleCue.o);
     const hud = label(hudRoot, '', 0, 2.9, -3, 4.6, .92,'#e2fff6',3);
     const guidance = label(hudRoot, '', 0, 1.85, -3, 4.6, .68,'#e2fff6',2);
     const startLabel = label(hudRoot, 'НАЧАТЬ РАУНД', 0, 1.3, -3, 2.1, .4);
@@ -428,9 +429,15 @@ export function createExperience(host: HTMLElement, hooks: {
         guns.forEach((g,i)=>g.visible=mode==='drones'&&sources.get(controllers[i])?.handedness==='right');
         // The desktop already has HTML controls. In VR the console is fixed to the observation station, not the head.
         hudRoot.visible=mode!=='hub'&&renderer.xr.isPresenting;
-        hudRoot.position.set(0,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?5:mode==='robot'?2:0);
+        const stationY=mode==='cargo'?2.8:mode==='robot'?1.5:0,stationZ=mode==='cargo'?7:mode==='robot'?4:1;
+        // Fixed side console: the centre sight line and ground remain unobstructed.
+        const consoleYaw=Math.atan2(4.4,3.4),consoleScale=.8;
+        hudRoot.rotation.y=consoleYaw;hudRoot.scale.setScalar(consoleScale);
+        hudRoot.position.set(-4.4+3*consoleScale*Math.sin(consoleYaw),stationY+2.1,stationZ-3.4+3*consoleScale*Math.cos(consoleYaw));
+        consoleCue.o.visible=hudRoot.visible;consoleCue.o.position.set(-1.8,stationY+1.85,stationZ-4.5);
+        guidance.write(mode==='cargo'?cargo.hint():lessonText());
         hud.o.position.set(0,.9,-3);guidance.o.position.set(0,-.02,-3);
-        startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.5,-1.13,-3);again.o.position.set(1.5,-1.13,-3);
+        startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.7,-1.13,-3);again.o.position.set(1.7,-1.13,-3);
         lessonLabel.o.position.set(0,-1.65,-3);gameDemoLabel.o.position.set(1.7,-1.65,-3);newGuest.o.position.set(-1.7,-1.65,-3);
         pauseLabel.o.position.set(0,-1.13,-3);
         scene.updateMatrixWorld(true);
@@ -769,7 +776,7 @@ export function createExperience(host: HTMLElement, hooks: {
         for (let i = 0; i < controllers.length; i++) {
             const hand = sources.get(controllers[i])?.handedness;
             const hint = handHints[i];
-            const text = mode === 'cargo' ? (hand === 'left' ? 'ЛЕВЫЙ СТИК: ХОД И ПОВОРОТ' : 'КУРОК: ЗАХВАТ / ВЫГРУЗКА') : hand === 'left' ? (learned.move ? 'БОКОВАЯ: ХОЛЛ' : 'ЛЕВЫЙ СТИК: ДВИЖЕНИЕ') : mode === 'drones' ? (training && lessonStep === 1 ? 'БОКОВАЯ: ПЕРЕЗАРЯДКА' : !learned.shoot ? 'КУРОК: ВЫСТРЕЛ' : !learned.reload ? 'БОКОВАЯ: ПЕРЕЗАРЯДКА' : !learned.turn ? 'СТИК: ПОВОРОТ 30°' : '') : mode === 'robot' ? (!learned.spin ? 'КУРОК: СПИННЕР' : !learned.turn ? 'СТИК: ПОВОРОТ 30°' : '') : (!learned.turn ? 'СТИК: ПОВОРОТ 30°' : 'КУРОК: ВЫБРАТЬ');
+            const text = mode!=='hub'&&hand==='left' ? (mode==='cargo' ? `${cargo.delivered}/3 · ${presentation?'ПОКАЗ ∞':Math.ceil(seconds)+' С'} / ПУЛЬТ СЛЕВА` : 'ПУЛЬТ СЛЕВА / БОКОВАЯ: ХОЛЛ') : mode === 'cargo' ? (hand === 'left' ? 'ЛЕВЫЙ СТИК: ХОД И ПОВОРОТ' : 'КУРОК: ЗАХВАТ / ВЫГРУЗКА') : hand === 'left' ? (learned.move ? 'БОКОВАЯ: ХОЛЛ' : 'ЛЕВЫЙ СТИК: ДВИЖЕНИЕ') : mode === 'drones' ? (training && lessonStep === 1 ? 'БОКОВАЯ: ПЕРЕЗАРЯДКА' : !learned.shoot ? 'КУРОК: ВЫСТРЕЛ' : !learned.reload ? 'БОКОВАЯ: ПЕРЕЗАРЯДКА' : !learned.turn ? 'СТИК: ПОВОРОТ 30°' : '') : mode === 'robot' ? (!learned.spin ? 'КУРОК: СПИННЕР' : !learned.turn ? 'СТИК: ПОВОРОТ 30°' : '') : (!learned.turn ? 'СТИК: ПОВОРОТ 30°' : 'КУРОК: ВЫБРАТЬ');
             hint.o.visible = !!text;
             hint.write(text);
         }

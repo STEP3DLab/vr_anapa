@@ -10,7 +10,7 @@ const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(project, '.test-output');
 await mkdir(output, {recursive:true});
 // A separate inspection bundle exposes fixtures. The production app.js has NO testing globals.
-await build({absWorkingDir:project,stdin:{contents:"import {createExperience} from './src/worldEngine';createExperience(document.getElementById('host')!,{status(){},scene(){}});",resolveDir:project,loader:'ts'},outfile:output+'/inspection.js',bundle:true,format:'esm',plugins:[{name:'inspection-only',setup(b){b.onLoad({filter:/worldEngine\.ts$/},async args=>{let s=await readFile(args.path,'utf8');const index=s.lastIndexOf("    go('hub');");assert.ok(index>0);s=s.slice(0,index)+s.slice(index).replace("    go('hub');","    go('hub');(globalThis as any).__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView};");return {contents:s,loader:'ts'};});}}]});
+await build({absWorkingDir:project,stdin:{contents:"import {createExperience} from './src/worldEngine';createExperience(document.getElementById('host')!,{status(){},scene(){}});",resolveDir:project,loader:'ts'},outfile:output+'/inspection.js',bundle:true,format:'esm',plugins:[{name:'inspection-only',setup(b){b.onLoad({filter:/worldEngine\.ts$/},async args=>{let s=await readFile(args.path,'utf8');const index=s.lastIndexOf("    go('hub');");assert.ok(index>0);s=s.slice(0,index)+s.slice(index).replace("    go('hub');","    go('hub');(globalThis as any).__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView,hudRoot};");return {contents:s,loader:'ts'};});}}]});
 await writeFile(output+'/inspection.html',`<!doctype html><html><head><link rel="icon" href="../favicon.svg"><style>body{margin:0}#host{width:100vw;height:100vh}canvas{display:block}</style></head><body><div id="host"></div><script type="module" src="./inspection.js"></script></body></html>`);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.wasm':'application/wasm'};
 const server=createServer(async(req,res)=>{try{const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);let file=resolve(project, '.'+pathname);if(!file.startsWith(project+'/')&&file!==project)throw Error('Invalid path');if(pathname.endsWith('/'))file+='/index.html';const data=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream'});res.end(data);}catch{res.writeHead(404);res.end('Not found');}});
@@ -55,6 +55,9 @@ try{
  for(const name of ['cargo','robot','drones']){
   await page.evaluate(mode=>{const q=window.__inspection;q.go(mode);q.renderer.xr.isPresenting=true;q.placeView();q.renderer.xr.isPresenting=false;q.camera.position.set(0,1.65,0);q.camera.rotation.set(-.15,0,0);q.fade.visible=false;q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);},name);
   await page.screenshot({path:output+'/console-preview-'+name+'.png'});
+  const heights=await page.evaluate(()=>{const q=window.__inspection;return q.hudRoot.children.filter(o=>o.userData.action).map(o=>o.getWorldPosition(q.camera.position.clone()).y-q.rig.position.y);});assert.ok(heights.every(y=>y>.3),'Every VR button must remain above ground');
+  await page.evaluate(()=>{const q=window.__inspection;q.camera.rotation.set(-.08,Math.atan2(4.4,3.4),0);q.renderer.render(q.scene,q.camera);});
+  await page.screenshot({path:output+'/console-side-'+name+'.png'});
  }
  reports.push({errors});assert.deepEqual(errors,[],'No browser errors expected');
  console.log('PASS: real WebGL2 renderer; three scenes; help/pause; unsupported VR message; two mobile layouts without overlaps; legacy gallery; real rendered arm sequence. Software GPU, not Quest.');
