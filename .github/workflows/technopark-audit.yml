@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '22'
       - run: npm install --ignore-scripts --no-audit --no-fund
-      - run: node ../.github/apply-v9.mjs
+      - run: node ../.github/apply-v9.mjs && node ../.github/qa-followup.mjs
       - run: npm run check
       - run: npm test
       - run: npm run build
@@ -43,7 +43,7 @@ jobs:
           test "$GITHUB_REF_NAME" = technopark-v9-audit
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/worldEngine.ts app.js package-lock.json
+          git add src/worldEngine.ts tests/browser.test.mjs app.js package-lock.json
           if ! git diff --cached --quiet; then
             git commit -m 'Build tested technopark v9 assets on audit branch'
             git push origin HEAD:technopark-v9-audit
