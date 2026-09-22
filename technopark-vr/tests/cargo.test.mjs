@@ -23,13 +23,14 @@ try{
  const {createCargoScene}=await import(pathToFileURL(join(temp,'cargoScene.mjs')));const messages=[];const cargo=createCargoScene(s=>messages.push(s));
  const robot=cargo.robot,upper=robot.getObjectByName('cargo-upper-link'),fore=robot.getObjectByName('cargo-fore-link'),claw=robot.getObjectByName('cargo-claw'),crate=cargo.packages[0];
  const step=(n,active=true,drive=0,turn=0)=>{for(let i=0;i<n;i++){cargo.update(1/60,drive,turn,active);assert.ok(Math.abs(upper.scale.y-ARM.upper)<1e-8);assert.ok(Math.abs(fore.scale.y-ARM.fore)<1e-8);}};
- robot.position.set(-5,0,0);cargo.update(0,0,0,false);assert.match(cargo.hint(),/ДОСТУПЕН/);
+ robot.position.set(-5,0,0);cargo.update(0,0,0,false);assert.match(cargo.hint(),/ДОСТУПЕН/);assert.equal(cargo.actionable,true,'stopped rover in reach must expose the cargo action');
+ assert.ok(cargo.root.getObjectByName('cargo-navigation-line'));assert.ok(cargo.root.getObjectByName('cargo-navigation-arrow'));
  cargo.interact();assert.ok(cargo.busy);assert.equal(crate.parent,cargo.root,'do not attach before the claw closes');step(60);assert.equal(crate.parent,cargo.root);
  step(70);assert.equal(crate.parent,robot);assert.ok(Math.abs(crate.position.y-(claw.position.y-ARM.gripOffset))<1e-8);
  const frozenTip=claw.position.clone(),frozenCrate=crate.position.clone();step(600,false,1,1);assert.ok(frozenTip.distanceTo(claw.position)<1e-8);assert.ok(frozenCrate.distanceTo(crate.position)<1e-8);
  step(240);assert.ok(!cargo.busy);assert.ok(cargo.loaded);assert.ok(distance(crate.position,{x:0,y:1.31,z:1.85})<1e-8,'load must rest on the rear platform');
  cargo.interact();assert.ok(!cargo.busy,'no unloading outside the base');robot.position.set(0,0,2);cargo.update(0,0,0,false);cargo.interact();assert.ok(cargo.busy);step(180);assert.equal(cargo.delivered,0,'do not credit delivery before placement');step(190);assert.equal(cargo.delivered,1);assert.ok(crate.userData.delivered);assert.equal(crate.parent,cargo.root);assert.ok(Math.abs(crate.position.x)<=2.8&&Math.abs(crate.position.z-2)<=1.8);assert.ok(Math.abs(crate.position.y-.36)<1e-8);
  cargo.interact();assert.equal(cargo.delivered,1);cargo.reset();assert.equal(cargo.delivered,0);assert.ok(!cargo.busy&&!cargo.loaded);assert.equal(crate.parent,cargo.root);
- robot.position.set(-5,0,0);step(1,true,0,1);cargo.interact();assert.ok(!cargo.busy,'turning also prevents acquisition');
+ robot.position.set(-5,0,0);step(1,true,0,1);assert.equal(cargo.actionable,false,'turning must clear the ready state');cargo.interact();assert.ok(!cargo.busy,'turning also prevents acquisition');
  cargo.dispose();console.log('PASS: 1500 IK targets + singularities, constant link lengths, rotated collisions, blocked reach, full pick/place sequence, frozen animation, no duplicate or premature delivery.');
 }finally{rmSync(temp,{recursive:true,force:true});}
