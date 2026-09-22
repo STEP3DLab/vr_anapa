@@ -322,12 +322,15 @@ export function createCargoScene(onEvent: (message: string) => void) {
         }
     }
     reset();update(0,0,0,false);
+    // Merge rigid chassis details by material. Wheels and every articulated part stay separate for simulation/animation.
+    const dynamicRobot=new Set<T.Object3D>([...wheels,turret,upper,fore,upperSideA,upperSideB,foreSideA,foreSideB,...pins,barrel1,rod1,barrel2,rod2]);
+    const disposeRobotStatic=batchStatic(robot,dynamicRobot);
     const disposeStatic=batchStatic(root,new Set(packages));
     return {root,robot,packages,reset,update,interact,stop(){velocity=0;turnVelocity=0;},
         get delivered(){return delivered;},get loaded(){return !!carried;},get busy(){return !!job;},get finished(){return finished;},get distance(){return distance;},get collisions(){return collisions;},
         hint:guidance,
         actionLabel(){return job?'Манипулятор работает…':carried?'Выгрузить груз':'Захватить груз';},
         status(){return `Грузы ${delivered}/3 · ${job?'Манипулятор работает':carried?'Груз на платформе':'Захват свободен'} · ${Math.round(distance)} м · Столкновения ${collisions}`;},
-        dispose(){disposeStatic();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
+        dispose(){disposeStatic();disposeRobotStatic();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
     };
 }
