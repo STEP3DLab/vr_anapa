@@ -356,7 +356,7 @@ export function createExperience(host: HTMLElement, hooks: {
     action(newGuest.o, () => nextVisitor());
     const pauseLabel=label(hudRoot,'ПАУЗА',0,.3,-3,1.7,.32);
     action(pauseLabel.o,()=>paused()?resume():pause('manual',true));
-    const diagLabel=label(hudRoot,'',0,-2.43,-3,3.6,.24,'#9fc9c2',1);diagLabel.o.visible=false;
+    const diagLabel=label(hudRoot,'',0,-2.43,-3,3.6,.24,'#9fc9c2',1);diagLabel.o.name='vr-diagnostics';diagLabel.o.visible=false;
     const recenterLabel=label(hudRoot,'◎  ЦЕНТР ВИДА',0,-2.05,-3,1.9,.3);
     action(recenterLabel.o,()=>placeView());
     const handHints: Array<ReturnType<typeof label>> = [];
