@@ -28,6 +28,7 @@ export function createAudio(){
  }
  return {
   unlock(){const c=init();applyScene();return c;},
+  ready(){return !!context;},
   scene(name:string){desiredScene=name;applyScene();},
   tone,
   event(name:string){
