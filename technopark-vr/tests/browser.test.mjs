@@ -44,6 +44,8 @@ try{
  // Close-up, deterministic, real rendered inspection of the arm at every handling stage.
  await page.goto(url+'.test-output/inspection.html',{waitUntil:'networkidle'});await page.waitForTimeout(800);
  await page.evaluate(()=>{const q=window.__inspection;q.go('cargo');q.renderer.setAnimationLoop(null);q.fade.visible=false;q.scene.traverse(o=>{if(o.isDirectionalLight)o.intensity=3.5;});q.cargo.robot.position.set(-5,0,0);q.cargo.update(0,0,0,false);q.camera.position.set(1,4.5,5);q.camera.lookAt(-5,1,0);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);});
+ assert.equal(await page.evaluate(()=>window.__inspection.cargo.actionable),true,'cargo action must be ready at the highlighted pickup pose');
+ assert.equal(await page.evaluate(()=>!!window.__inspection.scene.getObjectByName('cargo-navigation-line')&&!!window.__inspection.scene.getObjectByName('cargo-navigation-arrow')),true,'cargo navigator must be rendered');
  await page.screenshot({path:output+'/arm-0-ready.png'});
  await page.evaluate(()=>window.__inspection.cargo.interact());
  for(const [name,frames] of [['1-approach',70],['2-gripped',65],['3-transfer',45],['4-loaded',190]]){
