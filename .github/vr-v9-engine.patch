@@ -1,0 +1,258 @@
+@@ 3 3
+import {batchStatic} from './staticBatch';
+@@ 11 11
+    paused?: (v:boolean)=>void;
+    xr?: (v:boolean)=>void;
+    support?: (v:boolean)=>void;
+    error?: (message:string)=>void;
+    action?: (label:string)=>void;
+    hint?: (text:string)=>void;
+    phase?: (phase:string)=>void;
+    diagnostics?: (data:{fps:number;calls:number;triangles:number;geometries:number;textures:number;xr:boolean;scene:string})=>void;
+@@ 17 17
+    renderer.xr.setFramebufferScaleFactor(1);
+    renderer.xr.setFoveation(.65);
+@@ 44 46
+    function label(g:T.Group,txt:string,x:number,y:number,z:number,w=3,h=.55,color='#e2fff6',rows=1){
+        const c=document.createElement('canvas');c.width=Math.min(2048,Math.max(512,Math.round(w*240)));c.height=Math.max(96,Math.round(c.width*h/w));
+        const ctx=c.getContext('2d')!,tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.generateMipmaps=false;tex.minFilter=T.LinearFilter;textures.push(tex);
+        const m=new T.MeshBasicMaterial({map:tex,side:T.DoubleSide,toneMapped:false});materials.push(m);
+        const o=mesh(g,new T.PlaneGeometry(w,h),m,x,y,z);let previousText='';
+        function write(text:string){
+            if(text===previousText)return;previousText=text;
+            let font=Math.floor(c.height*.66/rows),lines:string[]=[];
+            const wrap=()=>{lines=[];for(const paragraph of text.split('\n')){let line='';for(const word of paragraph.split(' ')){const test=line?line+' '+word:word;if(ctx.measureText(test).width>c.width*.92&&line){lines.push(line);line=word;}else line=test;}lines.push(line);}};
+            do{ctx.font='600 '+font+'px Arial';wrap();if(lines.length<=rows)break;font--;}while(font>c.height*.32/rows);
+            ctx.fillStyle='#081b25';ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle=color;ctx.fillRect(0,0,c.width,3);
+            ctx.textAlign='center';ctx.textBaseline='middle';const lineHeight=c.height/Math.max(rows,lines.length);
+            lines.forEach((line,i)=>ctx.fillText(line,c.width/2,c.height/2+(i-(lines.length-1)/2)*lineHeight));tex.needsUpdate=true;
+        }
+        write(txt);return {o,write};
+    }
+@@ 261 263
+    const hud = label(hudRoot, '', 0, 2.9, -3, 4.6, .92,'#e2fff6',3);
+    const guidance = label(hudRoot, '', 0, 1.85, -3, 4.6, .68,'#e2fff6',2);
+@@ 264 265
+    action(startLabel.o, () => paused()?resume():start());
+@@ 268 269
+    action(again.o, () => {resume();restart();});
+@@ 274 275
+    action(lessonLabel.o, () => {resume();train();});
+@@ 279 279
+    const pauseLabel=label(hudRoot,'ПАУЗА',0,.3,-3,1.7,.32);
+    action(pauseLabel.o,()=>paused()?resume():pause('manual',true));
+@@ 282 282
+    const rays:T.Line[]=[];const tips:T.Mesh[]=[];
+@@ 290 291
+        const hint = label(c, '', 0, .15, -.34, .56, .16,'#e2fff6',2);
+@@ 293 294
+        const geom = new T.BufferGeometry().setFromPoints([new T.Vector3(), new T.Vector3(0, 0, -1)]);
+@@ 297 298
+        const line=new T.Line(geom,lm);line.scale.z=8;c.add(line);rays.push(line);
+        const dot=mesh(c,new T.SphereGeometry(.015,8,6),cyan,0,0,-8);dot.visible=false;tips.push(dot);
+@@ 301 302
+        c.addEventListener('connected', (e: any) => { sources.set(c, e.data);neutral.add(e.data); weapon.visible = e.data.handedness === 'right' && mode === 'drones'; });
+@@ 303 304
+        c.addEventListener('selectstart', () => { if([...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return;controllerRay(c); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit) {
+@@ 307 307
+            if(paused()){resume();return;}
+            if(inputBlocked(sources.get(c)!))return;
+@@ 315 317
+            else if (mode === 'cargo'){
+                const wasBusy=cargo.busy;cargoAction();if(!wasBusy&&cargo.busy)pulse(c);
+            }
+@@ 334 334
+    const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>();
+    let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0;
+    let observedSession:XRSession|null=null;
+    const paused=()=>pauseReasons.size>0;
+    function clearInput(){keys.clear();cargo.stop();audioFX.motor(0);for(const source of sources.values())neutral.add(source);}
+    function inputBlocked(source:XRInputSource){
+        if(!neutral.has(source))return false;
+        if(source.gamepad&&source.gamepad.axes.some(a=>Number.isFinite(a)&&Math.abs(a)>.25))return true;
+        neutral.delete(source);return false;
+    }
+    function stick(source:XRInputSource){
+        if(paused()||inputBlocked(source))return [0,0];
+        const a=source.gamepad?.axes??[],offset=a.length>=4?2:0;
+        return [a[offset]??0,a[offset+1]??0].map(v=>Number.isFinite(v)?T.MathUtils.clamp(v,-1,1):0);
+    }
+    function pause(reason:string,value:boolean){
+        const before=paused();if(value)pauseReasons.add(reason);else pauseReasons.delete(reason);
+        if(before!==paused()){clearInput();previous=0;hooks.paused?.(paused());updateHUD();}
+    }
+    function resume(){pauseReasons.delete('manual');pauseReasons.delete('focus');clearInput();previous=0;hooks.paused?.(paused());audioFX.unlock();updateHUD();}
+    function pulse(controller:T.Group){try{const actuator=(sources.get(controller)?.gamepad as any)?.hapticActuators?.[0];if(actuator)Promise.resolve(actuator.pulse(.3,65)).catch(()=>{});}catch{}}
+
+@@ 338 339
+    function nextVisitor() { pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());welcome(); Object.assign(learned, { move: false, turn: false, spin: false, shoot: false, reload: false }); go('hub'); }
+@@ 350 351
+    function start() { if(paused())return; if (mode === 'hub' || (!training && !ready && !ended))
+@@ 352 352
+    const won=()=>mode==='cargo'?cargo.finished:mode==='robot'?rivalHealth<=0:drones[8].hp<=0;
+    const resultScore=()=>mode==='cargo'?Math.max(0,cargo.delivered*500+(cargo.finished?Math.ceil(seconds)*5:0)-cargo.collisions*25):mode==='robot'?score*100+(rivalHealth<=0?Math.ceil(seconds)*10:0):score;
+@@ 353 354
+        return; ended = true; audioFX.motor(0); const result=resultScore(); if (!presentation)
+@@ 358 369
+        catch { } audioFX.event(won()?'win':'end'); updateHUD(); }
+    function cargoAction(){if(paused())return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
+@@ 370 374
+    function placeView(){
+        clearInput();rig.position.set(0,0,0);rig.rotation.set(0,0,0);
+        if(!renderer.xr.isPresenting){
+            camera.position.set(0,mode==='cargo'?11:mode==='robot'?7:2.6,mode==='cargo'?12:mode==='robot'?8:7);
+            camera.lookAt(0,mode==='cargo'||mode==='robot'?0:2.6,-10);
+        }else{
+            camera.position.set(0,0,0);camera.rotation.set(0,0,0);
+            rig.position.set(0,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?7:mode==='robot'?4:1);
+        }
+        desktopGun.visible=mode==='drones'&&!renderer.xr.isPresenting;
+        guns.forEach((g,i)=>g.visible=mode==='drones'&&sources.get(controllers[i])?.handedness==='right');
+        // The desktop already has HTML controls. In VR the console is fixed to the observation station, not the head.
+        hudRoot.visible=mode!=='hub'&&renderer.xr.isPresenting;
+        hudRoot.position.set(0,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?5:mode==='robot'?2:0);
+        hud.o.position.set(0,.9,-3);guidance.o.position.set(0,-.02,-3);
+        startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.5,-1.13,-3);again.o.position.set(1.5,-1.13,-3);
+        lessonLabel.o.position.set(0,-1.65,-3);gameDemoLabel.o.position.set(1.7,-1.65,-3);newGuest.o.position.set(-1.7,-1.65,-3);
+        pauseLabel.o.position.set(0,-1.13,-3);
+        scene.updateMatrixWorld(true);
+@@ 375 383
+    function go(next:Mode){
+        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);transition=.3;audioFX.motor(0);if(next!==mode)audioFX.event('portal');mode=next;
+        pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
+        Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();if(next!=='hub')train();
+    }
+    function restart() { clearInput();cargo.reset(); roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
+@@ 390 391
+    function reload() { if(paused())return; if (mode === 'drones' && !ended && ammo < 6 && !reloading) {
+@@ 396 397
+    function shoot(ray: T.Ray, c?: T.Group) { if(paused())return; if (ready) {
+@@ 432 434
+        if(c)pulse(c);
+@@ 441 443
+        s = training ? lessonText() : ready ? 'ГОТОВЫ? НАЖМИТЕ «НАЧАТЬ РАУНД»' : countdown > 0 ? 'СТАРТ ЧЕРЕЗ ' + Math.ceil(countdown) : ended ? (mode === 'cargo' ? (cargo.finished ? 'ДОСТАВЛЕНО 3/3 · ' + Math.ceil(roundAge) + ' С · ОШИБКИ ' + cargo.collisions : 'ВРЕМЯ ВЫШЛО · ' + cargo.delivered + '/3 ГРУЗОВ') : mode === 'robot' ? (rivalHealth <= 0 ? 'ПОБЕДА В ДУЭЛИ' : 'ПОПРОБУЙТЕ ЕЩЁ') : `${drones[8].hp <= 0 ? 'ФЛАГМАН СБИТ' : 'РАУНД ЗАВЕРШЁН'} · ТОЧНОСТЬ ${shots ? Math.round(hits / shots * 100) : 0}%`) + ` · ОЧКИ ${resultScore()} · РЕКОРД ${bests[mode]}` : `${presentation ? 'ДЕМОНСТРАЦИЯ ∞' : Math.ceil(seconds) + ' с'} · ${progress}`;
+    } if(paused())s='ПАУЗА · '+s;
+    const phase=mode==='hub'?'hub':training?'training':ready?'ready':countdown?'countdown':ended?'ended':'active';if(phase!==lastPhase){lastPhase=phase;hooks.phase?.(phase);}
+    startLabel.o.visible=paused()||ready||training||ended;startLabel.write(paused()?'ПРОДОЛЖИТЬ':ended?'ЕЩЁ РАУНД':'НАЧАТЬ РАУНД');
+    pauseLabel.write(paused()?'ПРОДОЛЖИТЬ':'ПАУЗА');
+    const action=mode==='cargo'?cargo.actionLabel():'';if(action!==lastAction){lastAction=action;hooks.action?.(action);}
+    if (s !== lastHUD) {
+@@ 445 446
+        hud.write(s); // Text wraps without horizontal glyph distortion.
+
+@@ 447 471
+    const keyName=(key:string)=>({ArrowUp:'w',ArrowDown:'s',ArrowLeft:'a',ArrowRight:'d'}[key]??key.toLowerCase());
+    function down(e:KeyboardEvent){
+        const target=e.target as HTMLElement;
+        if(target?.closest?.('input,textarea,select,[contenteditable]'))return;
+        if(target?.closest?.('button,a')&&(e.code==='Space'||e.key==='Enter'))return;
+        if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
+        if(paused()){if(!e.repeat&&(e.code==='Space'||e.key==='Enter'))resume();return;}
+        keys.add(keyName(e.key));if(e.repeat)return;
+        if(e.code==='Space'){if(mode==='cargo')cargoAction();else if(ready&&mode!=='hub')start();else spin();}
+        if(e.key.toLowerCase()==='q')snap(-1);if(e.key.toLowerCase()==='e')snap(1);if(e.key.toLowerCase()==='r')reload();
+        if(e.key.toLowerCase()==='p'&&mode!=='hub')pause('manual',true);if(e.key==='Escape')go('hub');
+    }
+    const up=(e:KeyboardEvent)=>keys.delete(keyName(e.key));
+    const blur=()=>{clearInput();if(!renderer.xr.isPresenting)pause('focus',true);};
+    const focus=()=>{if(!renderer.xr.isPresenting&&mode==='hub')pause('focus',false);};
+    const visibility=()=>{pause('page',document.hidden);if(!document.hidden&&mode!=='hub')pause('manual',true);};
+    window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur);window.addEventListener('focus',focus);
+    document.addEventListener('visibilitychange',visibility);
+    function click(e: PointerEvent) { if(paused())return; audioFX.unlock(); const r = renderer.domElement.getBoundingClientRect(); raycaster.setFromCamera(new T.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camera); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit)
+@@ 481 482
+    const pointerDown = (e: PointerEvent) => { if (mode === 'hub'&&!paused()&&!renderer.xr.isPresenting) {
+@@ 487 488
+    const pointerMove = (e: PointerEvent) => { if (!drag || mode !== 'hub' || paused() || renderer.xr.isPresenting)
+@@ 505 508
+    function xrVisibility(){
+        if(!observedSession)return;
+        const obscured=observedSession.visibilityState!=='visible';
+        if(obscured)pause('xr',true);else {pause('manual',true);pause('xr',false);}
+    }
+    function sessionStart(){
+        observedSession=renderer.xr.getSession();observedSession?.addEventListener('visibilitychange',xrVisibility);
+        pauseReasons.delete('focus');pauseReasons.delete('xr-switch');placeView();previous=0;hooks.xr?.(true);hooks.paused?.(paused());updateHUD();
+    }
+    function sessionEnd(){
+        observedSession?.removeEventListener('visibilitychange',xrVisibility);observedSession=null;
+        pauseReasons.delete('xr');pauseReasons.delete('xr-switch');if(mode!=='hub')pause('manual',true);
+        placeView();previous=0;resize();hooks.xr?.(false);updateHUD();
+    }
+    function contextLost(e:Event){e.preventDefault();pause('context',true);hooks.error?.('Графический контекст потерян. Обновите страницу для восстановления 3D.');}
+    function contextRestored(){hooks.error?.('Графический контекст восстановлен. Обновите страницу, чтобы заново подготовить окружение.');}
+    renderer.xr.addEventListener('sessionstart',sessionStart);renderer.xr.addEventListener('sessionend',sessionEnd);
+    renderer.domElement.addEventListener('webglcontextlost',contextLost);renderer.domElement.addEventListener('webglcontextrestored',contextRestored);
+    if(typeof navigator!=='undefined'&&navigator.xr?.isSessionSupported){
+        navigator.xr.isSessionSupported('immersive-vr').then(value=>{supported=value;if(!disposed)hooks.support?.(value);}).catch(()=>{if(!disposed)hooks.support?.(false);});
+    }else{supported=false;hooks.support?.(false);}
+    const disposeBatches=[batchStatic(hub),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones)];
+@@ 509 510
+        const dt = paused()?0:Math.min(previous?(t-previous)/1000:.016,.05);
+@@ 515 519
+        if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
+        sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):3.5;
+        if(mode==='hub')exhibits.forEach((e, i) => { e.rotation.y = elapsed * .22; e.position.y = 1.2 + Math.sin(elapsed + i) * .06; });
+@@ 529 530
+            guidance.write(noticeTime ? notice : mode==='cargo'?cargo.hint():training ? lessonText() : (mode === 'robot' ? 'ЛЕВЫЙ СТИК: РОБОТ · ПРАВЫЙ КУРОК: СПИННЕР' : 'КУРОК: ОГОНЬ · БОКОВАЯ: ПЕРЕЗАРЯДКА'));
+@@ 545 546
+                const [x]=stick(src);
+@@ 565 566
+        if(mode==='hub')portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
+@@ 579 580
+        if (mode === 'robot' && !paused() && !ended && !ready && !countdown) {
+@@ 583 585
+                    const [x,y]=stick(src);
+@@ 701 702
+                    const [x,y]=stick(src);
+@@ 707 708
+            const active = !paused()&&!ready && !countdown && !ended;
+@@ 709 710
+            audioFX.motor(active&&!cargo.busy?Math.abs(drive):0);
+            if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished)finish();}
+@@ 752 753
+        if (mode === 'hub'&&!paused()) {
+@@ 758 759
+                    const [x,y]=stick(src);
+@@ 787 789
+        for(let i=0;i<controllers.length;i++)if(sources.has(controllers[i])&&controllers[i].visible){
+            controllerRay(controllers[i]);const hit=raycaster.intersectObjects(actions.filter(visible),false)[0];
+            rays[i].scale.z=hit?Math.min(12,hit.distance):8;tips[i].visible=!!hit;
+            if(hit){tips[i].position.z=-hit.distance;tips[i].scale.setScalar(Math.max(1,hit.distance*.3));}
+        }
+        const hintText=mode==='cargo'?cargo.hint():'';if(hintText!==lastHint){lastHint=hintText;hooks.hint?.(hintText);}
+        updateHUD();renderer.render(scene,camera);
+        if(hooks.diagnostics){diagFrames++;if(t-diagTime>=1000){const info=renderer.info;
+            hooks.diagnostics({fps:Math.round(diagFrames*1000/(t-diagTime)),calls:info.render.calls,triangles:info.render.triangles,geometries:info.memory.geometries,textures:info.memory.textures,xr:renderer.xr.isPresenting,scene:mode});diagTime=t;diagFrames=0;}}
+
+@@ 791 795
+    return {go,restart,welcome,train,cargoAction,setPresentation,nextVisitor,spin,reload,start,turn:snap,
+        setPaused(value:boolean){pause('manual',value);},setHelpOpen(value:boolean){pause('help',value);},resume,
+        toggleSound(){muted=audioFX.toggle();return muted;},
+        key(k:string,on:boolean){if(!paused()&&on)keys.add(k);else keys.delete(k);},
+        async enterVR(){
+            if(sessionPending||renderer.xr.isPresenting||disposed)return;
+            audioFX.unlock();
+            if(!navigator.xr||supported===false)throw new Error('VR не поддерживается этим браузером. Откройте эту же HTTPS-ссылку в браузере гарнитуры Quest. На компьютере доступны все сцены без очков.');
+            if(window.isSecureContext===false)throw new Error('Для VR требуется HTTPS или localhost.');
+            sessionPending=true;pause('xr-switch',true);
+            try{
+                const session=await navigator.xr.requestSession('immersive-vr',{requiredFeatures:['local-floor']});
+                if(disposed){await session.end();return;}
+                try{await renderer.xr.setSession(session);}catch(e){await session.end();throw e;}
+            }finally{sessionPending=false;if(!disposed)pause('xr-switch',false);}
+        },
+        async exitVR(){await renderer.xr.getSession()?.end();},
+        dispose(){
+            disposed=true;renderer.setAnimationLoop(null);
+            renderer.xr.removeEventListener('sessionstart',sessionStart);renderer.xr.removeEventListener('sessionend',sessionEnd);
+            observedSession?.removeEventListener('visibilitychange',xrVisibility);void renderer.xr.getSession()?.end();
+            ro.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);window.removeEventListener('focus',focus);
+            document.removeEventListener('visibilitychange',visibility);
+            renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);
+            renderer.domElement.removeEventListener('webglcontextlost',contextLost);renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);
+            disposeBatches.forEach(dispose=>dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());
+            cargo.dispose();art.dispose();environment.dispose();audioFX.dispose();renderer.dispose();renderer.domElement.remove();
+@@ 796 800
+    };

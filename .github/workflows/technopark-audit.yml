@@ -3,7 +3,10 @@ on:
   push:
     branches: [technopark-v9-audit]
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: technopark-v9-audit
+  cancel-in-progress: true
 jobs:
   audit:
     runs-on: ubuntu-latest
@@ -12,16 +15,19 @@ jobs:
         working-directory: technopark-vr
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: npm install --ignore-scripts --no-audit --no-fund
+      - run: node ../.github/apply-v9.mjs
       - run: npm run check
-      - run: node tests/game.test.mjs && node tests/engine.test.mjs
+      - run: npm test
       - run: npm run build
       - run: npm install --prefix /tmp/vr-browser --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.56.1
       - run: /tmp/vr-browser/node_modules/.bin/playwright install chromium --with-deps
-      - run: node tests/browser.test.mjs
+      - run: npm run test:browser
         env:
           PLAYWRIGHT_PATH: /tmp/vr-browser/node_modules/playwright/index.mjs
           VR_LIVE_URL: https://step3dlab.github.io/vr_anapa/technopark-vr/?v=8.1
@@ -32,11 +38,19 @@ jobs:
           path: technopark-vr/.test-output
           include-hidden-files: true
           retention-days: 1
-      - name: Package verified build
-        if: success()
-        run: tar -czf /tmp/technopark-build.tar.gz app.js package-lock.json
+      - name: Record verified build on audit branch only
+        run: |
+          test "$GITHUB_REF_NAME" = technopark-v9-audit
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/worldEngine.ts app.js package-lock.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build tested technopark v9 assets on audit branch'
+            git push origin HEAD:technopark-v9-audit
+          fi
+      - name: Package verified project
+        run: tar -czf /tmp/technopark-build.tar.gz src tests app.js package-lock.json package.json index.html game.css README.md build.mjs
       - uses: actions/upload-artifact@v4
-        if: success()
         with:
           name: technopark-verified-build
           path: /tmp/technopark-build.tar.gz

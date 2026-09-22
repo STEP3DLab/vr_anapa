@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "test": "node tests/game.test.mjs && node tests/engine.test.mjs && node tests/cargo.test.mjs",
+    "test:browser": "node tests/browser.test.mjs"
   },
   "dependencies": {
     "three": "0.180.0",
