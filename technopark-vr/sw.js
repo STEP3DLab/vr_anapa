@@ -1,4 +1,4 @@
-const CACHE='technopark-vr-v11-5-1';
+const CACHE='technopark-vr-v11-6';
 const CORE=['./','./index.html','./app.js','./app.css','./game.css','./favicon.svg','./assets/models/credits.html'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));
