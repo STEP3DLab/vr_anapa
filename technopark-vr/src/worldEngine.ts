@@ -227,7 +227,7 @@ export function createExperience(host: HTMLElement, hooks: {
         kind: string;
         value: number;
     };
-    const drones: Drone[] = [];
+    const drones: Drone[] = [],droneDisposers:Array<()=>void>=[];
     for (let i = 0; i < 9; i++) {
         const g = new T.Group();
         g.name = i === 8 ? 'boss-drone' : 'game-drone';
@@ -236,11 +236,12 @@ export function createExperience(host: HTMLElement, hooks: {
         box(g, orange, 0, 0, .28, .4, .08, .06);
         box(g, black, 0, 0, 0, 1.6, .08, .1);
         box(g, black, 0, 0, 0, .1, .08, 1.5);
+        const propellers:T.Mesh[]=[];
         for (const x of [-.65, .65])
             for (const z of [-.6, .6]) {
                 cyl(g, black, x, .06, z, .31, .06, 12);
                 const prop = box(g, cyan, x, .1, z, .49, .012, .04);
-                prop.name = 'propeller';
+                prop.name = 'propeller';propellers.push(prop);
             }
         const boss = i === 8, armored = i % 3 === 2;
         const maxHP = boss ? 6 : armored ? 2 : 1;
@@ -249,6 +250,7 @@ export function createExperience(host: HTMLElement, hooks: {
             box(g, navy, 0, .2, 0, .85, .16, .6);
             box(g, boss ? red : orange, 0, .3, 0, .65, .04, .4);
         }
+        droneDisposers.push(batchStatic(g,new Set<T.Object3D>([hit,...propellers])));
         drones.push({ g, hit, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
     }
     const trainingHalo=mesh(range,new T.TorusGeometry(.92,.028,6,48),orange,0,2.6,-7);trainingHalo.userData.dynamic=true;trainingHalo.visible=false;
@@ -659,7 +661,7 @@ export function createExperience(host: HTMLElement, hooks: {
     if(typeof navigator!=='undefined'&&navigator.xr?.isSessionSupported){
         navigator.xr.isSessionSupported('immersive-vr').then(value=>{supported=value;if(!disposed)hooks.support?.(value);}).catch(()=>{if(!disposed)hooks.support?.(false);});
     }else{supported=false;hooks.support?.(false);}
-    const disposeBatches=[batchStatic(hub),batchStatic(robot),batchStatic(rival),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...exhibitDisposers];
+    const disposeBatches=[batchStatic(hub),batchStatic(robot),batchStatic(rival),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...droneDisposers,...exhibitDisposers];
     renderer.setAnimationLoop((t) => {
         const dt = paused()?0:Math.min(previous?(t-previous)/1000:.016,.05);
         previous = t;
