@@ -253,7 +253,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const ammoLamps:T.Mesh[]=[];for(let i=0;i<6;i++){const lamp=box(range,cyan,-2.25+i*.9,1.05,-4.25,.62,.12,.06);lamp.name='ammo-lamp';lamp.userData.dynamic=true;ammoLamps.push(lamp);}
     const bossBeacon=mesh(range,new T.TorusGeometry(2.3,.055,7,64),red,0,4.2,-23.7);bossBeacon.name='boss-beacon';bossBeacon.userData.dynamic=true;bossBeacon.visible=false;
     const bossCaption=label(range,'ФЛАГМАН · 6 ПОПАДАНИЙ',0,6.9,-23.65,5.2,.42,'#ff9b9b',1);bossCaption.o.visible=false;
-    const exhibits: T.Group[] = [];
+    const exhibits: T.Group[] = [], exhibitDisposers:Array<()=>void>=[];
     for (const [x, model, title, description, destination] of [[-6, robot, 'КРАСНЫЙ ТРЕУГОЛЬНИК', 'КОЛЬЦЕВОЙ СПИННЕР / КОМАНДА ДЕЗИНТЕГРАТОР', 'robot'], [6, drones[0].g, 'ЛАБОРАТОРИЯ БПЛА', 'ИНТЕРАКТИВНАЯ МОДЕЛЬ / ВОЗДУШНЫЙ ТИР', 'drones']] as const) {
         cyl(hub, black, x, .5, -.5, 1.35, 1, 48);
         cyl(hub, steel, x, 1.02, -.5, 1.36, .06, 48);
@@ -263,7 +263,7 @@ export function createExperience(host: HTMLElement, hooks: {
         copy.traverse(o => o.name = 'exhibit');
         copy.position.set(x, 1.2, -.5);
         hub.add(copy);
-        exhibits.push(copy);
+        exhibits.push(copy);exhibitDisposers.push(batchStatic(copy));
         xrOnly(label(hub, title, x, 2.6, -.55, 2.8, .35).o);
         xrOnly(label(hub, description, x, .7, .88, 2.4, .28).o);
         const enter = label(hub, 'ОТКРЫТЬ ИСПЫТАНИЕ →', x, .3, .88, 2.4, .28);xrOnly(enter.o);
@@ -274,7 +274,7 @@ export function createExperience(host: HTMLElement, hooks: {
         const x=7.55,z=-7.35;
         cyl(hub,black,x,.42,z,1.3,.84,40);cyl(hub,lime,x,.855,z,1.31,.055,40);
         const rim=mesh(hub,new T.TorusGeometry(1.25,.025,6,56),lime,x,.9,z);rim.rotation.x=Math.PI/2;
-        const copy=cargo.robot.clone(true);copy.traverse(o=>{if(o.name==='cargo-nav')o.visible=false;o.name='exhibit';});copy.name='cargo-exhibit';copy.position.set(x,1.02,z);copy.scale.setScalar(.62);copy.rotation.y=-.55;hub.add(copy);exhibits.push(copy);
+        const copy=cargo.robot.clone(true);copy.traverse(o=>{if(o.name==='cargo-nav')o.visible=false;o.name='exhibit';});copy.name='cargo-exhibit';copy.position.set(x,1.02,z);copy.scale.setScalar(.62);copy.rotation.y=-.55;hub.add(copy);exhibits.push(copy);exhibitDisposers.push(batchStatic(copy));
         xrOnly(label(hub,'РОБОТ 6×6 / ЛОСИНКА',x,2.75,z,3,.34,'#d8f3a7',1).o);
         const enter=label(hub,'ОТКРЫТЬ ГРУЗОВУЮ МИССИЮ →',x,.38,z+1.45,3,.3,'#d8f3a7',1);xrOnly(enter.o);action(enter.o,()=>go('cargo'));
     }
@@ -642,7 +642,7 @@ export function createExperience(host: HTMLElement, hooks: {
     if(typeof navigator!=='undefined'&&navigator.xr?.isSessionSupported){
         navigator.xr.isSessionSupported('immersive-vr').then(value=>{supported=value;if(!disposed)hooks.support?.(value);}).catch(()=>{if(!disposed)hooks.support?.(false);});
     }else{supported=false;hooks.support?.(false);}
-    const disposeBatches=[batchStatic(hub),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones)];
+    const disposeBatches=[batchStatic(hub),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...exhibitDisposers];
     renderer.setAnimationLoop((t) => {
         const dt = paused()?0:Math.min(previous?(t-previous)/1000:.016,.05);
         previous = t;
