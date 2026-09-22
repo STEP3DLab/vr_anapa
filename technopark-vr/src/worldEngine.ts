@@ -472,7 +472,7 @@ export function createExperience(host: HTMLElement, hooks: {
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
-        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=next===mode?.28:.62;transition=transitionTotal;startIntro(next);audioFX.motor(0);if(next!==mode)audioFX.event('portal');mode=next;
+        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=next===mode?.28:.62;transition=transitionTotal;startIntro(next);audioFX.motor(0);audioFX.scene(next);if(next!==mode)audioFX.event('portal');mode=next;
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
         if(next!=='hub'){
