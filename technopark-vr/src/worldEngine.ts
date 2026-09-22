@@ -659,7 +659,7 @@ export function createExperience(host: HTMLElement, hooks: {
     if(typeof navigator!=='undefined'&&navigator.xr?.isSessionSupported){
         navigator.xr.isSessionSupported('immersive-vr').then(value=>{supported=value;if(!disposed)hooks.support?.(value);}).catch(()=>{if(!disposed)hooks.support?.(false);});
     }else{supported=false;hooks.support?.(false);}
-    const disposeBatches=[batchStatic(hub),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...exhibitDisposers];
+    const disposeBatches=[batchStatic(hub),batchStatic(robot),batchStatic(rival),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...exhibitDisposers];
     renderer.setAnimationLoop((t) => {
         const dt = paused()?0:Math.min(previous?(t-previous)/1000:.016,.05);
         previous = t;
