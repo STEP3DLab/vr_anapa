@@ -305,11 +305,12 @@ export function createExperience(host: HTMLElement, hooks: {
     const fade = mesh(new T.Group(), new T.PlaneGeometry(20, 20), fadeMat, 0, 0, -.3);
     fade.renderOrder = 999;
     camera.add(fade);
-    let transition = 0,transitionTotal=.3;let sceneIntro=0,lastPortalFocus=-1;
+    let transition = 0,transitionTotal=.3;let sceneIntro=0,lastPortalFocus=-1,firstScene=true;
     const introRoot=new T.Group();scene.add(introRoot);introRoot.visible=false;
-    const introKicker=label(introRoot,'',0,.72,-2.6,3.5,.34,'#baffdf',1),introTitle=label(introRoot,'',0,0,-2.6,5.2,.72,'#f4fff9',2),introHint=label(introRoot,'',0,-.68,-2.6,4.6,.3,'#aac9c5',2);
+    // Short, compact scene ID: enough for orientation without blocking the experience.
+    const introKicker=label(introRoot,'',0,.34,-3.4,2.4,.22,'#baffdf',1),introTitle=label(introRoot,'',0,0,-3.4,3.35,.4,'#f4fff9',1),introHint=label(introRoot,'',0,-.32,-3.4,3.1,.2,'#aac9c5',1);
     const introData:Record<Mode,[string,string,string]>={hub:['ТЕХНОПАРК РГСУ','VR-ПРОСТРАНСТВО','ВЫБЕРИТЕ ПОРТАЛ ИЛИ ИССЛЕДУЙТЕ ХОЛЛ'],robot:['01 / КОНТРОЛЬ','РОБОТ-АРЕНА','ЭНЕРГОЯЧЕЙКИ · БЛОКИ · ДУЭЛЬ'],drones:['02 / РЕАКЦИЯ','ДРОН-ТИР','6 ЗАРЯДОВ · СЕРИИ · ФЛАГМАН'],cargo:['03 / ЛОГИСТИКА','ПОЛИГОН ЛОСИНКА','3 ГРУЗА · МАНИПУЛЯТОР · БАЗА']};
-    function startIntro(next:Mode){const d=introData[next];introKicker.write(d[0]);introTitle.write(d[1]);introHint.write(d[2]);introRoot.position.set(0,0,0);introRoot.rotation.set(0,0,0);camera.add(introRoot);sceneIntro=1.75;introRoot.visible=true;}
+    function startIntro(next:Mode){const d=introData[next];introKicker.write(d[0]);introTitle.write(d[1]);introHint.write(d[2]);introRoot.position.set(0,0,0);introRoot.rotation.set(0,0,0);camera.add(introRoot);sceneIntro=.72;introRoot.visible=true;}
     const hudRoot = new T.Group();
     scene.add(hudRoot);
     // Minimal spatial mission beacon: one glance shows scene, state and progress without opening a menu.
@@ -483,7 +484,7 @@ export function createExperience(host: HTMLElement, hooks: {
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
-        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=next===mode?.28:.62;transition=transitionTotal;startIntro(next);audioFX.motor(0);audioFX.scene(next);if(next!==mode&&audioFX.ready())audioFX.event('portal');mode=next;
+        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=firstScene?.18:next===mode?.22:.42;transition=transitionTotal;if(!(firstScene&&next==='hub'))startIntro(next);else{sceneIntro=0;introRoot.visible=false;}firstScene=false;audioFX.motor(0);audioFX.scene(next);if(next!==mode&&audioFX.ready())audioFX.event('portal');mode=next;
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
         if(next!=='hub'){
@@ -651,7 +652,7 @@ export function createExperience(host: HTMLElement, hooks: {
         elapsed += dt;
         transition = Math.max(0, transition - dt);
         const fadeProgress=transitionTotal?transition/transitionTotal:0;fadeMat.opacity=Math.min(.94,fadeProgress*1.12);fade.visible=transition>0;
-        sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(1.75-sceneIntro)/.28),out=Math.min(1,sceneIntro/.42),s=.9+.1*q;introRoot.scale.setScalar(s);introRoot.position.y=.04*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out);}});}
+        sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(.72-sceneIntro)/.16),out=Math.min(1,sceneIntro/.2),s=.96+.04*q;introRoot.scale.setScalar(s);introRoot.position.y=.02*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out)*.92;}});}
         if(missionBeacon.visible){const pulseScale=ended&&won()?.82+.035*(.5+.5*Math.sin(elapsed*6)):.82;missionBeacon.scale.setScalar(pulseScale);}
         if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
         sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):mode==='robot'?4.15:mode==='drones'?3.85:3.5;
