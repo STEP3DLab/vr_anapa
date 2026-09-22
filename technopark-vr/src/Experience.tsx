@@ -5,7 +5,7 @@ export default function Experience(){
  const [scene,setScene]=useState('hub'),[status,setStatus]=useState('Подготовка пространства…'),[error,setError]=useState('');
  const [entering,setEntering]=useState(false),[help,setHelp]=useState(false),[menu,setMenu]=useState(false),[muted,setMuted]=useState(false),[clean,setClean]=useState(false),[presentation,setPresentation]=useState(false);
  const [paused,setPaused]=useState(false),[xr,setXR]=useState(false),[supported,setSupported]=useState<boolean>(),[phase,setPhase]=useState('hub'),[action,setAction]=useState('Захватить груз'),[hint,setHint]=useState(''),[diagnostics,setDiagnostics]=useState('');
- const menuButton=useRef<HTMLButtonElement>(null);
+ const menuButton=useRef<HTMLButtonElement>(null),menuPausedByUs=useRef(false);
  const hub=scene==='hub',cargo=scene==='cargo',ground=cargo||scene==='robot',busy=action.includes('работает');
  const title=hub?'VR-пространство':cargo?'Полигон Лосинка':scene==='robot'?'Робот-арена':'Дрон-тир';
  const sceneMeta=scene==='cargo'?{num:'03',tag:'ЛОГИСТИКА',objective:'3 ГРУЗА',control:'ЛЕВЫЙ СТИК + КУРОК'}:scene==='robot'?{num:'01',tag:'КОНТРОЛЬ',objective:'5 + 6 + ДУЭЛЬ',control:'ЛЕВЫЙ СТИК + КУРОК'}:scene==='drones'?{num:'02',tag:'РЕАКЦИЯ',objective:'ФЛАГМАН',control:'ПРАВЫЙ КУРОК'}:{num:'00',tag:'ХОЛЛ',objective:'3 ПОРТАЛА',control:'ИССЛЕДОВАНИЕ'};
@@ -15,10 +15,10 @@ export default function Experience(){
   {id:'drones' as const,num:'02',kicker:'РЕАКЦИЯ',name:'Дрон-тир',desc:'Точность · серии · флагман'},
   {id:'cargo' as const,num:'03',kicker:'ЛОГИСТИКА',name:'Полигон Лосинка',desc:'Робот 6×6 · захват · доставка'}
  ];
- function switchScene(mode:'hub'|'robot'|'drones'|'cargo'){game.current?.go(mode);setMenu(false);}
+ function switchScene(mode:'hub'|'robot'|'drones'|'cargo'){menuPausedByUs.current=false;game.current?.go(mode);setMenu(false);}
  function openHelp(){setMenu(false);setHelp(true);}
- function closeMenu(resumeMission=true){if(resumeMission&&!hub&&paused)game.current?.resume();setMenu(false);requestAnimationFrame(()=>menuButton.current?.focus());}
- function toggleMenu(){if(menu){closeMenu();return;}if(!hub&&!paused)game.current?.setPaused(true);setMenu(true);}
+ function closeMenu(resumeMission=true){if(resumeMission&&menuPausedByUs.current)game.current?.resume();menuPausedByUs.current=false;setMenu(false);requestAnimationFrame(()=>menuButton.current?.focus());}
+ function toggleMenu(){if(menu){closeMenu();return;}menuPausedByUs.current=!hub&&!paused;if(menuPausedByUs.current)game.current?.setPaused(true);setMenu(true);}
  function continueFromMenu(){closeMenu(true);}
  async function enterVR(){
   if(entering)return;if(!game.current){setError('3D-сцена не запустилась. Обновите страницу и проверьте сообщение об ошибке.');return;}
