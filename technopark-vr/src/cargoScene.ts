@@ -53,6 +53,8 @@ export function createCargoScene(onEvent: (message: string) => void) {
         box(base, lime, x, .05, 0, .08, .08, 4);
     for (const z of [-2, 2])
         box(base, lime, 0, .05, z, 6, .08, .08);
+    const bayOff=new T.MeshBasicMaterial({color:0x40534a,toneMapped:false}),bayOn=new T.MeshBasicMaterial({color:0x8fffbd,toneMapped:false});materials.push(bayOff,bayOn);
+    const deliveryBays:T.Mesh[]=[];for(let i=0;i<3;i++){const bay=box(base,bayOff,-1.9+i*1.9,.055,.55,1.45,.018,1.05);bay.name='cargo-delivery-bay-'+i;bay.userData.dynamic=true;deliveryBays.push(bay);}
     label('БАЗА / ДОСТАВКА ГРУЗОВ', 0, 1.25, 4.1, 4.5);
     label('ЛОСИНКА / ПОЛИГОН НРТК', 0, 4.5, -23, 11);
     label('ДЕМОНСТРАЦИОННАЯ ПЛАНИРОВКА', 0, 3.6, -23, 8);
@@ -220,6 +222,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
     }
     function reset(){
         carried=null;job=null;delivered=0;velocity=0;turnVelocity=0;distance=0;collisions=0;collisionDelay=0;finished=false;navTime=0;
+        deliveryBays.forEach(b=>b.material=bayOff);
         robot.position.set(0,0,1);robot.rotation.set(0,0,0);tip.copy(restTip);jawOpening=.54;wheelPhases.fill(0);nav.visible=true;baseBeacon.visible=false;
         packages.forEach((p,i)=>{root.add(p);p.position.copy(starts[i]);p.rotation.set(0,0,0);p.userData.delivered=false;});
         markers.forEach(m=>{m.beacon.visible=true;m.label.visible=true;});readyBase.visible=false;
@@ -259,7 +262,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
                     tip.copy(j.to);j.item.position.copy(j.to).addScaledVector(up,-ARM.gripOffset);j.item.rotation.set(0,0,0);
                     if(j.kind==='unload'){
                         robot.updateWorldMatrix(true,true);root.attach(j.item);j.item.position.y=.36;j.item.userData.delivered=true;
-                        carried=null;delivered++;onEvent('ДОСТАВЛЕНО '+delivered+'/3');
+                        carried=null;delivered++;deliveryBays.forEach((b,i)=>b.material=i<delivered?bayOn:bayOff);onEvent('ДОСТАВЛЕНО '+delivered+'/3');
                     }
                     j.released=true;
                 }
