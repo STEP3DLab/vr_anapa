@@ -444,7 +444,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const won=()=>mode==='cargo'?cargo.finished:mode==='robot'?rivalHealth<=0:drones[8].hp<=0;
     const resultScore=()=>mode==='cargo'?Math.max(0,cargo.delivered*500+(cargo.finished?Math.ceil(seconds)*5:0)-cargo.collisions*25):mode==='robot'?score*100+(rivalHealth<=0?Math.ceil(seconds)*10:0):score;
     function finish() { if (ended)
-        return; ended = true; audioFX.motor(0); const result=resultScore(); if (!presentation)
+        return; ended = true; audioFX.motor(0);if(won())controllers.forEach(ctrl=>pulse(ctrl,.42,110)); const result=resultScore(); if (!presentation)
         bests[mode] = Math.max(bests[mode] || 0, result); if (!presentation)
         try {
             localStorage.setItem('technopark-records', JSON.stringify(bests));
@@ -560,7 +560,7 @@ export function createExperience(host: HTMLElement, hooks: {
         lastHUD = s;
         if(mode!=='hub'){
             const title=mode==='cargo'?'03 · ПОЛИГОН ЛОСИНКА':mode==='robot'?'01 · РОБОТ-АРЕНА':'02 · ДРОН-ТИР';
-            const state=paused()?'ПАУЗА':training?'ОБУЧЕНИЕ':ready?'ГОТОВ К СТАРТУ':countdown>0?'СТАРТ '+Math.ceil(countdown):ended?'ИТОГ':'МИССИЯ';
+            const state=paused()?'ПАУЗА':training?'ОБУЧЕНИЕ':ready?'ГОТОВ К СТАРТУ':countdown>0?'СТАРТ '+Math.ceil(countdown):ended?(won()?'МИССИЯ ВЫПОЛНЕНА':'РАУНД ЗАВЕРШЁН'):'МИССИЯ';
             const detail=mode==='cargo'?`ГРУЗЫ ${cargo.delivered}/3 · ${cargo.loaded?'НА ПЛАТФОРМЕ':'ЗАХВАТ СВОБОДЕН'}`:mode==='robot'?(duel?`ДУЭЛЬ · ${rivalHealth}/3 · ВЫ ${health}/3`:`ЯЧЕЙКИ ${cells.filter(c=>!c.visible).length}/5 · БЛОКИ ${blocks.filter(b=>!b.visible).length}/6`):`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
             beaconTop.write(title);beaconMain.write(state);beaconSub.write(detail);
         }
@@ -650,6 +650,7 @@ export function createExperience(host: HTMLElement, hooks: {
         transition = Math.max(0, transition - dt);
         const fadeProgress=transitionTotal?transition/transitionTotal:0;fadeMat.opacity=Math.min(.94,fadeProgress*1.12);fade.visible=transition>0;
         sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(1.75-sceneIntro)/.28),out=Math.min(1,sceneIntro/.42),s=.9+.1*q;introRoot.scale.setScalar(s);introRoot.position.y=.04*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out);}});}
+        if(missionBeacon.visible){const pulseScale=ended&&won()?.82+.035*(.5+.5*Math.sin(elapsed*6)):.82;missionBeacon.scale.setScalar(pulseScale);}
         if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
         sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):3.5;
         if(mode==='hub')exhibits.forEach((e, i) => { e.rotation.y = elapsed * .22; e.position.y = 1.2 + Math.sin(elapsed + i) * .06; });
