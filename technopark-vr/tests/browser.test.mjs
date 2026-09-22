@@ -26,6 +26,13 @@ try{
  assert.equal(await page.locator('.game-error').count(),0,'3D must start');
  const gl=await page.evaluate(()=>{const c=document.createElement('canvas'),g=c.getContext('webgl2');if(!g)return null;const e=g.getExtension('WEBGL_debug_renderer_info');return {version:g.getParameter(g.VERSION),renderer:e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):null};});assert.ok(gl);reports.push({webgl:gl});
  await page.screenshot({path:output+'/desktop-hub.png'});
+ if(await page.evaluate(()=>('serviceWorker' in navigator))){
+  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});
+  if(!await page.evaluate(()=>!!navigator.serviceWorker.controller)){await page.reload({waitUntil:'networkidle'});await page.waitForFunction(()=>!!navigator.serviceWorker.controller);}
+  await page.context().setOffline(true);await page.reload({waitUntil:'domcontentloaded'});await page.waitForTimeout(800);
+  assert.equal(await page.locator('.experience').count(),1,'Cached VR experience must open without network after first load');assert.equal(await page.locator('.game-error').count(),0,'Offline fallback must not start with a 3D error');await page.screenshot({path:output+'/desktop-offline.png'});
+  await page.context().setOffline(false);await page.reload({waitUntil:'networkidle'});await page.waitForTimeout(500);
+ }
  await page.getByRole('button',{name:'Чистый вид ↗',exact:true}).click();await page.waitForTimeout(80);
  assert.equal(await page.locator('.wordmark').evaluate(el=>getComputedStyle(el).display),'none','Clean view hides the wordmark');
  assert.equal(await page.locator('.vr-entry button').isVisible(),true,'Clean view keeps the VR entry available');
