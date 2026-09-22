@@ -306,7 +306,7 @@ export function createExperience(host: HTMLElement, hooks: {
     fade.renderOrder = 999;
     camera.add(fade);
     let transition = 0,transitionTotal=.3;let sceneIntro=0,lastPortalFocus=-1,firstScene=true;
-    const introRoot=new T.Group();scene.add(introRoot);introRoot.visible=false;
+    const introRoot=new T.Group();introRoot.name='scene-intro';scene.add(introRoot);introRoot.visible=false;
     // Short, compact scene ID: enough for orientation without blocking the experience.
     const introKicker=label(introRoot,'',0,.34,-3.4,2.4,.22,'#baffdf',1),introTitle=label(introRoot,'',0,0,-3.4,3.35,.4,'#f4fff9',1),introHint=label(introRoot,'',0,-.32,-3.4,3.1,.2,'#aac9c5',1);
     const introData:Record<Mode,[string,string,string]>={hub:['ТЕХНОПАРК РГСУ','VR-ПРОСТРАНСТВО','ВЫБЕРИТЕ ПОРТАЛ ИЛИ ИССЛЕДУЙТЕ ХОЛЛ'],robot:['01 / КОНТРОЛЬ','РОБОТ-АРЕНА','ЭНЕРГОЯЧЕЙКИ · БЛОКИ · ДУЭЛЬ'],drones:['02 / РЕАКЦИЯ','ДРОН-ТИР','6 ЗАРЯДОВ · СЕРИИ · ФЛАГМАН'],cargo:['03 / ЛОГИСТИКА','ПОЛИГОН ЛОСИНКА','3 ГРУЗА · МАНИПУЛЯТОР · БАЗА']};
