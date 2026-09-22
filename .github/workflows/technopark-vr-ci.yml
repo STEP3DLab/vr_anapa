@@ -53,7 +53,8 @@ jobs:
         with:
           name: technopark-vr-browser-audit-${{ github.run_number }}
           path: technopark-vr/.test-output
-          if-no-files-found: ignore
+          if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
       - name: Publish rebuilt browser bundle
         working-directory: .
