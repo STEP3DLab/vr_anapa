@@ -278,7 +278,17 @@ export function createExperience(host: HTMLElement, hooks: {
         xrOnly(label(hub,'РОБОТ 6×6 / ЛОСИНКА',x,2.75,z,3,.34,'#d8f3a7',1).o);
         const enter=label(hub,'ОТКРЫТЬ ГРУЗОВУЮ МИССИЮ →',x,.38,z+1.45,3,.3,'#d8f3a7',1);xrOnly(enter.o);action(enter.o,()=>go('cargo'));
     }
-    function gun() { const g = new T.Group(); box(g, black, 0, 0, -.25, .12, .14, .5); box(g, steel, 0, .04, -.6, .07, .07, .35); box(g, orange, 0, -.03, -.36, .14, .05, .13); const muzzle = mesh(g, new T.IcosahedronGeometry(.12, 0), orange, 0, .04, -.83); muzzle.name = 'muzzle-flash'; muzzle.visible = false; box(g, cyan, 0, .085, -.5, .02, .012, .28); const handle = box(g, navy, 0, -.13, -.06, .09, .22, .12); handle.rotation.x = -.3; return g; }
+    function gun() {
+        const g = new T.Group();g.name='shotgun';
+        box(g,black,0,0,-.24,.15,.15,.5);
+        for(const x of [-.035,.035]){const barrel=cyl(g,steel,x,.035,-.64,.027,.66,10);barrel.rotation.x=Math.PI/2;}
+        box(g,orange,0,-.018,-.47,.18,.085,.24);box(g,black,0,-.025,-.2,.17,.11,.16);
+        const stock=box(g,navy,0,-.11,.08,.13,.18,.3);stock.rotation.x=-.34;
+        const pump=box(g,navy,0,-.025,-.68,.19,.11,.22);pump.name='shotgun-pump';
+        const muzzle = mesh(g, new T.IcosahedronGeometry(.12, 0), orange, 0, .035, -.99); muzzle.name = 'muzzle-flash'; muzzle.visible = false;
+        box(g,cyan,0,.105,-.55,.018,.014,.42);
+        return g;
+    }
     const desktopGun = gun();
     camera.add(desktopGun);
     desktopGun.position.set(.3, -.24, -.25);
