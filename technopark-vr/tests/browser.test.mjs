@@ -26,6 +26,11 @@ try{
  assert.equal(await page.locator('.game-error').count(),0,'3D must start');
  const gl=await page.evaluate(()=>{const c=document.createElement('canvas'),g=c.getContext('webgl2');if(!g)return null;const e=g.getExtension('WEBGL_debug_renderer_info');return {version:g.getParameter(g.VERSION),renderer:e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):null};});assert.ok(gl);reports.push({webgl:gl});
  await page.screenshot({path:output+'/desktop-hub.png'});
+ await page.getByRole('button',{name:'Чистый вид ↗',exact:true}).click();await page.waitForTimeout(80);
+ assert.equal(await page.locator('.wordmark').evaluate(el=>getComputedStyle(el).display),'none','Clean view hides the wordmark');
+ assert.equal(await page.locator('.vr-entry button').isVisible(),true,'Clean view keeps the VR entry available');
+ await page.screenshot({path:output+'/desktop-clean.png'});
+ await page.getByRole('button',{name:'Вернуть интерфейс',exact:true}).click();
  await page.getByRole('button',{name:'☰ Меню',exact:true}).click();await page.waitForTimeout(260);assert.equal(await page.locator('.main-menu').count(),1);const desktopMenu=await page.locator('.main-menu').boundingBox();assert.ok(desktopMenu&&desktopMenu.width>400&&desktopMenu.height>500&&desktopMenu.x>=0&&desktopMenu.y>=0&&desktopMenu.x+desktopMenu.width<=1440&&desktopMenu.y+desktopMenu.height<=900);assert.equal(await page.locator('.menu-live').count(),1);assert.equal(await page.locator('.menu-vr').count(),1);const menuOnTop=await page.evaluate(()=>!!document.elementFromPoint(innerWidth-80,innerHeight/2)?.closest?.('.main-menu'));assert.equal(menuOnTop,true,'Command menu must be the top interactive layer');await page.screenshot({path:output+'/desktop-menu.png'});await page.keyboard.press('Escape');assert.equal(await page.locator('.main-menu').count(),0,'Escape closes menu without navigation');await page.keyboard.press('m');assert.equal(await page.locator('.main-menu').count(),1,'M opens command menu');await page.keyboard.press('m');assert.equal(await page.locator('.main-menu').count(),0,'M toggles command menu');
  for(const [name,text] of [['cargo','Полигон Лосинка'],['robot','Робот-арена'],['drones','Дрон-тир']]){
   await page.locator('.portal-cards button').filter({hasText:text}).click();await page.waitForTimeout(1100);await page.screenshot({path:output+'/desktop-'+name+'.png'});
