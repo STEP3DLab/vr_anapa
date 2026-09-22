@@ -551,7 +551,7 @@ export function createExperience(host: HTMLElement, hooks: {
         if(mode!=='hub'){
             const title=mode==='cargo'?'03 · ПОЛИГОН ЛОСИНКА':mode==='robot'?'01 · РОБОТ-АРЕНА':'02 · ДРОН-ТИР';
             const state=paused()?'ПАУЗА':training?'ОБУЧЕНИЕ':ready?'ГОТОВ К СТАРТУ':countdown>0?'СТАРТ '+Math.ceil(countdown):ended?'ИТОГ':'МИССИЯ';
-            const detail=mode==='cargo'?`ГРУЗЫ ${cargo.delivered}/3 · ${cargo.loaded?'НА ПЛАТФОРМЕ':'ЗАХВАТ СВОБОДЕН'}`:mode==='robot'?`ЯЧЕЙКИ ${Math.min(score,5)}/5 · БЛОКИ ${6-blocks.filter(b=>b.visible).length}/6`:`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
+            const detail=mode==='cargo'?`ГРУЗЫ ${cargo.delivered}/3 · ${cargo.loaded?'НА ПЛАТФОРМЕ':'ЗАХВАТ СВОБОДЕН'}`:mode==='robot'?(duel?`ДУЭЛЬ · ${rivalHealth}/3 · ВЫ ${health}/3`:`ЯЧЕЙКИ ${cells.filter(c=>!c.visible).length}/5 · БЛОКИ ${blocks.filter(b=>!b.visible).length}/6`):`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
             beaconTop.write(title);beaconMain.write(state);beaconSub.write(detail);
         }
                 hooks.status(s);
@@ -846,7 +846,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         if (mode === 'drones'){
             trainingHalo.visible=training&&!drones[0].dead;trainingHalo.rotation.z+=dt*.45;
-            ammoLamps.forEach((lamp,i)=>lamp.visible=i<ammo&&!reloading);bossBeacon.visible=!training&&roundAge>=40&&!ended;bossCaption.o.visible=bossBeacon.visible;bossBeacon.rotation.z+=dt*.18;bossBeacon.scale.setScalar(1+.035*Math.sin(elapsed*3));
+            ammoLamps.forEach((lamp,i)=>lamp.visible=i<ammo&&!reloading);bossBeacon.visible=!training&&roundAge>=40&&!ended;bossCaption.o.visible=bossBeacon.visible;if(bossBeacon.visible)bossCaption.write(`ФЛАГМАН · ${drones[8].hp}/6`);bossBeacon.rotation.z+=dt*.18;bossBeacon.scale.setScalar(1+.035*Math.sin(elapsed*3));
             for (let i = 0; i < drones.length; i++) {
                 const d = drones[i];
                 if (i === 8 && roundAge < 40) {
