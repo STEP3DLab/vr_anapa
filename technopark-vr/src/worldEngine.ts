@@ -714,7 +714,8 @@ export function createExperience(host: HTMLElement, hooks: {
         flashTime = Math.max(0, flashTime - dt);
         flash.visible = flashTime > 0 && !renderer.xr.isPresenting;
         guns.forEach(g => { const m = g.getObjectByName('muzzle-flash'); if (m)
-            m.visible = flashTime > 0; g.position.z = flashTime > 0 ? .05 : 0; });
+            m.visible = flashTime > 0; g.position.z = flashTime > 0 ? .05 : 0;const pump=g.getObjectByName('shotgun-pump');if(pump)pump.position.z=-.68+(reloading?.18*Math.sin((1-reloading/1.3)*Math.PI):0); });
+        const desktopPump=desktopGun.getObjectByName('shotgun-pump');if(desktopPump)desktopPump.position.z=-.68+(reloading?.18*Math.sin((1-reloading/1.3)*Math.PI):0);
         desktopGun.position.z = -.25 + (flashTime > 0 ? .06 : 0);
         if(mode==='hub'){
             portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
