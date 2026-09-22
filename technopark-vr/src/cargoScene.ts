@@ -132,15 +132,16 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const upperSideA=box(robot,red,0,0,0,.13,1,.38),upperSideB=box(robot,red,0,0,0,.13,1,.38);
     const foreSideA=box(robot,red,0,0,0,.12,1,.33),foreSideB=box(robot,red,0,0,0,.12,1,.33);
     upper.name='cargo-upper-link'; fore.name='cargo-fore-link';
+    const beamDir=new T.Vector3(),hydraulicMiddle=new T.Vector3(),hydraulicA=new T.Vector3(),hydraulicB=new T.Vector3(),tangentScratch=new T.Vector3(),offsetScratch=new T.Vector3();
     function beam(m:T.Mesh,a:T.Vector3,b:T.Vector3){
         m.position.copy(a).lerp(b,.5);m.scale.y=a.distanceTo(b);
-        m.quaternion.setFromUnitVectors(up,b.clone().sub(a).normalize());
+        beamDir.copy(b).sub(a).normalize();m.quaternion.setFromUnitVectors(up,beamDir);
     }
     const pins=[shoulder,elbow,tip].map(()=>cylinder(robot,red,0,0,0,.21,.43));
     const barrel1=cylinder(robot,body,0,0,0,.065,1),rod1=cylinder(robot,steel,0,0,0,.035,1);
     const barrel2=cylinder(robot,body,0,0,0,.06,1),rod2=cylinder(robot,steel,0,0,0,.03,1);
     function hydraulic(barrel:T.Mesh,rod:T.Mesh,a:T.Vector3,b:T.Vector3){
-        const middle=a.clone().lerp(b,.55);beam(barrel,a,middle);beam(rod,middle,b);
+        hydraulicMiddle.copy(a).lerp(b,.55);beam(barrel,a,hydraulicMiddle);beam(rod,hydraulicMiddle,b);
     }
     const claw=new T.Group();claw.name='cargo-claw';robot.add(claw);
     cylinder(claw,steel,0,.05,0,.17,.23);
@@ -171,7 +172,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
         const plate=label('ГРУЗ '+(i+1),p.x,1.35,p.z,1.8);markers.push({beacon,label:plate});
     });
     const readyBase=box(base,markerReady,0,.055,0,5.8,.012,3.8);readyBase.visible=false;
-    const point=new T.Vector3(),local=new T.Vector3(),shoulderWorld=new T.Vector3(),dropScratch=new T.Vector3(),navScratch=new T.Vector3();
+    const point=new T.Vector3(),local=new T.Vector3(),shoulderWorld=new T.Vector3(),dropScratch=new T.Vector3(),navScratch=new T.Vector3(),contacts=new Float32Array(6);
     type Job={kind:'pickup'|'unload';item:T.Mesh;t:number;from:T.Vector3;to:T.Vector3;start:T.Vector3;gripped:boolean;released:boolean};
     let job:Job|null=null,carried:T.Mesh|null=null,delivered=0,velocity=0,turnVelocity=0,distance=0,collisions=0,collisionDelay=0,finished=false,navTime=0;
     const wheelPhases=new Array(6).fill(0);
@@ -295,9 +296,9 @@ export function createCargoScene(onEvent: (message: string) => void) {
         if(collision&&!collisionDelay){collisions++;collisionDelay=1;onEvent('ПРЕПЯТСТВИЕ · СДАЙТЕ НАЗАД И ОБЪЕДЬТЕ');}
         // Average all six wheel contacts; no discontinuous centre-only height jump at a ramp edge.
         const yawNow=robot.rotation.y,c=Math.cos(yawNow),sn=Math.sin(yawNow);
-        const contacts=wheels.map(w=>heightAt(robot.position.x+c*w.position.x+sn*w.position.z,robot.position.z-sn*w.position.x+c*w.position.z));
+        let contactSum=0;for(let i=0;i<wheels.length;i++){const w=wheels[i],h=heightAt(robot.position.x+c*w.position.x+sn*w.position.z,robot.position.z-sn*w.position.x+c*w.position.z);contacts[i]=h;contactSum+=h;}
         const front=(contacts[0]+contacts[3])/2,rear=(contacts[2]+contacts[5])/2,left=(contacts[0]+contacts[1]+contacts[2])/3,right=(contacts[3]+contacts[4]+contacts[5])/3;
-        robot.position.y=T.MathUtils.damp(robot.position.y,contacts.reduce((a,b)=>a+b,0)/6,14,dt);
+        robot.position.y=T.MathUtils.damp(robot.position.y,contactSum/6,14,dt);
         robot.rotation.x=T.MathUtils.damp(robot.rotation.x,Math.atan2(front-rear,2),14,dt);
         robot.rotation.z=T.MathUtils.damp(robot.rotation.z,Math.atan2(right-left,2.08),14,dt);
         let k=0;
@@ -309,14 +310,14 @@ export function createCargoScene(onEvent: (message: string) => void) {
         if(active)animateJob(dt);
         const solution=solveArm(tip);elbow.set(solution.elbow.x,solution.elbow.y,solution.elbow.z);tip.set(solution.wrist.x,solution.wrist.y,solution.wrist.z);
         const turretYaw=Math.atan2(tip.x-shoulder.x,-(tip.z-shoulder.z));turret.rotation.y=turretYaw;
-        const tangent=new T.Vector3(Math.cos(turretYaw),0,Math.sin(turretYaw));
+        const tangent=tangentScratch.set(Math.cos(turretYaw),0,Math.sin(turretYaw));
         beam(upper,shoulder,elbow);beam(fore,elbow,tip);
         beam(upperSideA,shoulder,elbow);upperSideA.position.addScaledVector(tangent,.22);beam(upperSideB,shoulder,elbow);upperSideB.position.addScaledVector(tangent,-.22);
         beam(foreSideA,elbow,tip);foreSideA.position.addScaledVector(tangent,.18);beam(foreSideB,elbow,tip);foreSideB.position.addScaledVector(tangent,-.18);
-        pins.forEach((p,i)=>{p.position.copy([shoulder,elbow,tip][i]);p.quaternion.setFromUnitVectors(up,tangent);});
-        const offset=tangent.clone().multiplyScalar(.2);
-        hydraulic(barrel1,rod1,shoulder.clone().add(offset).addScaledVector(up,-.12),elbow.clone().add(offset).lerp(shoulder,.22));
-        hydraulic(barrel2,rod2,elbow.clone().add(offset).lerp(shoulder,.26),elbow.clone().add(offset).lerp(tip,.45));
+        pins[0].position.copy(shoulder);pins[1].position.copy(elbow);pins[2].position.copy(tip);pins.forEach(p=>p.quaternion.setFromUnitVectors(up,tangent));
+        const offset=offsetScratch.copy(tangent).multiplyScalar(.2);
+        hydraulicA.copy(shoulder).add(offset).addScaledVector(up,-.12);hydraulicB.copy(elbow).add(offset).lerp(shoulder,.22);hydraulic(barrel1,rod1,hydraulicA,hydraulicB);
+        hydraulicA.copy(elbow).add(offset).lerp(shoulder,.26);hydraulicB.copy(elbow).add(offset).lerp(tip,.45);hydraulic(barrel2,rod2,hydraulicA,hydraulicB);
         claw.position.copy(tip);claw.rotation.y=turretYaw;jaws[0].position.x=-jawOpening;jaws[1].position.x=jawOpening;
         statusMat.color.set(job?0xffb45f:carried?0x8fffbd:finished?0x72ffe2:0xffd56e);statusLamp.scale.setScalar(job?1+.22*Math.sin(navTime*8):1);
         const target=!carried&&!job?pickupTarget():null;
