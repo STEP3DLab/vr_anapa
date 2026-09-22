@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {readFileSync,mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join,dirname} from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+import * as Three from 'three';
+const {build}=await import(process.env.ESBUILD_PATH||'esbuild');
+const project=dirname(dirname(fileURLToPath(import.meta.url))),temp=mkdtempSync(join(tmpdir(),'vr-smoke-'));
+await build({absWorkingDir:project,entryPoints:['src/worldEngine.ts'],bundle:true,platform:'node',format:'esm',outfile:join(temp,'engine.mjs'),plugins:[{name:'headless-renderer',setup(b){b.onLoad({filter:/worldEngine\.ts$/},args=>({contents:readFileSync(args.path,'utf8').replace('new T.WebGLRenderer({antialias:true})','new (globalThis as any).TestRenderer()').replace('new T.PMREMGenerator(renderer)','new (globalThis as any).TestEnvironment()'),loader:'ts'}));}}]});
+const events={},controllers=[];let frame,scene;
+const context={clearRect(){},fillRect(){},fillText(){}};
+globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>context})};globalThis.devicePixelRatio=1;globalThis.window={addEventListener:(n,f)=>events[n]=f,removeEventListener(){}};globalThis.ResizeObserver=class{observe(){}disconnect(){}};
+globalThis.localStorage={getItem:()=>null,setItem(){}};
+globalThis.TestEnvironment=class{fromScene(){return {texture:null,dispose(){}};}dispose(){}};
+globalThis.TestRenderer=class{constructor(){this.domElement={addEventListener:(n,f)=>events[n]=f,removeEventListener(){},remove(){},setPointerCapture(){},getBoundingClientRect:()=>({left:0,top:0,width:1200,height:800})};this.xr={enabled:false,isPresenting:false,setReferenceSpaceType(){},getController:()=>{const c=new Three.Group();controllers.push(c);return c;},addEventListener(){},getSession(){}};}setPixelRatio(){}setSize(){}setAnimationLoop(f){frame=f;}render(s){scene=s;s.updateMatrixWorld(true);}dispose(){}};
+const {createExperience}=await import(pathToFileURL(join(temp,'engine.mjs')));let status='';const game=createExperience({clientWidth:1200,clientHeight:800,appendChild(){}},{status:s=>status=s,scene(){}});
+let t=0;function frames(n){for(let i=0;i<n;i++)frame(t+=1000/60);}
+frames(2);assert.match(status,/портал/);
+game.go('robot');frames(600);assert.match(status,/ГОТОВЫ/,'timer must wait for player');game.start();frames(60);assert.match(status,/СТАРТ ЧЕРЕЗ/);frames(125);assert.match(status,/60 с/);game.start();frames(1);assert.doesNotMatch(status,/СТАРТ ЧЕРЕЗ/,'start must not reset active round');game.key('w',true);frames(120);game.key('w',false);game.spin();frames(3600);assert.match(status,/ПОПРОБУЙТЕ ЕЩЁ/);
+game.go('drones');game.start();frames(185);events.pointerdown({clientX:1150,clientY:700});assert.match(status,/5\/6/);game.reload();frames(90);assert.match(status,/6\/6/);frames(3600);assert.match(status,/РАУНД ЗАВЕРШЁН/);game.restart();frames(1);assert.match(status,/ГОТОВЫ/);
+game.go('hub');frames(1);let camera;scene.traverse(o=>{if(o.isPerspectiveCamera)camera=o;});const before=camera.getWorldPosition(new Three.Vector3());game.turn(1);frames(1);assert.ok(before.distanceTo(camera.getWorldPosition(new Three.Vector3()))<1e-6,'snap turn must preserve head position');
+const src={handedness:'right',gamepad:{axes:[0,0,.9,0]}};controllers[1].dispatchEvent({type:'connected',data:src});frames(1);const yaw=camera.parent.rotation.y;frames(20);assert.equal(camera.parent.rotation.y,yaw,'holding the stick must not keep turning');src.gamepad.axes[2]=0;frames(1);src.gamepad.axes[2]=.9;frames(1);assert.notEqual(camera.parent.rotation.y,yaw,'returning to center must rearm snap');game.dispose();rmSync(temp,{recursive:true});console.log('PASS: scene creation, art animation, ready/countdown gates, start guard, timer/results, ammo/reload, snap pivot and stick latch, cleanup. GPU and physical headset are not simulated.');
