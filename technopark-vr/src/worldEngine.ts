@@ -707,7 +707,7 @@ export function createExperience(host: HTMLElement, hooks: {
             portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
             const activeCamera=renderer.xr.isPresenting?renderer.xr.getCamera():camera,head=activeCamera.getWorldPosition(pointScratch);activeCamera.getWorldQuaternion(quatScratch);const forward=forwardScratch.set(0,0,-1).applyQuaternion(quatScratch);let best=-1,bestDot=.9;
             portalGroups.forEach((p,i)=>{p.getWorldPosition(localScratch);localScratch.sub(head);const dist=localScratch.length(),dot=localScratch.normalize().dot(forward);if(dist<15&&dot>bestDot){bestDot=dot;best=i;}const target=i===best?1.045:1;p.scale.lerp(scaleScratch.set(target,target,target),Math.min(1,dt*8));p.position.y=p.userData.baseY+(i===best?.035*Math.sin(elapsed*5):0);});portalFocus=best;
-            if(portalFocus!==lastPortalFocus){lastPortalFocus=portalFocus;if(portalFocus>=0&&renderer.xr.isPresenting)audioFX.tone(520,.045,'sine',.025);}
+            if(portalFocus!==lastPortalFocus)lastPortalFocus=portalFocus;
         }
         if (mode !== 'hub' && !ended && !ready && !countdown && !training && !presentation) {
             seconds = Math.max(0, seconds - dt);
