@@ -18,6 +18,7 @@ export function createExperience(host: HTMLElement, hooks: {
     hint?: (text:string)=>void;
     phase?: (phase:string)=>void;
     diagnostics?: (data:{fps:number;calls:number;triangles:number;geometries:number;textures:number;xr:boolean;scene:string})=>void;
+    records?: (records:Record<string,number>)=>void;
 }) {
     const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: false });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -421,6 +422,7 @@ export function createExperience(host: HTMLElement, hooks: {
         bests = { ...bests, ...JSON.parse(localStorage.getItem('technopark-records') || '{}') };
     }
     catch { }
+    hooks.records?.({...bests});
     let mode: Mode = 'hub', seconds = 60, score = 0, ammo = 6, reloading = 0, cooldown = 0, spinning = false, ended = false, elapsed = 0, lastHUD = '', flashTime = 0;
     const keys = new Set<string>();
     const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>();
@@ -471,7 +473,7 @@ export function createExperience(host: HTMLElement, hooks: {
         try {
             localStorage.setItem('technopark-records', JSON.stringify(bests));
         }
-        catch { } audioFX.event(won()?'win':'end'); updateHUD(); }
+        catch { } hooks.records?.({...bests});audioFX.event(won()?'win':'end'); updateHUD(); }
     function cargoAction(){if(paused())return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
     function snap(dir: number) { learned.turn = true; const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(headScratch); const a = -dir * Math.PI / 6; rig.position.sub(head).applyAxisAngle(upAxis, a).add(head); rig.rotation.y += a; }
     function placeView(){
