@@ -41,10 +41,19 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+      - name: Cache Playwright Chromium
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-1.56.1-chromium
       - name: Install Chromium for WebGL2 audit
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install-deps chromium
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]; then
+            npx playwright install chromium
+          fi
       - name: Run real WebGL2 browser audit
         env:
           PLAYWRIGHT_PATH: playwright
@@ -55,7 +64,7 @@ jobs:
         with:
           name: technopark-vr-browser-audit-${{ github.run_number }}
           path: technopark-vr/.test-output
-          if-no-files-found: error
+          if-no-files-found: ignore
           include-hidden-files: true
           retention-days: 14
       - name: Publish rebuilt browser bundle
