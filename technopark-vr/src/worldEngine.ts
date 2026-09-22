@@ -480,7 +480,7 @@ export function createExperience(host: HTMLElement, hooks: {
         startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.7,-1.13,-3);again.o.position.set(1.7,-1.13,-3);
         lessonLabel.o.position.set(0,-1.65,-3);gameDemoLabel.o.position.set(1.7,-1.65,-3);newGuest.o.position.set(-1.7,-1.65,-3);
         pauseLabel.o.position.set(0,-1.13,-3);recenterLabel.o.position.set(0,-2.05,-3);
-        const beaconY=mode==='cargo'?4.6:mode==='robot'?3.5:2.35,beaconZ=mode==='cargo'?-6.5:mode==='robot'?-10.8:-10.5;missionBeacon.position.set(4.7,beaconY,beaconZ);missionBeacon.rotation.y=-.32;missionBeacon.scale.setScalar(.82);
+        const beaconY=mode==='cargo'?3.85:mode==='robot'?3.15:2.35,beaconZ=mode==='cargo'?2:mode==='robot'?-1.2:-4;missionBeacon.position.set(4.15,beaconY,beaconZ);missionBeacon.rotation.y=-.42;missionBeacon.scale.setScalar(.98);
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
@@ -653,7 +653,7 @@ export function createExperience(host: HTMLElement, hooks: {
         transition = Math.max(0, transition - dt);
         const fadeProgress=transitionTotal?transition/transitionTotal:0;fadeMat.opacity=Math.min(.94,fadeProgress*1.12);fade.visible=transition>0;
         sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(.72-sceneIntro)/.16),out=Math.min(1,sceneIntro/.2),s=.96+.04*q;introRoot.scale.setScalar(s);introRoot.position.y=.02*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out)*.92;}});}
-        if(missionBeacon.visible){const pulseScale=ended&&won()?.82+.035*(.5+.5*Math.sin(elapsed*6)):.82;missionBeacon.scale.setScalar(pulseScale);}
+        if(missionBeacon.visible){const pulseScale=ended&&won()?.98+.045*(.5+.5*Math.sin(elapsed*6)):.98;missionBeacon.scale.setScalar(pulseScale);}
         if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
         sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):mode==='robot'?4.15:mode==='drones'?3.85:3.5;
         if(mode==='hub')exhibits.forEach((e, i) => { e.rotation.y = elapsed * .22; e.position.y = 1.2 + Math.sin(elapsed + i) * .06; });
