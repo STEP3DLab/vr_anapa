@@ -1,0 +1,32 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const path=new URL('../technopark-vr/src/worldEngine.ts',import.meta.url);
+let s=readFileSync(path,'utf8');
+function replace(a,b){assert.ok(s.includes(a),'Missing audited fragment: '+a);s=s.replace(a,b);}
+replace("    const hud = label(hudRoot, '',", "    const consoleCue=label(hudRoot,'← ПУЛЬТ И ЗАДАНИЕ',0,0,0,1.6,.24);scene.add(consoleCue.o);\n    const hud = label(hudRoot, '',");
+replace("        hudRoot.position.set(0,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?5:mode==='robot'?2:0);", `        const stationY=mode==='cargo'?2.8:mode==='robot'?1.5:0,stationZ=mode==='cargo'?7:mode==='robot'?4:1;
+        // Fixed side console: the centre sight line and ground remain unobstructed.
+        const consoleYaw=Math.atan2(4.4,3.4),consoleScale=.8;
+        hudRoot.rotation.y=consoleYaw;hudRoot.scale.setScalar(consoleScale);
+        hudRoot.position.set(-4.4+3*consoleScale*Math.sin(consoleYaw),stationY+2.1,stationZ-3.4+3*consoleScale*Math.cos(consoleYaw));
+        consoleCue.o.visible=hudRoot.visible;consoleCue.o.position.set(-1.8,stationY+1.85,stationZ-4.5);
+        guidance.write(mode==='cargo'?cargo.hint():lessonText());`);
+replace("back.o.position.set(-1.5,-1.13,-3);again.o.position.set(1.5,-1.13,-3);","back.o.position.set(-1.7,-1.13,-3);again.o.position.set(1.7,-1.13,-3);");
+replace("            const text = mode === 'cargo' ?", "            const text = mode!=='hub'&&hand==='left' ? (mode==='cargo' ? `${cargo.delivered}/3 · ${presentation?'ПОКАЗ ∞':Math.ceil(seconds)+' С'} / ПУЛЬТ СЛЕВА` : 'ПУЛЬТ СЛЕВА / БОКОВАЯ: ХОЛЛ') : mode === 'cargo' ?");
+writeFileSync(path,s);
+const testPath=new URL('../technopark-vr/tests/browser.test.mjs',import.meta.url);
+let test=readFileSync(testPath,'utf8');
+test=test.replace('__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView}','__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView,hudRoot}');
+if(!test.includes('console-side-'))test=test.replace("  await page.screenshot({path:output+'/console-preview-'+name+'.png'});",`  await page.screenshot({path:output+'/console-preview-'+name+'.png'});
+  const heights=await page.evaluate(()=>{const q=window.__inspection;return q.hudRoot.children.filter(o=>o.userData.action).map(o=>o.getWorldPosition(q.camera.position.clone()).y-q.rig.position.y);});assert.ok(heights.every(y=>y>.3),'Every VR button must remain above ground');
+  await page.evaluate(()=>{const q=window.__inspection;q.camera.rotation.set(-.08,Math.atan2(4.4,3.4),0);q.renderer.render(q.scene,q.camera);});
+  await page.screenshot({path:output+'/console-side-'+name+'.png'});`);
+writeFileSync(testPath,test);
+const experiencePath=new URL('../technopark-vr/src/Experience.tsx',import.meta.url);
+let experience=readFileSync(experiencePath,'utf8');
+if(!experience.includes('Пульт задания расположен слева'))experience=experience.replace('Луч и курок — выбор портала, кнопки или светового круга телепортации.','Луч и курок — выбор портала, кнопки или светового круга телепортации. Пульт задания расположен слева от игровой зоны.');
+writeFileSync(experiencePath,experience);
+const readmePath=new URL('../technopark-vr/README.md',import.meta.url);
+let readme=readFileSync(readmePath,'utf8');
+if(!readme.includes('## Дополнение к визуальной приёмке версии 9'))readme+='\n## Дополнение к визуальной приёмке версии 9\n\nVR-пульт перенесён влево от основной линии взгляда, все его кнопки находятся выше пола. Небольшая надпись указывает направление к пульту; на левом контроллере полигона есть счётчик грузов и времени. Положение пульта проверяется отдельными монокулярными снимками с условной высоты глаз 1,65 м — это не тест на физической гарнитуре.\n\n`tests/route.test.mjs` проходит полный маршрут из трёх доставок только командами движения и поворота, без телепортации робота: около 120 симулированных секунд и 93 метров без столкновений. Это проверка проходимости и доступности грузов, а не измерение времени прохождения человеком. Тест включён в `npm test`.\n';
+writeFileSync(readmePath,readme);
