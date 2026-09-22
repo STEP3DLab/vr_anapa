@@ -124,7 +124,7 @@ export function createExperience(host: HTMLElement, hooks: {
     function action(o: T.Object3D, f: () => void) { o.userData.action = f; actions.push(o); }
     for (const [x, z] of [[0, -3], [-5, -3], [5, -3], [0, 3], [5, -9]]) {
         const pad = cyl(hub, cyan, x, .035, z, .4, .025, 32);
-        action(pad, () => { const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(new T.Vector3()); rig.position.x += x - head.x; rig.position.z += z - head.z; audioFX.event('portal'); });
+        action(pad, () => { const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(headScratch); rig.position.x += x - head.x; rig.position.z += z - head.z; audioFX.event('portal'); });
     }
     xrOnly(label(hub, 'ЛЕВЫЙ СТИК: ДВИЖЕНИЕ / ПРАВЫЙ: ПОВОРОТ 30°', 0, 1.2, -1.5, 4, .32).o);
     xrOnly(label(hub, 'ЛУЧ + КУРОК: ПОРТАЛ ИЛИ ТЕЛЕПОРТ НА ПОЛУ', 0, .8, -1.5, 4, .32).o);
@@ -342,6 +342,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
     const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3(), forwardScratch=new T.Vector3(), scaleScratch=new T.Vector3(), quatScratch=new T.Quaternion(), deltaScratch=new T.Vector3(), awayScratch=new T.Vector3(), headScratch=new T.Vector3(), directionScratch=new T.Vector3(), sideScratch=new T.Vector3(), moveScratch=new T.Vector3(), candidateScratch=new T.Vector3(), tracerEndScratch=new T.Vector3();
+    const upAxis=new T.Vector3(0,1,0);
     const rays:T.Line[]=[];const tips:T.Mesh[]=[];const hoverTargets:Array<T.Object3D|null>=[null,null];
     function visible(o: T.Object3D) { for (let p: T.Object3D | null = o; p; p = p.parent)
         if (!p.visible)
@@ -454,7 +455,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         catch { } audioFX.event(won()?'win':'end'); updateHUD(); }
     function cargoAction(){if(paused())return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
-    function snap(dir: number) { learned.turn = true; const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(new T.Vector3()); const a = -dir * Math.PI / 6; rig.position.sub(head).applyAxisAngle(new T.Vector3(0, 1, 0), a).add(head); rig.rotation.y += a; }
+    function snap(dir: number) { learned.turn = true; const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(headScratch); const a = -dir * Math.PI / 6; rig.position.sub(head).applyAxisAngle(upAxis, a).add(head); rig.rotation.y += a; }
     function placeView(){
         clearInput();rig.position.set(0,0,0);rig.rotation.set(0,0,0);
         if(!renderer.xr.isPresenting){
