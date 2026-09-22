@@ -75,7 +75,7 @@ export default function Experience(){
     <h1>{hub?<>Искусство.<br/>Технологии.<br/><em>Вы внутри.</em></>:title}</h1>
     <p>{hub?'Кинетическое «Ядро», три портала и инженерные испытания. Выберите сцену или исследуйте павильон.':cargo?'Доставьте три груза на зелёную базу. Стрелка над роботом показывает текущую цель. За один рейс — один груз.':scene==='robot'?'Соберите 5 энергоячеек, разрушьте 6 блоков и победите «Бульдозер».':'Шесть зарядов. Бронированные цели. Флагман на 40-й секунде.'}</p>
    </main>
-   <aside className="game-status"><span className="status-label">{hub?'ЖИВАЯ ИНСТАЛЛЯЦИЯ':title+(presentation?' · ПОКАЗ БЕЗ ТАЙМЕРА':'')}</span><strong>{status}</strong>{cargo&&!paused&&phase!=='ready'&&phase!=='ended'&&<p className="cargo-hint">{hint}</p>}</aside>
+   <aside className="game-status"><span className="status-label">{hub?'ЖИВАЯ ИНСТАЛЛЯЦИЯ':title+(presentation?' · ПОКАЗ БЕЗ ТАЙМЕРА':'')+(autoDemo?' · АВТОДЕМО':'')}</span><strong>{status}</strong>{cargo&&!paused&&phase!=='ready'&&phase!=='ended'&&<p className="cargo-hint">{autoDemo?'Автодемо: робот выполняет полный маршрут доставки без движения камеры наблюдателя.':hint}</p>}</aside>
    {hub?<section className="portal-cards" aria-label="Выберите испытание">
     {sceneItems.slice(1).map(item=><button key={item.id} onClick={()=>switchScene(item.id)}><span className="card-number">{item.num} / {item.kicker}</span><strong>{item.name} <b>↗</b></strong><small>{item.desc}{records[item.id]>0?` · рекорд ${records[item.id]}`:''}</small></button>)}
    </section>:<div className="round-actions">
@@ -83,8 +83,8 @@ export default function Experience(){
     {readyAction&&<button onClick={()=>{game.current?.resume();game.current?.train();}}>Пройти обучение</button>}
    </div>}
    {ground&&<div className="touch-controls" aria-label="Управление роботом">
-    {[['↑','w','Вперёд'],['←','a','Повернуть влево'],['↓','s','Назад'],['→','d','Повернуть вправо']].map(([label,key,name])=><button key={key} aria-label={name} disabled={paused||busy&&cargo} onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);game.current?.key(key,true);}} onPointerUp={()=>game.current?.key(key,false)} onPointerCancel={()=>game.current?.key(key,false)} onLostPointerCapture={()=>game.current?.key(key,false)}>{label}</button>)}
-    <button className="robot-action" disabled={paused||busy&&cargo} onClick={()=>cargo?game.current?.cargoAction():game.current?.spin()}>{cargo?action:'Спиннер'}</button>
+    {[['↑','w','Вперёд'],['←','a','Повернуть влево'],['↓','s','Назад'],['→','d','Повернуть вправо']].map(([label,key,name])=><button key={key} aria-label={name} disabled={paused||busy&&cargo||autoDemo} onPointerDown={e=>{e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);game.current?.key(key,true);}} onPointerUp={()=>game.current?.key(key,false)} onPointerCancel={()=>game.current?.key(key,false)} onLostPointerCapture={()=>game.current?.key(key,false)}>{label}</button>)}
+    <button className="robot-action" disabled={paused||busy&&cargo||autoDemo} onClick={()=>cargo?game.current?.cargoAction():game.current?.spin()}>{cargo?action:'Спиннер'}</button>
    </div>}
    {scene==='drones'&&<button className="reload" disabled={paused} onClick={()=>game.current?.reload()}>Перезарядка / R</button>}
    {!hub&&phase==='ended'&&<section className="result-card" aria-live="polite"><span>ИСПЫТАНИЕ ЗАВЕРШЕНО</span><h2>{title}</h2><p>{status}</p><div><button className="result-primary" onClick={()=>game.current?.start()}>↻ Ещё раунд</button><button onClick={()=>game.current?.go(nextScene as 'hub'|'drones'|'cargo')}>Следующее: {nextSceneLabel} →</button><button onClick={()=>game.current?.go('hub')}>⌂ В холл</button></div></section>}
