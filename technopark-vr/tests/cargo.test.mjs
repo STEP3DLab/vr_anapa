@@ -21,7 +21,7 @@ try{
  assert.equal(overlapsBarrier(0,0,0,{x:2,z:0,w:.2,d:6}),false);assert.equal(overlapsBarrier(0,0,Math.PI/2,{x:2,z:0,w:.2,d:6}),true,'turning must include the rear platform');
  assert.ok(segmentBlocked({x:0,y:1,z:1},{x:0,y:1,z:-4},[{x:0,z:-2,w:3,d:.6}]));assert.ok(!segmentBlocked({x:3,y:1,z:1},{x:3,y:1,z:-4},[{x:0,z:-2,w:3,d:.6}]));
  const {createCargoScene}=await import(pathToFileURL(join(temp,'cargoScene.mjs')));const messages=[];const cargo=createCargoScene(s=>messages.push(s));
- const robot=cargo.robot,upper=robot.getObjectByName('cargo-upper-link'),fore=robot.getObjectByName('cargo-fore-link'),claw=robot.getObjectByName('cargo-claw'),crate=cargo.packages[0];
+ const robot=cargo.robot,upper=robot.getObjectByName('cargo-upper-link'),fore=robot.getObjectByName('cargo-fore-link'),claw=robot.getObjectByName('cargo-claw'),statusLamp=robot.getObjectByName('cargo-status-lamp'),crate=cargo.packages[0];assert.ok(statusLamp,'rover exposes a visible status beacon');
  const step=(n,active=true,drive=0,turn=0)=>{for(let i=0;i<n;i++){cargo.update(1/60,drive,turn,active);assert.ok(Math.abs(upper.scale.y-ARM.upper)<1e-8);assert.ok(Math.abs(fore.scale.y-ARM.fore)<1e-8);}};
  robot.position.set(-5,0,0);cargo.update(0,0,0,false);assert.match(cargo.hint(),/ДОСТУПЕН/);
  cargo.interact();assert.ok(cargo.busy);assert.equal(crate.parent,cargo.root,'do not attach before the claw closes');step(60);assert.equal(crate.parent,cargo.root);
