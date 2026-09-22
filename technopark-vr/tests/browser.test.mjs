@@ -10,14 +10,20 @@ const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(project, '.test-output');
 await mkdir(output, {recursive:true});
 // A separate inspection bundle exposes fixtures. The production app.js has NO testing globals.
-await build({absWorkingDir:project,stdin:{contents:"import {createExperience} from './src/worldEngine';createExperience(document.getElementById('host')!,{status(){},scene(){}});",resolveDir:project,loader:'ts'},outfile:output+'/inspection.js',bundle:true,format:'esm',plugins:[{name:'inspection-only',setup(b){b.onLoad({filter:/worldEngine\.ts$/},async args=>{let s=await readFile(args.path,'utf8');const index=s.lastIndexOf("    go('hub');");assert.ok(index>0);s=s.slice(0,index)+s.slice(index).replace("    go('hub');","    go('hub');(globalThis as any).__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView,hudRoot,missionBeacon};");return {contents:s,loader:'ts'};});}}]});
+await build({absWorkingDir:project,stdin:{contents:"import {createExperience} from './src/worldEngine';createExperience(document.getElementById('host')!,{status(){},scene(){}});",resolveDir:project,loader:'ts'},outfile:output+'/inspection.js',bundle:true,format:'esm',plugins:[{name:'inspection-only',setup(b){b.onLoad({filter:/worldEngine\.ts$/},async args=>{let s=await readFile(args.path,'utf8');assert.ok(s.includes('renderer.setAnimationLoop((t,frame) => {'));s=s.replace('renderer.setAnimationLoop((t,frame) => {','const auditFrame=(t:number,frame?:XRFrame) => {');s=s.replace("    });\n    go('hub');","    };renderer.setAnimationLoop(auditFrame);\n    go('hub');(globalThis as any).__inspection={renderer,scene,camera,cargo,go,start,fade,introRoot,rig,placeView,hudRoot,missionBeacon,controllers,drones,cells,blocks,robot,spin,reload,nextVisitor,pause,resume,advance(n:number){renderer.setAnimationLoop(null);const draw=renderer.render;renderer.render=()=>{};try{for(let i=0;i<n;i++)auditFrame((previous||0)+1000/60);}finally{renderer.render=draw;}fade.visible=false;introRoot.visible=false;scene.updateMatrixWorld(true);renderer.render(scene,camera);}};");return {contents:s,loader:'ts'};});}}]});
 await writeFile(output+'/inspection.html',`<!doctype html><html><head><link rel="icon" href="../favicon.svg"><style>body{margin:0}#host{width:100vw;height:100vh}canvas{display:block}</style></head><body><div id="host"></div><script type="module" src="./inspection.js"></script></body></html>`);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.wasm':'application/wasm'};
 const server=createServer(async(req,res)=>{try{const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);let file=resolve(project, '.'+pathname);if(!file.startsWith(project+'/')&&file!==project)throw Error('Invalid path');if(pathname.endsWith('/'))file+='/index.html';const data=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream'});res.end(data);}catch{res.writeHead(404);res.end('Not found');}});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const url='http://127.0.0.1:'+server.address().port+'/';
-const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']});
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox']});
 const reports=[];
+const budget=JSON.parse(await readFile(resolve(project,'tests/performance-budget.json'),'utf8'));
+async function performanceReport(page,name,spatial=false){
+ const stats=await page.evaluate(()=>{const q=window.__inspection;q.renderer.render(q.scene,q.camera);return {calls:q.renderer.info.render.calls,triangles:q.renderer.info.render.triangles,...q.renderer.info.memory};});
+ reports.push({budgetScene:name,spatial,...stats});assert.ok(stats.calls<=budget[name].calls+(spatial?budget.spatialUIExtraCalls:0),`${name}: ${stats.calls} draw calls`);assert.ok(stats.triangles<=budget[name].triangles,`${name}: triangle budget`);assert.ok(stats.geometries<=budget.geometries,'geometry memory budget');assert.ok(stats.textures<=budget.textures,'texture memory budget');
+ return stats;
+}
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
  const errors=[];page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
@@ -42,7 +48,7 @@ try{
  for(const [name,text] of [['cargo','Полигон Лосинка'],['robot','Робот-арена'],['drones','Дрон-тир']]){
   await page.locator('.portal-cards button').filter({hasText:text}).click();await page.waitForTimeout(240);await page.screenshot({path:output+'/desktop-'+name+'-intro.png'});await page.waitForTimeout(1650);await page.screenshot({path:output+'/desktop-'+name+'.png'});
   const diagnostics=await page.locator('[data-diagnostics]').textContent(),calls=Number(diagnostics?.match(/(\d+) вызов/)?.[1]??Infinity),budgets={cargo:95,robot:70,drones:50};reports.push({scene:name,status:await page.locator('.game-status').innerText(),diagnostics,calls});assert.ok(calls<=budgets[name],`${name} draw calls ${calls} exceed budget ${budgets[name]}`);
-  if(name==='cargo'){await page.getByRole('button',{name:'☰ Меню',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.game-status')?.textContent.includes('ПАУЗА'));assert.match(await page.locator('.menu-live').innerText(),/ПАУЗА/);await page.getByRole('button',{name:'▶ Продолжить миссию',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('.game-status')?.textContent.includes('ПАУЗА'));}
+ if(name==='cargo'){await page.getByRole('button',{name:'☰ Меню',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.game-status')?.textContent.includes('ПАУЗА'));assert.match(await page.locator('.menu-live').innerText(),/ПАУЗА/);await page.getByRole('button',{name:'▶ Продолжить миссию',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('.game-status')?.textContent.includes('ПАУЗА'));await page.keyboard.press('p');await page.getByRole('button',{name:'☰ Меню',exact:true}).click();await page.getByRole('button',{name:'▶ Продолжить миссию',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('.game-status')?.textContent.includes('ПАУЗА'));}
   await page.getByRole('button',{name:'Как играть ?',exact:true}).click();await page.waitForFunction(()=>!!document.querySelector('dialog:modal')&&document.querySelector('.game-status')?.textContent.includes('ПАУЗА'));assert.match(await page.locator('.game-status').innerText(),/ПАУЗА/);await page.screenshot({path:output+'/help-'+name+'.png'});await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.querySelector('dialog:modal'));
   assert.equal(await page.locator('.game-error').count(),0);await page.getByRole('button',{name:'⌂ Холл',exact:true}).click();
  }
@@ -57,29 +63,55 @@ try{
  }
  await page.setViewportSize({width:1440,height:900});await page.goto(url+'?scene=robot&presentation=1&autostart=1',{waitUntil:'networkidle'});await page.waitForTimeout(500);
  assert.match(await page.locator('.game-status').innerText(),/СТАРТ ЧЕРЕЗ|ДЕМОНСТРАЦИЯ ∞/,'Autostart deep link begins the selected presentation scene');
+ await page.goto(url+'?scene=drones',{waitUntil:'networkidle'});assert.equal(await page.locator('.experience.scene-drones').count(),1,'drones deep link');
+ await page.goto(url+'?scene=cargo',{waitUntil:'networkidle'});assert.equal(await page.locator('.experience.scene-cargo').count(),1,'cargo deep link');
  await page.goto(url+'?scene=cargo&presentation=1&clean=1',{waitUntil:'networkidle'});await page.waitForTimeout(650);
  assert.equal(await page.locator('.experience.is-game.clean').count(),1,'Deep link opens the requested game scene in clean presentation mode');
  assert.equal(await page.locator('.game-status').count(),0,'Clean deep link keeps gameplay overlays hidden');assert.equal(await page.locator('.vr-entry button').isVisible(),true);
  await page.goto(url+'?gallery=1',{waitUntil:'networkidle'});await page.waitForTimeout(600);await page.screenshot({path:output+'/gallery.png'});
+ await page.locator('.demo-list button').filter({hasText:'Робот-манипулятор'}).click();assert.equal(new URL(page.url()).searchParams.get('gallery'),'1','changing exhibits must preserve the gallery deep link');
+ const stl=Buffer.from('solid audit\nfacet normal 0 0 1\nouter loop\nvertex 0 0 0\nvertex 1 0 0\nvertex 0 1 0\nendloop\nendfacet\nendsolid audit');
+ const gltf={asset:{version:'2.0'},scene:0,scenes:[{nodes:[0]}],nodes:[{mesh:0}],meshes:[{primitives:[{attributes:{POSITION:0}}]}],buffers:[{byteLength:36}],bufferViews:[{buffer:0,byteLength:36}],accessors:[{bufferView:0,componentType:5126,count:3,type:'VEC3',min:[0,0,0],max:[1,1,0]}]};
+ const json=Buffer.from(JSON.stringify(gltf)),padded=Math.ceil(json.length/4)*4,glb=Buffer.alloc(12+8+padded+8+36,0x20);glb.writeUInt32LE(0x46546c67,0);glb.writeUInt32LE(2,4);glb.writeUInt32LE(glb.length,8);glb.writeUInt32LE(padded,12);glb.writeUInt32LE(0x4e4f534a,16);json.copy(glb,20);glb.writeUInt32LE(36,20+padded);glb.writeUInt32LE(0x004e4942,24+padded);[0,0,0,1,0,0,0,1,0].forEach((v,i)=>glb.writeFloatLE(v,28+padded+i*4));
+ for(const [name,buffer] of [['audit.stl',stl],['audit.glb',glb]]){await page.locator('input[type=file]').setInputFiles({name,mimeType:'application/octet-stream',buffer});await page.waitForFunction(name=>document.querySelector('.scene-heading h1')?.textContent===name,name);assert.equal(new URL(page.url()).searchParams.get('gallery'),'1');}await page.screenshot({path:output+'/gallery-local-glb.png'});
  // Close-up, deterministic, real rendered inspection of the arm at every handling stage.
  await page.goto(url+'.test-output/inspection.html',{waitUntil:'networkidle'});await page.waitForTimeout(800);assert.equal(await page.evaluate(()=>!!window.__inspection.scene.getObjectByName('cargo-exhibit')),true,'Losinka rover exhibit must be present in the hall');
- await page.evaluate(()=>{const q=window.__inspection;q.go('cargo');q.renderer.setAnimationLoop(null);q.fade.visible=false;q.scene.traverse(o=>{if(o.isDirectionalLight)o.intensity=3.5;});q.cargo.robot.position.set(-5,0,0);q.cargo.update(0,0,0,false);q.camera.position.set(1,4.5,5);q.camera.lookAt(-5,1,0);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);});
+ await page.evaluate(()=>{const q=window.__inspection;q.go('cargo');q.renderer.setAnimationLoop(null);q.fade.visible=false;q.introRoot.visible=false;q.scene.traverse(o=>{if(o.isDirectionalLight)o.intensity=3.5;});q.cargo.robot.position.set(-5,0,0);q.cargo.update(0,0,0,false);q.camera.position.set(1,4.5,5);q.camera.lookAt(-5,1,0);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);});
  await page.screenshot({path:output+'/arm-0-ready.png'});
  await page.evaluate(()=>window.__inspection.cargo.interact());
  for(const [name,frames] of [['1-approach',70],['2-gripped',65],['3-transfer',45],['4-loaded',190]]){
   const state=await page.evaluate(n=>{const q=window.__inspection;for(let i=0;i<n;i++)q.cargo.update(1/60,0,0,true);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);return {loaded:q.cargo.loaded,busy:q.cargo.busy,delivered:q.cargo.delivered,calls:q.renderer.info.render.calls,triangles:q.renderer.info.render.triangles};},frames);reports.push({arm:name,...state});await page.screenshot({path:output+'/arm-'+name+'.png'});
  }
- await page.evaluate(()=>{const q=window.__inspection;q.cargo.robot.position.set(0,0,2);q.cargo.update(0,0,0,false);q.camera.position.set(6,5,8);q.camera.lookAt(0,1,2);q.cargo.interact();for(let i=0;i<370;i++)q.cargo.update(1/60,0,0,true);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);});
+ await page.evaluate(()=>{const q=window.__inspection;q.cargo.robot.position.set(0,0,2);q.cargo.update(0,0,0,false);q.camera.position.set(6,5,8);q.camera.lookAt(0,1,2);q.cargo.interact();});
+ for(const [phase,frames] of [['deck-grip',135],['lowering',80],['released',40],['rest',115]]){await page.evaluate(n=>{const q=window.__inspection;for(let i=0;i<n;i++)q.cargo.update(1/60,0,0,true);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);},frames);await page.screenshot({path:output+'/unload-'+phase+'.png'});}
  assert.equal(await page.evaluate(()=>window.__inspection.cargo.delivered),1);await page.screenshot({path:output+'/arm-5-delivered.png'});
+ for(let index=1;index<3;index++){
+  const delivered=await page.evaluate(index=>{const q=window.__inspection,c=q.cargo,item=c.packages[index];c.robot.position.set(item.position.x,0,item.position.z+3);c.robot.rotation.set(0,0,0);c.update(0,0,0,false);c.interact();for(let i=0;i<370;i++)c.update(1/60,0,0,true);c.robot.position.set(0,0,2);c.update(0,0,0,false);c.interact();for(let i=0;i<370;i++)c.update(1/60,0,0,true);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);return c.delivered;},index);
+  assert.equal(delivered,index+1,'every cargo delivery is rendered and counted once');await page.screenshot({path:output+'/cargo-delivered-'+delivered+'.png'});
+ }
  // Monoscopic preview at a nominal standing eye height; NOT an immersive device test.
  for(const name of ['cargo','robot','drones']){
-  await page.evaluate(mode=>{const q=window.__inspection;q.go(mode);q.renderer.xr.isPresenting=true;q.placeView();q.renderer.xr.isPresenting=false;q.camera.position.set(0,1.65,0);q.camera.rotation.set(-.15,0,0);q.fade.visible=false;q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);},name);
+  await page.evaluate(mode=>{const q=window.__inspection;q.go(mode);q.renderer.xr.isPresenting=true;q.placeView();q.renderer.xr.isPresenting=false;q.camera.position.set(0,1.65,0);q.camera.rotation.set(-.15,0,0);q.fade.visible=false;q.introRoot.visible=false;q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);},name);
   await page.screenshot({path:output+'/console-preview-'+name+'.png'});
   assert.equal(await page.evaluate(()=>window.__inspection.missionBeacon.visible),true,'Spatial mission beacon must be visible in VR game scenes');
   const heights=await page.evaluate(()=>{const q=window.__inspection;return q.hudRoot.children.filter(o=>o.userData.action).map(o=>o.getWorldPosition(q.camera.position.clone()).y-q.rig.position.y);});assert.ok(heights.every(y=>y>.3),'Every VR button must remain above ground');
   await page.evaluate(()=>{const q=window.__inspection;q.camera.rotation.set(-.08,Math.atan2(4.4,3.4),0);q.renderer.render(q.scene,q.camera);});
   await page.screenshot({path:output+'/console-side-'+name+'.png'});
+  await performanceReport(page,name,true);
  }
+ // Full active workloads, not just the one-drone tutorial. Logic advances deterministically;
+ // the final scene is drawn by the real WebGL2 renderer (no mock or screenshot substitute).
+ await page.evaluate(()=>{const q=window.__inspection;q.go('hub');q.advance(270);});
+ await page.screenshot({path:output+'/hub-settled.png'});await performanceReport(page,'hub');
+ await page.evaluate(()=>{const q=window.__inspection;q.go('drones');q.start();q.advance(2600);});
+ await page.screenshot({path:output+'/drones-flagship-wave.png'});await performanceReport(page,'drones');
+ assert.equal(await page.evaluate(()=>window.__inspection.drones.filter(d=>d.g.visible).length),9,'entire final wave must be rendered');
+ await page.evaluate(()=>{const q=window.__inspection;q.go('robot');q.start();q.advance(190);q.spin();for(const o of [...q.cells,...q.blocks]){q.robot.position.copy(o.position);q.advance(1);}});
+ await page.screenshot({path:output+'/robot-duel.png'});await performanceReport(page,'robot');
+ await page.evaluate(()=>{const q=window.__inspection;q.go('cargo');q.start();q.advance(190);});await performanceReport(page,'cargo');
+ const memories=[];for(let cycle=0;cycle<3;cycle++){for(const mode of ['hub','robot','drones','cargo'])await page.evaluate(mode=>{const q=window.__inspection;q.go(mode);q.start();q.advance(mode==='drones'?2600:270);},mode);memories.push(await page.evaluate(()=>({...window.__inspection.renderer.info.memory})));}
+ assert.deepEqual(memories[2],memories[1],'repeated scene changes must not accumulate GPU geometries/textures');reports.push({memoryAfterCycles:memories});
+ const softwareFPS=await page.evaluate(async()=>{const q=window.__inspection,start=performance.now();for(let i=0;i<8;i++)await new Promise(resolve=>requestAnimationFrame(()=>{q.renderer.render(q.scene,q.camera);resolve();}));return 8000/(performance.now()-start);});assert.ok(softwareFPS>=budget.minimumSoftwareFPS,'software WebGL2 must keep producing frames');reports.push({softwareFPS,hardware:'Software renderer; not Meta Quest 2'});
  reports.push({errors});assert.deepEqual(errors,[],'No browser errors expected');
  console.log('PASS: real WebGL2 renderer; three scenes; help/pause; unsupported VR message; two mobile layouts without overlaps; legacy gallery; real rendered arm sequence. Software GPU, not Quest.');
 } finally {await writeFile(output+'/browser-report.json',JSON.stringify(reports,null,2));await browser.close();server.close();}
