@@ -457,8 +457,8 @@ export function createExperience(host: HTMLElement, hooks: {
     function placeView(){
         clearInput();rig.position.set(0,0,0);rig.rotation.set(0,0,0);
         if(!renderer.xr.isPresenting){
-            camera.position.set(0,mode==='cargo'?11:mode==='robot'?7:2.6,mode==='cargo'?12:mode==='robot'?8:7);
-            camera.lookAt(0,mode==='cargo'||mode==='robot'?0:2.6,-10);
+            camera.position.set(0,mode==='cargo'?11:mode==='robot'?5.6:2.7,mode==='cargo'?12:mode==='robot'?6.6:7);
+            camera.lookAt(0,mode==='cargo'?0:mode==='robot'?.45:2.7,mode==='robot'?-7:-10);
         }else{
             camera.position.set(0,0,0);camera.rotation.set(0,0,0);
             rig.position.set(0,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?7:mode==='robot'?4:1);
@@ -654,7 +654,7 @@ export function createExperience(host: HTMLElement, hooks: {
         sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(1.75-sceneIntro)/.28),out=Math.min(1,sceneIntro/.42),s=.9+.1*q;introRoot.scale.setScalar(s);introRoot.position.y=.04*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out);}});}
         if(missionBeacon.visible){const pulseScale=ended&&won()?.82+.035*(.5+.5*Math.sin(elapsed*6)):.82;missionBeacon.scale.setScalar(pulseScale);}
         if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
-        sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):3.5;
+        sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):mode==='robot'?4.15:mode==='drones'?3.85:3.5;
         if(mode==='hub')exhibits.forEach((e, i) => { e.rotation.y = elapsed * .22; e.position.y = 1.2 + Math.sin(elapsed + i) * .06; });
         if (mode !== 'hub' && !ready && !training && !ended && !countdown) {
             roundAge += dt;
