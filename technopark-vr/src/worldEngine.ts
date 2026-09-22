@@ -6,6 +6,7 @@ import { createArt } from './art';
 import { createAudio } from './audio';
 import {alignStation,neutralGamepad,axisValue} from './xrComfort';
 import {contactShadow} from './contactShadow';
+import {createShowcaseModels} from './showcaseModels';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 type Mode = 'hub' | 'robot' | 'drones' | 'cargo';
 export function createExperience(host: HTMLElement, hooks: {
@@ -22,6 +23,7 @@ export function createExperience(host: HTMLElement, hooks: {
     diagnostics?: (data:{fps:number;calls:number;triangles:number;geometries:number;textures:number;xr:boolean;scene:string})=>void;
     records?: (records:Record<string,number>)=>void;
     autopilot?: (active:boolean)=>void;
+    armMode?: (active:boolean)=>void;
 }) {
     const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: false });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -49,7 +51,7 @@ export function createExperience(host: HTMLElement, hooks: {
     scene.environmentIntensity=.72;
     room.dispose();
     pmrem.dispose();
-    const audioFX = createAudio();
+    const audioFX = createAudio(),showcaseModels=createShowcaseModels();
     const cargo = createCargoScene(message => { notify(message); sound(440); });
     const worlds = { hub: new T.Group(), robot: new T.Group(), drones: new T.Group(), cargo: cargo.root };
     Object.values(worlds).forEach(g => scene.add(g));
@@ -187,11 +189,15 @@ export function createExperience(host: HTMLElement, hooks: {
     arena.add(rival);
     box(rival, navy, 0, .3, 0, 1.4, .5, 1.2);
     box(rival, orange, 0, .54, 0, .9, .06, .7);
-    box(rival, steel, 0, .25, -.75, 1.6, .25, .35);
+    const plowShape=new T.Shape();plowShape.moveTo(-.9,.1);plowShape.lineTo(-.45,.52);plowShape.lineTo(-.36,.52);plowShape.lineTo(-.72,.1);plowShape.closePath();
+    const plow=mesh(rival,new T.ExtrudeGeometry(plowShape,{depth:1.65,bevelEnabled:false,steps:1}),steel);plow.rotation.y=-Math.PI/2;plow.position.x=.825;
+    for(const x of [-.53,.53])box(rival,black,x,.33,-.34,.1,.12,.55);
+    for(const x of [-.45,0,.45])box(rival,black,x,.58,.05,.22,.02,.06);
     for (const x of [-.8, .8])
         for (const z of [-.4, .4]) {
             const wheel = cyl(rival, black, x, .23, z, .23, .14, 12);
             wheel.rotation.z = Math.PI / 2;
+            const hub=cyl(rival,steel,x+Math.sign(x)*.085,.23,z,.11,.028,12);hub.rotation.z=Math.PI/2;
         }
     const rivalName = label(arena, 'СОПЕРНИК / БУЛЬДОЗЕР', 0, 1.3, -11, 2.8, .3);
     const duelGate=new T.Group();duelGate.name='arena-duel-gate';arena.add(duelGate);duelGate.position.set(0,0,-13.15);duelGate.visible=false;
@@ -214,7 +220,7 @@ export function createExperience(host: HTMLElement, hooks: {
         const stripe = box(arena, steel, 0, .14, -3 - i * 4, 11, .012, .03);
     }
     const range = worlds.drones;
-    label(range, 'AERIAL LAB / ДРОН-ТРЕНИРОВКА', 0, 6, -25, 11, 1);
+    label(range, 'БПЛА / СТРЕЛКОВЫЙ СТЕНД', 0, 6, -25, 11, 1);
     for (let i = 0; i < 5; i++) {
         box(range, steel, 0, .04, -6 - i * 5, 22, .05, .08);
         for (const x of [-11, 11]) {
@@ -223,11 +229,11 @@ export function createExperience(host: HTMLElement, hooks: {
         }
     }
     for (let i = 0; i < 3; i++) {
-        const hoop = mesh(range, new T.TorusGeometry(6 + i, .035, 6, 64), i % 2 ? cyan : orange, 0, 4, -12 - i * 7);
+        const hoop = mesh(range, new T.TorusGeometry(6 + i, .035, 6, 64), steel, 0, 4, -12 - i * 7);
     }
     type Drone = {
         g: T.Group;
-        hit: T.Mesh;
+        rotorOffsets:number[][];
         phase: number;
         dead: boolean;
         velocity: number;
@@ -241,22 +247,10 @@ export function createExperience(host: HTMLElement, hooks: {
         healthBar:T.Mesh;
     };
     const drones: Drone[] = [],droneDisposers:Array<()=>void>=[];
-    const rotorGeometry=new T.BoxGeometry(.49,.012,.04),rotorDummy=new T.Object3D();geometries.push(rotorGeometry);
-    const rotorOffsets=[[-.65,-.6],[-.65,.6],[.65,-.6],[.65,.6]];
+    const rotorDummy=new T.Object3D();
     for (let i = 0; i < 9; i++) {
-        const g = new T.Group();
-        g.name = i === 8 ? 'boss-drone' : 'game-drone';
-        range.add(g);
-        const hit = box(g, steel, 0, 0, 0, .7, .28, .5);
-        box(g, orange, 0, 0, .28, .4, .08, .06);
-        box(g, black, 0, 0, 0, 1.6, .08, .1);
-        box(g, black, 0, 0, 0, .1, .08, 1.5);
-        const rotors=new T.InstancedMesh(rotorGeometry,cyan,4);rotors.name='drone-rotors';rotors.boundingSphere=new T.Sphere(new T.Vector3(0,.1,0),1.3);rotors.instanceMatrix.setUsage(T.DynamicDrawUsage);g.add(rotors);
-        rotorOffsets.forEach(([x,z],index)=>{rotorDummy.position.set(x,.1,z);rotorDummy.rotation.set(0,0,0);rotorDummy.updateMatrix();rotors.setMatrixAt(index,rotorDummy.matrix);});
-        for (const x of [-.65, .65])
-            for (const z of [-.6, .6]) {
-                cyl(g, black, x, .06, z, .31, .06, 12);
-            }
+        const model=showcaseModels.drone(),g=model.root,rotors=model.rotors;
+        g.name = i === 8 ? 'boss-drone' : 'game-drone';range.add(g);
         const boss = i === 8, armored = i % 3 === 2;
         const maxHP = boss ? 6 : armored ? 2 : 1;
         g.scale.setScalar(boss ? 2.4 : armored ? 1.35 : i % 3 === 1 ? 1.05 : 1.2);
@@ -266,7 +260,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         const healthBar=box(g,boss?red:orange,0,.53,.1,.85,.055,.055);healthBar.name='drone-health';healthBar.visible=maxHP>1;
         droneDisposers.push(batchPalette(g,new Set<T.Object3D>([rotors,healthBar])));
-        drones.push({ g, hit,rotors,rotorAngle:0,healthBar, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
+        drones.push({ g,rotorOffsets:model.offsets,rotors,rotorAngle:0,healthBar, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
     }
     const trainingHalo=mesh(range,new T.TorusGeometry(.92,.028,6,48),orange,0,2.6,-7);trainingHalo.userData.dynamic=true;trainingHalo.visible=false;
     const ammoLamps:T.Mesh[]=[];for(let i=0;i<6;i++){const lamp=box(range,cyan,-2.25+i*.9,1.05,-4.25,.62,.12,.06);lamp.name='ammo-lamp';lamp.userData.dynamic=true;ammoLamps.push(lamp);}
@@ -298,23 +292,13 @@ export function createExperience(host: HTMLElement, hooks: {
         const enter=label(hub,'ОТКРЫТЬ ГРУЗОВУЮ МИССИЮ →',x,.38,z+1.45,3,.3,'#d8f3a7',1);xrOnly(enter.o);action(enter.o,()=>go('cargo'));
     }
     function gun() {
-        const g = new T.Group();g.name='shotgun';
-        box(g,black,0,0,-.24,.15,.15,.5);
-        for(const x of [-.035,.035]){const barrel=cyl(g,steel,x,.035,-.64,.027,.66,10);barrel.rotation.x=Math.PI/2;}
-        box(g,orange,0,-.018,-.47,.18,.085,.24);box(g,black,0,-.025,-.2,.17,.11,.16);
-        const stock=box(g,navy,0,-.11,.08,.13,.18,.3);stock.rotation.x=-.34;
-        const pump=box(g,navy,0,-.025,-.68,.19,.11,.22);pump.name='shotgun-pump';
-        const muzzle = mesh(g, new T.IcosahedronGeometry(.12, 0), orange, 0, .035, -.99); muzzle.name = 'muzzle-flash'; muzzle.visible = false;
-        box(g,cyan,0,.105,-.55,.018,.014,.42);
+        const g=showcaseModels.gun();
+        const muzzle=mesh(g,new T.IcosahedronGeometry(.075,0),orange,0,.026,-.718);muzzle.name='muzzle-flash';muzzle.visible=false;
         return g;
     }
     const desktopGun = gun();
     camera.add(desktopGun);
     desktopGun.position.set(.3, -.24, -.25);
-    const flash = mesh(new T.Group(), new T.IcosahedronGeometry(.13, 0), orange);
-    camera.add(flash);
-    flash.position.set(.3, -.2, -1);
-    flash.visible = false;
     const sparksGeo = new T.BufferGeometry(), sparkPos = new Float32Array(96 * 3), sparkVel = new Float32Array(96 * 3);
     sparksGeo.setAttribute('position', new T.BufferAttribute(sparkPos, 3));
     geometries.push(sparksGeo);
@@ -348,7 +332,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const consoleCue=label(hudRoot,'← ПУЛЬТ И ЗАДАНИЕ',0,0,0,1.6,.24);scene.add(consoleCue.o);
     const hud = label(hudRoot, '', 0, 2.9, -3, 4.6, .92,'#e2fff6',3);
     const guidance = label(hudRoot, '', 0, 1.85, -3, 4.6, .68,'#e2fff6',2);
-    const startLabel = label(hudRoot, 'НАЧАТЬ РАУНД', 0, 1.3, -3, 2.1, .4);
+    const startLabel = label(hudRoot, 'НАЧАТЬ РАУНД', 0, 1.3, -3, 1.6, .42);
     action(startLabel.o, () => paused()?resume():start());
     const back = label(hudRoot, '⌂  ХОЛЛ', -1.5, 2.35, -3, 1.35, .36);
     action(back.o, () => go('hub'));
@@ -369,6 +353,11 @@ export function createExperience(host: HTMLElement, hooks: {
     const diagLabel=label(hudRoot,'',0,1.5,-3,3.6,.24,'#9fc9c2',1);diagLabel.o.name='vr-diagnostics';diagLabel.o.visible=false;
     const recenterLabel=label(hudRoot,'◎  ЦЕНТР ВИДА',0,-2.05,-3,1.9,.3);
     action(recenterLabel.o,()=>placeView());
+    const armModeLabel=label(hudRoot,'РУЧНАЯ СТРЕЛА',-1.8,-.66,-3,1.35,.38,'#d8f3a7',2);
+    action(armModeLabel.o,()=>toggleArm());
+    const duelLabel=label(hudRoot,'ПРЯМОЙ БОЙ',1.8,-.66,-3,1.35,.42,'#ffd0a4',1);action(duelLabel.o,()=>startDuel());
+    const gripLabel=label(hudRoot,'АВТОЗАХВАТ',1.8,-.66,-3,1.35,.38,'#d8f3a7',2);
+    action(gripLabel.o,()=>cargoAction());
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
     const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3(), forwardScratch=new T.Vector3(), scaleScratch=new T.Vector3(), quatScratch=new T.Quaternion(), deltaScratch=new T.Vector3(), awayScratch=new T.Vector3(), headScratch=new T.Vector3(), directionScratch=new T.Vector3(), sideScratch=new T.Vector3(), moveScratch=new T.Vector3(), candidateScratch=new T.Vector3(), tracerEndScratch=new T.Vector3();
@@ -418,10 +407,10 @@ export function createExperience(host: HTMLElement, hooks: {
                 const wasBusy=cargo.busy;cargoAction();if(!wasBusy&&cargo.busy)pulse(c);
             }
         } });
-        c.addEventListener('squeezestart', () => {const source=sources.get(c);if(!source||inputBlocked(source)||[...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return; if (source.handedness === 'left')
+        c.addEventListener('squeezestart', () => {const source=sources.get(c);if(!source||inputBlocked(source)||squeezeTimes.get(c)===previous||[...pauseReasons].some(reason=>!['manual','focus'].includes(reason)))return;squeezeTimes.set(c,previous); if (source.handedness === 'left')
             go('hub');
         else if (mode === 'drones')
-            reload(); });
+            reload(); else if(mode==='cargo')toggleArm(); });
     }
     let entranceAge = 0, roundAge = 0, bossAnnounced = false;
     let presentation = false, training = false, lessonStep = 0, lessonTravel = 0, lessonTurn = 0, lessonSpin = false, health = 3, rivalHealth = 3, duel = false, impactWait = 0, rivalRespawn = 0;
@@ -439,7 +428,7 @@ export function createExperience(host: HTMLElement, hooks: {
     hooks.records?.({...bests});
     let mode: Mode = 'hub', seconds = 60, score = 0, ammo = 6, reloading = 0, cooldown = 0, spinning = false, ended = false, elapsed = 0, lastHUD = '', flashTime = 0;
     const keys = new Set<string>();
-    const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>(),gestureTimes=new WeakMap<T.Group,number>();
+    const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>(),gestureTimes=new WeakMap<T.Group,number>(),squeezeTimes=new WeakMap<T.Group,number>();
     const stickSample=[0,0];
     let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0,diagnosticsVisible=false;
     let observedSession:XRSession|null=null,observedSpace:XRReferenceSpace|null=null,pendingRecenter=false;
@@ -481,15 +470,22 @@ export function createExperience(host: HTMLElement, hooks: {
     function start() { if([...pauseReasons].some(reason=>reason!=='menu'))return; if (mode === 'hub' || (!training && !ready && !ended))
         return; restart(); audioFX.unlock(); ready = false; countdown = 3; startLabel.o.visible = false; sound(660); updateHUD(); }
     const won=()=>mode==='cargo'?cargo.finished:mode==='robot'?rivalHealth<=0:drones[8].hp<=0;
-    const resultScore=()=>mode==='cargo'?Math.max(0,cargo.delivered*500+(cargo.finished?Math.ceil(seconds)*5:0)-cargo.collisions*25):mode==='robot'?score*100+(rivalHealth<=0?Math.ceil(seconds)*10:0):score;
+    let duelOnly=false;
+    const recordKey=()=>mode==='robot'&&duelOnly?'duel':mode;
+    const resultScore=()=>mode==='cargo'?Math.max(0,cargo.delivered*500+(cargo.finished?Math.ceil(seconds)*5:0)-cargo.collisions*25):mode==='robot'?(duelOnly?0:score*100)+(rivalHealth<=0?Math.ceil(seconds)*10:0):score;
     function finish() { if (ended)
         return; ended = true; audioFX.motor(0);if(won())controllers.forEach(ctrl=>pulse(ctrl,.42,110)); const result=resultScore(); if (!presentation)
-        bests[mode] = Math.max(bests[mode] || 0, result); if (!presentation)
+        bests[recordKey()] = Math.max(bests[recordKey()] || 0, result); if (!presentation)
         try {
             localStorage.setItem('technopark-records', JSON.stringify(bests));
         }
         catch { } hooks.records?.({...bests});audioFX.event(won()?'win':'end'); updateHUD(); }
     function cargoAction(){if(paused()||cargoAutopilot)return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
+    function toggleArm(){
+        if(mode!=='cargo'||paused()||cargoAutopilot||ended||countdown)return;
+        if(ready)start();
+        if(cargo.setManual(!cargo.manual)){clearInput();hooks.armMode?.(cargo.manual);notify(cargo.manual?'РУЧНАЯ СТРЕЛА · ЛЕВЫЙ СТИК: ВЫЛЕТ / ПОВОРОТ · ПРАВЫЙ ↑↓: ВЫСОТА':'ШАССИ · ЛЕВЫЙ СТИК: УПРАВЛЕНИЕ РОБОТОМ');}updateHUD();
+    }
     function snap(dir: number) { learned.turn = true; const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(headScratch); const a = -dir * Math.PI / 6; rig.position.sub(head).applyAxisAngle(upAxis, a).add(head); rig.rotation.y += a; }
     function placeView(){
         pendingRecenter=renderer.xr.isPresenting;
@@ -506,6 +502,7 @@ export function createExperience(host: HTMLElement, hooks: {
         xrOnlyHub.forEach(o=>o.visible=renderer.xr.isPresenting);
         // The desktop already has HTML controls. In VR the console is fixed to the observation station, not the head.
         hudRoot.visible=mode!=='hub'&&renderer.xr.isPresenting;missionBeacon.visible=mode!=='hub'&&renderer.xr.isPresenting;
+        armModeLabel.o.visible=gripLabel.o.visible=mode==='cargo';duelLabel.o.visible=mode==='robot';
         const stationY=mode==='cargo'?2.8:mode==='robot'?1.5:0,stationZ=mode==='cargo'?7:mode==='robot'?4:1;
         // Fixed side console: the centre sight line and ground remain unobstructed.
         const consoleYaw=Math.atan2(4.4,3.4),consoleScale=.8;
@@ -529,7 +526,8 @@ export function createExperience(host: HTMLElement, hooks: {
             if(needsTraining)train();
         }
     }
-    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot){cargoDemoStep=0;cargoDemoWait=0;} roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset();hooks.armMode?.(false);lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot){cargoDemoStep=0;cargoDemoWait=0;} roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; duelOnly=false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function startDuel(){if(mode!=='robot'||[...pauseReasons].some(reason=>reason!=='menu'))return;restart();start();duelOnly=true;cells.forEach(c=>c.visible=false);blocks.forEach(b=>b.visible=false);score=11;duel=true;rival.visible=true;rivalName.o.visible=true;duelGate.visible=true;seconds=60;notify('БОЙ · ЛЕВЫЙ СТИК: РОБОТ · КУРОК: СПИННЕР');updateHUD();}
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
         learned.spin = true;
@@ -560,7 +558,7 @@ export function createExperience(host: HTMLElement, hooks: {
             dist = along;
         }
     }
-    ray.at(best?dist:18,tracerEndScratch);tracerGeo.setFromPoints([ray.origin,tracerEndScratch]);tracer.visible=true;tracerLife=.075;tracerMat.opacity=.92;
+    ray.at(best?dist:18,tracerEndScratch);const weapon=c?guns[controllers.indexOf(c)]:desktopGun;weapon?.getObjectByName('muzzle-flash')?.getWorldPosition(pointScratch);tracerGeo.setFromPoints([weapon?pointScratch:ray.origin,tracerEndScratch]);tracer.visible=true;tracerLife=.075;tracerMat.opacity=.92;
     if (best) {
         best.hp--;
         const destroyed = best.hp <= 0;
@@ -590,19 +588,20 @@ export function createExperience(host: HTMLElement, hooks: {
         notify('ПРОМАХ / СЕРИЯ СБРОШЕНА');
     } updateHUD(); }
     function updateHUD() { let s = entranceAge < 4 && mode === 'hub' ? 'ДОБРО ПОЖАЛОВАТЬ / АКТИВАЦИЯ ЯДРА' : presentation ? 'ПРЕЗЕНТАЦИЯ ∞ / Выберите сцену' : 'Ядро / кинетическая инсталляция · Выберите портал'; if (mode !== 'hub') {
-        const progress = mode === 'cargo' ? cargo.status() : mode === 'robot' ? (duel ? `ДУЭЛЬ · Ваша прочность ${health}/3 · Соперник ${rivalHealth}/3` : `Ячейки ${cells.filter(c => !c.visible).length}/5 · Блоки ${blocks.filter(c => !c.visible).length}/6 · ${spinning ? 'Спиннер ВКЛ' : 'Спиннер ВЫКЛ'}`) : `Волна ${Math.min(3, 1 + Math.floor(roundAge / 20))}${roundAge >= 40 ? ' · ФЛАГМАН ' + drones[8].hp + '/6' : ''} · ${score} очков · ${reloading ? 'Перезарядка…' : ammo + '/6 зарядов'} · ×${Math.min(4, 1 + Math.floor(combo / 3))}`;
-        s = training ? lessonText() : ready ? 'ГОТОВЫ? НАЖМИТЕ «НАЧАТЬ РАУНД»' : countdown > 0 ? 'СТАРТ ЧЕРЕЗ ' + Math.ceil(countdown) : ended ? (mode === 'cargo' ? (cargo.finished ? 'ДОСТАВЛЕНО 3/3 · ' + Math.ceil(roundAge) + ' С · ОШИБКИ ' + cargo.collisions : 'ВРЕМЯ ВЫШЛО · ' + cargo.delivered + '/3 ГРУЗОВ') : mode === 'robot' ? (rivalHealth <= 0 ? 'ПОБЕДА В ДУЭЛИ' : 'ПОПРОБУЙТЕ ЕЩЁ') : `${drones[8].hp <= 0 ? 'ФЛАГМАН СБИТ' : 'РАУНД ЗАВЕРШЁН'} · ТОЧНОСТЬ ${shots ? Math.round(hits / shots * 100) : 0}%`) + ` · ОЧКИ ${resultScore()} · РЕКОРД ${bests[mode]}` : `${presentation ? 'ДЕМОНСТРАЦИЯ ∞' : Math.ceil(seconds) + ' с'} · ${progress}`;
+        const progress = mode === 'cargo' ? cargo.status() : mode === 'robot' ? (duel ? `${duelOnly?'ПРЯМОЙ БОЙ':'ДУЭЛЬ'} · Ваша прочность ${health}/3 · Соперник ${rivalHealth}/3` : `Ячейки ${cells.filter(c => !c.visible).length}/5 · Блоки ${blocks.filter(c => !c.visible).length}/6 · ${spinning ? 'Спиннер ВКЛ' : 'Спиннер ВЫКЛ'}`) : `Волна ${Math.min(3, 1 + Math.floor(roundAge / 20))}${roundAge >= 40 ? ' · ФЛАГМАН ' + drones[8].hp + '/6' : ''} · ${score} очков · ${reloading ? 'Перезарядка…' : ammo + '/6 зарядов'} · ×${Math.min(4, 1 + Math.floor(combo / 3))}`;
+        s = training ? mode==='cargo'&&cargo.manual?'УРОК · РУЧНАЯ СТРЕЛА · ЗАХВАТИТЕ И УЛОЖИТЕ ГРУЗ':lessonText() : ready ? 'ГОТОВЫ? НАЖМИТЕ «НАЧАТЬ РАУНД»' : countdown > 0 ? 'СТАРТ ЧЕРЕЗ ' + Math.ceil(countdown) : ended ? (mode === 'cargo' ? (cargo.finished ? 'ДОСТАВЛЕНО 3/3 · ' + Math.ceil(roundAge) + ' С · ОШИБКИ ' + cargo.collisions : 'ВРЕМЯ ВЫШЛО · ' + cargo.delivered + '/3 ГРУЗОВ') : mode === 'robot' ? (rivalHealth <= 0 ? 'ПОБЕДА В ДУЭЛИ' : 'ПОПРОБУЙТЕ ЕЩЁ') : `${drones[8].hp <= 0 ? 'ФЛАГМАН СБИТ' : 'РАУНД ЗАВЕРШЁН'} · ТОЧНОСТЬ ${shots ? Math.round(hits / shots * 100) : 0}%`) + ` · ОЧКИ ${resultScore()} · РЕКОРД ${bests[recordKey()]||0}` : `${presentation ? 'ДЕМОНСТРАЦИЯ ∞' : Math.ceil(seconds) + ' с'} · ${progress}`;
     } if(paused())s='ПАУЗА · '+s;
     const phase=mode==='hub'?'hub':training?'training':ready?'ready':countdown?'countdown':ended?'ended':'active';if(phase!==lastPhase){lastPhase=phase;hooks.phase?.(phase);}
     startLabel.o.visible=paused()||ready||training||ended;startLabel.write(paused()?'ПРОДОЛЖИТЬ':ended?'ЕЩЁ РАУНД':'НАЧАТЬ РАУНД');
     pauseLabel.write(paused()?'ПРОДОЛЖИТЬ':'ПАУЗА');
+    armModeLabel.write(cargo.manual?'УПРАВЛЯТЬ ШАССИ':'РУЧНАЯ СТРЕЛА');gripLabel.write(cargo.actionLabel().toUpperCase());
     const action=mode==='cargo'?cargo.actionLabel():'';if(action!==lastAction){lastAction=action;hooks.action?.(action);}
     if (s !== lastHUD) {
         lastHUD = s;
         if(mode!=='hub'){
             const title=mode==='cargo'?'03 · ПОЛИГОН ЛОСИНКА':mode==='robot'?'01 · РОБОТ-АРЕНА':'02 · ДРОН-ТИР';
             const state=paused()?'ПАУЗА':training?'ОБУЧЕНИЕ':ready?'ГОТОВ К СТАРТУ':countdown>0?'СТАРТ '+Math.ceil(countdown):ended?(won()?'МИССИЯ ВЫПОЛНЕНА':'РАУНД ЗАВЕРШЁН'):'МИССИЯ';
-            const detail=mode==='cargo'?`ГРУЗЫ ${cargo.delivered}/3 · ${cargo.loaded?'НА ПЛАТФОРМЕ':'ЗАХВАТ СВОБОДЕН'}`:mode==='robot'?(duel?`ДУЭЛЬ · ${rivalHealth}/3 · ВЫ ${health}/3`:`ЯЧЕЙКИ ${cells.filter(c=>!c.visible).length}/5 · БЛОКИ ${blocks.filter(b=>!b.visible).length}/6`):`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
+            const detail=mode==='cargo'?`ГРУЗЫ ${cargo.delivered}/3 · ${cargo.handLoaded?'В ЗАХВАТЕ':cargo.loaded?'НА ПЛАТФОРМЕ':'ЗАХВАТ СВОБОДЕН'}`:mode==='robot'?(duel?`ДУЭЛЬ · ${rivalHealth}/3 · ВЫ ${health}/3`:`ЯЧЕЙКИ ${cells.filter(c=>!c.visible).length}/5 · БЛОКИ ${blocks.filter(b=>!b.visible).length}/6`):`ЗАРЯДЫ ${ammo}/6 · ОЧКИ ${score}`;
             beaconTop.write(title);beaconMain.write(state);beaconSub.write(detail);
         }
                 hooks.status(s);
@@ -620,6 +619,7 @@ export function createExperience(host: HTMLElement, hooks: {
         keys.add(keyName(e.key));if(e.repeat)return;
         if(e.code==='Space'){if(mode==='cargo')cargoAction();else if(ready&&mode!=='hub')start();else spin();}
         if(e.key.toLowerCase()==='q')snap(-1);if(e.key.toLowerCase()==='e')snap(1);if(e.key.toLowerCase()==='r')reload();
+        if(e.key.toLowerCase()==='c')toggleArm();
         if(e.key.toLowerCase()==='p'&&mode!=='hub')pause('manual',true);if(e.key==='Escape')go('hub');
     }
     const up=(e:KeyboardEvent)=>keys.delete(keyName(e.key));
@@ -628,7 +628,8 @@ export function createExperience(host: HTMLElement, hooks: {
     const visibility=()=>{pause('page',document.hidden);if(!document.hidden&&mode!=='hub')pause('manual',true);};
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur);window.addEventListener('focus',focus);
     document.addEventListener('visibilitychange',visibility);
-    function click(e: PointerEvent) { if(paused())return; audioFX.unlock(); const r = renderer.domElement.getBoundingClientRect(); raycaster.setFromCamera(new T.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camera); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit)
+    function aimDesktop(e:PointerEvent){if(mode!=='drones'||renderer.xr.isPresenting)return;const r=renderer.domElement.getBoundingClientRect();raycaster.setFromCamera(new T.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1),camera);raycaster.ray.at(18,pointScratch);camera.worldToLocal(pointScratch);directionScratch.copy(pointScratch).sub(desktopGun.position).normalize();desktopGun.quaternion.setFromUnitVectors(forwardScratch.set(0,0,-1),directionScratch);}
+    function click(e: PointerEvent) {aimDesktop(e); if(paused())return; audioFX.unlock(); const r = renderer.domElement.getBoundingClientRect(); raycaster.setFromCamera(new T.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), camera); const hit = raycaster.intersectObjects(actions.filter(visible), false)[0]; if (hit)
         hit.object.userData.action();
     else if (mode === 'drones')
         shoot(raycaster.ray.clone()); }
@@ -645,7 +646,7 @@ export function createExperience(host: HTMLElement, hooks: {
     }
     else
         click(e); };
-    const pointerMove = (e: PointerEvent) => { if (!drag || mode !== 'hub' || paused() || renderer.xr.isPresenting)
+    const pointerMove = (e: PointerEvent) => { aimDesktop(e); if (!drag || mode !== 'hub' || paused() || renderer.xr.isPresenting)
         return; const dx = e.clientX - drag.lastX, dy = e.clientY - drag.lastY; if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 5)
         drag.moved = true; if (drag.moved) {
         camera.rotation.order = 'YXZ';
@@ -730,7 +731,8 @@ export function createExperience(host: HTMLElement, hooks: {
             sparks.visible = false;
         for (const src of sources.values())
             if (src.handedness === 'right' && src.gamepad) {
-                const [x]=stick(src);
+                const [x,y]=stick(src);
+                if(mode==='cargo'&&cargo.manual&&Math.abs(y)>Math.abs(x))continue;
                 if (Math.abs(x) < .3)
                     turnReady = true;
                 else if (Math.abs(x) > .7 && turnReady) {
@@ -746,10 +748,10 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         cooldown = Math.max(0, cooldown - dt);
         flashTime = Math.max(0, flashTime - dt);
-        flash.visible = flashTime > 0 && !renderer.xr.isPresenting;
+        const desktopMuzzle=desktopGun.getObjectByName('muzzle-flash');if(desktopMuzzle)desktopMuzzle.visible=flashTime>0;
         guns.forEach(g => { const m = g.getObjectByName('muzzle-flash'); if (m)
-            m.visible = flashTime > 0; g.position.z = flashTime > 0 ? .05 : 0;const pump=g.getObjectByName('shotgun-pump');if(pump)pump.position.z=-.68+(reloading?.18*Math.sin((1-reloading/1.3)*Math.PI):0); });
-        const desktopPump=desktopGun.getObjectByName('shotgun-pump');if(desktopPump)desktopPump.position.z=-.68+(reloading?.18*Math.sin((1-reloading/1.3)*Math.PI):0);
+            m.visible = flashTime > 0; g.position.z = flashTime > 0 ? .05 : 0;const pump=g.getObjectByName('shotgun-pump');if(pump)pump.position.z=reloading?.13*Math.sin((1-reloading/1.3)*Math.PI):Math.max(0,1-cooldown/.45)*Math.max(0,cooldown/.45)*.38; });
+        const desktopPump=desktopGun.getObjectByName('shotgun-pump');if(desktopPump)desktopPump.position.z=reloading?.13*Math.sin((1-reloading/1.3)*Math.PI):Math.max(0,1-cooldown/.45)*Math.max(0,cooldown/.45)*.38;
         desktopGun.position.z = -.25 + (flashTime > 0 ? .06 : 0);
         if(mode==='hub'){
             portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
@@ -889,7 +891,7 @@ export function createExperience(host: HTMLElement, hooks: {
         for (let i = 0; i < controllers.length; i++) {
             const hand = sources.get(controllers[i])?.handedness;
             const hint = handHints[i];
-            const text = hand==='left'?(mode==='drones'?'БОКОВАЯ: ХОЛЛ / ПУЛЬТ СЛЕВА':'СТИК: '+(mode==='hub'?'ХОД':'РОБОТ')+' / БОКОВАЯ: ХОЛЛ'):paused()?'КУРОК: ПРОДОЛЖИТЬ':mode==='cargo'?'КУРОК: '+(cargo.loaded?'ВЫГРУЗКА':'ЗАХВАТ')+' / СТИК: ПОВОРОТ':mode==='drones'?'КУРОК: ВЫСТРЕЛ / БОКОВАЯ: ЗАРЯДИТЬ':mode==='robot'?'КУРОК: СПИННЕР / СТИК: ПОВОРОТ':'КУРОК: ВЫБРАТЬ / СТИК: ПОВОРОТ';
+            const text = hand==='left'?(mode==='drones'?'БОКОВАЯ: ХОЛЛ / ПУЛЬТ СЛЕВА':'СТИК: '+(mode==='hub'?'ХОД':mode==='cargo'&&cargo.manual?'ВЫЛЕТ / ПОВОРОТ СТРЕЛЫ':'РОБОТ')+' / БОКОВАЯ: ХОЛЛ'):paused()?'КУРОК: ПРОДОЛЖИТЬ':mode==='cargo'?(cargo.manual?'↑↓: ВЫСОТА / КУРОК: ЗАХВАТ / БОКОВАЯ: ШАССИ':'КУРОК: АВТОЗАХВАТ / БОКОВАЯ: РУЧНАЯ СТРЕЛА'):mode==='drones'?'КУРОК: ВЫСТРЕЛ / БОКОВАЯ: ЗАРЯДИТЬ':mode==='robot'?'КУРОК: СПИННЕР / СТИК: ПОВОРОТ':'КУРОК: ВЫБРАТЬ / СТИК: ПОВОРОТ';
             hint.o.visible = !!text;
             hint.write(text);
         }
@@ -920,10 +922,11 @@ export function createExperience(host: HTMLElement, hooks: {
                     }
                 }
             }
+            if(cargo.manual&&active){let lift=(keys.has('t')?1:0)-(keys.has('g')?1:0);for(const src of sources.values())if(src.handedness==='right'&&src.gamepad){const [,y]=stick(src);if(Math.abs(y)>.15)lift=-y;}cargo.moveArm(dt,drive,turn,lift);}
             cargo.update(dt, drive, turn, active);
             if(cargo.collisions>lastCargoCollisions){controllers.forEach(ctrl=>pulse(ctrl,.3,70));lastCargoCollisions=cargo.collisions;}
             if(cargo.delivered>lastCargoDelivered){controllers.forEach(ctrl=>pulse(ctrl,.22,55));lastCargoDelivered=cargo.delivered;}
-            audioFX.motor(active&&!cargo.busy?Math.abs(drive):0);
+            audioFX.motor(active&&!cargo.busy?Math.abs(drive)*(cargo.manual?.4:1):0);
             if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished){if(cargoAutopilot)setCargoAutopilot(false);finish();}}
         }
         if (mode === 'drones'){
@@ -937,6 +940,7 @@ export function createExperience(host: HTMLElement, hooks: {
                 }
                 if (i === 8 && !d.dead)
                     d.g.visible = true;
+                if(dt>0&&d.g.visible){d.rotorAngle+=dt*(d.dead?4:35);d.rotorOffsets.forEach(([x,y,z],index)=>{rotorDummy.position.set(x,y,z);rotorDummy.rotation.set(0,d.rotorAngle*(index%2?1:-1),0);rotorDummy.updateMatrix();d.rotors.setMatrixAt(index,rotorDummy.matrix);});d.rotors.instanceMatrix.needsUpdate=true;}
                 if (training) {
                     d.g.visible = i === 0 && !d.dead;
                     if (i === 0 && !d.dead) {
@@ -946,7 +950,6 @@ export function createExperience(host: HTMLElement, hooks: {
                     continue;
                 }
                 d.healthBar.visible=d.maxHP>1&&!d.dead;d.healthBar.scale.x=Math.max(0,d.hp/d.maxHP);
-                if(dt>0&&d.g.visible){d.rotorAngle+=dt*(d.dead?4:35);rotorOffsets.forEach(([x,z],index)=>{rotorDummy.position.set(x,.1,z);rotorDummy.rotation.set(0,d.rotorAngle,0);rotorDummy.updateMatrix();d.rotors.setMatrixAt(index,rotorDummy.matrix);});d.rotors.instanceMatrix.needsUpdate=true;}
                 if (d.dead) {
                     const fall = falling(d.g.position.y, d.velocity, dt);
                     d.velocity = fall.velocity;
@@ -1016,7 +1019,7 @@ export function createExperience(host: HTMLElement, hooks: {
 
     });
     go('hub');
-    return {go,restart,welcome,train,cargoAction,setPresentation,nextVisitor,spin,reload,start,turn:snap,
+    return {go,restart,welcome,train,cargoAction,toggleArm,setPresentation,nextVisitor,spin,reload,start,startDuel,turn:snap,
         setPaused(value:boolean){pause('manual',value);},setHelpOpen(value:boolean){pause('help',value);},setMenuOpen(value:boolean){pause('menu',value);},resume,recenter:placeView,
         toggleSound(){muted=audioFX.toggle();return muted;},
         setDiagnosticsVisible(value:boolean){diagnosticsVisible=value;diagLabel.o.visible=value&&hudRoot.visible;},
@@ -1046,7 +1049,7 @@ export function createExperience(host: HTMLElement, hooks: {
             renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointermove',pointerMove);renderer.domElement.removeEventListener('pointerup',pointerUp);renderer.domElement.removeEventListener('pointercancel',pointerCancel);
             renderer.domElement.removeEventListener('webglcontextlost',contextLost);renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);
             disposeBatches.forEach(dispose=>dispose());geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());
-            arenaShadow.dispose();cargo.dispose();art.dispose();environment.dispose();audioFX.dispose();renderer.dispose();renderer.domElement.remove();
+            showcaseModels.dispose();arenaShadow.dispose();cargo.dispose();art.dispose();environment.dispose();audioFX.dispose();renderer.dispose();renderer.domElement.remove();
         }
     };
 }

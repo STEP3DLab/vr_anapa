@@ -6,6 +6,9 @@ on:
     paths:
       - "technopark-vr/src/**"
       - "technopark-vr/tests/**"
+      - "technopark-vr/assets/**"
+      - "technopark-vr/scripts/**"
+      - "technopark-vr/tsconfig.json"
       - "technopark-vr/package.json"
       - "technopark-vr/package-lock.json"
       - "technopark-vr/build.mjs"
@@ -39,6 +42,10 @@ jobs:
           cache: npm
           cache-dependency-path: technopark-vr/package-lock.json
       - run: npm ci
+      - name: Verify prepared model assets
+        run: |
+          node scripts/prepare-models.mjs
+          git diff --exit-code -- assets/models/showcase.json
       - run: npm run check
       - run: npm test
       - run: npm run build

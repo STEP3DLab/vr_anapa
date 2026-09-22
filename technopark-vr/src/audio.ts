@@ -1,6 +1,7 @@
 /** Synthesized soundscape; no downloads, microphones or autoplay. */
 export function createAudio(){
  let context:AudioContext|undefined,master:GainNode|undefined,engine:OscillatorNode|undefined,motor:GainNode|undefined,ambient:OscillatorNode|undefined,ambientGain:GainNode|undefined;
+ let shotNoise:AudioBuffer|undefined;
  let muted=false,suspended=false,disposed=false,desiredScene='hub',lastMotor=-1;
  const ambience={hub:[52,.006],robot:[68,.0055],drones:[92,.0045],cargo:[58,.005]} as Record<string,[number,number]>;
  function applyScene(){
@@ -29,6 +30,15 @@ export function createAudio(){
   g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(volume,t+.008);g.gain.exponentialRampToValueAtTime(.001,t+d);
   o.connect(g);g.connect(master);o.start(t);o.stop(t+d+.02);o.onended=()=>{o.disconnect();g.disconnect();};
  }
+ function shot(){
+  const c=context;if(!c||!master||disposed||suspended||muted||c.state!=='running')return;
+  if(!shotNoise){shotNoise=c.createBuffer(1,Math.ceil(c.sampleRate*.18),c.sampleRate);const data=shotNoise.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;}
+  const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain(),t=c.currentTime;
+  source.buffer=shotNoise;filter.type='lowpass';filter.frequency.setValueAtTime(5200,t);filter.frequency.exponentialRampToValueAtTime(380,t+.16);
+  gain.gain.setValueAtTime(.3,t);gain.gain.exponentialRampToValueAtTime(.001,t+.18);
+  source.connect(filter);filter.connect(gain);gain.connect(master);source.start(t);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
+  tone(90,.16,'triangle',.25);tone(900,.025,'square',.035);
+ }
  return {
   unlock(){const c=init();applyScene();return c;},
   ready(){return !!context;},
@@ -37,7 +47,7 @@ export function createAudio(){
   event(name:string){
    if(name==='portal'){[220,330,440,660].forEach((f,i)=>tone(f,.5,'sine',.13,i*.065));}
    else if(name==='win'){[392,494,587,784].forEach((f,i)=>tone(f,.6,'sine',.16,i*.12));}
-   else if(name==='shot'){tone(90,.22,'sawtooth',.35);tone(650,.055,'triangle',.14);}
+   else if(name==='shot')shot();
    else if(name==='hit'){tone(880,.1,'square',.07);tone(110,.16,'triangle',.2);}
    else if(name==='reload'){tone(180,.09,'square',.05);tone(320,.08,'square',.05,.35);}
    else tone(540,.09);

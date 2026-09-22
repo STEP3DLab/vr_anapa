@@ -73,3 +73,13 @@
 .scene-drones .world canvas{cursor:crosshair}
 .main-menu button,.main-menu a{scroll-margin-top:55px;scroll-margin-bottom:150px}
 @media(max-height:560px){.result-card{max-height:calc(100dvh - 96px);overflow:auto}.result-card h2{font-size:22px}}
+
+/* One compact operator pad, with an explicit chassis/arm mode. */
+.cargo-pad{width:420px;flex-wrap:wrap;background:#0b202ae8;padding:10px;border:1px solid #baffdf35;border-radius:12px;bottom:110px}
+.cargo-mode-row{display:flex;gap:6px;width:100%}.cargo-mode-row button{transition:none;flex:1;min-height:34px!important;padding:7px!important}
+.experience .cargo-mode-row button[aria-pressed=true]{background:#d9f1b4;color:#182a25;border-color:#e9ffcb;opacity:1}
+.cargo-pad .robot-action{flex:1;min-width:92px;font-size:11px}.arm-key-hint{display:block;width:100%;font-size:10px;color:#cfdec8;line-height:1.4}
+.scene-cargo .round-actions{bottom:280px}.duel-button{border-color:#ffbd7e!important}
+.menu-actions a{color:#d8efc6;font-size:12px;padding:10px;text-decoration:none}
+@media(max-width:680px){.cargo-pad{width:auto;bottom:145px;padding:8px;gap:4px}.cargo-pad button{min-width:36px;padding:8px}.cargo-pad .robot-action{min-width:90px}.scene-cargo .round-actions{bottom:324px}.arm-key-hint{font-size:9px}}
+@media(max-height:560px) and (min-width:681px){.cargo-pad{width:440px;bottom:80px;padding:7px}.scene-cargo .round-actions{bottom:240px}.cargo-pad button{min-height:34px;padding:7px}.arm-key-hint{font-size:9px}}

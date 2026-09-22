@@ -27,8 +27,9 @@ export function batchStatic(root:T.Group,keep=new Set<T.Object3D>()){
 export function batchPalette(root:T.Group,keep:Set<T.Object3D>){
  const meshes=root.children.filter((o):o is T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>=>{
   const m=o as T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>;
-  return !!m.isMesh&&!(m as unknown as T.InstancedMesh).isInstancedMesh&&m.visible&&!keep.has(m)&&!Array.isArray(m.material)&&m.material.isMeshStandardMaterial&&!m.material.map&&!m.material.transparent;
+  return !!m.isMesh&&!(m as unknown as T.InstancedMesh).isInstancedMesh&&m.visible&&!keep.has(m)&&!Array.isArray(m.material)&&m.material.isMeshStandardMaterial&&!m.material.vertexColors&&!m.material.map&&!m.material.transparent;
  });
+ if(!meshes.length)return ()=>{};
  const copies=meshes.map(m=>{m.updateMatrix();const g=m.geometry.clone().applyMatrix4(m.matrix),colors=new Float32Array(g.attributes.position.count*3);for(let i=0;i<colors.length;i+=3){colors[i]=m.material.color.r;colors[i+1]=m.material.color.g;colors[i+2]=m.material.color.b;}g.setAttribute('color',new T.BufferAttribute(colors,3));return g;});
  const geometry=mergeGeometries(copies,false);copies.forEach(g=>g.dispose());
  if(!geometry)return ()=>{};

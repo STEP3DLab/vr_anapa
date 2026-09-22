@@ -1,4 +1,6 @@
 import * as T from 'three';
+import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import {mergeVertices} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {ARM, atBase, solveArm, overlapsBarrier, outsideField, segmentBlocked} from './cargoMath';
 import {batchStatic} from './staticBatch';
 import {contactShadow} from './contactShadow';
@@ -9,9 +11,11 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const geometries: T.BufferGeometry[] = [], materials: T.Material[] = [], textures: T.Texture[] = [];
     function material(color: T.ColorRepresentation, metalness = .1) { const m = new T.MeshStandardMaterial({ color, metalness, roughness: .65 }); materials.push(m); return m; }
     const earth = material('#625f49'), sand = material('#95886b'), asphalt = material('#303b40'), steel = material('#a5afb4', .65), darkSteel = material('#283237', .75), body = material('#59676b', .5), red = material('#a92319', .5), tire = material('#101617'), amber = material('#c39b35'), lime = material('#a5c870'), forest = material('#35574e');
+    steel.roughness=.3;darkSteel.roughness=.37;body.roughness=.48;red.roughness=.37;
     const workLight=new T.MeshBasicMaterial({color:0xffce69,toneMapped:false}),statusMat=new T.MeshBasicMaterial({color:0x8fffbd,toneMapped:false});materials.push(workLight,statusMat);
     function mesh(parent: T.Group, geometry: T.BufferGeometry, mat: T.Material, x = 0, y = 0, z = 0) { geometries.push(geometry); const m = new T.Mesh(geometry, mat); m.position.set(x, y, z); parent.add(m); return m; }
     const box = (p: T.Group, m: T.Material, x: number, y: number, z: number, w: number, h: number, d: number) => mesh(p, new T.BoxGeometry(w, h, d), m, x, y, z);
+    const machinedBox=(p:T.Group,m:T.Material,x:number,y:number,z:number,w:number,h:number,d:number,r=.025)=>{const raw=new RoundedBoxGeometry(w,h,d,1,r),g=mergeVertices(raw);raw.dispose();return mesh(p,g,m,x,y,z);};
     const cylinder = (p: T.Group, m: T.Material, x: number, y: number, z: number, r: number, h: number) => mesh(p, new T.CylinderGeometry(r, r, h, 16), m, x, y, z);
     function label(text: string, x: number, y: number, z: number, w = 5) { const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 128; const c = canvas.getContext('2d')!; c.fillStyle = '#182c2c'; c.fillRect(0, 0, 1024, 128); c.font = 'bold 38px Arial'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#e3ebc4'; c.fillText(text, 512, 64, 980); const tex = new T.CanvasTexture(canvas); tex.colorSpace=T.SRGBColorSpace; tex.generateMipmaps=false;tex.minFilter=T.LinearFilter; textures.push(tex); const mat = new T.MeshBasicMaterial({ map: tex, side: T.DoubleSide, toneMapped:false }); materials.push(mat); return mesh(root, new T.PlaneGeometry(w, w / 8), mat, x, y, z); }
     box(root, earth, 0, -.18, -8, 25, .35, 30);
@@ -80,7 +84,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
     root.add(robot);
     const shadow=contactShadow(3.4,4.7);root.add(shadow.mesh);
     const wheels: T.Mesh[] = [];
-    box(robot, body, 0, .85, 0, 1.8, .65, 2.9);
+    machinedBox(robot, body, 0, .85, 0, 1.8, .65, 2.9,.055);
     box(robot, steel, 0, 1.19, .3, 1.8, .1, 2.1);
     // Side armour and top service hatch make the silhouette closer to the supplied CAD views
     // while keeping the rover procedural and inexpensive for a standalone headset.
@@ -130,7 +134,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const restTip=tip.clone(), deck=new T.Vector3(0,1.31,1.85), up=new T.Vector3(0,1,0);
     cylinder(robot,steel,0,1.29,-.85,.4,.16);
     const turret=cylinder(robot,red,0,1.46,-.85,.28,.3);
-    const upper=box(robot,red,0,0,0,.42,1,.26), fore=box(robot,red,0,0,0,.34,1,.23);
+    const upper=machinedBox(robot,red,0,0,0,.42,1,.26), fore=machinedBox(robot,red,0,0,0,.34,1,.23);
     const upperSideA=box(robot,red,0,0,0,.13,1,.38),upperSideB=box(robot,red,0,0,0,.13,1,.38);
     const foreSideA=box(robot,red,0,0,0,.12,1,.33),foreSideB=box(robot,red,0,0,0,.12,1,.33);
     upper.name='cargo-upper-link'; fore.name='cargo-fore-link';
@@ -177,7 +181,13 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const point=new T.Vector3(),local=new T.Vector3(),shoulderWorld=new T.Vector3(),dropScratch=new T.Vector3(),navScratch=new T.Vector3(),contacts=new Float32Array(6);
     type Job={kind:'pickup'|'unload';item:T.Mesh;t:number;from:T.Vector3;to:T.Vector3;start:T.Vector3;gripped:boolean;released:boolean};
     let job:Job|null=null,carried:T.Mesh|null=null,delivered=0,velocity=0,turnVelocity=0,distance=0,collisions=0,collisionDelay=0,finished=false,navTime=0;
-    let cachedGuidance='';
+    let cachedGuidance='',armBlocked='',manual=false,handLoaded=false;
+    type GripJob={kind:'grip'|'deck'|'drop';item:T.Mesh;t:number;start:T.Vector3;target:T.Vector3};
+    let gripJob:GripJob|null=null;
+    const manualCandidate=new T.Vector3(),manualWorld=new T.Vector3(),manualTarget=new T.Vector3();
+    // A physical target under the wrist makes the three arm axes understandable from the fixed station.
+    const wristGuide=mesh(root,new T.RingGeometry(.28,.33,24),markerReady);
+    wristGuide.name='manual-gripper-guide';wristGuide.rotation.x=-Math.PI/2;wristGuide.visible=false;wristGuide.userData.dynamic=true;
     const armSolution=solveArm(tip),reachSolution=solveArm(tip),raisedPoint=new T.Vector3();
     const wheelPhases=new Array(6).fill(0);
     const smooth=(u:number)=>T.MathUtils.smoothstep(u,0,1);
@@ -213,7 +223,14 @@ export function createCargoScene(onEvent: (message: string) => void) {
     }
     function guidance(){
         if(finished)return 'ДОСТАВЛЕНО 3/3 · МИССИЯ ВЫПОЛНЕНА';
+        if(gripJob)return 'МАНИПУЛЯТОР: '+(gripJob.kind==='grip'?'ЗАХВАТ ЗАКРЫВАЕТСЯ':'ОПУСКАНИЕ И ФИКСАЦИЯ ГРУЗА');
         if(job)return job.t<1.9?'МАНИПУЛЯТОР: НАВЕДЕНИЕ И ЗАХВАТ':job.t<4?'МАНИПУЛЯТОР: ПЕРЕНОС ГРУЗА':'МАНИПУЛЯТОР: УКЛАДКА И ВОЗВРАТ';
+        if(manual){
+            if(armBlocked)return armBlocked;
+            if(handLoaded)return manualDrop()=== 'deck'?'НАД ПЛАТФОРМОЙ · КУРОК: УЛОЖИТЬ':manualDrop()==='drop'?'НАД БАЗОЙ · КУРОК: ВЫГРУЗИТЬ':'ГРУЗ В ЗАХВАТЕ · ПОДНИМИТЕ И ПЕРЕНЕСИТЕ НА ПЛАТФОРМУ ИЛИ БАЗУ';
+            if(manualPickup())return 'ЗАХВАТ СОВМЕЩЁН · КУРОК / ПРОБЕЛ: ЗАКРЫТЬ';
+            return carried?'НАВЕДИТЕ ЗАХВАТ НА ГРУЗ НА ПЛАТФОРМЕ':'СТРЕЛА: ЛЕВЫЙ СТИК — ВЫЛЕТ / ПОВОРОТ · ПРАВЫЙ ↑↓ — ВЫСОТА';
+        }
         if(carried){
             if(!atBase(robot.position.x,robot.position.z))return 'ГРУЗ НА ПЛАТФОРМЕ · ВЕРНИТЕСЬ НА ЗЕЛЁНУЮ БАЗУ';
             if(!isStopped())return 'БАЗА · ОТПУСТИТЕ СТИК И ОСТАНОВИТЕСЬ';
@@ -230,7 +247,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
         return next?'ГРУЗ '+(packages.indexOf(next)+1)+' · '+Math.round(next.position.distanceTo(robot.position))+' М · ПОДЪЕДЬТЕ ПЕРЕДНЕЙ ЧАСТЬЮ':'ДОСТАВКА ЗАВЕРШЕНА';
     }
     function reset(){
-        carried=null;job=null;delivered=0;velocity=0;turnVelocity=0;distance=0;collisions=0;collisionDelay=0;finished=false;navTime=0;
+        carried=null;job=null;gripJob=null;manual=false;handLoaded=false;armBlocked='';delivered=0;velocity=0;turnVelocity=0;distance=0;collisions=0;collisionDelay=0;finished=false;navTime=0;
         deliveryBays.forEach(b=>b.material=bayOff);
         robot.position.set(0,0,1);robot.rotation.set(0,0,0);tip.copy(restTip);jawOpening=.54;wheelPhases.fill(0);nav.visible=true;baseBeacon.visible=false;
         packages.forEach((p,i)=>{root.add(p);p.position.copy(starts[i]);p.rotation.set(0,0,0);p.userData.delivered=false;});
@@ -238,8 +255,9 @@ export function createCargoScene(onEvent: (message: string) => void) {
         cachedGuidance=guidance();
     }
     function interact(){
-        if(job||finished)return;
+        if(job||gripJob||finished)return;
         if(!isStopped()){onEvent('ОСТАНОВИТЕ РОБОТА: ОТПУСТИТЕ ЛЕВЫЙ СТИК');return;}
+        if(manual){manualInteract();cachedGuidance=guidance();return;}
         const target=carried?null:pickupTarget(),drop=carried?unloadPoint():null;
         if(carried&&!drop){onEvent(guidance());return;}
         if(!carried&&!target){onEvent(guidance());return;}
@@ -249,6 +267,67 @@ export function createCargoScene(onEvent: (message: string) => void) {
         job={kind:carried?'unload':'pickup',item,t:0,from,to:drop?drop.clone():deck.clone().addScaledVector(up,ARM.gripOffset),start:tip.clone(),gripped:false,released:false};
         velocity=0;turnVelocity=0;onEvent(carried?'ВЫГРУЗКА: МАНИПУЛЯТОР РАБОТАЕТ':'ЗАХВАТ: МАНИПУЛЯТОР РАБОТАЕТ');
         cachedGuidance=guidance();
+    }
+    function setManual(value:boolean){
+        if(job||gripJob||finished)return false;
+        if(!value&&handLoaded){onEvent('СНАЧАЛА УЛОЖИТЕ ГРУЗ НА ПЛАТФОРМУ');return false;}
+        manual=value;armBlocked='';velocity=0;turnVelocity=0;cachedGuidance=guidance();return true;
+    }
+    function manualPickup(){
+        robot.updateWorldMatrix(true,false);
+        for(const item of packages){
+            if(carried&&item!==carried)continue;
+            if(item.userData.delivered)continue;
+            item.getWorldPosition(manualWorld);robot.worldToLocal(manualWorld);manualWorld.y+=ARM.gripOffset;
+            if(tip.distanceTo(manualWorld)>.36||!solveArm(manualWorld,reachSolution).reachable)continue;
+            item.getWorldPosition(point);shoulderWorld.copy(shoulder);robot.localToWorld(shoulderWorld);
+            if(segmentBlocked(shoulderWorld,point,obstacles))continue;
+            manualTarget.copy(manualWorld);return item;
+        }
+        return null;
+    }
+    function manualDrop():'deck'|'drop'|null{
+        if(!handLoaded)return null;
+        manualTarget.copy(deck).addScaledVector(up,ARM.gripOffset);
+        if(Math.hypot(tip.x-deck.x,tip.z-deck.z)<.43&&tip.y>=manualTarget.y-.05&&tip.y<manualTarget.y+.65)return 'deck';
+        robot.updateWorldMatrix(true,false);manualWorld.copy(tip).addScaledVector(up,-ARM.gripOffset);robot.localToWorld(manualWorld);
+        if(!atBase(robot.position.x,robot.position.z)||Math.abs(manualWorld.x)>2.7||Math.abs(manualWorld.z-2)>1.7||manualWorld.y<.33||manualWorld.y>1.1)return null;
+        if(Math.abs(tip.x)<1.4&&tip.z> -1.8&&tip.z<2.65)return null;
+        if(packages.some(p=>p.userData.delivered&&Math.hypot(p.position.x-manualWorld.x,p.position.z-manualWorld.z)<.85))return null;
+        manualWorld.y=.36;manualTarget.copy(manualWorld);robot.worldToLocal(manualTarget);manualTarget.y+=ARM.gripOffset;return solveArm(manualTarget,reachSolution).reachable?'drop':null;
+    }
+    function manualInteract(){
+        if(handLoaded){const destination=manualDrop();if(!destination){onEvent('ОПУСТИТЕ ГРУЗ НАД ПЛАТФОРМОЙ ИЛИ СВОБОДНЫМ МЕСТОМ БАЗЫ');return;}
+            gripJob={kind:destination,item:carried!,t:0,start:tip.clone(),target:manualTarget.clone()};
+        }else{const item=manualPickup();if(!item){onEvent('СОВМЕСТИТЕ ЗАХВАТ С ГРУЗОМ · W/S: ВЫЛЕТ · A/D: ПОВОРОТ · T/G: ВЫСОТА');return;}
+            gripJob={kind:'grip',item,t:0,start:tip.clone(),target:manualTarget.clone()};
+        }
+    }
+    function moveArm(dt:number,reach:number,turn:number,lift:number){
+        if(!manual||job||gripJob||finished||dt<=0||(!reach&&!turn&&!lift))return;
+        const delta=Math.min(dt,.05),bounded=(v:number)=>Number.isFinite(v)?T.MathUtils.clamp(v,-1,1):0;
+        const angle=Math.atan2(tip.x-shoulder.x,-(tip.z-shoulder.z))-bounded(turn)*delta*.8;
+        const radius=T.MathUtils.clamp(Math.hypot(tip.x-shoulder.x,tip.z-shoulder.z)+bounded(reach)*delta*1.2,.65,3.23);
+        manualCandidate.set(shoulder.x+Math.sin(angle)*radius,T.MathUtils.clamp(tip.y+bounded(lift)*delta,ARM.gripOffset+.36,4),shoulder.z-Math.cos(angle)*radius);
+        // Keep the load above the chassis while rotating across it. No arm-through-rover shortcuts.
+        if(Math.abs(manualCandidate.x)<1.28&&manualCandidate.z> -1.7&&manualCandidate.z<1.32){if(manualCandidate.y<2.3){armBlocked='НАД КОРПУСОМ · СНАЧАЛА ПОДНИМИТЕ СТРЕЛУ';return;}}
+        if(Math.abs(manualCandidate.x)<1.15&&manualCandidate.z>=1.32&&manualCandidate.z<2.65)manualCandidate.y=Math.max(manualCandidate.y,deck.y+ARM.gripOffset);
+        if(!solveArm(manualCandidate,reachSolution).reachable){armBlocked='ПРЕДЕЛ ДОСЯГАЕМОСТИ · УМЕНЬШИТЕ ВЫЛЕТ ИЛИ ВЫСОТУ';return;}
+        robot.updateWorldMatrix(true,false);manualWorld.copy(manualCandidate);robot.localToWorld(manualWorld);
+        if(obstacles.some(o=>Math.abs(manualWorld.x-o.x)<o.w/2+.45&&Math.abs(manualWorld.z-o.z)<o.d/2+.45&&manualWorld.y<1.55)){armBlocked='ПРЕПЯТСТВИЕ · ПОДНИМИТЕ СТРЕЛУ';return;}
+        armBlocked='';tip.copy(manualCandidate);
+    }
+    function animateManual(dt:number){
+        if(gripJob){const j=gripJob;j.t+=dt;const u=smooth(Math.min(1,j.t/.55));tip.copy(j.start).lerp(j.target,u);jawOpening=j.kind==='grip'?T.MathUtils.lerp(.54,.405,u):T.MathUtils.lerp(.405,.54,u);
+            if(j.t>=.55){
+                if(j.kind==='grip'){robot.updateWorldMatrix(true,true);robot.attach(j.item);carried=j.item;handLoaded=true;onEvent('ГРУЗ ЗАЖАТ · ПОДНИМИТЕ СТРЕЛУ');}
+                else{j.item.position.copy(j.target).addScaledVector(up,-ARM.gripOffset);j.item.rotation.set(0,0,0);handLoaded=false;
+                    if(j.kind==='drop'){robot.updateWorldMatrix(true,true);root.attach(j.item);j.item.position.y=.36;j.item.userData.delivered=true;carried=null;delivered++;finished=delivered===3;deliveryBays.forEach((b,i)=>b.material=i<delivered?bayOn:bayOff);onEvent('ДОСТАВЛЕНО '+delivered+'/3');}
+                    else onEvent('ГРУЗ ЗАКРЕПЛЁН · C / ПРАВАЯ БОКОВАЯ: УПРАВЛЯТЬ ШАССИ');
+                }gripJob=null;
+            }
+        }
+        if(handLoaded&&carried){carried.position.copy(tip).addScaledVector(up,-ARM.gripOffset);carried.rotation.set(0,Math.atan2(tip.x,-(tip.z-shoulder.z)),0);}
     }
     function transfer(a:T.Vector3,b:T.Vector3,u:number){
         const start=Math.atan2(a.x-shoulder.x,-(a.z-shoulder.z)),end=Math.atan2(b.x-shoulder.x,-(b.z-shoulder.z));
@@ -294,8 +373,8 @@ export function createCargoScene(onEvent: (message: string) => void) {
     function update(dt:number,drive:number,turn:number,active:boolean){
         collisionDelay=Math.max(0,collisionDelay-dt);navTime+=dt;
         const speedFactor=robot.position.x< -3&&robot.position.z< -5&&robot.position.z> -14?.65:1;
-        velocity=active&&!job&&!finished?T.MathUtils.damp(velocity,drive*3.3*speedFactor,7,dt):0;
-        turnVelocity=active&&!job&&!finished?turn*1.65:0;
+        velocity=active&&!manual&&!job&&!gripJob&&!finished?T.MathUtils.damp(velocity,drive*3.3*speedFactor,7,dt):0;
+        turnVelocity=active&&!manual&&!job&&!gripJob&&!finished?turn*1.65:0;
         const blocked=(x:number,z:number,yaw:number)=>outsideField(x,z,yaw)||obstacles.some(o=>overlapsBarrier(x,z,yaw,o));
         const yaw=robot.rotation.y+turnVelocity*dt;
         let collision=false;
@@ -319,7 +398,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
             for(let j=0;j<12;j++){const a=j/12*Math.PI*2+wheelPhases[i];dummy.position.set(w.position.x,.53+Math.cos(a)*.51,w.position.z+Math.sin(a)*.51);dummy.rotation.set(a,0,0);dummy.updateMatrix();tread.setMatrixAt(k++,dummy.matrix);}
         }
         if(wheelMotion)tread.instanceMatrix.needsUpdate=true;
-        if(active)animateJob(dt);
+        if(active){animateJob(dt);animateManual(dt);}
         const solution=solveArm(tip,armSolution);elbow.set(solution.elbow.x,solution.elbow.y,solution.elbow.z);tip.set(solution.wrist.x,solution.wrist.y,solution.wrist.z);
         const turretYaw=Math.atan2(tip.x-shoulder.x,-(tip.z-shoulder.z));turret.rotation.y=turretYaw;
         const tangent=tangentScratch.set(Math.cos(turretYaw),0,Math.sin(turretYaw));
@@ -331,6 +410,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
         hydraulicA.copy(shoulder).add(offset).addScaledVector(up,-.12);hydraulicB.copy(elbow).add(offset).lerp(shoulder,.22);hydraulic(barrel1,rod1,hydraulicA,hydraulicB);
         hydraulicA.copy(elbow).add(offset).lerp(shoulder,.26);hydraulicB.copy(elbow).add(offset).lerp(tip,.45);hydraulic(barrel2,rod2,hydraulicA,hydraulicB);
         claw.position.copy(tip);claw.rotation.y=turretYaw;jaws[0].position.x=-jawOpening;jaws[1].position.x=jawOpening;
+        wristGuide.visible=manual&&!finished;if(wristGuide.visible){robot.updateWorldMatrix(true,false);manualWorld.copy(tip);robot.localToWorld(manualWorld);wristGuide.position.set(manualWorld.x,.07,manualWorld.z);wristGuide.material=(handLoaded?manualDrop():manualPickup())?markerReady:markerWaiting;}
         statusMat.color.set(job?0xffb45f:carried?0x8fffbd:finished?0x72ffe2:0xffd56e);statusLamp.scale.setScalar(job?1+.22*Math.sin(navTime*8):1);
         const target=!carried&&!job?pickupTarget():null;
         markers.forEach((m,i)=>{const available=!packages[i].userData.delivered&&packages[i]!==carried&&job?.item!==packages[i];m.beacon.visible=available;m.label.visible=available;m.beacon.material=packages[i]===target&&isStopped()?markerReady:markerWaiting;});
@@ -351,11 +431,12 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const dynamicRobot=new Set<T.Object3D>([...wheels,turret,upper,fore,upperSideA,upperSideB,foreSideA,foreSideB,...pins,barrel1,rod1,barrel2,rod2,statusLamp]);
     const disposeRobotStatic=batchStatic(robot,dynamicRobot);
     const disposeStatic=batchStatic(root,new Set(packages));
-    return {root,robot,packages,reset,update,interact,stop(){velocity=0;turnVelocity=0;},
-        get delivered(){return delivered;},get loaded(){return !!carried;},get busy(){return !!job;},get finished(){return finished;},get distance(){return distance;},get collisions(){return collisions;},
+    return {root,robot,packages,reset,update,interact,setManual,moveArm,stop(){velocity=0;turnVelocity=0;},
+        get manual(){return manual;},get handLoaded(){return handLoaded;},get wrist(){return tip;},
+        get delivered(){return delivered;},get loaded(){return !!carried;},get busy(){return !!job||!!gripJob;},get finished(){return finished;},get distance(){return distance;},get collisions(){return collisions;},
         hint:()=>cachedGuidance,
-        actionLabel(){return job?'Манипулятор работает…':carried?'Выгрузить груз':'Захватить груз';},
-        status(){return `Грузы ${delivered}/3 · ${job?'Манипулятор работает':carried?'Груз на платформе':'Захват свободен'} · ${Math.round(distance)} м · Столкновения ${collisions}`;},
+        actionLabel(){return job||gripJob?'Манипулятор работает…':manual?handLoaded?'Уложить груз':'Сомкнуть захват':carried?'Выгрузить груз':'Автозахват';},
+        status(){return `Грузы ${delivered}/3 · ${job||gripJob?'Манипулятор работает':handLoaded?'Груз в захвате':carried?'Груз на платформе':'Захват свободен'} · ${manual?'РУЧНАЯ СТРЕЛА':'ШАССИ'} · ${Math.round(distance)} м`;},
         dispose(){shadow.dispose();disposeStatic();disposeRobotStatic();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());}
     };
 }

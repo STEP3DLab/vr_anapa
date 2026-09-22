@@ -1,8 +1,8 @@
 {
-  "note": "Single-eye desktop WebGL2 / SwiftShader regression limits. Not a Quest FPS target. Active full waves and visible spatial UI are measured separately.",
+  "note": "Single-eye desktop WebGL2 / SwiftShader regression limits. Not a Quest FPS target. Active full waves and visible spatial UI are measured separately. Drone triangle allowance includes nine shared 4564-triangle imported quadcopters and the 2138-triangle shotgun; draw-call and texture limits are unchanged.",
   "hub": {"calls": 110, "triangles": 60000},
   "robot": {"calls": 75, "triangles": 30000},
-  "drones": {"calls": 65, "triangles": 30000},
+  "drones": {"calls": 65, "triangles": 65000},
   "cargo": {"calls": 100, "triangles": 35000},
   "spatialUIExtraCalls": 24,
   "geometries": 300,

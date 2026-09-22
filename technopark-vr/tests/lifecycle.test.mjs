@@ -23,14 +23,14 @@ try{
  assert.equal(neutralGamepad({axes:[0,0,.9,0],buttons:[]}),false);
  assert.equal(neutralGamepad({axes:[0,0,0,0],buttons:[{pressed:false,value:0}]}),true);
 
- let contexts=0,tones=0,scheduled=0;
+ let contexts=0,tones=0,scheduled=0,noiseBuffers=0,noiseShots=0;
  const activation={isActive:false};Object.defineProperty(globalThis,'navigator',{value:{userActivation:activation},configurable:true});
  const param=()=>({value:0,setValueAtTime(){},exponentialRampToValueAtTime(){},setTargetAtTime(){scheduled++;}});
- globalThis.AudioContext=class{constructor(){contexts++;this.currentTime=0;this.state='running';this.destination={};}createGain(){return {gain:param(),connect(){},disconnect(){}};}createOscillator(){tones++;return {frequency:param(),connect(){},disconnect(){},start(){},stop(){}};}async resume(){}async close(){this.state='closed';}};
+ globalThis.AudioContext=class{constructor(){contexts++;this.currentTime=0;this.state='running';this.destination={};}createGain(){return {gain:param(),connect(){},disconnect(){}};}createOscillator(){tones++;return {frequency:param(),connect(){},disconnect(){},start(){},stop(){}};}createBuffer(channels,length){noiseBuffers++;return {getChannelData:()=>new Float32Array(length)};}createBufferSource(){noiseShots++;return {connect(){},disconnect(){},start(){}};}createBiquadFilter(){return {frequency:param(),connect(){},disconnect(){}};}get sampleRate(){return 44100;}async resume(){}async close(){this.state='closed';}};
  const {createAudio}=await import(pathToFileURL(join(output,'audio.mjs'))),audio=createAudio();
  audio.event('portal');audio.unlock();assert.equal(contexts,0,'automatic scene/deep-link events cannot create audio');
  activation.isActive=true;audio.unlock();assert.equal(contexts,1);activation.isActive=false;
- audio.event('shot');const before=tones;assert.ok(before>2);
+ audio.event('shot');audio.event('shot');assert.equal(noiseBuffers,1,'shot noise is allocated once and reused');assert.equal(noiseShots,2);const before=tones;assert.ok(before>2);
  audio.pause(true);audio.event('hit');assert.equal(tones,before,'pause suppresses synthesized events');audio.pause(false);
  audio.motor(1);const automation=scheduled;for(let i=0;i<1000;i++)audio.motor(1);assert.equal(scheduled,automation,'steady motor input adds no audio scheduling per frame');
  audio.dispose();audio.event('win');activation.isActive=true;audio.unlock();assert.equal(contexts,1,'disposed audio cannot be recreated');
