@@ -47,6 +47,7 @@ export default function Experience(){
  useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if((e.key==='m'||e.key==='M')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();e.stopPropagation();toggleMenu();return;}if(e.key==='Escape'&&menu){e.preventDefault();e.stopPropagation();closeMenu();}};window.addEventListener('keydown',onKey,true);return()=>window.removeEventListener('keydown',onKey,true);},[menu,hub,paused]);
  function newVisitor(){menuPausedByUs.current=false;setHelp(false);setMenu(false);setClean(false);game.current?.nextVisitor();}
  const readyAction=phase==='training'||phase==='ready'||phase==='ended';
+ const nextScene=scene==='robot'?'drones':scene==='drones'?'cargo':'hub',nextSceneLabel=scene==='robot'?'Дрон-тир':scene==='drones'?'Полигон Лосинка':'Вернуться в холл';
  return <div className={`experience ${hub?'is-hub':'is-game'}${clean?' clean':''}${xr?' xr-active':''}`} onClick={e=>{const target=e.target as HTMLElement;if(e.detail>0&&!target.closest('dialog'))target.closest('button')?.blur();}}>
   <div ref={host} className="world" aria-label="Интерактивная трёхмерная сцена"/>
   <header className="game-header">
@@ -81,7 +82,7 @@ export default function Experience(){
     <button className="robot-action" disabled={paused||busy&&cargo} onClick={()=>cargo?game.current?.cargoAction():game.current?.spin()}>{cargo?action:'Спиннер'}</button>
    </div>}
    {scene==='drones'&&<button className="reload" disabled={paused} onClick={()=>game.current?.reload()}>Перезарядка / R</button>}
-   {!hub&&phase==='ended'&&<section className="result-card" aria-live="polite"><span>ИСПЫТАНИЕ ЗАВЕРШЕНО</span><h2>{title}</h2><p>{status}</p><div><button className="result-primary" onClick={()=>game.current?.start()}>↻ Ещё раунд</button><button onClick={()=>game.current?.go('hub')}>⌂ В холл</button></div></section>}
+   {!hub&&phase==='ended'&&<section className="result-card" aria-live="polite"><span>ИСПЫТАНИЕ ЗАВЕРШЕНО</span><h2>{title}</h2><p>{status}</p><div><button className="result-primary" onClick={()=>game.current?.start()}>↻ Ещё раунд</button><button onClick={()=>game.current?.go(nextScene as 'hub'|'drones'|'cargo')}>Следующее: {nextSceneLabel} →</button><button onClick={()=>game.current?.go('hub')}>⌂ В холл</button></div></section>}
   </>}
   <footer className="bottom-dock">
    {!clean&&<div className="game-footer"><span>{hub?'WASD — ход · Мышь — осмотр · Q/E — поворот':ground?'W/S — ход · A/D — поворот · Пробел — действие':'Клик по цели — выстрел · R — перезарядка'}</span><nav aria-label="Действия с сеансом">{hub&&<button onClick={()=>game.current?.welcome()}>Появление «Ядра»</button>}<button onClick={newVisitor}>Новый посетитель</button>{!hub&&<><button onClick={()=>{game.current?.resume();game.current?.restart();}}>↻ Сброс</button><button onClick={()=>game.current?.go('hub')}>⌂ Холл</button></>}<a href="?gallery=1">3D-галерея ↗</a></nav></div>}
