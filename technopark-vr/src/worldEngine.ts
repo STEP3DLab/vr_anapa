@@ -895,7 +895,7 @@ export function createExperience(host: HTMLElement, hooks: {
                     }else if(step){
                         const dx=step.x!-cargo.robot.position.x,dz=step.z!-cargo.robot.position.z,d=Math.hypot(dx,dz);
                         if(d<.07)cargoDemoStep++;
-                        else{const yaw=Math.atan2(-dx,-dz),e=angleDelta(yaw,cargo.robot.rotation.y);turn=T.MathUtils.clamp(e*3,-1,1);drive=Math.abs(e)>.55?0:Math.min(1,d*1.7);}
+                        else{const yaw=Math.atan2(-dx,-dz),e=angleDelta(yaw,cargo.robot.rotation.y);if(Math.abs(e)>.08){drive=0;turn=T.MathUtils.clamp(e/(1.65*Math.max(dt,.001)),-1,1);}else{drive=Math.min(1,d*1.7);turn=T.MathUtils.clamp(e*3,-1,1);}}
                     }
                 }
             }
