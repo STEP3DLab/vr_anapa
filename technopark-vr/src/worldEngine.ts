@@ -336,6 +336,8 @@ export function createExperience(host: HTMLElement, hooks: {
     action(newGuest.o, () => nextVisitor());
     const pauseLabel=label(hudRoot,'ПАУЗА',0,.3,-3,1.7,.32);
     action(pauseLabel.o,()=>paused()?resume():pause('manual',true));
+    const recenterLabel=label(hudRoot,'◎  ЦЕНТР ВИДА',0,-2.05,-3,1.9,.3);
+    action(recenterLabel.o,()=>placeView());
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
     const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3(), forwardScratch=new T.Vector3(), scaleScratch=new T.Vector3(), quatScratch=new T.Quaternion();
@@ -476,7 +478,7 @@ export function createExperience(host: HTMLElement, hooks: {
         hud.o.position.set(0,.9,-3);guidance.o.position.set(0,-.02,-3);
         startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.7,-1.13,-3);again.o.position.set(1.7,-1.13,-3);
         lessonLabel.o.position.set(0,-1.65,-3);gameDemoLabel.o.position.set(1.7,-1.65,-3);newGuest.o.position.set(-1.7,-1.65,-3);
-        pauseLabel.o.position.set(0,-1.13,-3);
+        pauseLabel.o.position.set(0,-1.13,-3);recenterLabel.o.position.set(0,-2.05,-3);
         const beaconY=mode==='cargo'?4.6:mode==='robot'?3.5:2.35,beaconZ=mode==='cargo'?-6.5:mode==='robot'?-10.8:-10.5;missionBeacon.position.set(4.7,beaconY,beaconZ);missionBeacon.rotation.y=-.32;missionBeacon.scale.setScalar(.82);
         scene.updateMatrixWorld(true);
     }
