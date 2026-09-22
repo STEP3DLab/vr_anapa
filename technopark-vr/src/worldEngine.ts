@@ -190,6 +190,11 @@ export function createExperience(host: HTMLElement, hooks: {
         cells.push(mesh(arena, new T.OctahedronGeometry(.34), cyan, [-4, 3, -3, 4, 0][i], .62, [-3, -4, -7, -10, -12][i]));
     for (let i = 0; i < 6; i++)
         blocks.push(box(arena, orange, [-4, 1, 4, -2, 2, -4][i], .42, [-5, -6, -8, -10, -12, -12][i], .7, .7, .7));
+    // Physical objective board remains readable in VR without opening the side console.
+    const arenaCellLamps:T.Mesh[]=[] ,arenaBlockLamps:T.Mesh[]=[];
+    for(let i=0;i<5;i++){const lamp=cyl(arena,cyan,-2.4+i*1.2,2.35,-13.45,.11,.08,10);lamp.rotation.x=Math.PI/2;lamp.name='arena-cell-lamp';arenaCellLamps.push(lamp);}
+    for(let i=0;i<6;i++){const lamp=box(arena,orange,-3+i*1.2,1.95,-13.43,.48,.13,.05);lamp.name='arena-block-lamp';arenaBlockLamps.push(lamp);}
+    label(arena,'5 ЭНЕРГОЯЧЕЕК  /  6 БЛОКОВ',0,2.75,-13.42,5.4,.34);
     cells.forEach(c => c.name = 'energy-cell');
     blocks.forEach(b => b.name = 'target-block');
     for (let i = 0; i < 3; i++) {
@@ -244,6 +249,9 @@ export function createExperience(host: HTMLElement, hooks: {
         drones.push({ g, hit, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
     }
     const trainingHalo=mesh(range,new T.TorusGeometry(.92,.028,6,48),orange,0,2.6,-7);trainingHalo.userData.dynamic=true;trainingHalo.visible=false;
+    const ammoLamps:T.Mesh[]=[];for(let i=0;i<6;i++){const lamp=box(range,cyan,-2.25+i*.9,1.05,-4.25,.62,.12,.06);lamp.name='ammo-lamp';ammoLamps.push(lamp);}
+    const bossBeacon=mesh(range,new T.TorusGeometry(2.3,.055,7,64),red,0,4.2,-23.7);bossBeacon.name='boss-beacon';bossBeacon.visible=false;
+    const bossCaption=label(range,'ФЛАГМАН · 6 ПОПАДАНИЙ',0,6.9,-23.65,5.2,.42,'#ff9b9b',1);bossCaption.o.visible=false;
     const exhibits: T.Group[] = [];
     for (const [x, model, title, description, destination] of [[-6, robot, 'КРАСНЫЙ ТРЕУГОЛЬНИК', 'КОЛЬЦЕВОЙ СПИННЕР / КОМАНДА ДЕЗИНТЕГРАТОР', 'robot'], [6, drones[0].g, 'ЛАБОРАТОРИЯ БПЛА', 'ИНТЕРАКТИВНАЯ МОДЕЛЬ / ВОЗДУШНЫЙ ТИР', 'drones']] as const) {
         cyl(hub, black, x, .5, -.5, 1.35, 1, 48);
@@ -727,6 +735,8 @@ export function createExperience(host: HTMLElement, hooks: {
             robot.rotation.y = moved.yaw;
             robot.position.x = moved.x;
             robot.position.z = moved.z;
+            arenaCellLamps.forEach((lamp,i)=>{const on=cells[i]?.visible!==false;lamp.visible=on;});
+            arenaBlockLamps.forEach((lamp,i)=>{const on=blocks[i]?.visible!==false;lamp.visible=on;});
             if (spinning)
                 ring.rotation.y += dt * 22;
             for (const c of cells) {
@@ -830,6 +840,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         if (mode === 'drones'){
             trainingHalo.visible=training&&!drones[0].dead;trainingHalo.rotation.z+=dt*.45;
+            ammoLamps.forEach((lamp,i)=>lamp.visible=i<ammo&&!reloading);bossBeacon.visible=!training&&roundAge>=40&&!ended;bossCaption.o.visible=bossBeacon.visible;bossBeacon.rotation.z+=dt*.18;bossBeacon.scale.setScalar(1+.035*Math.sin(elapsed*3));
             for (let i = 0; i < drones.length; i++) {
                 const d = drones[i];
                 if (i === 8 && roundAge < 40) {
