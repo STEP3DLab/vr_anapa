@@ -50,7 +50,7 @@ try{
  }
  await page.setViewportSize({width:1440,height:900});await page.goto(url+'?scene=cargo&presentation=1&clean=1',{waitUntil:'networkidle'});await page.waitForTimeout(650);
  assert.equal(await page.locator('.experience.is-game.clean').count(),1,'Deep link opens the requested game scene in clean presentation mode');
- assert.match(await page.locator('.game-status').innerText(),/УРОК|ГОТОВЫ|ДЕМОНСТРАЦИЯ|ПАУЗА/);
+ assert.equal(await page.locator('.game-status').count(),0,'Clean deep link keeps gameplay overlays hidden');assert.equal(await page.locator('.vr-entry button').isVisible(),true);
  await page.goto(url+'?gallery=1',{waitUntil:'networkidle'});await page.waitForTimeout(600);await page.screenshot({path:output+'/gallery.png'});
  // Close-up, deterministic, real rendered inspection of the arm at every handling stage.
  await page.goto(url+'.test-output/inspection.html',{waitUntil:'networkidle'});await page.waitForTimeout(800);assert.equal(await page.evaluate(()=>!!window.__inspection.scene.getObjectByName('cargo-exhibit')),true,'Losinka rover exhibit must be present in the hall');
