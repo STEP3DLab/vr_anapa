@@ -18,7 +18,8 @@
 
 
 /* v10.3 command menu polish */
-.main-menu{width:min(540px,calc(100% - 36px));padding:26px 26px 20px;animation:menu-in .2s cubic-bezier(.2,.7,.2,1)}
+.menu-scrim{position:fixed!important}
+.main-menu{position:fixed;width:min(540px,calc(100% - 36px));padding:26px 26px 20px;animation:menu-in .2s cubic-bezier(.2,.7,.2,1)}
 .menu-scrim{animation:scrim-in .18s ease-out}
 @keyframes menu-in{from{opacity:0;transform:translateX(18px) scale(.992)}to{opacity:1;transform:none}}
 @keyframes scrim-in{from{opacity:0}to{opacity:1}}@keyframes menu-mobile-in{from{opacity:0;transform:scale(.992)}to{opacity:1;transform:none}}
