@@ -341,7 +341,7 @@ export function createExperience(host: HTMLElement, hooks: {
     action(recenterLabel.o,()=>placeView());
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
-    const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3(), forwardScratch=new T.Vector3(), scaleScratch=new T.Vector3(), quatScratch=new T.Quaternion();
+    const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3(), forwardScratch=new T.Vector3(), scaleScratch=new T.Vector3(), quatScratch=new T.Quaternion(), deltaScratch=new T.Vector3(), awayScratch=new T.Vector3(), headScratch=new T.Vector3(), directionScratch=new T.Vector3(), sideScratch=new T.Vector3(), moveScratch=new T.Vector3(), candidateScratch=new T.Vector3(), tracerEndScratch=new T.Vector3();
     const rays:T.Line[]=[];const tips:T.Mesh[]=[];const hoverTargets:Array<T.Object3D|null>=[null,null];
     function visible(o: T.Object3D) { for (let p: T.Object3D | null = o; p; p = p.parent)
         if (!p.visible)
@@ -487,7 +487,7 @@ export function createExperience(host: HTMLElement, hooks: {
         if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=firstScene?.18:next===mode?.22:.42;transition=transitionTotal;if(!(firstScene&&next==='hub'))startIntro(next);else{sceneIntro=0;introRoot.visible=false;}firstScene=false;audioFX.motor(0);audioFX.scene(next);if(next!==mode&&audioFX.ready())audioFX.event('portal');mode=next;
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
-        if(next!=='hub'){
+        if(next!=='hub'&&!presentation){
             const needsTraining=next==='cargo'?!learned.cargo:next==='robot'?!(learned.move&&learned.spin):!(learned.shoot&&learned.reload);
             if(needsTraining)train();
         }
@@ -514,15 +514,16 @@ export function createExperience(host: HTMLElement, hooks: {
         return; if (!ammo) {
         reload();
         return;
-    } learned.shoot = true; ammo--; shots++; cooldown = .45; flashTime = .065; audioFX.event('shot'); const targets = drones.filter(d => !d.dead && d.g.visible); let best: Drone | undefined, dist = Infinity; for (const d of targets) {
-        const p = d.g.getWorldPosition(new T.Vector3());
-        const along = p.clone().sub(ray.origin).dot(ray.direction);
-        if (shotHits(along, ray.distanceToPoint(p) / d.g.scale.x) && along < dist) {
+    } learned.shoot = true; ammo--; shots++; cooldown = .45; flashTime = .065; audioFX.event('shot'); let best: Drone | undefined, dist = Infinity; for (const d of drones) {
+        if(d.dead||!d.g.visible)continue;
+        d.g.getWorldPosition(pointScratch);deltaScratch.copy(pointScratch).sub(ray.origin);
+        const along = deltaScratch.dot(ray.direction);
+        if (shotHits(along, ray.distanceToPoint(pointScratch) / d.g.scale.x) && along < dist) {
             best = d;
             dist = along;
         }
     }
-    const tracerEnd=ray.at(best?dist:18,new T.Vector3());tracerGeo.setFromPoints([ray.origin.clone(),tracerEnd]);tracer.visible=true;tracerLife=.075;tracerMat.opacity=.92;
+    ray.at(best?dist:18,tracerEndScratch);tracerGeo.setFromPoints([ray.origin,tracerEndScratch]);tracer.visible=true;tracerLife=.075;tracerMat.opacity=.92;
     if (best) {
         best.hp--;
         const destroyed = best.hp <= 0;
@@ -799,8 +800,7 @@ export function createExperience(host: HTMLElement, hooks: {
                     }
                 }
                 else {
-                    const delta = robot.position.clone().sub(rival.position);
-                    delta.y = 0;
+                    const delta = deltaScratch.copy(robot.position).sub(rival.position);delta.y = 0;
                     const distance = delta.length();
                     rival.rotation.y = Math.atan2(-delta.x, -delta.z);
                     if (distance > 1.5)
@@ -818,7 +818,7 @@ export function createExperience(host: HTMLElement, hooks: {
                             health--;
                             notify('УДАР! ВКЛЮЧИТЕ СПИННЕР');
                         }
-                        const away = robot.position.clone().sub(rival.position).setY(0).normalize();
+                        const away = awayScratch.copy(robot.position).sub(rival.position).setY(0).normalize();
                         rival.position.addScaledVector(away, -1.3);
                         rival.position.x = T.MathUtils.clamp(rival.position.x, -5.7, 5.7);
                         rival.position.z = T.MathUtils.clamp(rival.position.z, -12.7, -1.3);
@@ -909,7 +909,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         if (mode === 'hub'&&!paused()) {
             const headCamera = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
-            const head = headCamera.getWorldPosition(new T.Vector3());
+            const head = headCamera.getWorldPosition(headScratch);
             let mx = (keys.has('d') ? 1 : 0) - (keys.has('a') ? 1 : 0), mz = (keys.has('s') ? 1 : 0) - (keys.has('w') ? 1 : 0);
             for (const src of sources.values())
                 if (src.handedness === 'left' && src.gamepad) {
@@ -919,16 +919,14 @@ export function createExperience(host: HTMLElement, hooks: {
                     if (Math.abs(y) > .2)
                         mz = y;
                 }
-            const direction = headCamera.getWorldDirection(new T.Vector3());
-            direction.y = 0;
-            direction.normalize();
-            const side = new T.Vector3(-direction.z, 0, direction.x);
-            const move = side.multiplyScalar(mx).addScaledVector(direction, -mz);
+            const direction = headCamera.getWorldDirection(directionScratch);direction.y = 0;direction.normalize();
+            const side = sideScratch.set(-direction.z, 0, direction.x);
+            const move = moveScratch.copy(side).multiplyScalar(mx).addScaledVector(direction, -mz);
             if (move.length() > .1)
                 learned.move = true;
             if (move.length() > 1)
                 move.normalize();
-            const candidate = head.clone().addScaledVector(move, dt * 2);
+            const candidate = candidateScratch.copy(head).addScaledVector(move, dt * 2);
             if (Math.hypot(candidate.x, candidate.z + 11.5) > 3)
                 rig.position.addScaledVector(move, dt * 2);
             rig.position.x = T.MathUtils.clamp(rig.position.x, -8, 8);
