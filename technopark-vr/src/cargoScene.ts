@@ -331,7 +331,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
     }
     reset();update(0,0,0,false);
     // Merge rigid chassis details by material. Wheels and every articulated part stay separate for simulation/animation.
-    const dynamicRobot=new Set<T.Object3D>([...wheels,turret,upper,fore,upperSideA,upperSideB,foreSideA,foreSideB,...pins,barrel1,rod1,barrel2,rod2]);
+    const dynamicRobot=new Set<T.Object3D>([...wheels,turret,upper,fore,upperSideA,upperSideB,foreSideA,foreSideB,...pins,barrel1,rod1,barrel2,rod2,statusLamp]);
     const disposeRobotStatic=batchStatic(robot,dynamicRobot);
     const disposeStatic=batchStatic(root,new Set(packages));
     return {root,robot,packages,reset,update,interact,stop(){velocity=0;turnVelocity=0;},
