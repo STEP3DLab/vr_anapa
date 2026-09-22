@@ -50,7 +50,7 @@ export function createExperience(host: HTMLElement, hooks: {
     Object.values(worlds).forEach(g => scene.add(g));
     const materials: T.Material[] = [], geometries: T.BufferGeometry[] = [], textures: T.Texture[] = [];
     function mat(color: T.ColorRepresentation, metal = .3, glow = false) { const m = new T.MeshStandardMaterial({ color, metalness: metal, roughness: .4, emissive: glow ? color : 0, emissiveIntensity: glow ? 2 : 0 }); materials.push(m); return m; }
-    const navy = mat('#142d39'), steel = mat('#98aab7', .8), black = mat('#080f17'), cyan = mat('#52ffe0', .2, true), orange = mat('#ff8b3d', .2, true), red = mat('#fa263e'), white = mat('#d9faff');
+    const navy = mat('#142d39'), steel = mat('#98aab7', .8), black = mat('#080f17'), cyan = mat('#52ffe0', .2, true), orange = mat('#ff8b3d', .2, true), lime = mat('#bfe879', .15, true), red = mat('#fa263e'), white = mat('#d9faff');
     function mesh(g: T.Group, geo: T.BufferGeometry, m: T.Material, x = 0, y = 0, z = 0) { geometries.push(geo); const o = new T.Mesh(geo, m); o.position.set(x, y, z); g.add(o); return o; }
     const box = (g: T.Group, m: T.Material, x: number, y: number, z: number, w: number, h: number, d: number) => mesh(g, new T.BoxGeometry(w, h, d), m, x, y, z);
     const cyl = (g: T.Group, m: T.Material, x: number, y: number, z: number, r: number, h: number, n = 32) => mesh(g, new T.CylinderGeometry(r, r, h, n), m, x, y, z);
@@ -128,11 +128,11 @@ export function createExperience(host: HTMLElement, hooks: {
     }
     xrOnly(label(hub, 'ЛЕВЫЙ СТИК: ДВИЖЕНИЕ / ПРАВЫЙ: ПОВОРОТ 30°', 0, 1.2, -1.5, 4, .32).o);
     xrOnly(label(hub, 'ЛУЧ + КУРОК: ПОРТАЛ ИЛИ ТЕЛЕПОРТ НА ПОЛУ', 0, .8, -1.5, 4, .32).o);
-    function portal(x: number, mode: Mode, title: string, num: string, m: T.Material, z = -6, yaw = 0) { const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = yaw; p.userData.baseY=0;p.userData.mode=mode;hub.add(p);portalGroups.push(p); cyl(p, black, 0, .13, 0, 2, .25); for (const a of [-1, 1])
+    function portal(x: number, mode: Mode, title: string, num: string, m: T.Material, z = -6, yaw = 0) { const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = yaw; p.userData.baseY=0;p.userData.mode=mode;hub.add(p);portalGroups.push(p); cyl(p, black, 0, .13, 0, 2, .25);const floorRing=mesh(p,new T.TorusGeometry(1.76,.025,5,48),m,0,.27,0);floorRing.rotation.x=Math.PI/2;for(const lane of [-.62,.62])box(p,m,lane,.025,2.1,.045,.018,2.6); for (const a of [-1, 1])
         box(p, m, a * 1.55, 1.9, 0, .12, 3.8, .25); box(p, m, 0, 3.8, 0, 3.2, .12, .25); const pm = new T.ShaderMaterial({ transparent: true, side: T.DoubleSide, uniforms: { time: { value: 0 }, color: { value: new T.Color(mode === 'robot' ? '#27ebca' : mode === 'cargo' ? '#bbdf79' : '#ff883a') } }, vertexShader: 'varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}', fragmentShader: 'varying vec2 v;uniform float time;uniform vec3 color;void main(){vec2 p=v-.5;float r=length(p*vec2(1.,.75));float a=atan(p.y,p.x);float wave=pow(.5+.5*sin(r*42.-time*2.+a*3.),3.);wave+=.3*pow(.5+.5*sin(a*5.+time*.5+r*22.),8.);float edge=pow(abs(v.x-.5)*2.,5.);gl_FragColor=vec4(color*(.25+wave*.4+edge),.48+edge*.3);}' }); materials.push(pm); const surface = mesh(p, new T.PlaneGeometry(3, 3.6), pm, 0, 1.95, 0); portals.push(surface); action(surface, () => go(mode)); label(p, title, 0, 4.3, .05, 3.7, .55); label(p, num, 0, .65, .08, 2.7, .38); }
     portal(-5.2, 'robot', 'КРАСНЫЙ ТРЕУГОЛЬНИК', '01 / РОБОТ-АРЕНА', cyan);
     portal(5.2, 'drones', 'ОХОТА НА ДРОНОВ', '02 / ВОЗДУШНЫЙ ТИР', orange);
-    portal(8, 'cargo', 'ПОЛИГОН ЛОСИНКА', '03 / ГРУЗОВАЯ МИССИЯ', cyan, -11, -Math.PI / 2);
+    portal(8, 'cargo', 'ПОЛИГОН ЛОСИНКА', '03 / ГРУЗОВАЯ МИССИЯ', lime, -11, -Math.PI / 2);
     const arena = worlds.robot;
     box(arena, navy, 0, .06, -7, 13, .12, 13);
     for (const x of [-6.7, 6.7]) {
