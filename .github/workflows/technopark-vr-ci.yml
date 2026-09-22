@@ -22,15 +22,15 @@ concurrency:
 jobs:
   verify-and-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: technopark-vr
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -39,6 +39,22 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+      - name: Install Chromium for WebGL2 audit
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run real WebGL2 browser audit
+        env:
+          PLAYWRIGHT_PATH: playwright
+        run: npm run test:browser
+      - name: Upload browser audit screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: technopark-vr-browser-audit-${{ github.run_number }}
+          path: technopark-vr/.test-output
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Publish rebuilt browser bundle
         working-directory: .
         shell: bash
