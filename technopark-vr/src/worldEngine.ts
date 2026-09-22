@@ -316,7 +316,7 @@ export function createExperience(host: HTMLElement, hooks: {
     action(pauseLabel.o,()=>paused()?resume():pause('manual',true));
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
-    const raycaster = new T.Raycaster(), rotation = new T.Matrix4();
+    const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3();
     const rays:T.Line[]=[];const tips:T.Mesh[]=[];const hoverTargets:Array<T.Object3D|null>=[null,null];
     function visible(o: T.Object3D) { for (let p: T.Object3D | null = o; p; p = p.parent)
         if (!p.visible)
