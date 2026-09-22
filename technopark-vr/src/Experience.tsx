@@ -32,7 +32,10 @@ export default function Experience(){
     diagnostics:d=>setDiagnostics(`${d.xr?'XR':'Экран'} · ${d.fps} кадр/с · ${d.calls} вызовов · ${d.triangles.toLocaleString('ru')} треуг. · ${d.geometries} геом. / ${d.textures} текстур`)});
    const params=new URLSearchParams(location.search),requested=params.get('scene');
    if(params.get('presentation')==='1')game.current.setPresentation(true);
-   if(requested&&['hub','robot','drones','cargo'].includes(requested))game.current.go(requested as 'hub'|'robot'|'drones'|'cargo');
+   if(requested&&['hub','robot','drones','cargo'].includes(requested)){
+    game.current.go(requested as 'hub'|'robot'|'drones'|'cargo');
+    if(requested!=='hub'&&params.get('autostart')==='1')game.current.start();
+   }
    if(params.get('clean')==='1')setClean(true);
   }catch(e){setError('Не удалось запустить 3D: '+String(e));}
   return()=>{game.current?.dispose();game.current=null;};
