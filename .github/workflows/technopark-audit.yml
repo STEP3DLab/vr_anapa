@@ -19,12 +19,24 @@ jobs:
       - run: npm run check
       - run: node tests/game.test.mjs && node tests/engine.test.mjs
       - run: npm run build
-      - name: Package audit dependencies and build
-        if: always()
-        run: tar -czf /tmp/technopark-toolchain.tar.gz node_modules package-lock.json app.js
+      - run: npm install --prefix /tmp/vr-browser --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.56.1
+      - run: /tmp/vr-browser/node_modules/.bin/playwright install chromium --with-deps
+      - run: node tests/browser.test.mjs
+        env:
+          PLAYWRIGHT_PATH: /tmp/vr-browser/node_modules/playwright/index.mjs
+          VR_LIVE_URL: https://step3dlab.github.io/vr_anapa/technopark-vr/?v=8.1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: technopark-audit-toolchain
-          path: /tmp/technopark-toolchain.tar.gz
+          name: technopark-browser-review
+          path: technopark-vr/.test-output
+          retention-days: 1
+      - name: Package verified build
+        if: success()
+        run: tar -czf /tmp/technopark-build.tar.gz app.js package-lock.json
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: technopark-verified-build
+          path: /tmp/technopark-build.tar.gz
           retention-days: 1
