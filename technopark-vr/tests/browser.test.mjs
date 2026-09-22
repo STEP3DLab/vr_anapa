@@ -10,7 +10,7 @@ const project = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(project, '.test-output');
 await mkdir(output, {recursive:true});
 // A separate inspection bundle exposes fixtures. The production app.js has NO testing globals.
-await build({absWorkingDir:project,stdin:{contents:"import {createExperience} from './src/worldEngine';createExperience(document.getElementById('host')!,{status(){},scene(){}});",resolveDir:project,loader:'ts'},outfile:output+'/inspection.js',bundle:true,format:'esm',plugins:[{name:'inspection-only',setup(b){b.onLoad({filter:/worldEngine\.ts$/},async args=>{let s=await readFile(args.path,'utf8');const index=s.lastIndexOf("    go('hub');");assert.ok(index>0);s=s.slice(0,index)+s.slice(index).replace("    go('hub');","    go('hub');(globalThis as any).__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView,hudRoot};");return {contents:s,loader:'ts'};});}}]});
+await build({absWorkingDir:project,stdin:{contents:"import {createExperience} from './src/worldEngine';createExperience(document.getElementById('host')!,{status(){},scene(){}});",resolveDir:project,loader:'ts'},outfile:output+'/inspection.js',bundle:true,format:'esm',plugins:[{name:'inspection-only',setup(b){b.onLoad({filter:/worldEngine\.ts$/},async args=>{let s=await readFile(args.path,'utf8');const index=s.lastIndexOf("    go('hub');");assert.ok(index>0);s=s.slice(0,index)+s.slice(index).replace("    go('hub');","    go('hub');(globalThis as any).__inspection={renderer,scene,camera,cargo,go,fade,rig,placeView,hudRoot,missionBeacon};");return {contents:s,loader:'ts'};});}}]});
 await writeFile(output+'/inspection.html',`<!doctype html><html><head><link rel="icon" href="../favicon.svg"><style>body{margin:0}#host{width:100vw;height:100vh}canvas{display:block}</style></head><body><div id="host"></div><script type="module" src="./inspection.js"></script></body></html>`);
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.wasm':'application/wasm'};
 const server=createServer(async(req,res)=>{try{const pathname=decodeURIComponent(new URL(req.url,'http://localhost').pathname);let file=resolve(project, '.'+pathname);if(!file.startsWith(project+'/')&&file!==project)throw Error('Invalid path');if(pathname.endsWith('/'))file+='/index.html';const data=await readFile(file);res.writeHead(200,{'Content-Type':mime[extname(file)]||'application/octet-stream'});res.end(data);}catch{res.writeHead(404);res.end('Not found');}});
@@ -45,7 +45,7 @@ try{
  }
  await page.setViewportSize({width:1440,height:900});await page.goto(url+'?gallery=1',{waitUntil:'networkidle'});await page.waitForTimeout(600);await page.screenshot({path:output+'/gallery.png'});
  // Close-up, deterministic, real rendered inspection of the arm at every handling stage.
- await page.goto(url+'.test-output/inspection.html',{waitUntil:'networkidle'});await page.waitForTimeout(800);
+ await page.goto(url+'.test-output/inspection.html',{waitUntil:'networkidle'});await page.waitForTimeout(800);assert.equal(await page.evaluate(()=>!!window.__inspection.scene.getObjectByName('cargo-exhibit')),true,'Losinka rover exhibit must be present in the hall');
  await page.evaluate(()=>{const q=window.__inspection;q.go('cargo');q.renderer.setAnimationLoop(null);q.fade.visible=false;q.scene.traverse(o=>{if(o.isDirectionalLight)o.intensity=3.5;});q.cargo.robot.position.set(-5,0,0);q.cargo.update(0,0,0,false);q.camera.position.set(1,4.5,5);q.camera.lookAt(-5,1,0);q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);});
  await page.screenshot({path:output+'/arm-0-ready.png'});
  await page.evaluate(()=>window.__inspection.cargo.interact());
@@ -58,6 +58,7 @@ try{
  for(const name of ['cargo','robot','drones']){
   await page.evaluate(mode=>{const q=window.__inspection;q.go(mode);q.renderer.xr.isPresenting=true;q.placeView();q.renderer.xr.isPresenting=false;q.camera.position.set(0,1.65,0);q.camera.rotation.set(-.15,0,0);q.fade.visible=false;q.scene.updateMatrixWorld(true);q.renderer.render(q.scene,q.camera);},name);
   await page.screenshot({path:output+'/console-preview-'+name+'.png'});
+  assert.equal(await page.evaluate(()=>window.__inspection.missionBeacon.visible),true,'Spatial mission beacon must be visible in VR game scenes');
   const heights=await page.evaluate(()=>{const q=window.__inspection;return q.hudRoot.children.filter(o=>o.userData.action).map(o=>o.getWorldPosition(q.camera.position.clone()).y-q.rig.position.y);});assert.ok(heights.every(y=>y>.3),'Every VR button must remain above ground');
   await page.evaluate(()=>{const q=window.__inspection;q.camera.rotation.set(-.08,Math.atan2(4.4,3.4),0);q.renderer.render(q.scene,q.camera);});
   await page.screenshot({path:output+'/console-side-'+name+'.png'});
