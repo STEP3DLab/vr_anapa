@@ -106,7 +106,8 @@ export function createCargoScene(onEvent: (message: string) => void) {
     geometries.push(treadGeo);
     const tread = new T.InstancedMesh(treadGeo, tire, 72);
     robot.add(tread);
-    const dummy = new T.Object3D();
+    const rimGeo=new T.TorusGeometry(.31,.035,6,20);geometries.push(rimGeo);const wheelRims=new T.InstancedMesh(rimGeo,steel,6);wheelRims.name='cargo-wheel-rims';robot.add(wheelRims);
+    const dummy = new T.Object3D(),rimDummy=new T.Object3D();let rimIndex=0;
     for (const x of [-1.04, 1.04])
         for (const z of [-1, 0, 1]) {
             const w = new T.Mesh(wheelGeo, tire);
@@ -117,6 +118,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
             wheels.push(w);
             const hub = cylinder(robot, steel, x + Math.sign(x) * .19, .53, z, .28, .045);
             hub.rotation.z = Math.PI / 2;
+            rimDummy.position.set(x+Math.sign(x)*.205,.53,z);rimDummy.rotation.set(0,Math.PI/2,0);rimDummy.updateMatrix();wheelRims.setMatrixAt(rimIndex++,rimDummy.matrix);
         }
     const shoulder = new T.Vector3(ARM.shoulder.x,ARM.shoulder.y,ARM.shoulder.z);
     const elbow = new T.Vector3(), tip = new T.Vector3(0,1.25,-3.45);
