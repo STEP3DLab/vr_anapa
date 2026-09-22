@@ -42,6 +42,7 @@ export default function Experience(){
  },[]);
  useEffect(()=>{game.current?.setHelpOpen(help);if(help)dialog.current?.showModal();else dialog.current?.close();},[help]);
  useEffect(()=>{if(xr)setMenu(false);},[xr]);
+ useEffect(()=>{game.current?.setDiagnosticsVisible(showDiagnostics);},[showDiagnostics]);
  useEffect(()=>{const onFullscreen=()=>setFullscreen(!!document.fullscreenElement);document.addEventListener('fullscreenchange',onFullscreen);return()=>document.removeEventListener('fullscreenchange',onFullscreen);},[]);
  useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if((e.key==='m'||e.key==='M')&&!e.ctrlKey&&!e.metaKey&&!e.altKey){e.preventDefault();e.stopPropagation();toggleMenu();return;}if(e.key==='Escape'&&menu){e.preventDefault();e.stopPropagation();closeMenu();}};window.addEventListener('keydown',onKey,true);return()=>window.removeEventListener('keydown',onKey,true);},[menu,hub,paused]);
  function newVisitor(){menuPausedByUs.current=false;setHelp(false);setMenu(false);setClean(false);game.current?.nextVisitor();}
