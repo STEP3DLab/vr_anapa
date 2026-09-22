@@ -132,6 +132,15 @@ export function createCargoScene(onEvent: (message: string) => void) {
     const starts=[new T.Vector3(-5,.36,-3),new T.Vector3(6,.36,-10),new T.Vector3(-5,.36,-18)];
     const markerReady=new T.MeshBasicMaterial({color:0x82ffb0}),markerWaiting=new T.MeshBasicMaterial({color:0xdab34f});
     materials.push(markerReady,markerWaiting);
+    // A cheap world-space navigator stays readable from the fixed observation point in VR.
+    const navMaterial=new T.LineBasicMaterial({color:0xdab34f,transparent:true,opacity:.82,depthWrite:false});
+    materials.push(navMaterial);
+    const navGeometry=new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3()]);
+    geometries.push(navGeometry);
+    const navLine=new T.Line(navGeometry,navMaterial);navLine.name='cargo-navigation-line';navLine.userData.dynamic=true;root.add(navLine);
+    const navArrowMaterial=new T.MeshBasicMaterial({color:0xdab34f,toneMapped:false});
+    materials.push(navArrowMaterial);
+    const navArrow=mesh(root,new T.ConeGeometry(.28,.7,10),navArrowMaterial,0,2.4,0);navArrow.name='cargo-navigation-arrow';navArrow.rotation.x=Math.PI;navArrow.userData.dynamic=true;
     starts.forEach((p,i)=>{
         const crate=box(root,i===1?lime:amber,p.x,p.y,p.z,.7,.7,.7);crate.name='cargo-package-'+i;crate.userData.dynamic=true;packages.push(crate);
         // Contrast straps make small loads readable from the fixed observation point.
@@ -141,9 +150,9 @@ export function createCargoScene(onEvent: (message: string) => void) {
         const plate=label('ГРУЗ '+(i+1),p.x,1.35,p.z,1.8);markers.push({beacon,label:plate});
     });
     const readyBase=box(base,markerReady,0,.055,0,5.8,.012,3.8);readyBase.visible=false;
-    const point=new T.Vector3(),local=new T.Vector3();
+    const point=new T.Vector3(),local=new T.Vector3(),navStart=new T.Vector3(),navEnd=new T.Vector3();
     type Job={kind:'pickup'|'unload';item:T.Mesh;t:number;from:T.Vector3;to:T.Vector3;start:T.Vector3;gripped:boolean;released:boolean};
-    let job:Job|null=null,carried:T.Mesh|null=null,delivered=0,velocity=0,turnVelocity=0,distance=0,collisions=0,collisionDelay=0,finished=false;
+    let job:Job|null=null,carried:T.Mesh|null=null,delivered=0,velocity=0,turnVelocity=0,distance=0,collisions=0,collisionDelay=0,finished=false,navClock=0;
     const wheelPhases=new Array(6).fill(0);
     const smooth=(u:number)=>T.MathUtils.smoothstep(u,0,1);
     function isStopped(){return Math.abs(velocity)<.15&&Math.abs(turnVelocity)<.08;}
@@ -155,7 +164,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
             .map(p=>{p.getWorldPosition(point);return {item:p,v:point.clone().sub(robot.position).setY(0),world:point.clone()};})
             .filter(({v,world})=>{
                 const d=v.length();local.copy(world).addScaledVector(up,ARM.gripOffset);robot.worldToLocal(local);
-                return d>=1.8&&d<=3.6&&v.dot(forward)/d>.72&&solveArm(local).reachable&&!segmentBlocked(shoulderWorld,world,obstacles);
+                return d>=1.55&&d<=3.85&&v.dot(forward)/d>.60&&solveArm(local).reachable&&!segmentBlocked(shoulderWorld,world,obstacles);
             }).sort((a,b)=>a.v.length()-b.v.length())[0]?.item??null;
     }
     // Find a reachable free place on the painted base, not an instantaneous teleport to a slot.
@@ -187,7 +196,7 @@ export function createCargoScene(onEvent: (message: string) => void) {
         return next?'ГРУЗ '+(packages.indexOf(next)+1)+' · '+Math.round(next.position.distanceTo(robot.position))+' М · ПОДЪЕДЬТЕ ПЕРЕДНЕЙ ЧАСТЬЮ':'ДОСТАВКА ЗАВЕРШЕНА';
     }
     function reset(){
-        carried=null;job=null;delivered=0;velocity=0;turnVelocity=0;distance=0;collisions=0;collisionDelay=0;finished=false;
+        carried=null;job=null;delivered=0;velocity=0;turnVelocity=0;distance=0;collisions=0;collisionDelay=0;finished=false;navClock=0;
         robot.position.set(0,0,1);robot.rotation.set(0,0,0);tip.copy(restTip);jawOpening=.54;wheelPhases.fill(0);
         packages.forEach((p,i)=>{root.add(p);p.position.copy(starts[i]);p.rotation.set(0,0,0);p.userData.delivered=false;});
         markers.forEach(m=>{m.beacon.visible=true;m.label.visible=true;});readyBase.visible=false;
@@ -283,12 +292,28 @@ export function createCargoScene(onEvent: (message: string) => void) {
         claw.position.copy(tip);claw.rotation.y=turretYaw;jaws[0].position.x=-jawOpening;jaws[1].position.x=jawOpening;
         const target=!carried&&!job?pickupTarget():null;
         markers.forEach((m,i)=>{const available=!packages[i].userData.delivered&&packages[i]!==carried&&job?.item!==packages[i];m.beacon.visible=available;m.label.visible=available;m.beacon.material=packages[i]===target&&isStopped()?markerReady:markerWaiting;});
-        readyBase.visible=!!carried&&!job&&isStopped()&&!!unloadPoint();
+        const baseActionable=!!carried&&!job&&isStopped()&&!!unloadPoint();
+        readyBase.visible=baseActionable;
+        navClock+=dt;
+        const nearest=!carried&&!job?packages.filter(p=>!p.userData.delivered&&p!==carried).sort((a,b)=>a.position.distanceToSquared(robot.position)-b.position.distanceToSquared(robot.position))[0]:null;
+        const navTarget=target??nearest;
+        const showNav=!finished&&!job&&(!!carried||!!navTarget);
+        navLine.visible=showNav;navArrow.visible=showNav;
+        if(showNav){
+            robot.getWorldPosition(navStart);navStart.y=.13;
+            if(carried)navEnd.set(0,.13,2);else navTarget!.getWorldPosition(navEnd),navEnd.y=.13;
+            const pos=navGeometry.getAttribute('position') as T.BufferAttribute;
+            pos.setXYZ(0,navStart.x,navStart.y,navStart.z);pos.setXYZ(1,navEnd.x,navEnd.y,navEnd.z);pos.needsUpdate=true;
+            const actionable=baseActionable||!!target&&isStopped();
+            navMaterial.color.set(actionable?0x82ffb0:0xdab34f);navArrowMaterial.color.copy(navMaterial.color);
+            navArrow.position.set(navEnd.x,2.25+Math.sin(navClock*4)*.14,navEnd.z);
+        }
     }
     reset();update(0,0,0,false);
     const disposeStatic=batchStatic(root,new Set(packages));
     return {root,robot,packages,reset,update,interact,stop(){velocity=0;turnVelocity=0;},
         get delivered(){return delivered;},get loaded(){return !!carried;},get busy(){return !!job;},get finished(){return finished;},get distance(){return distance;},get collisions(){return collisions;},
+        get actionable(){return !job&&!finished&&isStopped()&&(carried?!!unloadPoint():!!pickupTarget());},
         hint:guidance,
         actionLabel(){return job?'Манипулятор работает…':carried?'Выгрузить груз':'Захватить груз';},
         status(){return `Грузы ${delivered}/3 · ${job?'Манипулятор работает':carried?'Груз на платформе':'Захват свободен'} · ${Math.round(distance)} м · Столкновения ${collisions}`;},
