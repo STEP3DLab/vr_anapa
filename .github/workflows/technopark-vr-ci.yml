@@ -11,6 +11,7 @@ on:
       - "technopark-vr/build.mjs"
       - "technopark-vr/game.css"
       - "technopark-vr/index.html"
+      - "technopark-vr/sw.js"
       - ".github/workflows/technopark-vr-ci.yml"
   workflow_dispatch:
 
