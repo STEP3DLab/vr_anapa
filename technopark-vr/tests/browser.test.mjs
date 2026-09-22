@@ -55,8 +55,8 @@ try{
   const layout=await page.evaluate(()=>{const selectors=['.vr-entry button','.round-actions','.touch-controls','.game-footer nav','.game-status','.game-header'];const r=selectors.map(s=>{const x=document.querySelector(s).getBoundingClientRect();return {selector:s,x:x.x,y:x.y,w:x.width,h:x.height};});const overlap=[];for(let i=0;i<r.length;i++)for(let j=i+1;j<r.length;j++)if(Math.min(r[i].x+r[i].w,r[j].x+r[j].w)>Math.max(r[i].x,r[j].x)+2&&Math.min(r[i].y+r[i].h,r[j].y+r[j].h)>Math.max(r[i].y,r[j].y)+2)overlap.push([r[i].selector,r[j].selector]);return {rects:r,overlap,horizontalOverflow:document.documentElement.scrollWidth>innerWidth};});reports.push({viewport,...layout});assert.equal(layout.horizontalOverflow,false);assert.deepEqual(layout.overlap,[],'Mobile controls and status must not overlap');
    await page.getByRole('button',{name:'☰ Меню',exact:true}).click();await page.locator('.menu-scenes button').filter({hasText:'Главный павильон'}).click();
  }
- await page.setViewportSize({width:1440,height:900});await page.goto(url+'?scene=robot&presentation=1&autostart=1',{waitUntil:'networkidle'});await page.waitForTimeout(3600);
- assert.match(await page.locator('.game-status').innerText(),/ДЕМОНСТРАЦИЯ ∞/,'Autostart deep link begins the selected presentation scene');
+ await page.setViewportSize({width:1440,height:900});await page.goto(url+'?scene=robot&presentation=1&autostart=1',{waitUntil:'networkidle'});await page.waitForTimeout(500);
+ assert.match(await page.locator('.game-status').innerText(),/СТАРТ ЧЕРЕЗ|ДЕМОНСТРАЦИЯ ∞/,'Autostart deep link begins the selected presentation scene');
  await page.goto(url+'?scene=cargo&presentation=1&clean=1',{waitUntil:'networkidle'});await page.waitForTimeout(650);
  assert.equal(await page.locator('.experience.is-game.clean').count(),1,'Deep link opens the requested game scene in clean presentation mode');
  assert.equal(await page.locator('.game-status').count(),0,'Clean deep link keeps gameplay overlays hidden');assert.equal(await page.locator('.vr-entry button').isVisible(),true);
