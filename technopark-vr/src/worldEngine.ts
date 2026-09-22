@@ -19,7 +19,7 @@ export function createExperience(host: HTMLElement, hooks: {
     phase?: (phase:string)=>void;
     diagnostics?: (data:{fps:number;calls:number;triangles:number;geometries:number;textures:number;xr:boolean;scene:string})=>void;
 }) {
-    const renderer = new T.WebGLRenderer({ antialias: true });
+    const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', stencil: false });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
     renderer.setSize(host.clientWidth, host.clientHeight);
     renderer.xr.enabled = true;
@@ -366,7 +366,7 @@ export function createExperience(host: HTMLElement, hooks: {
     let mode: Mode = 'hub', seconds = 60, score = 0, ammo = 6, reloading = 0, cooldown = 0, spinning = false, ended = false, elapsed = 0, lastHUD = '', flashTime = 0;
     const keys = new Set<string>();
     const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>();
-    let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0;
+    let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0,lastCargoActionable=false;
     let observedSession:XRSession|null=null;
     const paused=()=>pauseReasons.size>0;
     function clearInput(){keys.clear();cargo.stop();audioFX.motor(0);for(const source of sources.values())neutral.add(source);}
@@ -447,7 +447,7 @@ export function createExperience(host: HTMLElement, hooks: {
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();if(next!=='hub')train();
     }
-    function restart() { clearInput();cargo.reset(); roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset(); lastCargoActionable=false; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
         learned.spin = true;
@@ -793,6 +793,12 @@ export function createExperience(host: HTMLElement, hooks: {
             const active = !paused()&&!ready && !countdown && !ended;
             cargo.update(dt, drive, turn, active);
             audioFX.motor(active&&!cargo.busy?Math.abs(drive):0);
+            const cargoActionable=active&&cargo.actionable;
+            if(cargoActionable&&!lastCargoActionable){
+                const right=controllers.find(c=>sources.get(c)?.handedness==='right');
+                if(right)pulse(right);
+            }
+            lastCargoActionable=cargoActionable;
             if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished)finish();}
         }
         if (mode === 'drones')
