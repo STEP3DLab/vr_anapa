@@ -329,7 +329,7 @@ export function createExperience(host: HTMLElement, hooks: {
     action(pauseLabel.o,()=>paused()?resume():pause('manual',true));
     const handHints: Array<ReturnType<typeof label>> = [];
     const controllers: T.Group[] = [], sources = new Map<T.Group, XRInputSource>(), guns: T.Group[] = [];
-    const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3();
+    const raycaster = new T.Raycaster(), rotation = new T.Matrix4(), pointScratch=new T.Vector3(), localScratch=new T.Vector3(), forwardScratch=new T.Vector3(), scaleScratch=new T.Vector3(), quatScratch=new T.Quaternion();
     const rays:T.Line[]=[];const tips:T.Mesh[]=[];const hoverTargets:Array<T.Object3D|null>=[null,null];
     function visible(o: T.Object3D) { for (let p: T.Object3D | null = o; p; p = p.parent)
         if (!p.visible)
@@ -693,8 +693,8 @@ export function createExperience(host: HTMLElement, hooks: {
         desktopGun.position.z = -.25 + (flashTime > 0 ? .06 : 0);
         if(mode==='hub'){
             portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
-            const head=(renderer.xr.isPresenting?renderer.xr.getCamera():camera).getWorldPosition(pointScratch),forward=new T.Vector3(0,0,-1).applyQuaternion((renderer.xr.isPresenting?renderer.xr.getCamera():camera).getWorldQuaternion(new T.Quaternion()));let best=-1,bestDot=.9;
-            portalGroups.forEach((p,i)=>{p.getWorldPosition(localScratch);const d=localScratch.sub(head),dist=d.length(),dot=d.normalize().dot(forward);if(dist<15&&dot>bestDot){bestDot=dot;best=i;}const target=i===best?1.045:1;p.scale.lerp(new T.Vector3(target,target,target),Math.min(1,dt*8));p.position.y=p.userData.baseY+(i===best?.035*Math.sin(elapsed*5):0);});portalFocus=best;
+            const activeCamera=renderer.xr.isPresenting?renderer.xr.getCamera():camera,head=activeCamera.getWorldPosition(pointScratch);activeCamera.getWorldQuaternion(quatScratch);const forward=forwardScratch.set(0,0,-1).applyQuaternion(quatScratch);let best=-1,bestDot=.9;
+            portalGroups.forEach((p,i)=>{p.getWorldPosition(localScratch);localScratch.sub(head);const dist=localScratch.length(),dot=localScratch.normalize().dot(forward);if(dist<15&&dot>bestDot){bestDot=dot;best=i;}const target=i===best?1.045:1;p.scale.lerp(scaleScratch.set(target,target,target),Math.min(1,dt*8));p.position.y=p.userData.baseY+(i===best?.035*Math.sin(elapsed*5):0);});portalFocus=best;
             if(portalFocus!==lastPortalFocus){lastPortalFocus=portalFocus;if(portalFocus>=0&&renderer.xr.isPresenting)audioFX.tone(520,.045,'sine',.025);}
         }
         if (mode !== 'hub' && !ended && !ready && !countdown && !training && !presentation) {
