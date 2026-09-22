@@ -285,7 +285,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const sparks = new T.Points(sparksGeo, sparksMat);
     sparks.frustumCulled = false;
     scene.add(sparks);
-    const tracerGeo=new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3(0,0,-1)]);geometries.push(tracerGeo);const tracerMat=new T.LineBasicMaterial({color:0xffd28f,transparent:true,opacity:.9});materials.push(tracerMat);const tracer=new T.Line(tracerGeo,tracerMat);tracer.visible=false;tracer.frustumCulled=false;scene.add(tracer);
+    const tracerGeo=new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3(0,0,-1)]);geometries.push(tracerGeo);const tracerMat=new T.LineBasicMaterial({color:0xffd28f,transparent:true,opacity:.9});materials.push(tracerMat);const tracer=new T.Line(tracerGeo,tracerMat);tracer.name='shot-tracer';tracer.visible=false;tracer.frustumCulled=false;scene.add(tracer);
     let sparkLife = 0,tracerLife=0;
     function burst(p: T.Vector3) { sparkLife = .7; for (let i = 0; i < 96; i++) {
         sparkPos.set([p.x, p.y, p.z], i * 3);
