@@ -479,7 +479,7 @@ export function createExperience(host: HTMLElement, hooks: {
             localStorage.setItem('technopark-records', JSON.stringify(bests));
         }
         catch { } hooks.records?.({...bests});audioFX.event(won()?'win':'end'); updateHUD(); }
-    function cargoAction(){if(paused())return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
+    function cargoAction(){if(paused()||cargoAutopilot)return;if(ready){start();return;}if(ended||countdown)return;cargo.interact();updateHUD();}
     function snap(dir: number) { learned.turn = true; const head = (renderer.xr.isPresenting ? renderer.xr.getCamera() : camera).getWorldPosition(headScratch); const a = -dir * Math.PI / 6; rig.position.sub(head).applyAxisAngle(upAxis, a).add(head); rig.rotation.y += a; }
     function placeView(){
         clearInput();rig.position.set(0,0,0);rig.rotation.set(0,0,0);
