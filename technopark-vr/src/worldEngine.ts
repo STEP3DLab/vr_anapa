@@ -28,6 +28,7 @@ export function createExperience(host: HTMLElement, hooks: {
     renderer.xr.setFoveation(.65);
     renderer.outputColorSpace = T.SRGBColorSpace;
     renderer.toneMapping = T.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
     host.appendChild(renderer.domElement);
     const scene = new T.Scene();
     scene.background = new T.Color('#071722');
@@ -132,7 +133,7 @@ export function createExperience(host: HTMLElement, hooks: {
     portal(5.2, 'drones', 'ОХОТА НА ДРОНОВ', '02 / ВОЗДУШНЫЙ ТИР', orange);
     portal(8, 'cargo', 'ПОЛИГОН ЛОСИНКА', '03 / ГРУЗОВАЯ МИССИЯ', cyan, -11, -Math.PI / 2);
     const arena = worlds.robot;
-    box(arena, black, 0, .06, -7, 13, .12, 13);
+    box(arena, navy, 0, .06, -7, 13, .12, 13);
     for (const x of [-6.7, 6.7]) {
         box(arena, steel, x, .4, -7, .15, .8, 13.5);
         box(arena, cyan, x, .85, -7, .06, .05, 13.5);
@@ -145,6 +146,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const robot = new T.Group();
     robot.name = 'player-robot';
     arena.add(robot);
+    robot.scale.setScalar(1.12);
     cyl(robot, black, 0, .23, 0, .73, .3);
     cyl(robot, steel, 0, .42, 0, .67, .15);
     const ring = new T.Group();
@@ -184,9 +186,9 @@ export function createExperience(host: HTMLElement, hooks: {
     rivalName.o.visible = false;
     const cells: T.Mesh[] = [], blocks: T.Mesh[] = [];
     for (let i = 0; i < 5; i++)
-        cells.push(mesh(arena, new T.OctahedronGeometry(.28), cyan, [-4, 3, -3, 4, 0][i], .6, [-3, -4, -7, -10, -12][i]));
+        cells.push(mesh(arena, new T.OctahedronGeometry(.34), cyan, [-4, 3, -3, 4, 0][i], .62, [-3, -4, -7, -10, -12][i]));
     for (let i = 0; i < 6; i++)
-        blocks.push(box(arena, orange, [-4, 1, 4, -2, 2, -4][i], .4, [-5, -6, -8, -10, -12, -12][i], .6, .6, .6));
+        blocks.push(box(arena, orange, [-4, 1, 4, -2, 2, -4][i], .42, [-5, -6, -8, -10, -12, -12][i], .7, .7, .7));
     cells.forEach(c => c.name = 'energy-cell');
     blocks.forEach(b => b.name = 'target-block');
     for (let i = 0; i < 3; i++) {
@@ -233,13 +235,14 @@ export function createExperience(host: HTMLElement, hooks: {
             }
         const boss = i === 8, armored = i % 3 === 2;
         const maxHP = boss ? 6 : armored ? 2 : 1;
-        g.scale.setScalar(boss ? 2.2 : armored ? 1.15 : i % 3 === 1 ? .8 : 1);
+        g.scale.setScalar(boss ? 2.4 : armored ? 1.35 : i % 3 === 1 ? 1.05 : 1.2);
         if (armored || boss) {
             box(g, navy, 0, .2, 0, .85, .16, .6);
             box(g, boss ? red : orange, 0, .3, 0, .65, .04, .4);
         }
         drones.push({ g, hit, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
     }
+    const trainingHalo=mesh(range,new T.TorusGeometry(.92,.028,6,48),orange,0,2.6,-7);trainingHalo.userData.dynamic=true;trainingHalo.visible=false;
     const exhibits: T.Group[] = [];
     for (const [x, model, title, description, destination] of [[-6, robot, 'КРАСНЫЙ ТРЕУГОЛЬНИК', 'КОЛЬЦЕВОЙ СПИННЕР / КОМАНДА ДЕЗИНТЕГРАТОР', 'robot'], [6, drones[0].g, 'ЛАБОРАТОРИЯ БПЛА', 'ИНТЕРАКТИВНАЯ МОДЕЛЬ / ВОЗДУШНЫЙ ТИР', 'drones']] as const) {
         cyl(hub, black, x, .5, -.5, 1.35, 1, 48);
@@ -449,7 +452,7 @@ export function createExperience(host: HTMLElement, hooks: {
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
-        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);transition=.3;audioFX.motor(0);if(next!==mode)audioFX.event('portal');mode=next;
+        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transition=.3;audioFX.motor(0);if(next!==mode)audioFX.event('portal');mode=next;
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
         if(next!=='hub'){
@@ -805,7 +808,8 @@ export function createExperience(host: HTMLElement, hooks: {
             audioFX.motor(active&&!cargo.busy?Math.abs(drive):0);
             if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished)finish();}
         }
-        if (mode === 'drones')
+        if (mode === 'drones'){
+            trainingHalo.visible=training&&!drones[0].dead;trainingHalo.rotation.z+=dt*.45;
             for (let i = 0; i < drones.length; i++) {
                 const d = drones[i];
                 if (i === 8 && roundAge < 40) {
@@ -846,6 +850,7 @@ export function createExperience(host: HTMLElement, hooks: {
                     d.g.rotation.y = Math.sin(elapsed + d.phase) * .3;
                 }
             }
+        }
         if (mode === 'hub'&&!paused()) {
             const headCamera = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
             const head = headCamera.getWorldPosition(new T.Vector3());
