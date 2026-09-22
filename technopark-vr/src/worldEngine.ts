@@ -418,10 +418,10 @@ export function createExperience(host: HTMLElement, hooks: {
     let presentation = false, training = false, lessonStep = 0, lessonTravel = 0, lessonTurn = 0, lessonSpin = false, health = 3, rivalHealth = 3, duel = false, impactWait = 0, rivalRespawn = 0;
     const learned = { move: false, turn: false, spin: false, shoot: false, reload: false, cargo: false };
     let ready = true, countdown = 0, combo = 0, shots = 0, hits = 0, turnReady = true, muted = false, notice = '', noticeTime = 0;
-    let lastCargoCollisions=0,lastCargoDelivered=0,cargoAutopilot=false,cargoDemoStep=0;
+    let lastCargoCollisions=0,lastCargoDelivered=0,cargoAutopilot=false,cargoDemoStep=0,cargoDemoWait=0;
     const cargoDemoRoute:Array<{x?:number;z?:number;action?:true}>=[{x:-5,z:1},{x:-5,z:0},{action:true},{x:-5,z:1},{x:0,z:1},{x:0,z:2},{action:true},{x:6,z:2},{x:6,z:-7},{action:true},{x:6,z:2},{x:0,z:2},{action:true},{x:.55,z:2},{x:.55,z:-10},{x:-5,z:-10},{x:-5,z:-15},{action:true},{x:-5,z:-10},{x:.55,z:-10},{x:.55,z:2},{x:0,z:2},{action:true}];
     const angleDelta=(a:number,b:number)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
-    function setCargoAutopilot(value:boolean){cargoAutopilot=value;if(value)cargoDemoStep=0;hooks.autopilot?.(value);}
+    function setCargoAutopilot(value:boolean){cargoAutopilot=value;if(value){cargoDemoStep=0;cargoDemoWait=0;}hooks.autopilot?.(value);}
     let bests: Record<string, number> = { robot: 0, drones: 0, cargo: 0 };
     try {
         bests = { ...bests, ...JSON.parse(localStorage.getItem('technopark-records') || '{}') };
@@ -518,7 +518,7 @@ export function createExperience(host: HTMLElement, hooks: {
             if(needsTraining)train();
         }
     }
-    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot)cargoDemoStep=0; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot){cargoDemoStep=0;cargoDemoWait=0;} roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
         learned.spin = true;
@@ -886,7 +886,8 @@ export function createExperience(host: HTMLElement, hooks: {
             const active = !paused()&&!ready && !countdown && !ended;
             if(cargoAutopilot&&active&&!cargo.finished){
                 drive=0;turn=0;
-                if(!cargo.busy){
+                if(cargoDemoWait>0)cargoDemoWait=Math.max(0,cargoDemoWait-dt);
+                else if(!cargo.busy){
                     const step=cargoDemoRoute[cargoDemoStep];
                     if(step?.action){
                         const e=angleDelta(0,cargo.robot.rotation.y);
@@ -894,7 +895,7 @@ export function createExperience(host: HTMLElement, hooks: {
                         else{const wasBusy=cargo.busy;cargo.interact();if(!wasBusy&&cargo.busy)cargoDemoStep++;}
                     }else if(step){
                         const dx=step.x!-cargo.robot.position.x,dz=step.z!-cargo.robot.position.z,d=Math.hypot(dx,dz);
-                        if(d<.07)cargoDemoStep++;
+                        if(d<.07){cargoDemoStep++;cargoDemoWait=.65;}
                         else{const yaw=Math.atan2(-dx,-dz),e=angleDelta(yaw,cargo.robot.rotation.y);if(Math.abs(e)>.08){drive=0;turn=T.MathUtils.clamp(e/(1.65*Math.max(dt,.001)),-1,1);}else{drive=Math.min(1,d*1.7);turn=T.MathUtils.clamp(e*3,-1,1);}}
                     }
                 }
