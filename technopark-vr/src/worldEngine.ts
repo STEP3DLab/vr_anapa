@@ -356,6 +356,7 @@ export function createExperience(host: HTMLElement, hooks: {
     action(newGuest.o, () => nextVisitor());
     const pauseLabel=label(hudRoot,'ПАУЗА',0,.3,-3,1.7,.32);
     action(pauseLabel.o,()=>paused()?resume():pause('manual',true));
+    const diagLabel=label(hudRoot,'',0,-2.43,-3,3.6,.24,'#9fc9c2',1);diagLabel.o.visible=false;
     const recenterLabel=label(hudRoot,'◎  ЦЕНТР ВИДА',0,-2.05,-3,1.9,.3);
     action(recenterLabel.o,()=>placeView());
     const handHints: Array<ReturnType<typeof label>> = [];
@@ -426,7 +427,7 @@ export function createExperience(host: HTMLElement, hooks: {
     let mode: Mode = 'hub', seconds = 60, score = 0, ammo = 6, reloading = 0, cooldown = 0, spinning = false, ended = false, elapsed = 0, lastHUD = '', flashTime = 0;
     const keys = new Set<string>();
     const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>();
-    let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0;
+    let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0,diagnosticsVisible=false;
     let observedSession:XRSession|null=null;
     const paused=()=>pauseReasons.size>0;
     function clearInput(){keys.clear();cargo.stop();audioFX.motor(0);for(const source of sources.values())neutral.add(source);}
@@ -500,7 +501,7 @@ export function createExperience(host: HTMLElement, hooks: {
         hud.o.position.set(0,.9,-3);guidance.o.position.set(0,-.02,-3);
         startLabel.o.position.set(0,-.66,-3);back.o.position.set(-1.7,-1.13,-3);again.o.position.set(1.7,-1.13,-3);
         lessonLabel.o.position.set(0,-1.65,-3);gameDemoLabel.o.position.set(1.7,-1.65,-3);newGuest.o.position.set(-1.7,-1.65,-3);
-        pauseLabel.o.position.set(0,-1.13,-3);recenterLabel.o.position.set(0,-2.05,-3);
+        pauseLabel.o.position.set(0,-1.13,-3);recenterLabel.o.position.set(0,-2.05,-3);diagLabel.o.position.set(0,-2.43,-3);diagLabel.o.visible=diagnosticsVisible&&hudRoot.visible;
         const beaconY=mode==='cargo'?3.85:mode==='robot'?3.15:2.35,beaconZ=mode==='cargo'?2:mode==='robot'?-1.2:-4;missionBeacon.position.set(4.15,beaconY,beaconZ);missionBeacon.rotation.y=-.42;missionBeacon.scale.setScalar(.98);
         scene.updateMatrixWorld(true);
     }
@@ -970,14 +971,17 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         const hintText=mode==='cargo'?cargo.hint():'';if(hintText!==lastHint){lastHint=hintText;hooks.hint?.(hintText);}
         updateHUD();renderer.render(scene,camera);
-        if(hooks.diagnostics){diagFrames++;if(t-diagTime>=1000){const info=renderer.info;
-            hooks.diagnostics({fps:Math.round(diagFrames*1000/(t-diagTime)),calls:info.render.calls,triangles:info.render.triangles,geometries:info.memory.geometries,textures:info.memory.textures,xr:renderer.xr.isPresenting,scene:mode});diagTime=t;diagFrames=0;}}
+        if(hooks.diagnostics||diagnosticsVisible){diagFrames++;if(t-diagTime>=1000){const info=renderer.info,fps=Math.round(diagFrames*1000/(t-diagTime));
+            hooks.diagnostics?.({fps,calls:info.render.calls,triangles:info.render.triangles,geometries:info.memory.geometries,textures:info.memory.textures,xr:renderer.xr.isPresenting,scene:mode});
+            if(diagnosticsVisible)diagLabel.write(`FPS ${fps} · CALLS ${info.render.calls} · TRI ${Math.round(info.render.triangles/1000)}K`);
+            diagTime=t;diagFrames=0;}}
 
     });
     go('hub');
     return {go,restart,welcome,train,cargoAction,setPresentation,nextVisitor,spin,reload,start,turn:snap,
         setPaused(value:boolean){pause('manual',value);},setHelpOpen(value:boolean){pause('help',value);},resume,
         toggleSound(){muted=audioFX.toggle();return muted;},
+        setDiagnosticsVisible(value:boolean){diagnosticsVisible=value;diagLabel.o.visible=value&&hudRoot.visible;},
         key(k:string,on:boolean){if(!paused()&&on)keys.add(k);else keys.delete(k);},
         async enterVR(){
             if(sessionPending||renderer.xr.isPresenting||disposed)return;
