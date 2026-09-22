@@ -42,7 +42,7 @@ jobs:
           test "$GITHUB_REF_NAME" = technopark-v10-audit
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add technopark-vr/app.js
+          git add app.js
           if ! git diff --cached --quiet; then
             git commit -m 'Build tested Technopark VR v10 assets'
             git push origin HEAD:technopark-v10-audit
