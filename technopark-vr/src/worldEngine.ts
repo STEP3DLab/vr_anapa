@@ -384,6 +384,7 @@ export function createExperience(host: HTMLElement, hooks: {
     let presentation = false, training = false, lessonStep = 0, lessonTravel = 0, lessonTurn = 0, lessonSpin = false, health = 3, rivalHealth = 3, duel = false, impactWait = 0, rivalRespawn = 0;
     const learned = { move: false, turn: false, spin: false, shoot: false, reload: false, cargo: false };
     let ready = true, countdown = 0, combo = 0, shots = 0, hits = 0, turnReady = true, muted = false, notice = '', noticeTime = 0;
+    let lastCargoCollisions=0,lastCargoDelivered=0;
     let bests: Record<string, number> = { robot: 0, drones: 0, cargo: 0 };
     try {
         bests = { ...bests, ...JSON.parse(localStorage.getItem('technopark-records') || '{}') };
@@ -479,7 +480,7 @@ export function createExperience(host: HTMLElement, hooks: {
             if(needsTraining)train();
         }
     }
-    function restart() { clearInput();cargo.reset(); roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset();lastCargoCollisions=0;lastCargoDelivered=0; roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
         learned.spin = true;
@@ -751,6 +752,7 @@ export function createExperience(host: HTMLElement, hooks: {
                 if (!training && c.visible && Math.hypot(c.position.x - robot.position.x, c.position.z - robot.position.z) < 1) {
                     c.visible = false;
                     score++;
+                    controllers.forEach(ctrl=>{if(sources.get(ctrl)?.handedness==='left')pulse(ctrl,.16,35);});
                     sound(700);
                     burst(c.position);
                     notify('ЭНЕРГОЯЧЕЙКА +100');
@@ -760,6 +762,7 @@ export function createExperience(host: HTMLElement, hooks: {
                 if (!training && b.visible && spinning && Math.hypot(b.position.x - robot.position.x, b.position.z - robot.position.z) < 1.2) {
                     b.visible = false;
                     score++;
+                    controllers.forEach(ctrl=>{if(sources.get(ctrl)?.handedness==='right')pulse(ctrl,.28,55);});
                     audioFX.event('hit');
                     burst(b.position);
                     notify('БЛОК УНИЧТОЖЕН +100');
@@ -792,6 +795,7 @@ export function createExperience(host: HTMLElement, hooks: {
                     if (distance < 1.7 && !impactWait) {
                         impactWait = 1.3;
                         burst(robot.position);
+                        controllers.forEach(ctrl=>{if(sources.get(ctrl)?.handedness==='right')pulse(ctrl,spinning?.5:.34,90);});
                         audioFX.event('hit');
                         if (spinning) {
                             rivalHealth--;
@@ -841,6 +845,8 @@ export function createExperience(host: HTMLElement, hooks: {
                 }
             const active = !paused()&&!ready && !countdown && !ended;
             cargo.update(dt, drive, turn, active);
+            if(cargo.collisions>lastCargoCollisions){controllers.forEach(ctrl=>pulse(ctrl,.3,70));lastCargoCollisions=cargo.collisions;}
+            if(cargo.delivered>lastCargoDelivered){controllers.forEach(ctrl=>pulse(ctrl,.22,55));lastCargoDelivered=cargo.delivered;}
             audioFX.motor(active&&!cargo.busy?Math.abs(drive):0);
             if(active&&!cargo.busy){if(training&&cargo.delivered>0)completeLesson();else if(cargo.finished)finish();}
         }
