@@ -118,7 +118,8 @@ export function createExperience(host: HTMLElement, hooks: {
         box(hub, black, x, .35, -1, 2, .7, 3.6);
         box(hub, steel, x, .73, -1, 2.1, .08, 3.6);
     }
-    const actions: T.Object3D[] = [], portals: T.Mesh[] = [], xrOnlyHub:T.Object3D[]=[];
+    const actions: T.Object3D[] = [], portals: T.Mesh[] = [], portalGroups:T.Group[] = [], xrOnlyHub:T.Object3D[]=[];
+    const portalMode:Mode[]=['robot','drones','cargo'];let portalFocus=-1;
     const xrOnly=(o:T.Object3D)=>{xrOnlyHub.push(o);return o;};
     function action(o: T.Object3D, f: () => void) { o.userData.action = f; actions.push(o); }
     for (const [x, z] of [[0, -3], [-5, -3], [5, -3], [0, 3], [5, -9]]) {
@@ -127,7 +128,7 @@ export function createExperience(host: HTMLElement, hooks: {
     }
     xrOnly(label(hub, 'ЛЕВЫЙ СТИК: ДВИЖЕНИЕ / ПРАВЫЙ: ПОВОРОТ 30°', 0, 1.2, -1.5, 4, .32).o);
     xrOnly(label(hub, 'ЛУЧ + КУРОК: ПОРТАЛ ИЛИ ТЕЛЕПОРТ НА ПОЛУ', 0, .8, -1.5, 4, .32).o);
-    function portal(x: number, mode: Mode, title: string, num: string, m: T.Material, z = -6, yaw = 0) { const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = yaw; hub.add(p); cyl(p, black, 0, .13, 0, 2, .25); for (const a of [-1, 1])
+    function portal(x: number, mode: Mode, title: string, num: string, m: T.Material, z = -6, yaw = 0) { const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = yaw; p.userData.baseY=0;p.userData.mode=mode;hub.add(p);portalGroups.push(p); cyl(p, black, 0, .13, 0, 2, .25); for (const a of [-1, 1])
         box(p, m, a * 1.55, 1.9, 0, .12, 3.8, .25); box(p, m, 0, 3.8, 0, 3.2, .12, .25); const pm = new T.ShaderMaterial({ transparent: true, side: T.DoubleSide, uniforms: { time: { value: 0 }, color: { value: new T.Color(mode === 'robot' ? '#27ebca' : mode === 'cargo' ? '#bbdf79' : '#ff883a') } }, vertexShader: 'varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}', fragmentShader: 'varying vec2 v;uniform float time;uniform vec3 color;void main(){vec2 p=v-.5;float r=length(p*vec2(1.,.75));float a=atan(p.y,p.x);float wave=pow(.5+.5*sin(r*42.-time*2.+a*3.),3.);wave+=.3*pow(.5+.5*sin(a*5.+time*.5+r*22.),8.);float edge=pow(abs(v.x-.5)*2.,5.);gl_FragColor=vec4(color*(.25+wave*.4+edge),.48+edge*.3);}' }); materials.push(pm); const surface = mesh(p, new T.PlaneGeometry(3, 3.6), pm, 0, 1.95, 0); portals.push(surface); action(surface, () => go(mode)); label(p, title, 0, 4.3, .05, 3.7, .55); label(p, num, 0, .65, .08, 2.7, .38); }
     portal(-5.2, 'robot', 'КРАСНЫЙ ТРЕУГОЛЬНИК', '01 / РОБОТ-АРЕНА', cyan);
     portal(5.2, 'drones', 'ОХОТА НА ДРОНОВ', '02 / ВОЗДУШНЫЙ ТИР', orange);
@@ -285,7 +286,11 @@ export function createExperience(host: HTMLElement, hooks: {
     const fade = mesh(new T.Group(), new T.PlaneGeometry(20, 20), fadeMat, 0, 0, -.3);
     fade.renderOrder = 999;
     camera.add(fade);
-    let transition = 0;
+    let transition = 0,transitionTotal=.3;let sceneIntro=0,lastPortalFocus=-1;
+    const introRoot=new T.Group();scene.add(introRoot);introRoot.visible=false;
+    const introKicker=label(introRoot,'',0,.72,-2.6,3.5,.34,'#baffdf',1),introTitle=label(introRoot,'',0,0,-2.6,5.2,.72,'#f4fff9',2),introHint=label(introRoot,'',0,-.68,-2.6,4.6,.3,'#aac9c5',2);
+    const introData:Record<Mode,[string,string,string]>={hub:['ТЕХНОПАРК РГСУ','VR-ПРОСТРАНСТВО','ВЫБЕРИТЕ ПОРТАЛ ИЛИ ИССЛЕДУЙТЕ ХОЛЛ'],robot:['01 / КОНТРОЛЬ','РОБОТ-АРЕНА','ЭНЕРГОЯЧЕЙКИ · БЛОКИ · ДУЭЛЬ'],drones:['02 / РЕАКЦИЯ','ДРОН-ТИР','6 ЗАРЯДОВ · СЕРИИ · ФЛАГМАН'],cargo:['03 / ЛОГИСТИКА','ПОЛИГОН ЛОСИНКА','3 ГРУЗА · МАНИПУЛЯТОР · БАЗА']};
+    function startIntro(next:Mode){const d=introData[next];introKicker.write(d[0]);introTitle.write(d[1]);introHint.write(d[2]);introRoot.position.set(0,0,0);introRoot.rotation.set(0,0,0);camera.add(introRoot);sceneIntro=1.75;introRoot.visible=true;}
     const hudRoot = new T.Group();
     scene.add(hudRoot);
     const consoleCue=label(hudRoot,'← ПУЛЬТ И ЗАДАНИЕ',0,0,0,1.6,.24);scene.add(consoleCue.o);
@@ -452,7 +457,7 @@ export function createExperience(host: HTMLElement, hooks: {
         scene.updateMatrixWorld(true);
     }
     function go(next:Mode){
-        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transition=.3;audioFX.motor(0);if(next!==mode)audioFX.event('portal');mode=next;
+        if(disposed)return;scene.background=new T.Color(next==='cargo'?'#192d35':'#071722');scene.fog=new T.FogExp2(next==='cargo'?'#192d35':'#071722',next==='cargo'?.01:.016);renderer.toneMappingExposure=next==='robot'?1.34:next==='drones'?1.25:next==='cargo'?1.08:1.05;transitionTotal=next===mode?.28:.62;transition=transitionTotal;startIntro(next);audioFX.motor(0);if(next!==mode)audioFX.event('portal');mode=next;
         pauseReasons.delete('manual');pauseReasons.delete('focus');hooks.paused?.(paused());
         Object.entries(worlds).forEach(([name,g])=>g.visible=name===next);placeView();hooks.scene(next);restart();
         if(next!=='hub'){
@@ -611,8 +616,8 @@ export function createExperience(host: HTMLElement, hooks: {
         previous = t;
         elapsed += dt;
         transition = Math.max(0, transition - dt);
-        fadeMat.opacity = transition / .3;
-        fade.visible = transition > 0;
+        const fadeProgress=transitionTotal?transition/transitionTotal:0;fadeMat.opacity=Math.min(.94,fadeProgress*1.12);fade.visible=transition>0;
+        sceneIntro=Math.max(0,sceneIntro-dt);introRoot.visible=sceneIntro>0&&!renderer.xr.isPresenting;if(introRoot.visible){const q=Math.min(1,(1.75-sceneIntro)/.28),out=Math.min(1,sceneIntro/.42),s=.9+.1*q;introRoot.scale.setScalar(s);introRoot.position.y=.04*(1-q);introRoot.traverse(o=>{const m=(o as T.Mesh).material as T.Material&{opacity?:number;transparent?:boolean};if(m&&'opacity'in m){m.transparent=true;m.opacity=Math.min(q,out);}});}
         if(mode==='hub'){entranceAge=Math.min(4,entranceAge+dt);art.update(elapsed,entranceAge/4);}
         sun.intensity = mode==='hub'?1+2*T.MathUtils.smoothstep(entranceAge,0,4):3.5;
         if(mode==='hub')exhibits.forEach((e, i) => { e.rotation.y = elapsed * .22; e.position.y = 1.2 + Math.sin(elapsed + i) * .06; });
@@ -662,7 +667,12 @@ export function createExperience(host: HTMLElement, hooks: {
         guns.forEach(g => { const m = g.getObjectByName('muzzle-flash'); if (m)
             m.visible = flashTime > 0; g.position.z = flashTime > 0 ? .05 : 0; });
         desktopGun.position.z = -.25 + (flashTime > 0 ? .06 : 0);
-        if(mode==='hub')portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
+        if(mode==='hub'){
+            portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
+            const head=(renderer.xr.isPresenting?renderer.xr.getCamera():camera).getWorldPosition(pointScratch),forward=new T.Vector3(0,0,-1).applyQuaternion((renderer.xr.isPresenting?renderer.xr.getCamera():camera).getWorldQuaternion(new T.Quaternion()));let best=-1,bestDot=.9;
+            portalGroups.forEach((p,i)=>{p.getWorldPosition(localScratch);const d=localScratch.sub(head),dist=d.length(),dot=d.normalize().dot(forward);if(dist<15&&dot>bestDot){bestDot=dot;best=i;}const target=i===best?1.045:1;p.scale.lerp(new T.Vector3(target,target,target),Math.min(1,dt*8));p.position.y=p.userData.baseY+(i===best?.035*Math.sin(elapsed*5):0);});portalFocus=best;
+            if(portalFocus!==lastPortalFocus){lastPortalFocus=portalFocus;if(portalFocus>=0&&renderer.xr.isPresenting)audioFX.tone(520,.045,'sine',.025);}
+        }
         if (mode !== 'hub' && !ended && !ready && !countdown && !training && !presentation) {
             seconds = Math.max(0, seconds - dt);
             if (seconds === 0)
