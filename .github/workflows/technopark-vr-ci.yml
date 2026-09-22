@@ -9,6 +9,8 @@ on:
       - "technopark-vr/package.json"
       - "technopark-vr/package-lock.json"
       - "technopark-vr/build.mjs"
+      - "technopark-vr/game.css"
+      - "technopark-vr/index.html"
       - ".github/workflows/technopark-vr-ci.yml"
   workflow_dispatch:
 
