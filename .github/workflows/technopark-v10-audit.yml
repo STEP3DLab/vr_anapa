@@ -1,0 +1,49 @@
+name: Technopark VR v10 audit
+on:
+  push:
+    branches: [technopark-v10-audit]
+permissions:
+  contents: write
+concurrency:
+  group: technopark-v10-audit
+  cancel-in-progress: true
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: technopark-vr
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: npm install --prefix /tmp/vr-browser --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.56.1
+      - run: /tmp/vr-browser/node_modules/.bin/playwright install chromium --with-deps
+      - run: npm run test:browser
+        env:
+          PLAYWRIGHT_PATH: /tmp/vr-browser/node_modules/playwright/index.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: technopark-v10-browser-review
+          path: technopark-vr/.test-output
+          include-hidden-files: true
+          retention-days: 1
+      - name: Record verified build on audit branch only
+        run: |
+          test "$GITHUB_REF_NAME" = technopark-v10-audit
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add technopark-vr/app.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build tested Technopark VR v10 assets'
+            git push origin HEAD:technopark-v10-audit
+          fi
