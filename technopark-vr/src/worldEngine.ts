@@ -154,6 +154,7 @@ export function createExperience(host: HTMLElement, hooks: {
     robot.add(ring);
     const rm = mesh(ring, new T.TorusGeometry(.76, .105, 6, 32), steel, 0, .32, 0);
     rm.rotation.x = Math.PI / 2;
+    const spinGlow=mesh(ring,new T.TorusGeometry(.79,.028,6,40),cyan,0,.34,0);spinGlow.rotation.x=Math.PI/2;spinGlow.visible=false;spinGlow.name='spinner-glow';
     for (const x of [-.85, .85])
         box(ring, steel, x, .32, 0, .3, .2, .28);
     for (const x of [-.38, .38])
@@ -284,7 +285,8 @@ export function createExperience(host: HTMLElement, hooks: {
     const sparks = new T.Points(sparksGeo, sparksMat);
     sparks.frustumCulled = false;
     scene.add(sparks);
-    let sparkLife = 0;
+    const tracerGeo=new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3(0,0,-1)]);geometries.push(tracerGeo);const tracerMat=new T.LineBasicMaterial({color:0xffd28f,transparent:true,opacity:.9});materials.push(tracerMat);const tracer=new T.Line(tracerGeo,tracerMat);tracer.visible=false;tracer.frustumCulled=false;scene.add(tracer);
+    let sparkLife = 0,tracerLife=0;
     function burst(p: T.Vector3) { sparkLife = .7; for (let i = 0; i < 96; i++) {
         sparkPos.set([p.x, p.y, p.z], i * 3);
         sparkVel.set([(Math.random() - .5) * 5, Math.random() * 4, (Math.random() - .5) * 5], i * 3);
@@ -506,7 +508,9 @@ export function createExperience(host: HTMLElement, hooks: {
             best = d;
             dist = along;
         }
-    } if (best) {
+    }
+    const tracerEnd=ray.at(best?dist:18,new T.Vector3());tracerGeo.setFromPoints([ray.origin.clone(),tracerEnd]);tracer.visible=true;tracerLife=.075;tracerMat.opacity=.92;
+    if (best) {
         best.hp--;
         const destroyed = best.hp <= 0;
         best.dead = destroyed;
@@ -650,6 +654,7 @@ export function createExperience(host: HTMLElement, hooks: {
         noticeTime = Math.max(0, noticeTime - dt);
         if (mode !== 'hub')
             guidance.write(noticeTime ? notice : mode==='cargo'?cargo.hint():training ? lessonText() : (mode === 'robot' ? 'ЛЕВЫЙ СТИК: РОБОТ · ПРАВЫЙ КУРОК: СПИННЕР' : 'КУРОК: ОГОНЬ · БОКОВАЯ: ПЕРЕЗАРЯДКА'));
+        tracerLife=Math.max(0,tracerLife-dt);tracer.visible=tracerLife>0;if(tracer.visible)tracerMat.opacity=Math.min(.92,tracerLife/.075);
         if (sparkLife > 0) {
             sparkLife -= dt;
             sparks.visible = true;
@@ -737,6 +742,7 @@ export function createExperience(host: HTMLElement, hooks: {
             robot.position.z = moved.z;
             arenaCellLamps.forEach((lamp,i)=>{const on=cells[i]?.visible!==false;lamp.visible=on;});
             arenaBlockLamps.forEach((lamp,i)=>{const on=blocks[i]?.visible!==false;lamp.visible=on;});
+            spinGlow.visible=spinning&&!ended;spinGlow.scale.setScalar(1+.045*Math.sin(elapsed*12));
             if (spinning)
                 ring.rotation.y += dt * 22;
             for (const c of cells) {
