@@ -269,6 +269,15 @@ export function createExperience(host: HTMLElement, hooks: {
         const enter = label(hub, 'ОТКРЫТЬ ИСПЫТАНИЕ →', x, .3, .88, 2.4, .28);xrOnly(enter.o);
         action(enter.o, () => go(destination));
     }
+    // A third exhibit beside the cargo portal makes the supplied 6×6 rover visible before entering the mission.
+    {
+        const x=7.55,z=-7.35;
+        cyl(hub,black,x,.42,z,1.3,.84,40);cyl(hub,lime,x,.855,z,1.31,.055,40);
+        const rim=mesh(hub,new T.TorusGeometry(1.25,.025,6,56),lime,x,.9,z);rim.rotation.x=Math.PI/2;
+        const copy=cargo.robot.clone(true);copy.traverse(o=>o.name='exhibit');copy.position.set(x,1.02,z);copy.scale.setScalar(.62);copy.rotation.y=-.55;hub.add(copy);exhibits.push(copy);
+        xrOnly(label(hub,'РОБОТ 6×6 / ЛОСИНКА',x,2.75,z,3,.34,'#d8f3a7',1).o);
+        const enter=label(hub,'ОТКРЫТЬ ГРУЗОВУЮ МИССИЮ →',x,.38,z+1.45,3,.3,'#d8f3a7',1);xrOnly(enter.o);action(enter.o,()=>go('cargo'));
+    }
     function gun() { const g = new T.Group(); box(g, black, 0, 0, -.25, .12, .14, .5); box(g, steel, 0, .04, -.6, .07, .07, .35); box(g, orange, 0, -.03, -.36, .14, .05, .13); const muzzle = mesh(g, new T.IcosahedronGeometry(.12, 0), orange, 0, .04, -.83); muzzle.name = 'muzzle-flash'; muzzle.visible = false; box(g, cyan, 0, .085, -.5, .02, .012, .28); const handle = box(g, navy, 0, -.13, -.06, .09, .22, .12); handle.rotation.x = -.3; return g; }
     const desktopGun = gun();
     camera.add(desktopGun);
