@@ -27,9 +27,14 @@ export default function Experience(){
   setEntering(true);try{if(xr)await game.current.exitVR();else await game.current.enterVR();setError('');}catch(e){setError(e instanceof Error?e.message:String(e));}finally{setEntering(false);}
  }
  useEffect(()=>{
-  try{game.current=createExperience(host.current!,{status:setStatus,scene:setScene,presentation:setPresentation,paused:setPaused,xr:setXR,support:setSupported,error:setError,phase:setPhase,action:setAction,hint:setHint,
-   diagnostics:d=>setDiagnostics(`${d.xr?'XR':'Экран'} · ${d.fps} кадр/с · ${d.calls} вызовов · ${d.triangles.toLocaleString('ru')} треуг. · ${d.geometries} геом. / ${d.textures} текстур`)});}
-  catch(e){setError('Не удалось запустить 3D: '+String(e));}
+  try{
+   game.current=createExperience(host.current!,{status:setStatus,scene:setScene,presentation:setPresentation,paused:setPaused,xr:setXR,support:setSupported,error:setError,phase:setPhase,action:setAction,hint:setHint,
+    diagnostics:d=>setDiagnostics(`${d.xr?'XR':'Экран'} · ${d.fps} кадр/с · ${d.calls} вызовов · ${d.triangles.toLocaleString('ru')} треуг. · ${d.geometries} геом. / ${d.textures} текстур`)});
+   const params=new URLSearchParams(location.search),requested=params.get('scene');
+   if(params.get('presentation')==='1')game.current.setPresentation(true);
+   if(requested&&['hub','robot','drones','cargo'].includes(requested))game.current.go(requested as 'hub'|'robot'|'drones'|'cargo');
+   if(params.get('clean')==='1')setClean(true);
+  }catch(e){setError('Не удалось запустить 3D: '+String(e));}
   return()=>{game.current?.dispose();game.current=null;};
  },[]);
  useEffect(()=>{game.current?.setHelpOpen(help);if(help)dialog.current?.showModal();else dialog.current?.close();},[help]);
