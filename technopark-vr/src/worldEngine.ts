@@ -1031,6 +1031,7 @@ export function createExperience(host: HTMLElement, hooks: {
             audioFX.unlock();
             const xr=navigator.xr;
             if(!xr)throw new Error('WebXR недоступен в этом браузере. Откройте HTTPS-ссылку непосредственно в Meta Quest Browser.');
+            if(supported===false)throw new Error('VR не поддерживается этим браузером или гарнитурой. Откройте ссылку непосредственно в Meta Quest Browser.');
             if(window.isSecureContext===false)throw new Error('Для VR требуется HTTPS или localhost.');
             sessionPending=true;pause('xr-switch',true);
             try{
