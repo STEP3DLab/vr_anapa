@@ -1048,7 +1048,7 @@ export function createExperience(host: HTMLElement, hooks: {
             }catch(e){
                 const err=e as Error & {name?:string};
                 if(err?.name==='NotAllowedError')throw new Error('Meta Quest Browser не разрешил запуск VR. Разрешите погружение/WebXR для сайта и нажмите «Войти в VR» ещё раз.');
-                if(err?.name==='NotSupportedError')throw new Error('Гарнитура не выдала совместимое пространство WebXR. Обновите Meta Quest Browser и повторите вход.');
+                if(err?.name==='NotSupportedError')throw new Error('WebXR не поддерживается текущим состоянием браузера или гарнитуры. Обновите Meta Quest Browser и повторите вход.');
                 throw e;
             }finally{sessionPending=false;if(!disposed)pause('xr-switch',false);}
         },
