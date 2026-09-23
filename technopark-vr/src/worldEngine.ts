@@ -431,7 +431,7 @@ export function createExperience(host: HTMLElement, hooks: {
     const neutral=new WeakSet<XRInputSource>(),pauseReasons=new Set<string>(),gestureTimes=new WeakMap<T.Group,number>(),squeezeTimes=new WeakMap<T.Group,number>();
     const stickSample=[0,0];
     let disposed=false,supported:boolean|undefined,sessionPending=false,lastAction='',lastHint='',lastPhase='',previous=0,diagTime=0,diagFrames=0,diagnosticsVisible=false;
-    let observedSession:XRSession|null=null,observedSpace:XRReferenceSpace|null=null,pendingRecenter=false;
+    let observedSession:XRSession|null=null,observedSpace:XRReferenceSpace|null=null,pendingRecenter=false,referenceSpaceType:XRReferenceSpaceType='local-floor';
     const paused=()=>pauseReasons.size>0;
     function clearInput(){keys.clear();cargo.stop();audioFX.motor(0);for(const source of sources.values())neutral.add(source);}
     function inputBlocked(source:XRInputSource){
@@ -495,7 +495,7 @@ export function createExperience(host: HTMLElement, hooks: {
             camera.lookAt(0,mode==='cargo'?0:mode==='robot'?.45:2.7,mode==='robot'?-7:-10);
         }else{
             camera.position.set(0,0,0);camera.rotation.set(0,0,0);
-            rig.position.set(0,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?7:mode==='robot'?4:1);
+            const fallbackEye=referenceSpaceType==='local'?1.65:0;rig.position.set(0,(mode==='cargo'?2.8:mode==='robot'?1.5:0)+fallbackEye,mode==='cargo'?7:mode==='robot'?4:1);
         }
         desktopGun.visible=mode==='drones'&&!renderer.xr.isPresenting;
         guns.forEach((g,i)=>g.visible=mode==='drones'&&sources.get(controllers[i])?.handedness==='right');
@@ -690,7 +690,7 @@ export function createExperience(host: HTMLElement, hooks: {
     }else{supported=false;hooks.support?.(false);}
     const disposeBatches=[batchStatic(hub),batchStatic(robot),batchStatic(rival),batchStatic(arena,new Set([...cells,...blocks])),batchStatic(worlds.drones),...droneDisposers,...exhibitDisposers];
     renderer.setAnimationLoop((t,frame) => {
-        if(pendingRecenter&&frame&&observedSpace){const pose=frame.getViewerPose(observedSpace);if(pose){alignStation(rig,pose.transform.position,pose.transform.orientation,mode==='cargo'?2.8:mode==='robot'?1.5:0,mode==='cargo'?7:mode==='robot'?4:1);pendingRecenter=false;}}
+        if(pendingRecenter&&frame&&observedSpace){const pose=frame.getViewerPose(observedSpace);if(pose){const fallbackEye=referenceSpaceType==='local'?1.65:0;alignStation(rig,pose.transform.position,pose.transform.orientation,(mode==='cargo'?2.8:mode==='robot'?1.5:0)+fallbackEye,mode==='cargo'?7:mode==='robot'?4:1);pendingRecenter=false;}}
         // Re-arm only after all held controls return to neutral, including triggers.
         for(const source of sources.values())if(neutral.has(source))inputBlocked(source);
         const uiDt=paused()?0:Math.min(previous?Math.max(0,(t-previous)/1000):.016,.25);
@@ -1029,13 +1029,27 @@ export function createExperience(host: HTMLElement, hooks: {
         async enterVR(){
             if(sessionPending||renderer.xr.isPresenting||disposed)return;
             audioFX.unlock();
-            if(!navigator.xr||supported===false)throw new Error('VR не поддерживается этим браузером. Откройте эту же HTTPS-ссылку в браузере гарнитуры Quest. На компьютере доступны все сцены без очков.');
+            const xr=navigator.xr;
+            if(!xr)throw new Error('WebXR недоступен в этом браузере. Откройте HTTPS-ссылку непосредственно в Meta Quest Browser.');
             if(window.isSecureContext===false)throw new Error('Для VR требуется HTTPS или localhost.');
             sessionPending=true;pause('xr-switch',true);
             try{
-                const session=await navigator.xr.requestSession('immersive-vr',{requiredFeatures:['local-floor']});
+                // Keep floor tracking optional: some Quest/browser states report immersive-vr but do not grant local-floor.
+                // Probe the granted reference space before handing the session to Three.js, then fall back to local.
+                const session=await xr.requestSession('immersive-vr',{optionalFeatures:['local-floor','bounded-floor']});
                 if(disposed){await session.end();return;}
-                try{await renderer.xr.setSession(session);}catch(e){await session.end();throw e;}
+                let selected:XRReferenceSpaceType='local';
+                try{await session.requestReferenceSpace('local-floor');selected='local-floor';}
+                catch{try{await session.requestReferenceSpace('local');selected='local';}catch(e){await session.end();throw e;}}
+                referenceSpaceType=selected;
+                renderer.xr.setReferenceSpaceType(selected);
+                try{await renderer.xr.setSession(session);}catch(e){try{await session.end();}catch{}throw e;}
+                supported=true;hooks.support?.(true);
+            }catch(e){
+                const err=e as Error & {name?:string};
+                if(err?.name==='NotAllowedError')throw new Error('Meta Quest Browser не разрешил запуск VR. Разрешите погружение/WebXR для сайта и нажмите «Войти в VR» ещё раз.');
+                if(err?.name==='NotSupportedError')throw new Error('Гарнитура не выдала совместимое пространство WebXR. Обновите Meta Quest Browser и повторите вход.');
+                throw e;
             }finally{sessionPending=false;if(!disposed)pause('xr-switch',false);}
         },
         async exitVR(){await renderer.xr.getSession()?.end();},
