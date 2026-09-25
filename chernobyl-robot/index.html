@@ -4,8 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#111417" />
-  <meta name="description" content="Интерактивная WebXR-сцена: 3D-реконструкция чернобыльского робота по архивной фотографии. Работает на ПК и в VR-очках Meta Quest." />
-  <title>Чернобыльский робот · WebXR 3D</title>
+  <meta name="description" content="Интерактивная WebXR-сцена: музейная 3D-реконструкция мобильного робота «Мобот-Ч-ХВ-2», применявшегося при ликвидации последствий аварии на Чернобыльской АЭС. ПК и Meta Quest." />
+  <meta property="og:title" content="Мобот-Ч-ХВ-2 · 3D / VR" />
+  <meta property="og:description" content="Интерактивная WebXR-реконструкция чернобыльского робота. Просмотр на ПК и в Meta Quest." />
+  <meta property="og:type" content="website" />
+  <title>Мобот-Ч-ХВ-2 · WebXR 3D</title>
   <style>
     :root{
       --bg:#111417;--panel:rgba(18,22,25,.84);--line:rgba(255,255,255,.14);
@@ -34,6 +37,8 @@
     #toast{position:absolute;left:50%;bottom:88px;transform:translate(-50%,10px);opacity:0;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,208,138,.32);background:rgba(17,20,23,.9);color:#fff;font-size:12px;transition:.2s ease;white-space:nowrap}
     #toast.show{opacity:1;transform:translate(-50%,0)}
     .badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1);color:#c7ced3;font-size:10px;background:rgba(255,255,255,.04)}
+    .source-link{display:inline-flex;pointer-events:auto;margin-top:9px;color:#d9b378;text-decoration:none;font-size:11px;border-bottom:1px solid rgba(217,179,120,.28)}
+    .source-link:hover{color:#ffd08a;border-bottom-color:#ffd08a}
     .xr-state{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:62px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(18,22,25,.72);color:var(--muted);font-size:10px;backdrop-filter:blur(10px)}
     .xr-state.ok{color:#b8d9ad;border-color:rgba(184,217,173,.25)}
     .help-modal{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,8,.54);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:.2s ease}
@@ -82,10 +87,11 @@
 <body>
   <div id="ui">
     <section class="topbar">
-      <div class="eyebrow"><i class="dot"></i>архивная реконструкция · WebXR</div>
-      <h1>Чернобыльский робот</h1>
-      <p class="lead">Интерактивная 3D-реконструкция по одной архивной фотографии: гусеничное шасси, манипулятор, ковш, силовой блок и гидропривод. Геометрия условная — это визуальная музейная модель, а не точная CAD-копия.</p>
-      <div class="badge">ПК: мышь / тач · VR: Meta Quest Browser · HTTPS</div>
+      <div class="eyebrow"><i class="dot"></i>инженерная память · WebXR</div>
+      <h1>Мобот-Ч-ХВ-2</h1>
+      <p class="lead">Музейная 3D-реконструкция мобильного робототехнического комплекса, созданного школой МВТУ/МГТУ им. Н.Э. Баумана и применявшегося на Чернобыльской АЭС. Модель восстановлена по архивным фотографиям и предназначена для интерактивного изучения конструкции — это не точная CAD-копия.</p>
+      <div class="badge">ЧАЭС · 1987 · ПК / Meta Quest · WebXR</div>
+      <br><a class="source-link" href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">Архив СКТБ прикладной робототехники ↗</a>
     </section>
 
     <div class="controls">
@@ -509,7 +515,7 @@
     shareBtn.addEventListener('click',async()=>{
       const url = location.href;
       try{
-        if(navigator.share) await navigator.share({title:'Чернобыльский робот · 3D / VR',url});
+        if(navigator.share) await navigator.share({title:'Мобот-Ч-ХВ-2 · 3D / VR',url});
         else { await navigator.clipboard.writeText(url); showToast('Ссылка скопирована'); }
       }catch(e){ if(e?.name!=='AbortError') showToast('Не удалось поделиться ссылкой'); }
     });
