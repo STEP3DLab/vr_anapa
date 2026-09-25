@@ -64,7 +64,7 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     body.embed .topbar,body.embed .legend,body.embed .hint,body.embed .xr-state,body.embed .detail-card{display:none}
     body.embed .controls{top:12px;right:12px;max-width:520px}
-    body.embed #spinBtn,body.embed #markersBtn,body.embed #engineeringBtn,body.embed #shareBtn,body.embed #helpBtn{display:none}
+    body.embed #spinBtn,body.embed #markersBtn,body.embed #engineeringBtn,body.embed #pairBtn,body.embed #operatorViewBtn,body.embed #shareBtn,body.embed #helpBtn{display:none}
     body.embed #VRButton{bottom:16px!important;right:16px!important}
     @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.loader-ring{animation:none}}
     #VRButton{
@@ -520,6 +520,12 @@
     const spinBtn = document.getElementById('spinBtn');
     const markersBtn = document.getElementById('markersBtn');
     const engineeringBtn = document.getElementById('engineeringBtn');
+    const pairBtn = document.getElementById('pairBtn');
+    const operatorViewBtn = document.getElementById('operatorViewBtn');
+    const detailCard = document.getElementById('detailCard');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailText = document.getElementById('detailText');
+    const detailFlow = document.getElementById('detailFlow');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     const shareBtn = document.getElementById('shareBtn');
     const helpBtn = document.getElementById('helpBtn');
@@ -530,6 +536,42 @@
     const legend = document.getElementById('legend');
     const toast = document.getElementById('toast');
     let toastTimer;
+    let pairMode=false;
+    let operatorView=false;
+    const detailData={
+      'Гусеничный движитель':{
+        text:'Полиуретановые траки и подвеска обеспечивали движение по неровной кровле. По авторским пояснениям, при работе манипулятором подвеска могла фиксироваться для повышения устойчивости.',
+        flow:['движение','устойчивость','возврат']
+      },
+      'Поворотная платформа':{
+        text:'Основание рабочего оборудования должно было сохранять устойчивость машины при захвате и перемещении фрагментов. Комплекс проектировался как единая система шасси, рабочих органов, связи и контроля.',
+        flow:['подход','ориентация','операция']
+      },
+      'Манипулятор':{
+        text:'Во второй модификации рабочая зона и грузоподъёмность были увеличены; применялся сменный двупалый захват. Манипулятор использовали для точных операций, перемещения предметов и работы со специальной оснасткой.',
+        flow:['подвести','захватить','переместить']
+      },
+      'Рабочий ковш':{
+        text:'Фронтальный погрузчик мог сгребать, поднимать и ссыпать материал. На Мобот-Ч-ХВ-2 отбойный молоток мог устанавливаться вместо захвата или на фронтальном погрузчике.',
+        flow:['сгрести','поднять','ссыпать']
+      },
+      'Привод манипулятора':{
+        text:'Приводы комплекса описываются как электромеханические. В 3D-сцене цилиндрические элементы показаны как визуальная реконструкция исполнительных механизмов без приписывания им гидравлического принципа.',
+        flow:['команда','привод','движение']
+      },
+      'Телевизионная система':{
+        text:'Комплекс имел две телекамеры. Оператор видел рабочую зону через телевизионную систему; рядом фиксировались положение машины и данные дозиметрических измерений.',
+        flow:['камера','оператор','решение']
+      },
+      'Кабелеукладчик':{
+        text:'Полуавтоматический кабелеукладчик располагался внутри корпуса. На барабане было 200 м кабеля, могла применяться дополнительная 200-метровая вставка. По линии передавались питание, команды и видеосигналы.',
+        flow:['питание','управление','видео']
+      },
+      'Стыковочное устройство':{
+        text:'Для Мобот-Ч-ХВ-2 разработали полуавтоматическое устройство стыковки с подъёмным механизмом, чтобы устанавливать и снимать машину с кровли без выхода стропальщика в опасную точку.',
+        flow:['кран','стыковка','снятие']
+      }
+    };
     spinBtn.classList.toggle('active',autoSpin);
     engineeringBtn.classList.toggle('active',engineeringVisible);
     grid.visible = engineeringVisible;
@@ -540,6 +582,26 @@
       toast.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer=setTimeout(()=>toast.classList.remove('show'),1500);
+    }
+    function showDetail(label){
+      const d=detailData[label];
+      if(!d){ showToast(label); return; }
+      detailTitle.textContent=label;
+      detailText.textContent=d.text;
+      detailFlow.innerHTML=d.flow.map((x,i)=>'<b>'+x+'</b>'+(i<d.flow.length-1?'<i>→</i>':'')).join('');
+      detailCard.classList.remove('hidden');
+    }
+    function applyPairLayout(){
+      if(pairMode){
+        robot.scale.setScalar(0.76); robot.position.set(-0.92,0.11,0.06); robot.rotation.y=-0.22;
+        robot2.visible=true; robot2.scale.setScalar(0.76); robot2.position.set(0.92,0.11,-0.08); robot2.rotation.y=0.28;
+        controls.target.set(0,0.75,0);
+      }else{
+        robot.scale.setScalar(1); robot.position.set(0,0.11,0); robot.rotation.y=-0.58;
+        robot2.visible=false;
+        controls.target.set(0,0.72,0);
+      }
+      controls.update();
     }
 
     spinBtn.addEventListener('click',()=>{
@@ -556,6 +618,34 @@
       engineeringGroup.visible=engineeringVisible;
       engineeringBtn.classList.toggle('active',engineeringVisible);
       showToast(engineeringVisible ? 'Инженерный режим включён' : 'Экспозиционный режим');
+    });
+    pairBtn.addEventListener('click',()=>{
+      if(operatorView){ operatorView=false; operatorViewBtn.classList.remove('active'); }
+      pairMode=!pairMode;
+      pairBtn.classList.toggle('active',pairMode);
+      autoSpin=false; spinBtn.classList.remove('active');
+      applyPairLayout();
+      showToast(pairMode ? 'Два комплекса: экспозиционная компоновка 1987' : 'Один комплекс');
+    });
+    operatorViewBtn.addEventListener('click',()=>{
+      operatorView=!operatorView;
+      operatorViewBtn.classList.toggle('active',operatorView);
+      if(operatorView){
+        pairMode=false; pairBtn.classList.remove('active'); applyPairLayout();
+        autoSpin=false; spinBtn.classList.remove('active');
+        robot.rotation.y=0;
+        camera.position.set(-1.18,1.04,-0.24);
+        controls.target.set(-4.0,0.92,-0.24);
+        controls.minDistance=0.1;
+        showDetail('Телевизионная система');
+        showToast('Условный вид бортовой камеры');
+      }else{
+        camera.position.set(3.7,2.25,4.65);
+        controls.target.set(0,0.72,0);
+        controls.minDistance=2.35;
+        robot.rotation.y=-0.58;
+        controls.update();
+      }
     });
     fullscreenBtn.addEventListener('click',async()=>{
       try{
@@ -574,8 +664,13 @@
     closeHelpBtn.addEventListener('click',()=>helpModal.classList.remove('open'));
     helpModal.addEventListener('click',e=>{if(e.target===helpModal) helpModal.classList.remove('open')});
     resetBtn.addEventListener('click',()=>{
+      pairMode=false; pairBtn.classList.remove('active');
+      operatorView=false; operatorViewBtn.classList.remove('active');
+      applyPairLayout();
+      detailCard.classList.add('hidden');
       dolly.position.set(0,0,0);
       camera.position.set(3.7,2.25,4.65);
+      controls.minDistance=2.35;
       controls.target.set(0,0.72,0);
       robot.rotation.y=-0.58;
       controls.update();
@@ -596,7 +691,7 @@
       pointer.y=-(e.clientY/innerHeight)*2+1;
       raycaster.setFromCamera(pointer,camera);
       const hit=raycaster.intersectObjects(clickable,false)[0];
-      if(hit?.object?.userData?.label) showToast(hit.object.userData.label);
+      if(hit?.object?.userData?.label) showDetail(hit.object.userData.label);
       down=null;
     });
 
@@ -646,6 +741,7 @@
       markerGroup.visible=false;
       engineeringGroup.visible=false;
       grid.visible=false;
+      robot2.visible=false;
       dolly.position.set(0,0,2.8);
       robot.rotation.y=-0.08;
     });
@@ -656,6 +752,7 @@
       markerGroup.visible=markersBtn.classList.contains('active');
       engineeringGroup.visible=engineeringVisible;
       grid.visible=engineeringVisible;
+      robot2.visible=pairMode;
       dolly.position.set(0,0,0);
       camera.position.set(3.7,2.25,4.65);
       controls.target.set(0,0.72,0);
@@ -696,7 +793,7 @@
       if(renderer.xr.isPresenting) updateXrLocomotion(dt);
       else {
         controls.update();
-        if(autoSpin && performance.now()>pauseSpinUntil) robot.rotation.y += dt*0.17;
+        if(autoSpin && !pairMode && !operatorView && performance.now()>pauseSpinUntil) robot.rotation.y += dt*0.17;
       }
       renderer.render(scene,camera);
     }
@@ -714,6 +811,8 @@
       if(e.key.toLowerCase()==='r') resetBtn.click();
       if(e.key.toLowerCase()==='m') markersBtn.click();
       if(e.key.toLowerCase()==='i') engineeringBtn.click();
+      if(e.key.toLowerCase()==='p') pairBtn.click();
+      if(e.key.toLowerCase()==='o') operatorViewBtn.click();
       if(e.key.toLowerCase()==='f') fullscreenBtn.click();
     });
 
