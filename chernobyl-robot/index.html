@@ -12,7 +12,7 @@
   <style>
     :root{
       --bg:#111417;--panel:rgba(18,22,25,.84);--line:rgba(255,255,255,.14);
-      --text:#f2f4f5;--muted:#aeb7bd;--accent:#d89a43;--accent2:#ffd08a;
+      --text:#f2f4f5;--muted:#aeb7bd;--accent:#d89a43;--accent2:#ffd08a;--olive:#aaa889;
     }
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text)}
@@ -39,6 +39,15 @@
     .badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1);color:#c7ced3;font-size:10px;background:rgba(255,255,255,.04)}
     .source-link{display:inline-flex;pointer-events:auto;margin-top:9px;color:#d9b378;text-decoration:none;font-size:11px;border-bottom:1px solid rgba(217,179,120,.28)}
     .source-link:hover{color:#ffd08a;border-bottom-color:#ffd08a}
+    .detail-card{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:112px;width:min(360px,calc(100vw - 36px));padding:14px 15px;border:1px solid var(--line);border-radius:16px;background:rgba(18,22,25,.86);backdrop-filter:blur(16px);box-shadow:0 18px 46px rgba(0,0,0,.25);transition:.22s ease}
+    .detail-card.hidden{opacity:0;transform:translateY(8px);pointer-events:none}
+    .detail-card .kicker{color:var(--accent2);font-size:10px;font-weight:750;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+    .detail-card h3{margin:0 0 6px;font-size:17px;letter-spacing:-.015em}
+    .detail-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.48}
+    .detail-card .source{margin-top:8px;color:#808a91;font-size:10px}
+    .flow{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap;color:#d9dee1;font-size:10px}
+    .flow b{padding:4px 7px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.04)}
+    .flow i{font-style:normal;color:var(--accent)}
     .xr-state{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:62px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(18,22,25,.72);color:var(--muted);font-size:10px;backdrop-filter:blur(10px)}
     .xr-state.ok{color:#b8d9ad;border-color:rgba(184,217,173,.25)}
     .help-modal{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,8,.54);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:.2s ease}
@@ -53,7 +62,7 @@
     .loader-inner{text-align:center;color:#cfd5d9}
     .loader-ring{width:42px;height:42px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.10);border-top-color:#d89a43;border-radius:50%;animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
-    body.embed .topbar,body.embed .legend,body.embed .hint,body.embed .xr-state{display:none}
+    body.embed .topbar,body.embed .legend,body.embed .hint,body.embed .xr-state,body.embed .detail-card{display:none}
     body.embed .controls{top:12px;right:12px;max-width:520px}
     body.embed #spinBtn,body.embed #markersBtn,body.embed #engineeringBtn,body.embed #shareBtn,body.embed #helpBtn{display:none}
     body.embed #VRButton{bottom:16px!important;right:16px!important}
@@ -104,6 +113,8 @@
       <button class="ui-btn active" id="spinBtn" aria-label="Включить или выключить автовращение">Автовращение</button>
       <button class="ui-btn active" id="markersBtn" aria-label="Показать или скрыть обозначения узлов">Узлы</button>
       <button class="ui-btn active" id="engineeringBtn" aria-label="Переключить инженерный режим">Инженерный режим</button>
+      <button class="ui-btn" id="pairBtn" aria-label="Показать два комплекса Мобот-Ч-ХВ-2">Пара 1987</button>
+      <button class="ui-btn" id="operatorViewBtn" aria-label="Переключиться на вид бортовой камеры">Вид камеры</button>
       <button class="ui-btn" id="fullscreenBtn" aria-label="Открыть в полноэкранном режиме">Полный экран</button>
       <button class="ui-btn" id="shareBtn" aria-label="Поделиться ссылкой">Поделиться</button>
       <button class="ui-btn" id="helpBtn" aria-label="Открыть справку">Справка</button>
@@ -117,21 +128,29 @@
         <span><b class="n">2</b>Поворотная платформа</span>
         <span><b class="n">3</b>Манипулятор</span>
         <span><b class="n">4</b>Рабочий ковш</span>
-        <span><b class="n">5</b>Гидроцилиндр</span>
-        <span><b class="n">6</b>Камера / датчик</span>
-        <span><b class="n">7</b>Силовой отсек</span>
-        <span><b class="n">8</b>Направляющая</span>
+        <span><b class="n">5</b>Привод манипулятора</span>
+        <span><b class="n">6</b>Телевизионная система</span>
+        <span><b class="n">7</b>Кабелеукладчик</span>
+        <span><b class="n">8</b>Стыковочное устройство</span>
       </div>
     </section>
 
-    <div class="hint">ПК: мышь — вращение, колесо — масштаб. VR: левый стик — перемещение, grip — телепорт. Горячие клавиши: R — сброс, M — метки, I — инженерный режим, F — полный экран.</div>
+    <section class="detail-card hidden" id="detailCard">
+      <div class="kicker">Узел комплекса</div>
+      <h3 id="detailTitle">Выберите метку</h3>
+      <p id="detailText"></p>
+      <div class="flow" id="detailFlow"></div>
+      <div class="source">Описание сверено с рабочей научной редакцией 25.09.2026 и первичными документами проекта.</div>
+    </section>
+    <div class="hint">ПК: мышь — вращение, колесо — масштаб. VR: левый стик — перемещение, grip — телепорт. R — сброс, M — метки, I — инженерный режим, P — два робота, O — вид камеры, F — полный экран.</div>
     <div class="xr-state" id="xrStatus">Проверка WebXR…</div>
     <div class="help-modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
       <div class="help-card">
         <h2 id="helpTitle">Управление сценой</h2>
         <p><strong>ПК:</strong> удерживайте левую кнопку мыши и вращайте сцену, колесом приближайте и отдаляйте. Нажмите на номерной маркер или узел, чтобы увидеть его название.</p>
         <p><strong>Meta Quest:</strong> откройте страницу в Meta Quest Browser и нажмите «ВОЙТИ В VR». Левый стик отвечает за движение, grip — за телепорт по полу.</p>
-        <p><strong>Клавиатура:</strong> <kbd>R</kbd> сброс вида, <kbd>M</kbd> метки, <kbd>I</kbd> инженерный режим, <kbd>F</kbd> полный экран, <kbd>Esc</kbd> закрыть справку.</p>
+        <p><strong>Клавиатура:</strong> <kbd>R</kbd> сброс вида, <kbd>M</kbd> метки, <kbd>I</kbd> инженерный режим, <kbd>P</kbd> пара комплексов, <kbd>O</kbd> вид бортовой камеры, <kbd>F</kbd> полный экран, <kbd>Esc</kbd> закрыть справку.</p>
+        <p><strong>Важно:</strong> масштаб и закрытые от камеры участки геометрии реконструированы приближённо. Паспортные размеры не подменяются визуальной оценкой по фотографиям.</p>
         <p>Для вставки на сайт используйте тот же адрес с параметром <kbd>?embed=1</kbd> — интерфейс станет компактнее.</p>
         <div class="help-actions"><button class="ui-btn" id="closeHelpBtn">Закрыть</button></div>
       </div>
@@ -246,15 +265,17 @@
     }
     const rulerLine = new THREE.Mesh(new THREE.BoxGeometry(4.05,0.006,0.012),rulerMat);
     rulerLine.position.set(0,0.103,1.72);
+    rulerLine.userData.label='Визуальная шкала — без паспортных размеров';
     engineeringGroup.add(rulerLine);
     const axes = new THREE.AxesHelper(0.55);
     axes.position.set(-1.72,0.11,-1.55);
     engineeringGroup.add(axes);
     scene.add(engineeringGroup);
 
-    const steel = new THREE.MeshStandardMaterial({ color: 0x8f9698, roughness: 0.55, metalness: 0.72 });
-    const steelDark = new THREE.MeshStandardMaterial({ color: 0x555d61, roughness: 0.62, metalness: 0.68 });
-    const steelLight = new THREE.MeshStandardMaterial({ color: 0xb4b9b8, roughness: 0.48, metalness: 0.62 });
+    const steel = new THREE.MeshStandardMaterial({ color: 0x8f8d73, roughness: 0.61, metalness: 0.48 });
+    const steelDark = new THREE.MeshStandardMaterial({ color: 0x4f5147, roughness: 0.68, metalness: 0.44 });
+    const steelLight = new THREE.MeshStandardMaterial({ color: 0xb5b195, roughness: 0.56, metalness: 0.42 });
+    const offWhite = new THREE.MeshStandardMaterial({ color: 0xd8d5bd, roughness: 0.58, metalness: 0.34 });
     const rubber = new THREE.MeshStandardMaterial({ color: 0x242729, roughness: 0.9, metalness: 0.05 });
     const black = new THREE.MeshStandardMaterial({ color: 0x191c1e, roughness: 0.76, metalness: 0.36 });
     const accent = new THREE.MeshStandardMaterial({ color: 0xb77b35, roughness: 0.58, metalness: 0.52 });
@@ -370,6 +391,9 @@
     // Крылья и кабель-каналы.
     box(robot, [1.48,0.07,0.14], [0.06,0.67,0.52], steelLight);
     box(robot, [1.48,0.07,0.14], [0.06,0.67,-0.52], steelLight);
+    const rearCoverA = finish(new THREE.Mesh(new THREE.CylinderGeometry(0.29,0.29,0.18,28,1,false,0,Math.PI),steelLight));
+    rearCoverA.position.set(0.58,0.73,0.50); rearCoverA.rotation.x=Math.PI/2; rearCoverA.rotation.z=Math.PI/2; robot.add(rearCoverA);
+    const rearCoverB = rearCoverA.clone(); rearCoverB.position.z=-0.50; rearCoverB.rotation.z=-Math.PI/2; robot.add(rearCoverB);
     cable(robot, [[0.72,0.71,0.47],[0.25,0.76,0.49],[-0.25,0.72,0.51],[-0.68,0.64,0.50]],0.018);
 
     // Поворотный узел и стойка.
@@ -389,8 +413,14 @@
       rod(arm,[0.25,1.20,z],[-0.39,1.27,z],0.025,steelDark,'Гидропривод');
       rod(arm,[-0.34,1.02,z],[-1.05,0.76,z],0.024,steelDark,'Гидропривод');
     }
-    rod(arm,[0.20,1.23,0],[-0.47,1.25,0],0.036,accent,'Гидроцилиндр');
-    rod(arm,[-0.32,1.05,0],[-0.98,0.78,0],0.033,accent,'Гидроцилиндр');
+    rod(arm,[0.20,1.23,0],[-0.47,1.25,0],0.036,accent,'Линейный привод');
+    rod(arm,[-0.32,1.05,0],[-0.98,0.78,0],0.033,accent,'Линейный привод');
+    rod(arm,[0.36,1.30,-0.22],[-0.36,1.34,-0.22],0.050,offWhite,'Привод манипулятора');
+    rod(arm,[0.36,1.30,0.22],[-0.36,1.34,0.22],0.050,offWhite,'Привод манипулятора');
+    rod(arm,[0.20,1.18,-0.18],[-0.42,1.10,0.18],0.016,steelDark);
+    rod(arm,[0.20,1.18,0.18],[-0.42,1.10,-0.18],0.016,steelDark);
+    rod(arm,[-0.48,1.10,-0.16],[-1.02,0.86,0.16],0.015,steelDark);
+    rod(arm,[-0.48,1.10,0.16],[-1.02,0.86,-0.16],0.015,steelDark);
     cyl(arm,0.10,0.38,[a2[0],a2[1],0],steelDark,'Шарнир',[Math.PI/2,0,0],24);
     cable(arm,[[0.35,1.27,0.19],[-0.10,1.34,0.20],[-0.56,1.29,0.18],[-1.04,0.94,0.17]],0.013);
 
@@ -406,8 +436,8 @@
     robot.add(bucket);
     bucket.position.set(-1.28,0.59,0);
     bucket.rotation.z = -0.17;
-    box(bucket,[0.52,0.08,0.66],[0,-0.10,0],steelLight,'Рабочий ковш');
-    box(bucket,[0.10,0.43,0.64],[-0.22,0.09,0],steel,'Рабочий ковш',[0,0,-0.18]);
+    box(bucket,[0.62,0.08,0.84],[0,-0.10,0],steelLight,'Рабочий ковш');
+    box(bucket,[0.12,0.45,0.82],[-0.24,0.09,0],steel,'Рабочий ковш',[0,0,-0.18]);
     box(bucket,[0.08,0.31,0.07],[0.18,0.02,0.285],steelDark);
     box(bucket,[0.08,0.31,0.07],[0.18,0.02,-0.285],steelDark);
     for(const z of [-0.25,-0.125,0,0.125,0.25]){
@@ -419,7 +449,16 @@
     const sensor = new THREE.Group();
     robot.add(sensor);
     box(sensor,[0.16,0.18,0.19],[-0.96,0.90,-0.22],steelDark,'Камера / датчик');
-    cyl(sensor,0.055,0.08,[-1.05,0.91,-0.22],glass,'Камера / датчик',[0,0,Math.PI/2],24);
+    cyl(sensor,0.055,0.08,[-1.05,0.91,-0.22],glass,'Телевизионная система',[0,0,Math.PI/2],24);
+    box(sensor,[0.12,0.13,0.16],[-0.86,1.02,0.24],steelDark,'Телевизионная система');
+    cyl(sensor,0.045,0.07,[-0.95,1.02,0.24],glass,'Телевизионная система',[0,0,Math.PI/2],20);
+
+    const dock = new THREE.Group();
+    robot.add(dock);
+    const dockCone = finish(new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.18,0.34,24),steelLight),'Стыковочное устройство');
+    dockCone.position.set(0.64,1.34,-0.08); dock.add(dockCone);
+    const dockRing = finish(new THREE.Mesh(new THREE.TorusGeometry(0.12,0.018,10,28),steelDark),'Стыковочное устройство');
+    dockRing.position.set(0.64,1.54,-0.08); dockRing.rotation.x=Math.PI/2; dock.add(dockRing);
 
     // Мелкие конструктивные элементы.
     for (const z of [-0.35,0.35]) {
@@ -457,10 +496,15 @@
     makeMarker(2,'Поворотная платформа',[0.20,0.83,0.56]);
     makeMarker(3,'Манипулятор',[-0.43,1.30,0.43]);
     makeMarker(4,'Рабочий ковш',[-1.46,0.66,0.52]);
-    makeMarker(5,'Гидроцилиндр',[-0.18,1.42,0.34]);
-    makeMarker(6,'Камера / датчик',[-1.02,1.02,-0.38]);
-    makeMarker(7,'Силовой отсек',[0.24,0.86,0.46]);
-    makeMarker(8,'Направляющая',[0.39,1.56,0.16]);
+    makeMarker(5,'Привод манипулятора',[-0.18,1.42,0.34]);
+    makeMarker(6,'Телевизионная система',[-1.02,1.02,-0.38]);
+    makeMarker(7,'Кабелеукладчик',[0.24,0.86,0.46]);
+    makeMarker(8,'Стыковочное устройство',[0.66,1.62,0.08]);
+
+    const robot2 = robot.clone(true);
+    robot2.visible = false;
+    robot2.traverse(o=>{ if(o.isSprite) o.visible=false; o.userData={}; });
+    scene.add(robot2);
 
     // Незаметная контактная тень.
     const shadowDisk = new THREE.Mesh(
