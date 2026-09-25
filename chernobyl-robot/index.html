@@ -55,6 +55,7 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     body.embed .topbar,body.embed .legend,body.embed .hint,body.embed .xr-state{display:none}
     body.embed .controls{top:12px;right:12px;max-width:520px}
+    body.embed #spinBtn,body.embed #markersBtn,body.embed #engineeringBtn,body.embed #shareBtn,body.embed #helpBtn{display:none}
     body.embed #VRButton{bottom:16px!important;right:16px!important}
     @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.loader-ring{animation:none}}
     #VRButton{
@@ -75,6 +76,11 @@
       #VRButton{right:14px!important;bottom:72px!important}
     }
   </style>
+  <script>
+    window.__mobotBooted=false;
+    window.addEventListener('error',()=>{const l=document.getElementById('loading');if(l&&!window.__mobotBooted){const t=l.querySelector('.loader-inner');if(t)t.innerHTML='<div style="max-width:520px;padding:24px"><strong>Не удалось загрузить 3D-модули.</strong><br><span style="color:#aeb7bd;font-size:13px">Проверьте соединение и перезагрузите страницу. Для VR откройте адрес напрямую в Meta Quest Browser.</span></div>';}}});
+    setTimeout(()=>{const l=document.getElementById('loading');if(l&&!window.__mobotBooted){const t=l.querySelector('.loader-inner');if(t)t.innerHTML='<div style="max-width:520px;padding:24px"><strong>3D-сцена загружается дольше обычного.</strong><br><span style="color:#aeb7bd;font-size:13px">Обновите страницу или откройте её напрямую, если она встроена через iframe.</span></div>'; }},12000);
+  </script>
   <script type="importmap">
     {
       "imports": {
@@ -139,6 +145,7 @@
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { VRButton } from 'three/addons/webxr/VRButton.js';
 
+    window.__mobotBooted=true;
     const params = new URLSearchParams(location.search);
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isEmbed = params.get('embed') === '1' || params.get('clean') === '1';
