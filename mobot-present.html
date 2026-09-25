@@ -112,6 +112,64 @@
     body.presentation .mission-strip{border-color:rgba(255,208,138,.16)}
     .presenter-hint{position:fixed;left:50%;top:max(18px,env(safe-area-inset-top));z-index:7;transform:translateX(-50%);padding:8px 12px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(12,15,17,.62);backdrop-filter:blur(12px);font-size:10px;color:#9ca6ac;pointer-events:none;opacity:.86}
     body:not(.presentation) .presenter-hint{display:none}
+    /* Presentation mode v2: museum-style minimal interface */
+    body.presentation .topbar,
+    body.presentation .legend,
+    body.presentation .hint,
+    body.presentation .xr-state,
+    body.presentation .mission-strip,
+    body.presentation .presenter-hint{display:none!important}
+    body.presentation .controls{
+      top:auto;right:auto;left:50%;bottom:max(18px,env(safe-area-inset-bottom));
+      transform:translateX(-50%);max-width:none;flex-wrap:nowrap;gap:8px;
+      padding:6px;border:1px solid rgba(255,255,255,.08);border-radius:999px;
+      background:rgba(10,13,15,.58);backdrop-filter:blur(16px)
+    }
+    body.presentation .controls .ui-btn{display:none}
+    body.presentation #tourBtn,
+    body.presentation #fullscreenBtn,
+    body.presentation #resetBtn{display:block;padding:10px 14px;background:transparent;border-color:transparent;color:#d9dee1}
+    body.presentation #tourBtn.active{background:var(--accent);color:#17120c}
+    body.presentation #tourBtn:hover,
+    body.presentation #fullscreenBtn:hover,
+    body.presentation #resetBtn:hover{background:rgba(255,255,255,.07);transform:none}
+    body.presentation .detail-card{
+      left:max(22px,env(safe-area-inset-left));right:auto;bottom:88px;
+      width:min(430px,calc(100vw - 44px));padding:0;border:0;border-radius:0;
+      background:transparent;backdrop-filter:none;box-shadow:none;
+      text-shadow:0 2px 18px rgba(0,0,0,.9)
+    }
+    body.presentation .detail-card .kicker{display:none}
+    body.presentation .detail-card h3{margin:0 0 6px;font-size:clamp(22px,2.2vw,34px);font-weight:720;letter-spacing:-.03em}
+    body.presentation .detail-card p{max-width:42ch;color:#d0d5d8;font-size:13px;line-height:1.45}
+    body.presentation .detail-card .confidence,
+    body.presentation .detail-card .flow,
+    body.presentation .detail-card .source{display:none}
+    body.presentation .tour-progress{margin-top:8px;color:#9ca5aa;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+    body.presentation #toast{bottom:78px;background:rgba(10,13,15,.72);border-color:rgba(255,255,255,.10)}
+    body.presentation #VRButton{
+      right:max(18px,env(safe-area-inset-right))!important;bottom:max(18px,env(safe-area-inset-bottom))!important;
+      padding:10px 14px!important;background:rgba(216,154,67,.92)!important
+    }
+    body.presentation .cinematic-intro{align-items:center;padding:clamp(28px,7vw,96px)}
+    body.presentation .intro-content{width:min(680px,90vw)}
+    body.presentation .intro-kicker{font-size:11px;margin-bottom:12px;opacity:.82}
+    body.presentation .intro-title{font-size:clamp(54px,9vw,118px)}
+    body.presentation .intro-subtitle{max-width:560px;margin-top:18px;font-size:clamp(14px,1.7vw,18px);color:#b6bec3}
+    body.presentation .intro-stats,
+    body.presentation .intro-note,
+    body.presentation #startTourIntroBtn{display:none}
+    body.presentation .intro-actions{margin-top:26px}
+    body.presentation .intro-btn.primary{padding:14px 20px;font-size:13px}
+    @media (max-width:760px){
+      body.presentation .controls{bottom:14px;gap:2px}
+      body.presentation #tourBtn,body.presentation #fullscreenBtn,body.presentation #resetBtn{padding:9px 10px;font-size:11px}
+      body.presentation .detail-card{left:16px;bottom:78px;width:calc(100vw - 32px)}
+      body.presentation .detail-card h3{font-size:24px}
+      body.presentation #VRButton{right:14px!important;bottom:64px!important}
+      body.presentation .cinematic-intro{align-items:center;padding:28px 20px}
+      body.presentation .intro-title{font-size:56px}
+    }
     @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.loader-ring{animation:none}}
     #VRButton{
       position:fixed!important;right:max(18px,env(safe-area-inset-right))!important;bottom:72px!important;left:auto!important;width:auto!important;
@@ -147,16 +205,16 @@
 <body class="presentation">
   <section class="cinematic-intro" id="cinematicIntro" aria-label="Заставка проекта">
     <div class="intro-content">
-      <div class="intro-kicker">Инженерная память · демонстрационный режим · Чернобыльская АЭС · 1987</div>
+      <div class="intro-kicker">Живая инженерная память · Чернобыль · 1987</div>
       <h1 class="intro-title">Мобот-Ч-ХВ-2</h1>
-      <p class="intro-subtitle">Интерактивная реконструкция мобильной роботизированной системы, созданной для работы там, где непосредственное присутствие человека становилось опасным.</p>
+      <p class="intro-subtitle">Интерактивная 3D-реконструкция робототехнического комплекса, работавшего на Чернобыльской АЭС.</p>
       <div class="intro-stats">
         <div class="intro-stat"><b>1108 ч</b><span>наработка двух комплексов*</span></div>
         <div class="intro-stat"><b>350</b><span>мешков по акту*</span></div>
         <div class="intro-stat"><b>8</b><span>маяков-ориентиров*</span></div>
       </div>
       <div class="intro-actions">
-        <button class="intro-btn primary" id="startExperienceBtn">Начать презентацию</button>
+        <button class="intro-btn primary" id="startExperienceBtn">Открыть 3D-модель</button>
         <button class="intro-btn" id="startTourIntroBtn">Свободный просмотр</button>
       </div>
       <div class="intro-note">* Показатели относятся к документированным работам 1987 года. 3D-геометрия — исследовательская реконструкция, а не паспортная CAD-модель.</div>
@@ -607,6 +665,7 @@
     makeMarker(7,'Кабелеукладчик',[0.24,0.86,0.46]);
     makeMarker(8,'Стыковочное устройство',[0.66,1.62,0.08]);
     makeMarker(9,'Дозиметрический блок ИМД-21Б',[-0.58,1.17,0.55]);
+    if(document.body.classList.contains('presentation')) markerGroup.visible=false;
 
     const robot2 = robot.clone(true);
     robot2.visible = false;
@@ -622,7 +681,7 @@
 
     // UI.
     let autoSpin = !reduceMotion && params.get('autospin') !== '0';
-    let engineeringVisible = params.get('engineering') !== '0';
+    let engineeringVisible = params.get('engineering') === '1';
     let pauseSpinUntil = 0;
     const spinBtn = document.getElementById('spinBtn');
     const markersBtn = document.getElementById('markersBtn');
@@ -652,7 +711,7 @@
     let toastTimer;
     let pairMode=false;
     let operatorView=false;
-    let atmosphereVisible=params.get('effects')!=='0';
+    let atmosphereVisible=params.get('effects')==='1';
     let started=false;
     let tourActive=false;
     let tourIndex=0;
@@ -706,6 +765,8 @@
       }
     };
     spinBtn.classList.toggle('active',autoSpin);
+    markersBtn.classList.toggle('active',markerGroup.visible);
+    legend.classList.toggle('hidden',!markerGroup.visible);
     engineeringBtn.classList.toggle('active',engineeringVisible);
     atmosphereBtn.classList.toggle('active',atmosphereVisible);
     atmosphereGroup.visible=atmosphereVisible;
@@ -722,7 +783,7 @@
       const d=detailData[label];
       if(!d){ showToast(label); return; }
       detailTitle.textContent=label;
-      detailText.textContent=d.text;
+      detailText.textContent=document.body.classList.contains('presentation') ? (d.text.split(/(?<=[.!?])\s+/)[0] || d.text) : d.text;
       detailConfidence.className='confidence '+d.grade.toLowerCase();
       detailConfidence.textContent=d.grade+' · '+d.gradeText;
       detailFlow.innerHTML=d.flow.map((x,i)=>'<b>'+x+'</b>'+(i<d.flow.length-1?'<i>→</i>':'')).join('');
