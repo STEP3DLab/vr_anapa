@@ -1,0 +1,1090 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111417" />
+  <meta name="description" content="Интерактивная WebXR-сцена: музейная 3D-реконструкция мобильного робота «Мобот-Ч-ХВ-2», применявшегося при ликвидации последствий аварии на Чернобыльской АЭС. ПК и Meta Quest." />
+  <meta property="og:title" content="Мобот-Ч-ХВ-2 · интерактивная 3D / VR презентация" />
+  <meta property="og:description" content="Интерактивная WebXR-реконструкция чернобыльского робота. Просмотр на ПК и в Meta Quest." />
+  <meta property="og:type" content="website" />
+  <meta name="robots" content="index,follow" />
+  <link rel="modulepreload" href="./mobot-assets/three.core.min.js" />
+  <link rel="modulepreload" href="./mobot-assets/three.module.min.js" />
+  <link rel="modulepreload" href="./mobot-assets/controls/OrbitControls.js" />
+  <link rel="modulepreload" href="./mobot-assets/webxr/VRButton.js" />
+  <title>Мобот-Ч-ХВ-2 · 3D / VR презентация</title>
+  <style>
+    :root{
+      --bg:#111417;--panel:rgba(18,22,25,.84);--line:rgba(255,255,255,.14);
+      --text:#f2f4f5;--muted:#aeb7bd;--accent:#d89a43;--accent2:#ffd08a;--olive:#aaa889;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text)}
+    canvas{display:block;width:100%;height:100%;touch-action:none}
+    #ui{position:fixed;inset:0;pointer-events:none;z-index:4}
+    .topbar{position:absolute;left:max(18px,env(safe-area-inset-left));top:max(18px,env(safe-area-inset-top));max-width:min(620px,calc(100vw - 36px));padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(22,26,29,.88),rgba(14,17,20,.72));backdrop-filter:blur(16px);box-shadow:0 16px 44px rgba(0,0,0,.26)}
+    .eyebrow{display:flex;align-items:center;gap:9px;color:var(--accent2);font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+    .dot{width:7px;height:7px;border-radius:99px;background:var(--accent);box-shadow:0 0 18px rgba(216,154,67,.75)}
+    h1{margin:7px 0 6px;font-size:clamp(24px,3vw,42px);line-height:.98;letter-spacing:-.035em;font-weight:750}
+    .lead{margin:0;color:var(--muted);font-size:13px;line-height:1.45;max-width:57ch}
+    .controls{position:absolute;right:max(18px,env(safe-area-inset-right));top:max(18px,env(safe-area-inset-top));display:flex;gap:9px;pointer-events:auto;flex-wrap:wrap;justify-content:flex-end;max-width:440px}
+    button.ui-btn{appearance:none;border:1px solid var(--line);background:rgba(18,22,25,.82);color:var(--text);border-radius:999px;padding:10px 13px;font:650 12px/1 system-ui;cursor:pointer;backdrop-filter:blur(12px);transition:.18s ease}
+    button.ui-btn:hover{border-color:rgba(255,208,138,.5);transform:translateY(-1px);background:rgba(30,35,39,.9)}
+    button.ui-btn.active{background:var(--accent);border-color:var(--accent);color:#17120c}
+    .legend{position:absolute;left:max(18px,env(safe-area-inset-left));bottom:max(18px,env(safe-area-inset-bottom));width:min(370px,calc(100vw - 36px));padding:13px 14px;border:1px solid var(--line);border-radius:16px;background:var(--panel);backdrop-filter:blur(14px);transition:.25s ease}
+    .legend.hidden{opacity:0;transform:translateY(8px);pointer-events:none}
+    .legend-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+    .legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px 12px;font-size:12px}
+    .legend-grid span{display:flex;gap:7px;align-items:center;min-width:0}
+    .n{display:inline-grid;place-items:center;flex:0 0 20px;height:20px;border-radius:99px;background:var(--accent);color:#17120c;font-size:10px;font-weight:800}
+    .hint{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(18,22,25,.72);color:var(--muted);font-size:11px;backdrop-filter:blur(10px);max-width:320px;text-align:right}
+    #toast{position:absolute;left:50%;bottom:88px;transform:translate(-50%,10px);opacity:0;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,208,138,.32);background:rgba(17,20,23,.9);color:#fff;font-size:12px;transition:.2s ease;white-space:nowrap}
+    #toast.show{opacity:1;transform:translate(-50%,0)}
+    .badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1);color:#c7ced3;font-size:10px;background:rgba(255,255,255,.04)}
+    .source-link{display:inline-flex;pointer-events:auto;margin-top:9px;color:#d9b378;text-decoration:none;font-size:11px;border-bottom:1px solid rgba(217,179,120,.28)}
+    .source-link:hover{color:#ffd08a;border-bottom-color:#ffd08a}
+    .cinematic-intro{position:fixed;inset:0;z-index:25;display:grid;align-items:center;padding:clamp(24px,6vw,86px);background:
+      radial-gradient(circle at 68% 42%,rgba(137,139,111,.22),transparent 26%),
+      radial-gradient(circle at 28% 25%,rgba(216,154,67,.12),transparent 26%),
+      linear-gradient(110deg,rgba(8,11,13,.98) 0%,rgba(12,16,19,.93) 48%,rgba(12,16,19,.50) 100%);
+      overflow:hidden;transition:opacity .8s ease,visibility .8s ease}
+    .cinematic-intro::before{content:"";position:absolute;inset:-20%;background:repeating-linear-gradient(90deg,transparent 0 86px,rgba(255,255,255,.018) 87px 88px);transform:perspective(900px) rotateX(68deg) translateY(34%);transform-origin:center;animation:introGrid 11s linear infinite}
+    .cinematic-intro::after{content:"";position:absolute;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,208,138,.66),transparent);box-shadow:0 0 24px rgba(216,154,67,.38);animation:scanIntro 4.8s ease-in-out infinite}
+    .cinematic-intro.done{opacity:0;visibility:hidden;pointer-events:none}
+    .intro-content{position:relative;z-index:2;width:min(760px,92vw)}
+    .intro-kicker{font-size:12px;font-weight:760;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px}
+    .intro-title{margin:0;font-size:clamp(48px,8vw,112px);line-height:.84;letter-spacing:-.06em;font-weight:820;text-wrap:balance}
+    .intro-subtitle{margin:18px 0 0;max-width:700px;color:#bbc3c8;font-size:clamp(15px,2vw,20px);line-height:1.48}
+    .intro-stats{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 0}
+    .intro-stat{min-width:138px;padding:10px 12px;border:1px solid rgba(255,255,255,.10);border-radius:13px;background:rgba(255,255,255,.035);backdrop-filter:blur(10px)}
+    .intro-stat b{display:block;font-size:20px;color:#fff}
+    .intro-stat span{font-size:10px;color:#909ba2;text-transform:uppercase;letter-spacing:.08em}
+    .intro-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;pointer-events:auto}
+    .intro-btn{border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:13px 18px;background:rgba(255,255,255,.06);color:#fff;font:720 12px/1 system-ui;cursor:pointer;transition:.18s ease}
+    .intro-btn.primary{background:var(--accent);border-color:var(--accent);color:#17120c}
+    .intro-btn:hover{transform:translateY(-2px);border-color:rgba(255,208,138,.56)}
+    .intro-note{margin-top:14px;color:#747f86;font-size:10px;line-height:1.4}
+    .mission-strip{position:fixed;left:50%;bottom:18px;z-index:6;transform:translateX(-50%);display:flex;gap:8px;align-items:center;padding:7px 10px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(12,15,17,.72);backdrop-filter:blur(12px);font-size:10px;color:#9ca6ac;pointer-events:none;white-space:nowrap}
+    .mission-strip b{color:#e3e7e9;font-weight:680}
+    @keyframes scanIntro{0%,100%{top:18%;opacity:.18}50%{top:82%;opacity:.72}}
+    @keyframes introGrid{to{transform:perspective(900px) rotateX(68deg) translateY(39%)}}
+    .detail-card{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:112px;width:min(360px,calc(100vw - 36px));padding:14px 15px;border:1px solid var(--line);border-radius:16px;background:rgba(18,22,25,.86);backdrop-filter:blur(16px);box-shadow:0 18px 46px rgba(0,0,0,.25);transition:.22s ease}
+    .detail-card.hidden{opacity:0;transform:translateY(8px);pointer-events:none}
+    .detail-card .kicker{color:var(--accent2);font-size:10px;font-weight:750;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+    .detail-card h3{margin:0 0 6px;font-size:17px;letter-spacing:-.015em}
+    .detail-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.48}
+    .detail-card .source{margin-top:8px;color:#808a91;font-size:10px}
+    .confidence{display:inline-flex;align-items:center;gap:6px;margin:0 0 8px;padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);font-size:10px;font-weight:720}
+    .confidence.a{color:#b8d9ad;border-color:rgba(184,217,173,.28);background:rgba(184,217,173,.06)}
+    .confidence.b{color:#ffd08a;border-color:rgba(255,208,138,.28);background:rgba(255,208,138,.06)}
+    .confidence.c{color:#c9cfd4;border-color:rgba(201,207,212,.22);background:rgba(201,207,212,.05)}
+    .tour-progress{margin-top:9px;color:#8d979e;font-size:10px}
+    .flow{display:flex;align-items:center;gap:6px;margin-top:9px;flex-wrap:wrap;color:#d9dee1;font-size:10px}
+    .flow b{padding:4px 7px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.04)}
+    .flow i{font-style:normal;color:var(--accent)}
+    .xr-state{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:62px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(18,22,25,.72);color:var(--muted);font-size:10px;backdrop-filter:blur(10px)}
+    .xr-state.ok{color:#b8d9ad;border-color:rgba(184,217,173,.25)}
+    .help-modal{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,8,.54);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:.2s ease}
+    .help-modal.open{opacity:1;pointer-events:auto}
+    .help-card{width:min(560px,calc(100vw - 30px));padding:20px;border:1px solid var(--line);border-radius:20px;background:rgba(17,21,24,.96);box-shadow:0 30px 80px rgba(0,0,0,.42);pointer-events:auto}
+    .help-card h2{margin:0 0 8px;font-size:22px}
+    .help-card p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.5}
+    .help-card kbd{display:inline-block;padding:2px 6px;border:1px solid rgba(255,255,255,.16);border-bottom-width:2px;border-radius:6px;background:rgba(255,255,255,.06);color:#fff;font:600 11px/1.4 ui-monospace,monospace}
+    .help-actions{display:flex;justify-content:flex-end;margin-top:16px}
+    #loading{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#101316;transition:opacity .45s ease,visibility .45s ease}
+    #loading.done{opacity:0;visibility:hidden}
+    .loader-inner{text-align:center;color:#cfd5d9}
+    .loader-ring{width:42px;height:42px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.10);border-top-color:#d89a43;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    body.embed .topbar,body.embed .legend,body.embed .hint,body.embed .xr-state,body.embed .detail-card{display:none}
+    body.embed .controls{top:12px;right:12px;max-width:520px}
+    body.embed #spinBtn,body.embed #markersBtn,body.embed #engineeringBtn,body.embed #atmosphereBtn,body.embed #tourBtn,body.embed #pairBtn,body.embed #operatorViewBtn,body.embed #shareBtn,body.embed #helpBtn{display:none}
+    body.embed #VRButton{bottom:16px!important;right:16px!important}
+    body.presentation #shareBtn,body.presentation #helpBtn{display:none}
+    body.presentation .topbar{max-width:min(650px,calc(100vw - 36px));border-color:rgba(255,208,138,.18)}
+    body.presentation .cinematic-intro{background:
+      radial-gradient(circle at 72% 38%,rgba(170,168,137,.28),transparent 25%),
+      radial-gradient(circle at 24% 20%,rgba(216,154,67,.16),transparent 24%),
+      linear-gradient(112deg,rgba(7,9,11,.99) 0%,rgba(11,14,17,.95) 49%,rgba(11,14,17,.56) 100%)}
+    body.presentation .intro-title{text-shadow:0 10px 44px rgba(0,0,0,.44)}
+    body.presentation .intro-btn.primary{box-shadow:0 0 0 1px rgba(255,208,138,.12),0 12px 42px rgba(216,154,67,.18)}
+    body.presentation .mission-strip{border-color:rgba(255,208,138,.16)}
+    .presenter-hint{position:fixed;left:50%;top:max(18px,env(safe-area-inset-top));z-index:7;transform:translateX(-50%);padding:8px 12px;border:1px solid rgba(255,255,255,.10);border-radius:999px;background:rgba(12,15,17,.62);backdrop-filter:blur(12px);font-size:10px;color:#9ca6ac;pointer-events:none;opacity:.86}
+    body:not(.presentation) .presenter-hint{display:none}
+    @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.loader-ring{animation:none}}
+    #VRButton{
+      position:fixed!important;right:max(18px,env(safe-area-inset-right))!important;bottom:72px!important;left:auto!important;width:auto!important;
+      border:1px solid rgba(255,208,138,.55)!important;border-radius:999px!important;padding:11px 16px!important;
+      background:rgba(216,154,67,.92)!important;color:#18130d!important;opacity:1!important;
+      font:bold 12px/1 system-ui!important;letter-spacing:.03em!important;z-index:8!important
+    }
+    body.xr #ui{display:none}
+    body.xr #VRButton{display:block!important;opacity:.16!important}
+    @media (max-width:760px){
+      .topbar{right:18px;max-width:none;padding:13px 14px}
+      h1{font-size:27px}
+      .lead{font-size:12px}
+      .controls{top:auto;right:14px;bottom:122px;max-width:220px}
+      .legend{width:calc(100vw - 28px);left:14px;bottom:14px;padding:11px}
+      .hint{display:none}
+      #VRButton{right:14px!important;bottom:72px!important}
+      .cinematic-intro{align-items:end;padding:24px 18px 112px}
+      .intro-title{font-size:52px}
+      .intro-subtitle{font-size:13px}
+      .intro-stats{gap:7px}
+      .intro-stat{min-width:104px;padding:8px 9px}
+      .mission-strip{display:none}
+    }
+  </style>
+  <script>
+    window.__mobotBooted=false;
+    window.addEventListener('error',()=>{const l=document.getElementById('loading');if(l&&!window.__mobotBooted){const t=l.querySelector('.loader-inner');if(t)t.innerHTML='<div style="max-width:520px;padding:24px"><strong>Не удалось запустить локальный 3D-модуль.</strong><br><span style="color:#aeb7bd;font-size:13px">Перезагрузите страницу. Если ошибка повторится, откройте тестовую страницу /vr_anapa/mobot-health.html.</span></div>';}}});
+    setTimeout(()=>{const l=document.getElementById('loading');if(l&&!window.__mobotBooted){const t=l.querySelector('.loader-inner');if(t)t.innerHTML='<div style="max-width:520px;padding:24px"><strong>3D-сцена запускается дольше обычного.</strong><br><span style="color:#aeb7bd;font-size:13px">Обновите страницу или откройте её напрямую, если она встроена через iframe.</span></div>'; }},12000);
+  </script>
+
+</head>
+<body class="presentation">
+  <section class="cinematic-intro" id="cinematicIntro" aria-label="Заставка проекта">
+    <div class="intro-content">
+      <div class="intro-kicker">Инженерная память · демонстрационный режим · Чернобыльская АЭС · 1987</div>
+      <h1 class="intro-title">Мобот-Ч-ХВ-2</h1>
+      <p class="intro-subtitle">Интерактивная реконструкция мобильной роботизированной системы, созданной для работы там, где непосредственное присутствие человека становилось опасным.</p>
+      <div class="intro-stats">
+        <div class="intro-stat"><b>1108 ч</b><span>наработка двух комплексов*</span></div>
+        <div class="intro-stat"><b>350</b><span>мешков по акту*</span></div>
+        <div class="intro-stat"><b>8</b><span>маяков-ориентиров*</span></div>
+      </div>
+      <div class="intro-actions">
+        <button class="intro-btn primary" id="startExperienceBtn">Начать презентацию</button>
+        <button class="intro-btn" id="startTourIntroBtn">Свободный просмотр</button>
+      </div>
+      <div class="intro-note">* Показатели относятся к документированным работам 1987 года. 3D-геометрия — исследовательская реконструкция, а не паспортная CAD-модель.</div>
+    </div>
+  </section>
+  <div class="presenter-hint">← / → — узлы · T — экскурсия · P — два комплекса · O — бортовая камера · F — полный экран</div>\n  <div class="mission-strip"><b>Мобот-Ч-ХВ-2</b><span>•</span><span>инженерная реконструкция</span><span>•</span><span>ПК + Meta Quest</span></div>
+  <div id="ui">
+    <section class="topbar">
+      <div class="eyebrow"><i class="dot"></i>инженерная память · WebXR · презентация</div>
+      <h1>Мобот-Ч-ХВ-2</h1>
+      <p class="lead">Музейная 3D-реконструкция мобильного робототехнического комплекса, созданного школой МВТУ/МГТУ им. Н.Э. Баумана и применявшегося на Чернобыльской АЭС. Модель восстановлена по архивным фотографиям и предназначена для интерактивного изучения конструкции — это не точная CAD-копия.</p>
+      <div class="badge">ДЕМОНСТРАЦИЯ · ЧАЭС · 1987 · ПК / Meta Quest · WebXR</div>
+      <br><a class="source-link" href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">Архив СКТБ прикладной робототехники ↗</a>
+    </section>
+
+    <div class="controls">
+      <button class="ui-btn active" id="spinBtn" aria-label="Включить или выключить автовращение">Автовращение</button>
+      <button class="ui-btn active" id="markersBtn" aria-label="Показать или скрыть обозначения узлов">Узлы</button>
+      <button class="ui-btn active" id="engineeringBtn" aria-label="Переключить инженерный режим">Инженерный режим</button>
+      <button class="ui-btn active" id="atmosphereBtn" aria-label="Переключить атмосферные эффекты">Эффекты</button>
+      <button class="ui-btn" id="tourBtn" aria-label="Запустить инженерную экскурсию">Экскурсия</button>
+      <button class="ui-btn" id="pairBtn" aria-label="Показать два комплекса Мобот-Ч-ХВ-2">Пара 1987</button>
+      <button class="ui-btn" id="operatorViewBtn" aria-label="Переключиться на вид бортовой камеры">Вид камеры</button>
+      <button class="ui-btn" id="fullscreenBtn" aria-label="Открыть в полноэкранном режиме">Полный экран</button>
+      <button class="ui-btn" id="shareBtn" aria-label="Поделиться ссылкой">Поделиться</button>
+      <button class="ui-btn" id="helpBtn" aria-label="Открыть справку">Справка</button>
+      <button class="ui-btn" id="resetBtn" aria-label="Сбросить положение камеры">Сбросить вид</button>
+    </div>
+
+    <section class="legend" id="legend">
+      <div class="legend-title">Ключевые узлы</div>
+      <div class="legend-grid">
+        <span><b class="n">1</b>Гусеничный движитель</span>
+        <span><b class="n">2</b>Поворотная платформа</span>
+        <span><b class="n">3</b>Манипулятор</span>
+        <span><b class="n">4</b>Фронтальный погрузчик</span>
+        <span><b class="n">5</b>Привод манипулятора</span>
+        <span><b class="n">6</b>Телевизионная система</span>
+        <span><b class="n">7</b>Кабелеукладчик</span>
+        <span><b class="n">8</b>Стыковочное устройство</span>
+        <span><b class="n">9</b>Дозиметрический блок ИМД-21Б</span>
+      </div>
+    </section>
+
+    <section class="detail-card hidden" id="detailCard">
+      <div class="kicker">Узел комплекса</div>
+      <h3 id="detailTitle">Выберите метку</h3>
+      <div class="confidence b" id="detailConfidence">B · реконструкция по фото</div>
+      <p id="detailText"></p>
+      <div class="flow" id="detailFlow"></div>
+      <div class="tour-progress" id="tourProgress"></div>
+      <div class="source">Описание сверено с рабочей научной редакцией 25.09.2026 и первичными документами проекта.</div>
+    </section>
+    <div class="hint">ПК: мышь — вращение, колесо — масштаб. VR: левый стик — перемещение, grip — телепорт. R — сброс, M — метки, I — инженерный режим, T — экскурсия, P — два робота, O — вид камеры, F — полный экран.</div>
+    <div class="xr-state" id="xrStatus">Проверка WebXR…</div>
+    <div class="help-modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="help-card">
+        <h2 id="helpTitle">Управление сценой</h2>
+        <p><strong>ПК:</strong> удерживайте левую кнопку мыши и вращайте сцену, колесом приближайте и отдаляйте. Нажмите на номерной маркер или узел, чтобы увидеть его название.</p>
+        <p><strong>Meta Quest:</strong> откройте страницу в Meta Quest Browser и нажмите «ВОЙТИ В VR». Левый стик отвечает за движение, grip — за телепорт по полу.</p>
+        <p><strong>Клавиатура:</strong> <kbd>R</kbd> сброс вида, <kbd>M</kbd> метки, <kbd>I</kbd> инженерный режим, <kbd>E</kbd> эффекты, <kbd>T</kbd> экскурсия, <kbd>P</kbd> пара комплексов, <kbd>O</kbd> вид бортовой камеры, <kbd>F</kbd> полный экран, <kbd>Esc</kbd> закрыть справку.</p>
+        <p><strong>Важно:</strong> масштаб и закрытые от камеры участки геометрии реконструированы приближённо. Паспортные размеры не подменяются визуальной оценкой по фотографиям.</p>
+        <p>Для вставки на сайт используйте тот же адрес с параметром <kbd>?embed=1</kbd> — интерфейс станет компактнее.</p>
+        <div class="help-actions"><button class="ui-btn" id="closeHelpBtn">Закрыть</button></div>
+      </div>
+    </div>
+    <div id="toast"></div>
+  </div>
+  <div id="loading"><div class="loader-inner"><div class="loader-ring"></div><div>Подготовка 3D-сцены…</div></div></div>
+
+  <script type="module">
+    import * as THREE from './mobot-assets/three.module.min.js';
+    import { OrbitControls } from './mobot-assets/controls/OrbitControls.js';
+    import { VRButton } from './mobot-assets/webxr/VRButton.js';
+
+    window.__mobotBooted=true;
+    const params = new URLSearchParams(location.search);
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isEmbed = params.get('embed') === '1' || params.get('clean') === '1';
+    if (isEmbed) document.body.classList.add('embed');
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x111417);
+    scene.fog = new THREE.FogExp2(0x111417, 0.036);
+
+    const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.05, 80);
+    camera.position.set(3.7, 2.25, 4.65);
+
+    const dolly = new THREE.Group();
+    dolly.add(camera);
+    scene.add(dolly);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.8));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.02;
+    renderer.xr.enabled = true;
+    renderer.xr.setReferenceSpaceType('local-floor');
+    document.body.prepend(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0.72, 0);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.055;
+    controls.minDistance = 2.35;
+    controls.maxDistance = 9;
+    controls.maxPolarAngle = Math.PI * 0.49;
+
+    const hemi = new THREE.HemisphereLight(0xc8d2d8, 0x252728, 1.35);
+    scene.add(hemi);
+
+    const key = new THREE.DirectionalLight(0xfff2dd, 4.2);
+    key.position.set(-3.8, 6.2, 4.1);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.near = 0.1;
+    key.shadow.camera.far = 18;
+    key.shadow.camera.left = -5;
+    key.shadow.camera.right = 5;
+    key.shadow.camera.top = 5;
+    key.shadow.camera.bottom = -5;
+    scene.add(key);
+
+    const rim = new THREE.SpotLight(0xd89a43, 42, 12, Math.PI / 5.5, 0.72, 1.35);
+    rim.position.set(3.7, 3.8, -4.2);
+    rim.target.position.set(0, 0.6, 0);
+    scene.add(rim, rim.target);
+
+    const fill = new THREE.PointLight(0x9eb9c8, 10, 8, 2);
+    fill.position.set(-3, 1.4, -2.3);
+    scene.add(fill);
+
+    const floorMat = new THREE.MeshStandardMaterial({ color: 0x202529, roughness: 0.92, metalness: 0.05 });
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(8.5, 96), floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    floor.userData.teleportable = true;
+    scene.add(floor);
+
+    const turntable = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.9, 1.96, 0.09, 80),
+      new THREE.MeshStandardMaterial({ color: 0x252b2f, roughness: 0.66, metalness: 0.36 })
+    );
+    turntable.position.y = 0.045;
+    turntable.receiveShadow = true;
+    turntable.castShadow = true;
+    scene.add(turntable);
+
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(1.82, 1.86, 96),
+      new THREE.MeshBasicMaterial({ color: 0xd89a43, transparent: true, opacity: 0.78, side: THREE.DoubleSide })
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.093;
+    scene.add(ring);
+
+    const grid = new THREE.GridHelper(16, 32, 0x4b5358, 0x2d3337);
+    grid.position.y = 0.096;
+    grid.material.transparent = true;
+    grid.material.opacity = 0.33;
+    scene.add(grid);
+
+    const engineeringGroup = new THREE.Group();
+    const rulerMat = new THREE.MeshBasicMaterial({color:0x9aa5ac,transparent:true,opacity:.42});
+    for(let i=-8;i<=8;i++){
+      const major = i % 2 === 0;
+      const tick = new THREE.Mesh(new THREE.BoxGeometry(major ? 0.018 : 0.010,0.008,major ? 0.24 : 0.14),rulerMat);
+      tick.position.set(i*0.25,0.103,1.72);
+      engineeringGroup.add(tick);
+    }
+    const rulerLine = new THREE.Mesh(new THREE.BoxGeometry(4.05,0.006,0.012),rulerMat);
+    rulerLine.position.set(0,0.103,1.72);
+    rulerLine.userData.label='Визуальная шкала — без паспортных размеров';
+    engineeringGroup.add(rulerLine);
+    const axes = new THREE.AxesHelper(0.55);
+    axes.position.set(-1.72,0.11,-1.55);
+    engineeringGroup.add(axes);
+    scene.add(engineeringGroup);
+
+    // Лёгкие музейные эффекты: сканирующее кольцо и частицы. В VR они отключаются.
+    const atmosphereGroup = new THREE.Group();
+    const scanMat = new THREE.MeshBasicMaterial({color:0xd89a43,transparent:true,opacity:.24,depthWrite:false,side:THREE.DoubleSide});
+    const scanRing = new THREE.Mesh(new THREE.RingGeometry(1.62,1.69,80),scanMat);
+    scanRing.rotation.x=-Math.PI/2; scanRing.position.y=0.35; atmosphereGroup.add(scanRing);
+    const particleCount=180;
+    const particlePos=new Float32Array(particleCount*3);
+    for(let i=0;i<particleCount;i++){
+      const a=i*2.399963229728653;
+      const r=1.4+((i*37)%100)/100*4.7;
+      particlePos[i*3]=Math.cos(a)*r;
+      particlePos[i*3+1]=0.12+((i*53)%100)/100*3.1;
+      particlePos[i*3+2]=Math.sin(a)*r;
+    }
+    const particleGeo=new THREE.BufferGeometry();
+    particleGeo.setAttribute('position',new THREE.BufferAttribute(particlePos,3));
+    const particles=new THREE.Points(particleGeo,new THREE.PointsMaterial({color:0xb9b79a,size:0.018,transparent:true,opacity:.22,depthWrite:false}));
+    atmosphereGroup.add(particles);
+    scene.add(atmosphereGroup);
+
+    const steel = new THREE.MeshStandardMaterial({ color: 0x8f8d73, roughness: 0.61, metalness: 0.48 });
+    const steelDark = new THREE.MeshStandardMaterial({ color: 0x4f5147, roughness: 0.68, metalness: 0.44 });
+    const steelLight = new THREE.MeshStandardMaterial({ color: 0xb5b195, roughness: 0.56, metalness: 0.42 });
+    const offWhite = new THREE.MeshStandardMaterial({ color: 0xd8d5bd, roughness: 0.58, metalness: 0.34 });
+    const rubber = new THREE.MeshStandardMaterial({ color: 0x242729, roughness: 0.9, metalness: 0.05 });
+    const black = new THREE.MeshStandardMaterial({ color: 0x191c1e, roughness: 0.76, metalness: 0.36 });
+    const accent = new THREE.MeshStandardMaterial({ color: 0xb77b35, roughness: 0.58, metalness: 0.52 });
+    const glass = new THREE.MeshPhysicalMaterial({ color: 0x1d262b, roughness: 0.15, metalness: 0.12, transmission: 0.22, transparent: true, opacity: 0.88 });
+
+    const robot = new THREE.Group();
+    robot.position.y = 0.11;
+    robot.rotation.y = -0.58;
+    scene.add(robot);
+
+    const clickable = [];
+    function finish(mesh, label = '') {
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      if (label) {
+        mesh.userData.label = label;
+        clickable.push(mesh);
+      }
+      return mesh;
+    }
+
+    function box(parent, size, pos, mat, label = '', rot = [0,0,0]) {
+      const m = finish(new THREE.Mesh(new THREE.BoxGeometry(...size), mat), label);
+      m.position.set(...pos);
+      m.rotation.set(...rot);
+      parent.add(m);
+      return m;
+    }
+
+    function cyl(parent, r, h, pos, mat, label = '', rot = [0,0,0], seg = 32) {
+      const m = finish(new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), mat), label);
+      m.position.set(...pos);
+      m.rotation.set(...rot);
+      parent.add(m);
+      return m;
+    }
+
+    function beamBox(parent, a, b, thick, depth, mat, label = '') {
+      const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
+      const mid = A.clone().add(B).multiplyScalar(0.5);
+      const len = A.distanceTo(B);
+      const m = box(parent, [len, thick, depth], [mid.x, mid.y, mid.z], mat, label);
+      m.rotation.z = Math.atan2(B.y - A.y, B.x - A.x);
+      return m;
+    }
+
+    function rod(parent, a, b, radius, mat, label = '') {
+      const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b);
+      const dir = B.clone().sub(A);
+      const len = dir.length();
+      const m = finish(new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, len, 18), mat), label);
+      m.position.copy(A.clone().add(B).multiplyScalar(0.5));
+      m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+      parent.add(m);
+      return m;
+    }
+
+    function cable(parent, pts, radius = 0.012) {
+      const curve = new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p)));
+      const m = finish(new THREE.Mesh(new THREE.TubeGeometry(curve, 42, radius, 7, false), black));
+      parent.add(m);
+      return m;
+    }
+
+    // Нижняя рама.
+    const chassis = new THREE.Group();
+    robot.add(chassis);
+    box(chassis, [1.66, 0.23, 0.92], [0, 0.39, 0], steelDark, 'Несущая рама');
+    box(chassis, [1.48, 0.12, 0.80], [0.02, 0.55, 0], steel, 'Поворотная платформа');
+    box(chassis, [0.64, 0.18, 0.77], [0.22, 0.68, 0], steelLight, 'Силовой отсек');
+    box(chassis, [0.56, 0.10, 0.30], [-0.48, 0.66, 0], steelDark);
+
+    // Гусеницы и катки.
+    function makeTrack(zSide) {
+      const g = new THREE.Group();
+      robot.add(g);
+
+      const wheelXs = [-0.66,-0.34,0,0.34,0.66];
+      for (let i=0;i<wheelXs.length;i++) {
+        cyl(g, i===0 || i===wheelXs.length-1 ? 0.19 : 0.155, 0.16, [wheelXs[i], 0.30, zSide], rubber,
+          i===2 ? 'Гусеничный движитель' : '', [Math.PI/2,0,0], 28);
+        cyl(g, i===0 || i===wheelXs.length-1 ? 0.11 : 0.09, 0.17, [wheelXs[i], 0.30, zSide], steelDark, '', [Math.PI/2,0,0], 24);
+      }
+
+      const points = [];
+      const topY = 0.52, bottomY = 0.10, leftX = -0.78, rightX = 0.78;
+      const nTop = 13, nSide = 7;
+      for (let i=0;i<nTop;i++) {
+        const t=i/(nTop-1); points.push({x:THREE.MathUtils.lerp(leftX,rightX,t),y:topY,a:0});
+      }
+      for (let i=1;i<nSide;i++) {
+        const t=i/nSide, ang=Math.PI/2 - t*Math.PI;
+        points.push({x:rightX + Math.cos(ang)*0.13,y:0.31 + Math.sin(ang)*0.21,a:ang-Math.PI/2});
+      }
+      for (let i=0;i<nTop;i++) {
+        const t=i/(nTop-1); points.push({x:THREE.MathUtils.lerp(rightX,leftX,t),y:bottomY,a:0});
+      }
+      for (let i=1;i<nSide;i++) {
+        const t=i/nSide, ang=-Math.PI/2 - t*Math.PI;
+        points.push({x:leftX + Math.cos(ang)*0.13,y:0.31 + Math.sin(ang)*0.21,a:ang-Math.PI/2});
+      }
+      for (const p of points) {
+        const tread = box(g, [0.115,0.055,0.255], [p.x,p.y,zSide], rubber);
+        tread.rotation.z = p.a;
+      }
+
+      box(g, [1.56,0.06,0.24], [0,0.545,zSide], black);
+      return g;
+    }
+    makeTrack(0.54);
+    makeTrack(-0.54);
+
+    // Крылья и кабель-каналы.
+    box(robot, [1.48,0.07,0.14], [0.06,0.67,0.52], steelLight);
+    box(robot, [1.48,0.07,0.14], [0.06,0.67,-0.52], steelLight);
+    const rearCoverA = finish(new THREE.Mesh(new THREE.CylinderGeometry(0.29,0.29,0.18,28,1,false,0,Math.PI),steelLight));
+    rearCoverA.position.set(0.58,0.73,0.50); rearCoverA.rotation.x=Math.PI/2; rearCoverA.rotation.z=Math.PI/2; robot.add(rearCoverA);
+    const rearCoverB = rearCoverA.clone(); rearCoverB.position.z=-0.50; rearCoverB.rotation.z=-Math.PI/2; robot.add(rearCoverB);
+    cable(robot, [[0.72,0.71,0.47],[0.25,0.76,0.49],[-0.25,0.72,0.51],[-0.68,0.64,0.50]],0.018);
+
+    // Поворотный узел и стойка.
+    cyl(robot, 0.27, 0.13, [0.26,0.73,0], black, 'Поворотная платформа');
+    box(robot, [0.30,0.54,0.40], [0.30,0.97,0], steelDark, 'Опора манипулятора');
+    box(robot, [0.11,0.47,0.52], [0.47,0.97,0], steel);
+    cyl(robot, 0.13, 0.47, [0.33,1.11,0], steelLight, 'Ось манипулятора', [Math.PI/2,0,0]);
+    cyl(robot, 0.15, 0.36, [0.49,1.07,0.25], steelLight, 'Привод', [0,0,Math.PI/2]);
+
+    // Двухбалочный манипулятор.
+    const arm = new THREE.Group();
+    robot.add(arm);
+    const a1=[0.31,1.13,0], a2=[-0.45,1.12,0], a3=[-1.16,0.84,0];
+    for (const z of [-0.15,0.15]) {
+      beamBox(arm,[a1[0],a1[1],z],[a2[0],a2[1],z],0.085,0.085,steelLight,'Манипулятор');
+      beamBox(arm,[a2[0],a2[1],z],[a3[0],a3[1],z],0.078,0.078,steelLight,'Манипулятор');
+      rod(arm,[0.25,1.20,z],[-0.39,1.27,z],0.025,steelDark,'Гидропривод');
+      rod(arm,[-0.34,1.02,z],[-1.05,0.76,z],0.024,steelDark,'Гидропривод');
+    }
+    rod(arm,[0.20,1.23,0],[-0.47,1.25,0],0.036,accent,'Линейный привод');
+    rod(arm,[-0.32,1.05,0],[-0.98,0.78,0],0.033,accent,'Линейный привод');
+    rod(arm,[0.36,1.30,-0.22],[-0.36,1.34,-0.22],0.050,offWhite,'Привод манипулятора');
+    rod(arm,[0.36,1.30,0.22],[-0.36,1.34,0.22],0.050,offWhite,'Привод манипулятора');
+    rod(arm,[0.20,1.18,-0.18],[-0.42,1.10,0.18],0.016,steelDark);
+    rod(arm,[0.20,1.18,0.18],[-0.42,1.10,-0.18],0.016,steelDark);
+    rod(arm,[-0.48,1.10,-0.16],[-1.02,0.86,0.16],0.015,steelDark);
+    rod(arm,[-0.48,1.10,0.16],[-1.02,0.86,-0.16],0.015,steelDark);
+    cyl(arm,0.10,0.38,[a2[0],a2[1],0],steelDark,'Шарнир',[Math.PI/2,0,0],24);
+    cable(arm,[[0.35,1.27,0.19],[-0.10,1.34,0.20],[-0.56,1.29,0.18],[-1.04,0.94,0.17]],0.013);
+
+    // Сменный двупалый захват на конце манипулятора. Геометрия схематична, но рабочие органы разделены:
+    // манипулятор с захватом и отдельный фронтальный погрузчик.
+    const gripper = new THREE.Group();
+    robot.add(gripper);
+    gripper.position.set(-1.18,0.84,0);
+    cyl(gripper,0.075,0.30,[0,0,0],steelDark,'Манипулятор',[Math.PI/2,0,0],22);
+    box(gripper,[0.24,0.09,0.07],[-0.14,-0.06,0.12],steelDark,'Манипулятор',[0,0,-0.18]);
+    box(gripper,[0.24,0.09,0.07],[-0.14,-0.06,-0.12],steelDark,'Манипулятор',[0,0,0.18]);
+    box(gripper,[0.09,0.24,0.07],[-0.27,-0.16,0.12],steelLight,'Манипулятор',[0,0,0.28]);
+    box(gripper,[0.09,0.24,0.07],[-0.27,-0.16,-0.12],steelLight,'Манипулятор',[0,0,0.28]);
+
+    // Верхняя направляющая / механизм на стрелой.
+    beamBox(robot,[-0.48,1.41,-0.05],[0.68,1.41,-0.05],0.035,0.08,black,'Направляющая');
+    for(let i=0;i<18;i++){
+      box(robot,[0.052,0.035,0.11],[-0.43+i*0.061,1.45,-0.05],steelDark);
+    }
+    cyl(robot,0.075,0.12,[-0.02,1.49,-0.05],steelLight,'Датчик / ролик',[Math.PI/2,0,0],22);
+
+    // Рабочий ковш, стилизованный под фото.
+    const bucket = new THREE.Group();
+    robot.add(bucket);
+    bucket.position.set(-1.28,0.59,0);
+    bucket.rotation.z = -0.17;
+    box(bucket,[0.62,0.08,0.84],[0,-0.10,0],steelLight,'Фронтальный погрузчик');
+    box(bucket,[0.12,0.45,0.82],[-0.24,0.09,0],steel,'Фронтальный погрузчик',[0,0,-0.18]);
+    box(bucket,[0.08,0.31,0.07],[0.18,0.02,0.285],steelDark);
+    box(bucket,[0.08,0.31,0.07],[0.18,0.02,-0.285],steelDark);
+    for(const z of [-0.25,-0.125,0,0.125,0.25]){
+      box(bucket,[0.15,0.055,0.035],[-0.30,-0.16,z],steelLight);
+    }
+    rod(robot,[-0.70,0.58,0.29],[-1.20,0.69,0.29],0.030,steelDark,'Фронтальный погрузчик');
+    rod(robot,[-0.70,0.58,-0.29],[-1.20,0.69,-0.29],0.030,steelDark,'Фронтальный погрузчик');
+
+    // Камера/сенсор на передней части.
+    const sensor = new THREE.Group();
+    robot.add(sensor);
+    box(sensor,[0.16,0.18,0.19],[-0.96,0.90,-0.22],steelDark,'Камера / датчик');
+    cyl(sensor,0.055,0.08,[-1.05,0.91,-0.22],glass,'Телевизионная система',[0,0,Math.PI/2],24);
+    box(sensor,[0.12,0.13,0.16],[-0.86,1.02,0.24],steelDark,'Телевизионная система');
+    cyl(sensor,0.045,0.07,[-0.95,1.02,0.24],glass,'Телевизионная система',[0,0,Math.PI/2],20);
+
+    const dock = new THREE.Group();
+    robot.add(dock);
+    const dockCone = finish(new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.18,0.34,24),steelLight),'Стыковочное устройство');
+    dockCone.position.set(0.64,1.34,-0.08); dock.add(dockCone);
+    const dockRing = finish(new THREE.Mesh(new THREE.TorusGeometry(0.12,0.018,10,28),steelDark),'Стыковочное устройство');
+    dockRing.position.set(0.64,1.54,-0.08); dockRing.rotation.x=Math.PI/2; dock.add(dockRing);
+
+    // Дозиметрический блок ИМД-21Б. Наличие прибора подтверждено актами; форма крепления показана схематично.
+    const dose = new THREE.Group();
+    robot.add(dose);
+    cyl(dose,0.072,0.24,[-0.54,1.03,0.37],offWhite,'Дозиметрический блок ИМД-21Б',[Math.PI/2,0,0],24);
+    box(dose,[0.16,0.05,0.13],[-0.48,0.94,0.37],steelDark,'Дозиметрический блок ИМД-21Б');
+
+    // Мелкие конструктивные элементы.
+    for (const z of [-0.35,0.35]) {
+      beamBox(robot,[0.22,0.79,z],[0.53,1.18,z],0.032,0.035,steelDark);
+      beamBox(robot,[-0.22,0.70,z],[0.22,0.79,z],0.03,0.03,steelDark);
+    }
+
+    // Детализация после инженерного обзора: болтовой венец, растяжки и дополнительная гидролиния.
+    for(let i=0;i<10;i++){
+      const a=i/10*Math.PI*2;
+      cyl(robot,0.016,0.028,[0.26+Math.cos(a)*0.22,0.805,Math.sin(a)*0.22],steelLight,'',[0,0,0],12);
+    }
+    beamBox(robot,[0.43,1.21,-0.22],[0.66,0.78,-0.35],0.028,0.028,steelDark);
+    beamBox(robot,[0.43,1.21,0.22],[0.66,0.78,0.35],0.028,0.028,steelDark);
+    cable(robot,[[0.58,1.05,-0.22],[0.26,1.22,-0.24],[-0.28,1.30,-0.22],[-0.78,1.08,-0.18]],0.010);
+    cable(robot,[[0.56,1.01,-0.18],[0.18,1.17,-0.16],[-0.35,1.19,-0.14],[-0.93,0.90,-0.10]],0.008);
+
+    // Номерные метки-sprites.
+    const markerGroup = new THREE.Group();
+    robot.add(markerGroup);
+    function makeMarker(number, label, pos) {
+      const c=document.createElement('canvas'); c.width=c.height=128;
+      const ctx=c.getContext('2d');
+      ctx.clearRect(0,0,128,128);
+      ctx.beginPath(); ctx.arc(64,64,44,0,Math.PI*2);
+      ctx.fillStyle='#d89a43'; ctx.fill();
+      ctx.lineWidth=6; ctx.strokeStyle='rgba(255,255,255,.88)'; ctx.stroke();
+      ctx.fillStyle='#18130d'; ctx.font='800 52px system-ui'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(String(number),64,66);
+      const tex=new THREE.CanvasTexture(c); tex.colorSpace=THREE.SRGBColorSpace;
+      const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+      s.position.set(...pos); s.scale.setScalar(0.23); s.renderOrder=10; s.userData.label=label; clickable.push(s);
+      markerGroup.add(s);
+    }
+    makeMarker(1,'Гусеничный движитель',[0.42,0.35,0.82]);
+    makeMarker(2,'Поворотная платформа',[0.20,0.83,0.56]);
+    makeMarker(3,'Манипулятор',[-0.43,1.30,0.43]);
+    makeMarker(4,'Фронтальный погрузчик',[-1.46,0.66,0.52]);
+    makeMarker(5,'Привод манипулятора',[-0.18,1.42,0.34]);
+    makeMarker(6,'Телевизионная система',[-1.02,1.02,-0.38]);
+    makeMarker(7,'Кабелеукладчик',[0.24,0.86,0.46]);
+    makeMarker(8,'Стыковочное устройство',[0.66,1.62,0.08]);
+    makeMarker(9,'Дозиметрический блок ИМД-21Б',[-0.58,1.17,0.55]);
+
+    const robot2 = robot.clone(true);
+    robot2.visible = false;
+    robot2.traverse(o=>{ if(o.isSprite) o.visible=false; o.userData={}; });
+    scene.add(robot2);
+
+    // Незаметная контактная тень.
+    const shadowDisk = new THREE.Mesh(
+      new THREE.CircleGeometry(1.35,64),
+      new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:0.20,depthWrite:false})
+    );
+    shadowDisk.rotation.x=-Math.PI/2; shadowDisk.position.y=0.105; scene.add(shadowDisk);
+
+    // UI.
+    let autoSpin = !reduceMotion && params.get('autospin') !== '0';
+    let engineeringVisible = params.get('engineering') !== '0';
+    let pauseSpinUntil = 0;
+    const spinBtn = document.getElementById('spinBtn');
+    const markersBtn = document.getElementById('markersBtn');
+    const engineeringBtn = document.getElementById('engineeringBtn');
+    const atmosphereBtn = document.getElementById('atmosphereBtn');
+    const cinematicIntro = document.getElementById('cinematicIntro');
+    const startExperienceBtn = document.getElementById('startExperienceBtn');
+    const startTourIntroBtn = document.getElementById('startTourIntroBtn');
+    const tourBtn = document.getElementById('tourBtn');
+    const pairBtn = document.getElementById('pairBtn');
+    const operatorViewBtn = document.getElementById('operatorViewBtn');
+    const detailCard = document.getElementById('detailCard');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailText = document.getElementById('detailText');
+    const detailFlow = document.getElementById('detailFlow');
+    const detailConfidence = document.getElementById('detailConfidence');
+    const tourProgress = document.getElementById('tourProgress');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const helpBtn = document.getElementById('helpBtn');
+    const closeHelpBtn = document.getElementById('closeHelpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const xrStatus = document.getElementById('xrStatus');
+    const resetBtn = document.getElementById('resetBtn');
+    const legend = document.getElementById('legend');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    let pairMode=false;
+    let operatorView=false;
+    let atmosphereVisible=params.get('effects')!=='0';
+    let started=false;
+    let tourActive=false;
+    let tourIndex=0;
+    let tourNextAt=0;
+    let cameraTween=null;
+    const detailData={
+      'Гусеничный движитель':{
+        grade:'B', gradeText:'форма реконструирована по нескольким фото',
+        text:'Полиуретановые траки и подвеска обеспечивали движение по неровной кровле. По авторским пояснениям, при работе манипулятором подвеска могла фиксироваться для повышения устойчивости.',
+        flow:['движение','устойчивость','возврат']
+      },
+      'Поворотная платформа':{
+        grade:'B', gradeText:'функция подтверждена, геометрия частично реконструирована',
+        text:'Основание рабочего оборудования должно было сохранять устойчивость машины при захвате и перемещении фрагментов. Комплекс проектировался как единая система шасси, рабочих органов, связи и контроля.',
+        flow:['подход','ориентация','операция']
+      },
+      'Манипулятор':{
+        grade:'A', gradeText:'назначение и рабочие органы подтверждены источниками',
+        text:'Во второй модификации рабочая зона и грузоподъёмность были увеличены; применялся сменный двупалый захват. Манипулятор использовали для точных операций, перемещения предметов и работы со специальной оснасткой.',
+        flow:['подвести','захватить','переместить']
+      },
+      'Фронтальный погрузчик':{
+        grade:'A', gradeText:'назначение подтверждено источниками',
+        text:'Фронтальный погрузчик был отдельным рабочим органом с двумя степенями подвижности: мог сгребать, поднимать и ссыпать материал. На Мобот-Ч-ХВ-2 отбойный молоток мог устанавливаться вместо захвата или на фронтальном погрузчике.',
+        flow:['сгрести','поднять','ссыпать']
+      },
+      'Привод манипулятора':{
+        grade:'C', gradeText:'внешняя форма исполнительного элемента условна',
+        text:'Приводы комплекса описываются как электромеханические. В 3D-сцене цилиндрические элементы показаны как визуальная реконструкция исполнительных механизмов без приписывания им гидравлического принципа.',
+        flow:['команда','привод','движение']
+      },
+      'Телевизионная система':{
+        grade:'A', gradeText:'две телекамеры подтверждены источниками',
+        text:'Комплекс имел две телекамеры. Оператор видел рабочую зону через телевизионную систему; рядом фиксировались положение машины и данные дозиметрических измерений.',
+        flow:['камера','оператор','решение']
+      },
+      'Кабелеукладчик':{
+        grade:'A', gradeText:'функция и длина кабеля подтверждены источниками',
+        text:'Полуавтоматический кабелеукладчик располагался внутри корпуса. На барабане было 200 м кабеля, могла применяться дополнительная 200-метровая вставка. По линии передавались питание, команды и видеосигналы.',
+        flow:['питание','управление','видео']
+      },
+      'Стыковочное устройство':{
+        grade:'B', gradeText:'назначение подтверждено, форма показана схематично',
+        text:'Для Мобот-Ч-ХВ-2 разработали полуавтоматическое устройство стыковки с подъёмным механизмом, чтобы устанавливать и снимать машину с кровли без выхода стропальщика в опасную точку.',
+        flow:['кран','стыковка','снятие']
+      },
+      'Дозиметрический блок ИМД-21Б':{
+        grade:'A', gradeText:'тип прибора подтверждён первичными документами',
+        text:'В первичных актах прибор уточнён как ИМД-21Б. Дозиметрия входила в рабочий цикл: измерить участок, выполнить механическую операцию и повторить измерение. Геометрия крепления на модели показана приближённо.',
+        flow:['измерить','выполнить','проверить']
+      }
+    };
+    spinBtn.classList.toggle('active',autoSpin);
+    engineeringBtn.classList.toggle('active',engineeringVisible);
+    atmosphereBtn.classList.toggle('active',atmosphereVisible);
+    atmosphereGroup.visible=atmosphereVisible;
+    grid.visible = engineeringVisible;
+    engineeringGroup.visible = engineeringVisible;
+
+    function showToast(text){
+      toast.textContent=text;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>toast.classList.remove('show'),1500);
+    }
+    function showDetail(label){
+      const d=detailData[label];
+      if(!d){ showToast(label); return; }
+      detailTitle.textContent=label;
+      detailText.textContent=d.text;
+      detailConfidence.className='confidence '+d.grade.toLowerCase();
+      detailConfidence.textContent=d.grade+' · '+d.gradeText;
+      detailFlow.innerHTML=d.flow.map((x,i)=>'<b>'+x+'</b>'+(i<d.flow.length-1?'<i>→</i>':'')).join('');
+      if(!tourActive) tourProgress.textContent='';
+      detailCard.classList.remove('hidden');
+    }
+    function beginExperience(withTour=false){
+      if(started){
+        if(withTour && !tourActive) tourBtn.click();
+        return;
+      }
+      started=true;
+      cinematicIntro.classList.add('done');
+      const finalPos=new THREE.Vector3(3.7,2.25,4.65);
+      const finalTarget=new THREE.Vector3(0,0.72,0);
+      camera.position.set(7.4,3.7,8.8);
+      controls.target.set(0,0.85,0);
+      cameraTween={
+        fromPos:camera.position.clone(),toPos:finalPos,
+        fromTarget:controls.target.clone(),toTarget:finalTarget,
+        started:performance.now(),duration:1800
+      };
+      if(withTour){
+        setTimeout(()=>{ if(!tourActive) tourBtn.click(); },1900);
+      }
+    }
+    startExperienceBtn.addEventListener('click',async()=>{
+      try{ if(!document.fullscreenElement) await document.documentElement.requestFullscreen(); }catch(e){}
+      beginExperience(true);
+    });
+    startTourIntroBtn.addEventListener('click',()=>beginExperience(false));
+
+    const tourSteps=[
+      {label:'Гусеничный движитель',pos:[3.15,1.15,3.25],target:[0,0.34,0]},
+      {label:'Поворотная платформа',pos:[3.0,1.75,2.85],target:[0.22,0.82,0]},
+      {label:'Манипулятор',pos:[2.85,2.15,2.65],target:[-0.40,1.22,0]},
+      {label:'Фронтальный погрузчик',pos:[2.55,1.15,3.15],target:[-1.26,0.58,0]},
+      {label:'Привод манипулятора',pos:[2.65,2.12,2.45],target:[-0.18,1.36,0]},
+      {label:'Телевизионная система',pos:[2.45,1.66,2.70],target:[-0.93,0.98,-0.10]},
+      {label:'Кабелеукладчик',pos:[3.10,1.55,2.55],target:[0.23,0.80,0]},
+      {label:'Стыковочное устройство',pos:[2.55,2.25,2.20],target:[0.64,1.48,-0.05]},
+      {label:'Дозиметрический блок ИМД-21Б',pos:[2.55,1.75,2.80],target:[-0.54,1.04,0.34]}
+    ];
+    function startCameraTween(step){
+      cameraTween={
+        fromPos:camera.position.clone(),toPos:new THREE.Vector3(...step.pos),
+        fromTarget:controls.target.clone(),toTarget:new THREE.Vector3(...step.target),
+        started:performance.now(),duration:900
+      };
+    }
+    function showTourStep(){
+      const step=tourSteps[tourIndex];
+      showDetail(step.label);
+      tourProgress.textContent='Экскурсия · '+(tourIndex+1)+' / '+tourSteps.length;
+      startCameraTween(step);
+      tourNextAt=performance.now()+8200;
+    }
+    function finishPresentation(){
+      stopTour();
+      pairMode=true;
+      pairBtn.classList.add('active');
+      operatorView=false;
+      operatorViewBtn.classList.remove('active');
+      autoSpin=false;
+      spinBtn.classList.remove('active');
+      applyPairLayout();
+      detailCard.classList.add('hidden');
+      cameraTween={
+        fromPos:camera.position.clone(),toPos:new THREE.Vector3(5.4,2.55,6.15),
+        fromTarget:controls.target.clone(),toTarget:new THREE.Vector3(0,0.72,0),
+        started:performance.now(),duration:1400
+      };
+      showToast('Финал · два комплекса Мобот-Ч-ХВ-2 · 1987');
+    }
+    function stopTour(){
+      tourActive=false;
+      tourBtn.classList.remove('active');
+      tourProgress.textContent='';
+    }
+
+    function applyPairLayout(){
+      if(pairMode){
+        robot.scale.setScalar(0.76); robot.position.set(-0.92,0.11,0.06); robot.rotation.y=-0.22;
+        robot2.visible=true; robot2.scale.setScalar(0.76); robot2.position.set(0.92,0.11,-0.08); robot2.rotation.y=0.28;
+        controls.target.set(0,0.75,0);
+      }else{
+        robot.scale.setScalar(1); robot.position.set(0,0.11,0); robot.rotation.y=-0.58;
+        robot2.visible=false;
+        controls.target.set(0,0.72,0);
+      }
+      controls.update();
+    }
+
+    spinBtn.addEventListener('click',()=>{
+      autoSpin=!autoSpin; spinBtn.classList.toggle('active',autoSpin);
+    });
+    markersBtn.addEventListener('click',()=>{
+      markerGroup.visible=!markerGroup.visible;
+      markersBtn.classList.toggle('active',markerGroup.visible);
+      legend.classList.toggle('hidden',!markerGroup.visible);
+    });
+    engineeringBtn.addEventListener('click',()=>{
+      engineeringVisible=!engineeringVisible;
+      grid.visible=engineeringVisible;
+      engineeringGroup.visible=engineeringVisible;
+      engineeringBtn.classList.toggle('active',engineeringVisible);
+      showToast(engineeringVisible ? 'Инженерный режим включён' : 'Экспозиционный режим');
+    });
+    atmosphereBtn.addEventListener('click',()=>{
+      atmosphereVisible=!atmosphereVisible;
+      atmosphereGroup.visible=atmosphereVisible;
+      atmosphereBtn.classList.toggle('active',atmosphereVisible);
+      showToast(atmosphereVisible ? 'Атмосферные эффекты включены' : 'Атмосферные эффекты выключены');
+    });
+    tourBtn.addEventListener('click',()=>{
+      if(tourActive){ stopTour(); showToast('Экскурсия остановлена'); return; }
+      operatorView=false; operatorViewBtn.classList.remove('active');
+      pairMode=false; pairBtn.classList.remove('active'); applyPairLayout();
+      autoSpin=false; spinBtn.classList.remove('active');
+      tourIndex=0; tourActive=true; tourBtn.classList.add('active');
+      showTourStep();
+      showToast('Инженерная экскурсия запущена');
+    });
+    pairBtn.addEventListener('click',()=>{
+      stopTour();
+      if(operatorView){ operatorView=false; operatorViewBtn.classList.remove('active'); }
+      pairMode=!pairMode;
+      pairBtn.classList.toggle('active',pairMode);
+      autoSpin=false; spinBtn.classList.remove('active');
+      applyPairLayout();
+      showToast(pairMode ? 'Два комплекса: экспозиционная компоновка 1987' : 'Один комплекс');
+    });
+    operatorViewBtn.addEventListener('click',()=>{
+      stopTour();
+      operatorView=!operatorView;
+      operatorViewBtn.classList.toggle('active',operatorView);
+      if(operatorView){
+        pairMode=false; pairBtn.classList.remove('active'); applyPairLayout();
+        autoSpin=false; spinBtn.classList.remove('active');
+        robot.rotation.y=0;
+        camera.position.set(-1.18,1.04,-0.24);
+        controls.target.set(-4.0,0.92,-0.24);
+        controls.minDistance=0.1;
+        showDetail('Телевизионная система');
+        showToast('Условный вид бортовой камеры');
+      }else{
+        camera.position.set(3.7,2.25,4.65);
+        controls.target.set(0,0.72,0);
+        controls.minDistance=2.35;
+        robot.rotation.y=-0.58;
+        controls.update();
+      }
+    });
+    fullscreenBtn.addEventListener('click',async()=>{
+      try{
+        if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+        else await document.exitFullscreen();
+      }catch(e){ showToast('Полноэкранный режим недоступен'); }
+    });
+    shareBtn.addEventListener('click',async()=>{
+      const url = location.href;
+      try{
+        if(navigator.share) await navigator.share({title:'Мобот-Ч-ХВ-2 · 3D / VR',url});
+        else { await navigator.clipboard.writeText(url); showToast('Ссылка скопирована'); }
+      }catch(e){ if(e?.name!=='AbortError') showToast('Не удалось поделиться ссылкой'); }
+    });
+    helpBtn.addEventListener('click',()=>helpModal.classList.add('open'));
+    closeHelpBtn.addEventListener('click',()=>helpModal.classList.remove('open'));
+    helpModal.addEventListener('click',e=>{if(e.target===helpModal) helpModal.classList.remove('open')});
+    resetBtn.addEventListener('click',()=>{
+      stopTour();
+      pairMode=false; pairBtn.classList.remove('active');
+      operatorView=false; operatorViewBtn.classList.remove('active');
+      applyPairLayout();
+      detailCard.classList.add('hidden');
+      dolly.position.set(0,0,0);
+      camera.position.set(3.7,2.25,4.65);
+      controls.minDistance=2.35;
+      controls.target.set(0,0.72,0);
+      robot.rotation.y=-0.58;
+      controls.update();
+      showToast('Вид сброшен');
+    });
+
+    // Выбор деталей мышью / касанием.
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let down = null;
+    renderer.domElement.addEventListener('pointerdown',e=>{
+      if(!started) beginExperience(false);
+      if(tourActive) stopTour();
+      down={x:e.clientX,y:e.clientY};
+      pauseSpinUntil=performance.now()+6500;
+    });
+    renderer.domElement.addEventListener('pointerup',e=>{
+      if(!down || Math.hypot(e.clientX-down.x,e.clientY-down.y)>7 || renderer.xr.isPresenting){ down=null; return; }
+      pointer.x=(e.clientX/innerWidth)*2-1;
+      pointer.y=-(e.clientY/innerHeight)*2+1;
+      raycaster.setFromCamera(pointer,camera);
+      const hit=raycaster.intersectObjects(clickable,false)[0];
+      if(hit?.object?.userData?.label) showDetail(hit.object.userData.label);
+      down=null;
+    });
+
+    // WebXR button.
+    const vrButton = VRButton.createButton(renderer,{
+      optionalFeatures:['local-floor','bounded-floor','hand-tracking']
+    });
+    document.body.appendChild(vrButton);
+    const originalText = vrButton.textContent;
+    if (originalText === 'ENTER VR') vrButton.textContent = 'ВОЙТИ В VR';
+    if(navigator.xr?.isSessionSupported){
+      navigator.xr.isSessionSupported('immersive-vr').then(ok=>{
+        xrStatus.textContent = ok ? 'WebXR: VR-режим доступен' : 'WebXR: VR не поддерживается этим устройством';
+        xrStatus.classList.toggle('ok',ok);
+      }).catch(()=>xrStatus.textContent='WebXR: не удалось проверить поддержку');
+    }else{
+      xrStatus.textContent='WebXR: браузер без VR API';
+    }
+
+    // Контроллеры: луч + телепорт по полу.
+    const tempMatrix = new THREE.Matrix4();
+    function buildController(i){
+      const controller=renderer.xr.getController(i);
+      const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,-1)]);
+      const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xd89a43,transparent:true,opacity:.65}));
+      line.scale.z=3.5; controller.add(line);
+      controller.addEventListener('squeezestart',()=>{
+        tempMatrix.identity().extractRotation(controller.matrixWorld);
+        raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+        raycaster.ray.direction.set(0,0,-1).applyMatrix4(tempMatrix);
+        const hit=raycaster.intersectObject(floor,false)[0];
+        if(hit){
+          dolly.position.x=THREE.MathUtils.clamp(hit.point.x,-5.5,5.5);
+          dolly.position.z=THREE.MathUtils.clamp(hit.point.z,-5.5,5.5);
+        }
+      });
+      dolly.add(controller);
+      return controller;
+    }
+    buildController(0); buildController(1);
+
+    renderer.xr.addEventListener('sessionstart',()=>{
+      stopTour();
+      started=true;
+      cinematicIntro.classList.add('done');
+      document.body.classList.add('xr');
+      controls.enabled=false;
+      autoSpin=false;
+      renderer.shadowMap.enabled=false;
+      markerGroup.visible=false;
+      engineeringGroup.visible=false;
+      grid.visible=false;
+      atmosphereGroup.visible=false;
+      robot2.visible=false;
+      dolly.position.set(0,0,2.8);
+      robot.rotation.y=-0.08;
+    });
+    renderer.xr.addEventListener('sessionend',()=>{
+      document.body.classList.remove('xr');
+      controls.enabled=true;
+      renderer.shadowMap.enabled=true;
+      markerGroup.visible=markersBtn.classList.contains('active');
+      engineeringGroup.visible=engineeringVisible;
+      grid.visible=engineeringVisible;
+      atmosphereGroup.visible=atmosphereVisible;
+      robot2.visible=pairMode;
+      dolly.position.set(0,0,0);
+      camera.position.set(3.7,2.25,4.65);
+      controls.target.set(0,0.72,0);
+      robot.rotation.y=-0.58;
+      autoSpin=!reduceMotion && params.get('autospin') !== '0';
+      spinBtn.classList.toggle('active',autoSpin);
+      controls.update();
+    });
+
+    // Плавное перемещение левым стиком Quest.
+    const clock = new THREE.Clock();
+    const vForward = new THREE.Vector3();
+    const vRight = new THREE.Vector3();
+    const vMove = new THREE.Vector3();
+    function updateXrLocomotion(dt){
+      const session=renderer.xr.getSession();
+      if(!session) return;
+      let sx=0, sy=0;
+      for(const src of session.inputSources){
+        if(src.handedness==='left' && src.gamepad){
+          const a=src.gamepad.axes;
+          if(a.length>=2){ sx=a[a.length-2]||0; sy=a[a.length-1]||0; }
+        }
+      }
+      if(Math.hypot(sx,sy)<0.16) return;
+      const xrCam=renderer.xr.getCamera(camera);
+      xrCam.getWorldDirection(vForward);
+      vForward.y=0; vForward.normalize();
+      vRight.set(vForward.z,0,-vForward.x);
+      vMove.copy(vRight).multiplyScalar(sx).addScaledVector(vForward,-sy).multiplyScalar(1.45*dt);
+      dolly.position.add(vMove);
+      dolly.position.x=THREE.MathUtils.clamp(dolly.position.x,-5.5,5.5);
+      dolly.position.z=THREE.MathUtils.clamp(dolly.position.z,-5.5,5.5);
+    }
+
+    function animate(){
+      const dt=Math.min(clock.getDelta(),0.04);
+      if(renderer.xr.isPresenting) updateXrLocomotion(dt);
+      else {
+        const now=performance.now();
+        if(cameraTween){
+          const t=Math.min(1,(now-cameraTween.started)/cameraTween.duration);
+          const s=t*t*(3-2*t);
+          camera.position.lerpVectors(cameraTween.fromPos,cameraTween.toPos,s);
+          controls.target.lerpVectors(cameraTween.fromTarget,cameraTween.toTarget,s);
+          if(t>=1) cameraTween=null;
+        }
+        controls.update();
+        if(tourActive && now>=tourNextAt){
+          if(tourIndex>=tourSteps.length-1) finishPresentation();
+          else { tourIndex+=1; showTourStep(); }
+        }
+        if(autoSpin && !pairMode && !operatorView && !tourActive && now>pauseSpinUntil) robot.rotation.y += dt*0.17;
+        if(atmosphereVisible){
+          scanRing.position.y=0.28+(Math.sin(now*0.00115)+1)*0.64;
+          scanMat.opacity=0.13+(Math.sin(now*0.0021)+1)*0.055;
+          particles.rotation.y+=dt*0.018;
+        }
+      }
+      renderer.render(scene,camera);
+    }
+    renderer.setAnimationLoop(animate);
+
+    addEventListener('resize',()=>{
+      camera.aspect=innerWidth/innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+      renderer.setSize(innerWidth,innerHeight);
+    });
+
+    addEventListener('keydown',e=>{
+      if(e.key==='Escape'){ helpModal.classList.remove('open'); if(!started) beginExperience(false); }
+      if(e.key.toLowerCase()==='r') resetBtn.click();
+      if(e.key.toLowerCase()==='m') markersBtn.click();
+      if(e.key.toLowerCase()==='i') engineeringBtn.click();
+      if(e.key.toLowerCase()==='e') atmosphereBtn.click();
+      if(e.key.toLowerCase()==='t') tourBtn.click();
+      if(e.key.toLowerCase()==='p') pairBtn.click();
+      if(e.key.toLowerCase()==='o') operatorViewBtn.click();
+      if(e.key.toLowerCase()==='f') fullscreenBtn.click();
+      if(e.key==='ArrowRight' && tourActive){
+        tourIndex=Math.min(tourSteps.length-1,tourIndex+1);
+        showTourStep();
+      }
+      if(e.key==='ArrowLeft' && tourActive){
+        tourIndex=Math.max(0,tourIndex-1);
+        showTourStep();
+      }
+    });
+
+    // Защита от выхода за первый кадр при медленной загрузке модулей.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById('loading')?.classList.add('done')));
+    if(params.get('demo')==='1') setTimeout(()=>beginExperience(true),220);
+    else if(isEmbed || params.get('autostart')==='1') setTimeout(()=>beginExperience(false),120);
+    setTimeout(()=>{ if(!renderer.xr.isPresenting) controls.update(); },80);
+  </script>
+</body>
+</html>
