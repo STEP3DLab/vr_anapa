@@ -305,7 +305,7 @@
         <h2 id="helpTitle">Управление сценой</h2>
         <p><strong>ПК:</strong> удерживайте левую кнопку мыши и вращайте сцену, колесом приближайте и отдаляйте. Нажмите на номерной маркер или узел, чтобы увидеть его название.</p>
         <p><strong>Meta Quest:</strong> откройте страницу в Meta Quest Browser и нажмите «ВОЙТИ В VR». Левый стик отвечает за движение, grip — за телепорт по полу.</p>
-        <p><strong>Клавиатура:</strong> <kbd>R</kbd> сброс вида, <kbd>M</kbd> метки, <kbd>I</kbd> инженерный режим, <kbd>E</kbd> эффекты, <kbd>T</kbd> экскурсия, <kbd>P</kbd> пара комплексов, <kbd>O</kbd> вид бортовой камеры, <kbd>F</kbd> полный экран, <kbd>Esc</kbd> закрыть справку.</p>
+        <p><strong>Клавиатура:</strong> <kbd>R</kbd> сброс вида, <kbd>M</kbd> метки, <kbd>I</kbd> инженерный режим, <kbd>E</kbd> эффекты, <kbd>T</kbd> экскурсия, <kbd>W</kbd> рабочий цикл, <kbd>P</kbd> пара комплексов, <kbd>O</kbd> вид бортовой камеры, <kbd>F</kbd> полный экран, <kbd>Esc</kbd> закрыть справку.</p>
         <p><strong>Важно:</strong> масштаб и закрытые от камеры участки геометрии реконструированы приближённо. Паспортные размеры не подменяются визуальной оценкой по фотографиям.</p>
         <p>Для вставки на сайт используйте тот же адрес с параметром <kbd>?embed=1</kbd> — интерфейс станет компактнее.</p>
         <div class="help-actions"><button class="ui-btn" id="closeHelpBtn">Закрыть</button></div>
@@ -815,6 +815,7 @@
     const workObjectStart=new THREE.Vector3();
     const workObjectEnd=new THREE.Vector3();
     const workCarryStart=new THREE.Vector3();
+    const workDepositStart=new THREE.Vector3();
     const workTmp=new THREE.Vector3();
     function localAtDefault(x,y,z){
       const v=new THREE.Vector3(x,y,z);
@@ -1126,6 +1127,7 @@
         controls.minDistance=0.08;
         workCamera(p,t,1050);
       }else if(phase===5){
+        workDepositStart.copy(workObject.position);
         setWorkText('Операция завершена','Объект перемещён, робот возвращён в исходную конфигурацию.',5);
         controls.minDistance=2.35;
         workCamera(new THREE.Vector3(4.75,2.30,5.55),new THREE.Vector3(0,0.74,0),1200);
@@ -1199,7 +1201,7 @@
         gripper.position.x=THREE.MathUtils.lerp(gripperBase.x-0.05,gripperBase.x,t);
         gripper.position.y=THREE.MathUtils.lerp(gripperBase.y+0.13,gripperBase.y,t);
         bucket.rotation.z=THREE.MathUtils.lerp(bucketBaseRotZ-0.045,bucketBaseRotZ,t);
-        workObject.position.lerpVectors(workCarryStart,workObjectEnd,t);
+        workObject.position.lerpVectors(workDepositStart,workObjectEnd,t);
       }else{
         workActive=false; workBtn.classList.remove('active');
         resetWorkPose();
@@ -1313,7 +1315,7 @@
     const pointer = new THREE.Vector2();
     let down = null;
     renderer.domElement.addEventListener('pointerdown',e=>{
-      if(workActive) stopWorkCycle(false);
+      if(workActive) stopWorkCycle(true);
       if(!started) beginExperience(false);
       if(tourActive) stopTour();
       down={x:e.clientX,y:e.clientY};
