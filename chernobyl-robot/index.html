@@ -34,6 +34,24 @@
     #toast{position:absolute;left:50%;bottom:88px;transform:translate(-50%,10px);opacity:0;padding:10px 14px;border-radius:999px;border:1px solid rgba(255,208,138,.32);background:rgba(17,20,23,.9);color:#fff;font-size:12px;transition:.2s ease;white-space:nowrap}
     #toast.show{opacity:1;transform:translate(-50%,0)}
     .badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1);color:#c7ced3;font-size:10px;background:rgba(255,255,255,.04)}
+    .xr-state{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:62px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(18,22,25,.72);color:var(--muted);font-size:10px;backdrop-filter:blur(10px)}
+    .xr-state.ok{color:#b8d9ad;border-color:rgba(184,217,173,.25)}
+    .help-modal{position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,8,.54);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:.2s ease}
+    .help-modal.open{opacity:1;pointer-events:auto}
+    .help-card{width:min(560px,calc(100vw - 30px));padding:20px;border:1px solid var(--line);border-radius:20px;background:rgba(17,21,24,.96);box-shadow:0 30px 80px rgba(0,0,0,.42);pointer-events:auto}
+    .help-card h2{margin:0 0 8px;font-size:22px}
+    .help-card p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.5}
+    .help-card kbd{display:inline-block;padding:2px 6px;border:1px solid rgba(255,255,255,.16);border-bottom-width:2px;border-radius:6px;background:rgba(255,255,255,.06);color:#fff;font:600 11px/1.4 ui-monospace,monospace}
+    .help-actions{display:flex;justify-content:flex-end;margin-top:16px}
+    #loading{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#101316;transition:opacity .45s ease,visibility .45s ease}
+    #loading.done{opacity:0;visibility:hidden}
+    .loader-inner{text-align:center;color:#cfd5d9}
+    .loader-ring{width:42px;height:42px;margin:0 auto 12px;border:3px solid rgba(255,255,255,.10);border-top-color:#d89a43;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    body.embed .topbar,body.embed .legend,body.embed .hint,body.embed .xr-state{display:none}
+    body.embed .controls{top:12px;right:12px;max-width:520px}
+    body.embed #VRButton{bottom:16px!important;right:16px!important}
+    @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.loader-ring{animation:none}}
     #VRButton{
       position:fixed!important;right:max(18px,env(safe-area-inset-right))!important;bottom:72px!important;left:auto!important;width:auto!important;
       border:1px solid rgba(255,208,138,.55)!important;border-radius:999px!important;padding:11px 16px!important;
@@ -71,9 +89,13 @@
     </section>
 
     <div class="controls">
-      <button class="ui-btn active" id="spinBtn">Автовращение</button>
-      <button class="ui-btn active" id="markersBtn">Узлы</button>
-      <button class="ui-btn" id="resetBtn">Сбросить вид</button>
+      <button class="ui-btn active" id="spinBtn" aria-label="Включить или выключить автовращение">Автовращение</button>
+      <button class="ui-btn active" id="markersBtn" aria-label="Показать или скрыть обозначения узлов">Узлы</button>
+      <button class="ui-btn active" id="engineeringBtn" aria-label="Переключить инженерный режим">Инженерный режим</button>
+      <button class="ui-btn" id="fullscreenBtn" aria-label="Открыть в полноэкранном режиме">Полный экран</button>
+      <button class="ui-btn" id="shareBtn" aria-label="Поделиться ссылкой">Поделиться</button>
+      <button class="ui-btn" id="helpBtn" aria-label="Открыть справку">Справка</button>
+      <button class="ui-btn" id="resetBtn" aria-label="Сбросить положение камеры">Сбросить вид</button>
     </div>
 
     <section class="legend" id="legend">
@@ -83,17 +105,38 @@
         <span><b class="n">2</b>Поворотная платформа</span>
         <span><b class="n">3</b>Манипулятор</span>
         <span><b class="n">4</b>Рабочий ковш</span>
+        <span><b class="n">5</b>Гидроцилиндр</span>
+        <span><b class="n">6</b>Камера / датчик</span>
+        <span><b class="n">7</b>Силовой отсек</span>
+        <span><b class="n">8</b>Направляющая</span>
       </div>
     </section>
 
-    <div class="hint">Перетаскивайте мышью для вращения, колесо — масштаб. В VR: левый стик — перемещение, сжатие контроллера — телепорт по полу.</div>
+    <div class="hint">ПК: мышь — вращение, колесо — масштаб. VR: левый стик — перемещение, grip — телепорт. Горячие клавиши: R — сброс, M — метки, I — инженерный режим, F — полный экран.</div>
+    <div class="xr-state" id="xrStatus">Проверка WebXR…</div>
+    <div class="help-modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="help-card">
+        <h2 id="helpTitle">Управление сценой</h2>
+        <p><strong>ПК:</strong> удерживайте левую кнопку мыши и вращайте сцену, колесом приближайте и отдаляйте. Нажмите на номерной маркер или узел, чтобы увидеть его название.</p>
+        <p><strong>Meta Quest:</strong> откройте страницу в Meta Quest Browser и нажмите «ВОЙТИ В VR». Левый стик отвечает за движение, grip — за телепорт по полу.</p>
+        <p><strong>Клавиатура:</strong> <kbd>R</kbd> сброс вида, <kbd>M</kbd> метки, <kbd>I</kbd> инженерный режим, <kbd>F</kbd> полный экран, <kbd>Esc</kbd> закрыть справку.</p>
+        <p>Для вставки на сайт используйте тот же адрес с параметром <kbd>?embed=1</kbd> — интерфейс станет компактнее.</p>
+        <div class="help-actions"><button class="ui-btn" id="closeHelpBtn">Закрыть</button></div>
+      </div>
+    </div>
     <div id="toast"></div>
   </div>
+  <div id="loading"><div class="loader-inner"><div class="loader-ring"></div><div>Подготовка 3D-сцены…</div></div></div>
 
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { VRButton } from 'three/addons/webxr/VRButton.js';
+
+    const params = new URLSearchParams(location.search);
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isEmbed = params.get('embed') === '1' || params.get('clean') === '1';
+    if (isEmbed) document.body.classList.add('embed');
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x111417);
@@ -179,6 +222,22 @@
     grid.material.transparent = true;
     grid.material.opacity = 0.33;
     scene.add(grid);
+
+    const engineeringGroup = new THREE.Group();
+    const rulerMat = new THREE.MeshBasicMaterial({color:0x9aa5ac,transparent:true,opacity:.42});
+    for(let i=-8;i<=8;i++){
+      const major = i % 2 === 0;
+      const tick = new THREE.Mesh(new THREE.BoxGeometry(major ? 0.018 : 0.010,0.008,major ? 0.24 : 0.14),rulerMat);
+      tick.position.set(i*0.25,0.103,1.72);
+      engineeringGroup.add(tick);
+    }
+    const rulerLine = new THREE.Mesh(new THREE.BoxGeometry(4.05,0.006,0.012),rulerMat);
+    rulerLine.position.set(0,0.103,1.72);
+    engineeringGroup.add(rulerLine);
+    const axes = new THREE.AxesHelper(0.55);
+    axes.position.set(-1.72,0.11,-1.55);
+    engineeringGroup.add(axes);
+    scene.add(engineeringGroup);
 
     const steel = new THREE.MeshStandardMaterial({ color: 0x8f9698, roughness: 0.55, metalness: 0.72 });
     const steelDark = new THREE.MeshStandardMaterial({ color: 0x555d61, roughness: 0.62, metalness: 0.68 });
@@ -355,7 +414,17 @@
       beamBox(robot,[-0.22,0.70,z],[0.22,0.79,z],0.03,0.03,steelDark);
     }
 
-    // Номерные метки-сprites.
+    // Детализация после инженерного обзора: болтовой венец, растяжки и дополнительная гидролиния.
+    for(let i=0;i<10;i++){
+      const a=i/10*Math.PI*2;
+      cyl(robot,0.016,0.028,[0.26+Math.cos(a)*0.22,0.805,Math.sin(a)*0.22],steelLight,'',[0,0,0],12);
+    }
+    beamBox(robot,[0.43,1.21,-0.22],[0.66,0.78,-0.35],0.028,0.028,steelDark);
+    beamBox(robot,[0.43,1.21,0.22],[0.66,0.78,0.35],0.028,0.028,steelDark);
+    cable(robot,[[0.58,1.05,-0.22],[0.26,1.22,-0.24],[-0.28,1.30,-0.22],[-0.78,1.08,-0.18]],0.010);
+    cable(robot,[[0.56,1.01,-0.18],[0.18,1.17,-0.16],[-0.35,1.19,-0.14],[-0.93,0.90,-0.10]],0.008);
+
+    // Номерные метки-sprites.
     const markerGroup = new THREE.Group();
     robot.add(markerGroup);
     function makeMarker(number, label, pos) {
@@ -375,6 +444,10 @@
     makeMarker(2,'Поворотная платформа',[0.20,0.83,0.56]);
     makeMarker(3,'Манипулятор',[-0.43,1.30,0.43]);
     makeMarker(4,'Рабочий ковш',[-1.46,0.66,0.52]);
+    makeMarker(5,'Гидроцилиндр',[-0.18,1.42,0.34]);
+    makeMarker(6,'Камера / датчик',[-1.02,1.02,-0.38]);
+    makeMarker(7,'Силовой отсек',[0.24,0.86,0.46]);
+    makeMarker(8,'Направляющая',[0.39,1.56,0.16]);
 
     // Незаметная контактная тень.
     const shadowDisk = new THREE.Mesh(
@@ -384,13 +457,26 @@
     shadowDisk.rotation.x=-Math.PI/2; shadowDisk.position.y=0.105; scene.add(shadowDisk);
 
     // UI.
-    let autoSpin = true;
+    let autoSpin = !reduceMotion && params.get('autospin') !== '0';
+    let engineeringVisible = params.get('engineering') !== '0';
+    let pauseSpinUntil = 0;
     const spinBtn = document.getElementById('spinBtn');
     const markersBtn = document.getElementById('markersBtn');
+    const engineeringBtn = document.getElementById('engineeringBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const helpBtn = document.getElementById('helpBtn');
+    const closeHelpBtn = document.getElementById('closeHelpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const xrStatus = document.getElementById('xrStatus');
     const resetBtn = document.getElementById('resetBtn');
     const legend = document.getElementById('legend');
     const toast = document.getElementById('toast');
     let toastTimer;
+    spinBtn.classList.toggle('active',autoSpin);
+    engineeringBtn.classList.toggle('active',engineeringVisible);
+    grid.visible = engineeringVisible;
+    engineeringGroup.visible = engineeringVisible;
 
     function showToast(text){
       toast.textContent=text;
@@ -407,6 +493,29 @@
       markersBtn.classList.toggle('active',markerGroup.visible);
       legend.classList.toggle('hidden',!markerGroup.visible);
     });
+    engineeringBtn.addEventListener('click',()=>{
+      engineeringVisible=!engineeringVisible;
+      grid.visible=engineeringVisible;
+      engineeringGroup.visible=engineeringVisible;
+      engineeringBtn.classList.toggle('active',engineeringVisible);
+      showToast(engineeringVisible ? 'Инженерный режим включён' : 'Экспозиционный режим');
+    });
+    fullscreenBtn.addEventListener('click',async()=>{
+      try{
+        if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+        else await document.exitFullscreen();
+      }catch(e){ showToast('Полноэкранный режим недоступен'); }
+    });
+    shareBtn.addEventListener('click',async()=>{
+      const url = location.href;
+      try{
+        if(navigator.share) await navigator.share({title:'Чернобыльский робот · 3D / VR',url});
+        else { await navigator.clipboard.writeText(url); showToast('Ссылка скопирована'); }
+      }catch(e){ if(e?.name!=='AbortError') showToast('Не удалось поделиться ссылкой'); }
+    });
+    helpBtn.addEventListener('click',()=>helpModal.classList.add('open'));
+    closeHelpBtn.addEventListener('click',()=>helpModal.classList.remove('open'));
+    helpModal.addEventListener('click',e=>{if(e.target===helpModal) helpModal.classList.remove('open')});
     resetBtn.addEventListener('click',()=>{
       dolly.position.set(0,0,0);
       camera.position.set(3.7,2.25,4.65);
@@ -420,7 +529,10 @@
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     let down = null;
-    renderer.domElement.addEventListener('pointerdown',e=>down={x:e.clientX,y:e.clientY});
+    renderer.domElement.addEventListener('pointerdown',e=>{
+      down={x:e.clientX,y:e.clientY};
+      pauseSpinUntil=performance.now()+6500;
+    });
     renderer.domElement.addEventListener('pointerup',e=>{
       if(!down || Math.hypot(e.clientX-down.x,e.clientY-down.y)>7 || renderer.xr.isPresenting){ down=null; return; }
       pointer.x=(e.clientX/innerWidth)*2-1;
@@ -438,6 +550,14 @@
     document.body.appendChild(vrButton);
     const originalText = vrButton.textContent;
     if (originalText === 'ENTER VR') vrButton.textContent = 'ВОЙТИ В VR';
+    if(navigator.xr?.isSessionSupported){
+      navigator.xr.isSessionSupported('immersive-vr').then(ok=>{
+        xrStatus.textContent = ok ? 'WebXR: VR-режим доступен' : 'WebXR: VR не поддерживается этим устройством';
+        xrStatus.classList.toggle('ok',ok);
+      }).catch(()=>xrStatus.textContent='WebXR: не удалось проверить поддержку');
+    }else{
+      xrStatus.textContent='WebXR: браузер без VR API';
+    }
 
     // Контроллеры: луч + телепорт по полу.
     const tempMatrix = new THREE.Matrix4();
@@ -465,18 +585,26 @@
       document.body.classList.add('xr');
       controls.enabled=false;
       autoSpin=false;
+      renderer.shadowMap.enabled=false;
+      markerGroup.visible=false;
+      engineeringGroup.visible=false;
+      grid.visible=false;
       dolly.position.set(0,0,2.8);
       robot.rotation.y=-0.08;
     });
     renderer.xr.addEventListener('sessionend',()=>{
       document.body.classList.remove('xr');
       controls.enabled=true;
+      renderer.shadowMap.enabled=true;
+      markerGroup.visible=markersBtn.classList.contains('active');
+      engineeringGroup.visible=engineeringVisible;
+      grid.visible=engineeringVisible;
       dolly.position.set(0,0,0);
       camera.position.set(3.7,2.25,4.65);
       controls.target.set(0,0.72,0);
       robot.rotation.y=-0.58;
-      autoSpin=true;
-      spinBtn.classList.add('active');
+      autoSpin=!reduceMotion && params.get('autospin') !== '0';
+      spinBtn.classList.toggle('active',autoSpin);
       controls.update();
     });
 
@@ -511,7 +639,7 @@
       if(renderer.xr.isPresenting) updateXrLocomotion(dt);
       else {
         controls.update();
-        if(autoSpin) robot.rotation.y += dt*0.17;
+        if(autoSpin && performance.now()>pauseSpinUntil) robot.rotation.y += dt*0.17;
       }
       renderer.render(scene,camera);
     }
@@ -524,7 +652,16 @@
       renderer.setSize(innerWidth,innerHeight);
     });
 
+    addEventListener('keydown',e=>{
+      if(e.key==='Escape') helpModal.classList.remove('open');
+      if(e.key.toLowerCase()==='r') resetBtn.click();
+      if(e.key.toLowerCase()==='m') markersBtn.click();
+      if(e.key.toLowerCase()==='i') engineeringBtn.click();
+      if(e.key.toLowerCase()==='f') fullscreenBtn.click();
+    });
+
     // Защита от выхода за первый кадр при медленной загрузке модулей.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById('loading')?.classList.add('done')));
     setTimeout(()=>{ if(!renderer.xr.isPresenting) controls.update(); },80);
   </script>
 </body>
