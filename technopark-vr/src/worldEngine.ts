@@ -1,5 +1,5 @@
 import * as T from 'three';
-import { driveRobot, shotHits, falling } from './gameLogic';
+import { driveRobot, sweptSphereHit, pelletDamage, falling } from './gameLogic';
 import { createCargoScene } from './cargoScene';
 import {batchStatic,batchPalette} from './staticBatch';
 import { createArt } from './art';
@@ -237,6 +237,11 @@ export function createExperience(host: HTMLElement, hooks: {
         phase: number;
         dead: boolean;
         velocity: number;
+        fallVX:number;
+        fallVZ:number;
+        fallSpin:number;
+        bounced:boolean;
+        wobble:number;
         respawn: number;
         hp: number;
         maxHP: number;
@@ -260,7 +265,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         const healthBar=box(g,boss?red:orange,0,.53,.1,.85,.055,.055);healthBar.name='drone-health';healthBar.visible=maxHP>1;
         droneDisposers.push(batchPalette(g,new Set<T.Object3D>([rotors,healthBar])));
-        drones.push({ g,rotorOffsets:model.offsets,rotors,rotorAngle:0,healthBar, phase: i * 1.31, dead: false, velocity: 0, respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
+        drones.push({ g,rotorOffsets:model.offsets,rotors,rotorAngle:0,healthBar, phase: i * 1.31, dead: false, velocity: 0, fallVX:0,fallVZ:0,fallSpin:0,bounced:false,wobble:0,respawn: 0, hp: maxHP, maxHP, kind: boss ? 'ФЛАГМАН' : armored ? 'БРОНИРОВАННЫЙ' : i % 3 === 1 ? 'СКОРОСТНОЙ' : 'РАЗВЕДЧИК', value: boss ? 600 : armored ? 180 : i % 3 === 1 ? 150 : 100 });
     }
     const trainingHalo=mesh(range,new T.TorusGeometry(.92,.028,6,48),orange,0,2.6,-7);trainingHalo.userData.dynamic=true;trainingHalo.visible=false;
     const ammoLamps:T.Mesh[]=[];for(let i=0;i<6;i++){const lamp=box(range,cyan,-2.25+i*.9,1.05,-4.25,.62,.12,.06);lamp.name='ammo-lamp';lamp.userData.dynamic=true;ammoLamps.push(lamp);}
@@ -307,8 +312,18 @@ export function createExperience(host: HTMLElement, hooks: {
     const sparks = new T.Points(sparksGeo, sparksMat);
     sparks.frustumCulled = false;
     scene.add(sparks);
-    const tracerGeo=new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3(0,0,-1)]);geometries.push(tracerGeo);const tracerMat=new T.LineBasicMaterial({color:0xffd28f,transparent:true,opacity:.9});materials.push(tracerMat);const tracer=new T.Line(tracerGeo,tracerMat);tracer.name='shot-tracer';tracer.visible=false;tracer.frustumCulled=false;scene.add(tracer);
-    let sparkLife = 0,tracerLife=0;
+    // Nine independent buckshot pellets share one draw call. Their streaks follow the simulated paths.
+    const pelletCount=9,pelletPositions=new Float32Array(pelletCount*6),pelletHits=new Int16Array(9);
+    const pellets=Array.from({length:pelletCount},()=>({position:new T.Vector3(),previous:new T.Vector3(),velocity:new T.Vector3(),active:false}));
+    const pelletGeo=new T.BufferGeometry();pelletGeo.setAttribute('position',new T.BufferAttribute(pelletPositions,3).setUsage(T.DynamicDrawUsage));geometries.push(pelletGeo);
+    const pelletMat=new T.LineBasicMaterial({color:0xffd5a0,transparent:true,opacity:.82,depthWrite:false});materials.push(pelletMat);
+    const pelletStreaks=new T.LineSegments(pelletGeo,pelletMat);pelletStreaks.name='shot-pellets';pelletStreaks.visible=false;pelletStreaks.frustumCulled=false;scene.add(pelletStreaks);
+    const shellMaterial=new T.MeshStandardMaterial({color:0xc99946,metalness:.85,roughness:.29});materials.push(shellMaterial);
+    const shellGeometry=new T.CylinderGeometry(.019,.019,.08,8);geometries.push(shellGeometry);
+    const shell=new T.Mesh(shellGeometry,shellMaterial);shell.name='spent-shell';shell.visible=false;scene.add(shell);
+    const shellVelocity=new T.Vector3();let shellLife=0,shellBounced=false,volleyAge=0,volleyActive=false,recoilTime=0,pumpPending=false;
+    const pelletCenter=new T.Vector3(),pelletContact=new T.Vector3(),pelletOrigin=new T.Vector3();
+    let sparkLife = 0;
     function burst(p: T.Vector3) { sparkLife = .7; for (let i = 0; i < 96; i++) {
         sparkPos.set([p.x, p.y, p.z], i * 3);
         sparkVel.set([(Math.random() - .5) * 5, Math.random() * 4, (Math.random() - .5) * 5], i * 3);
@@ -526,7 +541,7 @@ export function createExperience(host: HTMLElement, hooks: {
             if(needsTraining)train();
         }
     }
-    function restart() { clearInput();cargo.reset();hooks.armMode?.(false);lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot){cargoDemoStep=0;cargoDemoWait=0;} roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; duelOnly=false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
+    function restart() { clearInput();cargo.reset();hooks.armMode?.(false);lastCargoCollisions=0;lastCargoDelivered=0;if(cargoAutopilot){cargoDemoStep=0;cargoDemoWait=0;} roundAge = 0; bossAnnounced = false; keys.clear(); turnReady = true; training = false; health = 3; rivalHealth = 3; duel = false; duelOnly=false; impactWait = 0; rivalRespawn = 0; rival.visible = false; rivalName.o.visible = false;duelGate.visible=false; rival.position.set(0, 0, -11); audioFX.motor(0); sparkLife = 0; sparks.visible=false;volleyActive=false;pellets.forEach(p=>p.active=false);pelletStreaks.visible=false;shell.visible=false;shellLife=0;flashTime=0;recoilTime=0;pumpPending=false;ready = true; countdown = 0; combo = 0; shots = 0; hits = 0; notice = ''; noticeTime = 0; startLabel.o.visible = true; seconds = mode === 'cargo' ? 180 : 60; score = 0; ammo = 6; reloading = 0; cooldown = 0; spinning = false; ended = false; robot.position.set(0, .02, -2); robot.rotation.set(0, 0, 0); cells.forEach(c => c.visible = true); blocks.forEach(c => c.visible = true); drones.forEach(d => { d.dead = false; d.hp = d.maxHP; d.velocity = 0;d.fallVX=d.fallVZ=d.fallSpin=d.wobble=0;d.bounced=false; d.g.visible = d.kind !== 'ФЛАГМАН'; d.g.rotation.set(0, 0, 0); }); updateHUD(); }
     function startDuel(){if(mode!=='robot'||[...pauseReasons].some(reason=>reason!=='menu'))return;restart();start();duelOnly=true;cells.forEach(c=>c.visible=false);blocks.forEach(b=>b.visible=false);score=11;duel=true;rival.visible=true;rivalName.o.visible=true;duelGate.visible=true;seconds=60;notify('БОЙ · ЛЕВЫЙ СТИК: РОБОТ · КУРОК: СПИННЕР');updateHUD();}
     function spin() { if(paused())return; if (mode === 'robot' && !ended && !ready && !countdown) {
         spinning = !spinning;
@@ -538,57 +553,87 @@ export function createExperience(host: HTMLElement, hooks: {
     } }
     function reload() { if(paused())return; if (mode === 'drones' && !ended && ammo < 6 && !reloading) {
         learned.reload = true;
-        reloading = 1.3;
+        reloading = .62;
         audioFX.event('reload');
         updateHUD();
     } }
+    function resolveVolley() {
+        volleyActive=false;pelletStreaks.visible=false;
+        let targets=0,total=0,awardTotal=0,flagshipDestroyed=false,first:Drone|undefined,description='';
+        for(let i=0;i<drones.length;i++){
+            const count=pelletHits[i];if(!count)continue;
+            const d=drones[i];first??=d;targets++;total+=count;
+            const damage=pelletDamage(count,d.kind==='ФЛАГМАН'?'flagship':d.kind==='БРОНИРОВАННЫЙ'?'armored':'light');
+            d.hp=Math.max(0,d.hp-damage);d.wobble=Math.min(1,d.wobble+damage*.5);
+            const destroyed=d.hp<=1e-6;d.dead=destroyed;
+            if(destroyed){d.velocity=1.1;d.fallVX=pellets[0].velocity.x*.006;d.fallVZ=pellets[0].velocity.z*.006;d.fallSpin=2.2+damage;d.bounced=false;d.respawn=d.kind==='ФЛАГМАН'?6:2.4;}
+            const award=(destroyed?d.value:Math.max(1,Math.round(25*damage)))*Math.min(4,1+Math.floor((combo+1)/3));
+            score+=award;awardTotal+=award;
+            if(targets===1)description=d.kind+(destroyed?' СБИТ':' / ПРОЧНОСТЬ '+Math.ceil(d.hp));
+            if(destroyed&&d.kind==='ФЛАГМАН'&&!presentation&&!training)flagshipDestroyed=true;
+        }
+        if(targets){hits++;combo++;if(first)burst(first.g.position);audioFX.event('hit');
+            if(training){lessonStep=1;notify('ПОПАДАНИЕ · '+total+'/9 ДРОБИН · ТЕПЕРЬ ПЕРЕЗАРЯДИТЕ');}
+            else notify((targets>1?targets+' ЦЕЛИ':description)+' · '+total+'/9 ДРОБИН · +'+awardTotal);
+        }else{combo=0;notify('ПРОМАХ / СЕРИЯ СБРОШЕНА');}
+        if(flagshipDestroyed)finish();
+        updateHUD();
+    }
+    function advancePellets(dt:number){
+        if(!volleyActive||!dt)return;
+        volleyAge+=dt;let active=0;
+        const drag=Math.exp(-1.25*dt);
+        for(let i=0;i<pelletCount;i++){
+            const p=pellets[i],offset=i*6;
+            if(p.active){
+                p.previous.copy(p.position);p.velocity.multiplyScalar(drag);p.velocity.y-=9.81*dt;
+                p.position.addScaledVector(p.velocity,dt);
+                let nearest=Infinity,target=-1;
+                for(let j=0;j<drones.length;j++){
+                    const d=drones[j];if(d.dead||!d.g.visible)continue;
+                    d.g.getWorldPosition(pelletCenter);pelletCenter.y-=.12*d.g.scale.x;
+                    const t=sweptSphereHit(p.previous,p.position,pelletCenter,.62*d.g.scale.x);
+                    if(t!==null&&t<nearest){nearest=t;target=j;}
+                }
+                if(target>=0){p.position.lerpVectors(p.previous,p.position,nearest);pelletHits[target]++;p.active=false;}
+                else if(p.position.y<.16||p.position.distanceToSquared(pelletOrigin)>2500||volleyAge>.23)p.active=false;
+            }
+            if(p.active){active++;pelletContact.copy(p.position).addScaledVector(p.velocity,-.003);
+                pelletPositions.set([pelletContact.x,pelletContact.y,pelletContact.z,p.position.x,p.position.y,p.position.z],offset);
+            }else pelletPositions.set([p.position.x,p.position.y,p.position.z,p.position.x,p.position.y,p.position.z],offset);
+        }
+        pelletGeo.attributes.position.needsUpdate=true;
+        if(!active)resolveVolley();
+    }
     function shoot(ray: T.Ray, c?: T.Group) { if(paused())return; if (ready) {
         start();
         return;
-    } if (ended || countdown || cooldown || reloading)
+    } if (ended || countdown || cooldown)
         return; if (!ammo) {
         reload();
         return;
-    } learned.shoot = true; ammo--; shots++; cooldown = .45; flashTime = .065; audioFX.event('shot'); let best: Drone | undefined, dist = Infinity; for (const d of drones) {
-        if(d.dead||!d.g.visible)continue;
-        d.g.getWorldPosition(pointScratch);deltaScratch.copy(pointScratch).sub(ray.origin);
-        const along = deltaScratch.dot(ray.direction);
-        if (shotHits(along, ray.distanceToPoint(pointScratch) / d.g.scale.x) && along < dist) {
-            best = d;
-            dist = along;
-        }
+    } reloading=0;learned.shoot=true;ammo--;shots++;cooldown=.56;flashTime=.085;recoilTime=.18;pumpPending=true;audioFX.event('shot');if(c)pulse(c,.55,85);
+    const weapon=c?guns[controllers.indexOf(c)]:desktopGun;
+    weapon?.getObjectByName('muzzle-flash')?.getWorldPosition(pelletOrigin);
+    if(!weapon)pelletOrigin.copy(ray.origin);
+    ray.at(26,tracerEndScratch);
+    directionScratch.copy(tracerEndScratch).sub(pelletOrigin).normalize();
+    sideScratch.crossVectors(directionScratch,upAxis).normalize();
+    awayScratch.crossVectors(sideScratch,directionScratch).normalize();
+    pelletHits.fill(0);volleyAge=0;volleyActive=true;pelletStreaks.visible=true;
+    const rotation=Math.random()*Math.PI*2,spread=Math.tan(3.5*Math.PI/180);
+    for(let i=0;i<pelletCount;i++){
+        const radius=i===0?0:Math.sqrt(i/8)*spread,angle=rotation+i*2.399963;
+        const p=pellets[i];p.position.copy(pelletOrigin);p.previous.copy(pelletOrigin);
+        p.velocity.copy(directionScratch).addScaledVector(sideScratch,radius*Math.cos(angle)).addScaledVector(awayScratch,radius*Math.sin(angle)).normalize().multiplyScalar(330*(.98+Math.random()*.04));p.active=true;
+        pelletPositions.set([p.position.x,p.position.y,p.position.z,p.position.x,p.position.y,p.position.z],i*6);
     }
-    ray.at(best?dist:18,tracerEndScratch);const weapon=c?guns[controllers.indexOf(c)]:desktopGun;weapon?.getObjectByName('muzzle-flash')?.getWorldPosition(pointScratch);tracerGeo.setFromPoints([weapon?pointScratch:ray.origin,tracerEndScratch]);tracer.visible=true;tracerLife=.075;tracerMat.opacity=.92;
-    if (best) {
-        best.hp--;
-        const destroyed = best.hp <= 0;
-        best.dead = destroyed;
-        if (destroyed) {
-            best.velocity = 0;
-            best.respawn = best.kind === 'ФЛАГМАН' ? 6 : 2.4;
-        }
-        if (training) {
-            lessonStep = 1;
-            notify('ПОПАДАНИЕ! ТЕПЕРЬ ПЕРЕЗАРЯДИТЕ');
-        }
-        hits++;
-        combo++;
-        const multiplier = Math.min(4, 1 + Math.floor(combo / 3));
-        const award = (destroyed ? best.value : 25) * multiplier;
-        score += award;
-        burst(best.g.position);
-        audioFX.event('hit');
-        notify(best.kind + ' ' + (destroyed ? 'СБИТ' : ' / ПРОЧНОСТЬ ' + best.hp) + ' +' + award);
-        if (destroyed && best.kind === 'ФЛАГМАН' && !presentation && !training)
-            finish();
-        if(c)pulse(c);
-    }
-    else {
-        combo = 0;
-        notify('ПРОМАХ / СЕРИЯ СБРОШЕНА');
-    } updateHUD(); }
+    pelletGeo.attributes.position.needsUpdate=true;
+    if(weapon){weapon.getWorldQuaternion(quatScratch);shell.position.copy(pelletOrigin).add(new T.Vector3(.1,.03,.25).applyQuaternion(quatScratch));
+        shellVelocity.set(1.25,1.6,.35).applyQuaternion(quatScratch);shell.visible=true;shellLife=1.7;shellBounced=false;}
+    updateHUD(); }
     function updateHUD() { let s = entranceAge < 4 && mode === 'hub' ? 'ДОБРО ПОЖАЛОВАТЬ / АКТИВАЦИЯ ЯДРА' : presentation ? 'ПРЕЗЕНТАЦИЯ ∞ / Выберите сцену' : 'Ядро / кинетическая инсталляция · Выберите портал'; if (mode !== 'hub') {
-        const progress = mode === 'cargo' ? cargo.status() : mode === 'robot' ? (duel ? `${duelOnly?'ПРЯМОЙ БОЙ':'ДУЭЛЬ'} · Ваша прочность ${health}/3 · Соперник ${rivalHealth}/3` : `Ячейки ${cells.filter(c => !c.visible).length}/5 · Блоки ${blocks.filter(c => !c.visible).length}/6 · ${spinning ? 'Спиннер ВКЛ' : 'Спиннер ВЫКЛ'}`) : `Волна ${Math.min(3, 1 + Math.floor(roundAge / 20))}${roundAge >= 40 ? ' · ФЛАГМАН ' + drones[8].hp + '/6' : ''} · ${score} очков · ${reloading ? 'Перезарядка…' : ammo + '/6 зарядов'} · ×${Math.min(4, 1 + Math.floor(combo / 3))}`;
+        const progress = mode === 'cargo' ? cargo.status() : mode === 'robot' ? (duel ? `${duelOnly?'ПРЯМОЙ БОЙ':'ДУЭЛЬ'} · Ваша прочность ${health}/3 · Соперник ${rivalHealth}/3` : `Ячейки ${cells.filter(c => !c.visible).length}/5 · Блоки ${blocks.filter(c => !c.visible).length}/6 · ${spinning ? 'Спиннер ВКЛ' : 'Спиннер ВЫКЛ'}`) : `Волна ${Math.min(3, 1 + Math.floor(roundAge / 20))}${roundAge >= 40 ? ' · ФЛАГМАН ' + Math.ceil(drones[8].hp) + '/6' : ''} · ${score} очков · ${reloading ? 'Заряжаем · ' : ''}${ammo}/6 зарядов · ×${Math.min(4, 1 + Math.floor(combo / 3))}`;
         s = training ? mode==='cargo'&&cargo.manual?'УРОК · РУЧНАЯ СТРЕЛА · ЗАХВАТИТЕ И УЛОЖИТЕ ГРУЗ':lessonText() : ready ? 'ГОТОВЫ? НАЖМИТЕ «НАЧАТЬ РАУНД»' : countdown > 0 ? 'СТАРТ ЧЕРЕЗ ' + Math.ceil(countdown) : ended ? (mode === 'cargo' ? (cargo.finished ? 'ДОСТАВЛЕНО 3/3 · ' + Math.ceil(roundAge) + ' С · ОШИБКИ ' + cargo.collisions : 'ВРЕМЯ ВЫШЛО · ' + cargo.delivered + '/3 ГРУЗОВ') : mode === 'robot' ? (rivalHealth <= 0 ? 'ПОБЕДА В ДУЭЛИ' : 'ПОПРОБУЙТЕ ЕЩЁ') : `${drones[8].hp <= 0 ? 'ФЛАГМАН СБИТ' : 'РАУНД ЗАВЕРШЁН'} · ТОЧНОСТЬ ${shots ? Math.round(hits / shots * 100) : 0}%`) + ` · ОЧКИ ${resultScore()} · РЕКОРД ${bests[recordKey()]||0}` : `${presentation ? 'ДЕМОНСТРАЦИЯ ∞' : Math.ceil(seconds) + ' с'} · ${progress}`;
     } if(paused())s='ПАУЗА · '+s;
     const phase=mode==='hub'?'hub':training?'training':ready?'ready':countdown?'countdown':ended?'ended':'active';if(phase!==lastPhase){lastPhase=phase;hooks.phase?.(phase);}
@@ -715,7 +760,9 @@ export function createExperience(host: HTMLElement, hooks: {
         noticeTime = Math.max(0, noticeTime - dt);
         if (mode !== 'hub')
             guidance.write(noticeTime ? notice : mode==='cargo'?cargo.hint():training ? lessonText() : (mode === 'robot' ? 'ЛЕВЫЙ СТИК: РОБОТ · ПРАВЫЙ КУРОК: СПИННЕР' : 'КУРОК: ОГОНЬ · БОКОВАЯ: ПЕРЕЗАРЯДКА'));
-        tracerLife=Math.max(0,tracerLife-dt);tracer.visible=tracerLife>0;if(tracer.visible)tracerMat.opacity=Math.min(.92,tracerLife/.075);
+        if(shell.visible&&dt){shellLife=Math.max(0,shellLife-dt);shellVelocity.y-=9.81*dt;shell.position.addScaledVector(shellVelocity,dt);shell.rotation.x+=dt*13;shell.rotation.z+=dt*9;
+            if(shell.position.y<.05){shell.position.y=.05;if(!shellBounced){shellVelocity.y=Math.abs(shellVelocity.y)*.27;shellVelocity.x*=.55;shellVelocity.z*=.55;shellBounced=true;}else shellVelocity.set(0,0,0);}
+            if(!shellLife)shell.visible=false;}
         if (sparkLife > 0) {
             sparkLife -= dt;
             sparks.visible = true;
@@ -747,12 +794,16 @@ export function createExperience(host: HTMLElement, hooks: {
                 sound(countdown ? 660 : 990);
         }
         cooldown = Math.max(0, cooldown - dt);
+        if(pumpPending&&cooldown<.34){pumpPending=false;audioFX.event('pump');}
         flashTime = Math.max(0, flashTime - dt);
+        recoilTime=Math.max(0,recoilTime-dt);
+        const recoil=.11*Math.sin(recoilTime/.18*Math.PI);
+        const pumpTravel=reloading?.11*Math.sin((1-reloading/.62)*Math.PI):cooldown?.22*Math.sin((1-cooldown/.56)*Math.PI):0;
         const desktopMuzzle=desktopGun.getObjectByName('muzzle-flash');if(desktopMuzzle)desktopMuzzle.visible=flashTime>0;
         guns.forEach(g => { const m = g.getObjectByName('muzzle-flash'); if (m)
-            m.visible = flashTime > 0; g.position.z = flashTime > 0 ? .05 : 0;const pump=g.getObjectByName('shotgun-pump');if(pump)pump.position.z=reloading?.13*Math.sin((1-reloading/1.3)*Math.PI):Math.max(0,1-cooldown/.45)*Math.max(0,cooldown/.45)*.38; });
-        const desktopPump=desktopGun.getObjectByName('shotgun-pump');if(desktopPump)desktopPump.position.z=reloading?.13*Math.sin((1-reloading/1.3)*Math.PI):Math.max(0,1-cooldown/.45)*Math.max(0,cooldown/.45)*.38;
-        desktopGun.position.z = -.25 + (flashTime > 0 ? .06 : 0);
+            m.visible = flashTime > 0; g.position.z = recoil;const pump=g.getObjectByName('shotgun-pump');if(pump)pump.position.z=pumpTravel; });
+        const desktopPump=desktopGun.getObjectByName('shotgun-pump');if(desktopPump)desktopPump.position.z=pumpTravel;
+        desktopGun.position.z = -.25 + recoil;
         if(mode==='hub'){
             portals.forEach(p => (p.material as T.ShaderMaterial).uniforms.time.value = elapsed);
             const activeCamera=renderer.xr.isPresenting?renderer.xr.getCamera():camera,head=activeCamera.getWorldPosition(pointScratch);activeCamera.getWorldQuaternion(quatScratch);const forward=forwardScratch.set(0,0,-1).applyQuaternion(quatScratch);let best=-1,bestDot=.9;
@@ -767,9 +818,9 @@ export function createExperience(host: HTMLElement, hooks: {
         if (reloading) {
             reloading = Math.max(0, reloading - dt);
             if (!reloading) {
-                ammo = 6;
-                if (training && mode === 'drones' && lessonStep === 1)
-                    completeLesson();
+                ammo=Math.min(6,ammo+1);
+                if (training && mode === 'drones' && lessonStep === 1)completeLesson();
+                else if(ammo<6){reloading=.54;audioFX.event('reload');}
             }
         }
         if (mode === 'robot' && !paused() && !ended && !ready && !countdown) {
@@ -931,7 +982,7 @@ export function createExperience(host: HTMLElement, hooks: {
         }
         if (mode === 'drones'){
             trainingHalo.visible=training&&!drones[0].dead;trainingHalo.rotation.z+=dt*.45;
-            ammoLamps.forEach((lamp,i)=>lamp.visible=i<ammo&&!reloading);bossBeacon.visible=!training&&roundAge>=40&&!ended;bossCaption.o.visible=bossBeacon.visible;if(bossBeacon.visible)bossCaption.write(`ФЛАГМАН · ${drones[8].hp}/6`);bossBeacon.rotation.z+=dt*.18;bossBeacon.scale.setScalar(1+.035*Math.sin(elapsed*3));
+            ammoLamps.forEach((lamp,i)=>lamp.visible=i<ammo);bossBeacon.visible=!training&&roundAge>=40&&!ended;bossCaption.o.visible=bossBeacon.visible;if(bossBeacon.visible)bossCaption.write(`ФЛАГМАН · ${Math.ceil(drones[8].hp)}/6`);bossBeacon.rotation.z+=dt*.18;bossBeacon.scale.setScalar(1+.035*Math.sin(elapsed*3));
             for (let i = 0; i < drones.length; i++) {
                 const d = drones[i];
                 if (i === 8 && roundAge < 40) {
@@ -953,15 +1004,17 @@ export function createExperience(host: HTMLElement, hooks: {
                 if (d.dead) {
                     const fall = falling(d.g.position.y, d.velocity, dt);
                     d.velocity = fall.velocity;
-                    d.g.position.y = fall.y;
-                    d.g.rotation.z += dt * 3;
-                    d.g.rotation.x += dt * 2;
+                    d.g.position.y = Math.max(.36,fall.y);
+                    d.g.position.x+=d.fallVX*dt;d.g.position.z+=d.fallVZ*dt;
+                    d.fallVX*=Math.exp(-1.7*dt);d.fallVZ*=Math.exp(-1.7*dt);
+                    if(fall.y>.36){d.g.rotation.z+=dt*d.fallSpin;d.g.rotation.x+=dt*d.fallSpin*.65;}
+                    else if(!d.bounced){d.velocity=Math.abs(d.velocity)*.24;d.fallSpin*=.35;d.bounced=true;audioFX.event('debris');}
+                    else d.velocity=0;
                     d.respawn -= dt;
-                    if (d.g.position.y < .3)
-                        d.g.visible = false;
                     if (d.respawn <= 0 && !ended) {
                         d.dead = false;
                         d.hp = d.maxHP;
+                        d.wobble=0;
                         d.g.visible = true;
                         d.g.rotation.set(0, 0, 0);
                     }
@@ -969,9 +1022,12 @@ export function createExperience(host: HTMLElement, hooks: {
                 else if (!ended) {
                     d.g.position.set(Math.sin(elapsed * (d.kind === 'ФЛАГМАН' ? .22 : (d.kind === 'СКОРОСТНОЙ' ? .55 : .35) + Math.min(2, Math.floor(roundAge / 20)) * .13) + d.phase) * (4 + i * .4), 2.4 + (i % 3) * 1.4 + Math.sin(elapsed + d.phase) * .6, -8 - (i % 4) * 3);
                     d.g.rotation.y = Math.sin(elapsed + d.phase) * .3;
+                    d.wobble=Math.max(0,d.wobble-dt*1.6);
+                    d.g.rotation.z=Math.sin(elapsed*18+d.phase)*d.wobble*.35;
                 }
             }
         }
+        if(mode==='drones')advancePellets(dt);
         if (mode === 'hub'&&!paused()) {
             const headCamera = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
             const head = headCamera.getWorldPosition(headScratch);

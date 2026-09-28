@@ -1,11 +1,20 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-// This module is deliberately dependency-free: run on Node 22+ with type stripping.
-const source=readFileSync(new URL('../src/gameLogic.ts',import.meta.url),'utf8').replace(/:number/g,'');
-const {driveRobot,shotHits,falling}=await import('data:text/javascript,'+encodeURIComponent(source));
+import {transform} from 'esbuild';
+const source=readFileSync(new URL('../src/gameLogic.ts',import.meta.url),'utf8');
+const {code}=await transform(source,{loader:'ts',format:'esm'});
+const {driveRobot,sweptSphereHit,pelletDamage,falling}=await import('data:text/javascript,'+encodeURIComponent(code));
 let p={x:0,z:-2,yaw:0};for(let i=0;i<600;i++)p=driveRobot(p.x,p.z,p.yaw,1,0,1/60);assert.equal(p.z,-12.7);assert.equal(p.x,0);
 p=driveRobot(5.7,-5,-Math.PI/2,1,0,1);assert.equal(p.x,5.7);
 p=driveRobot(0,-5,0,0,1,.5);assert.equal(p.z,-5);assert.equal(p.yaw,1.2);
-assert.equal(shotHits(-3,0),false);assert.equal(shotHits(10,.5),true);assert.equal(shotHits(10,3),false);
+const start={x:0,y:1,z:0},end={x:0,y:1,z:-6},target={x:0,y:1,z:-5};
+assert.ok(Math.abs(sweptSphereHit(start,end,target,.6)-4.4/6)<1e-9,'fast pellet must not tunnel through a drone');
+assert.equal(sweptSphereHit(start,end,{x:2,y:1,z:-5},.6),null,'pellet outside the body must miss');
+assert.equal(sweptSphereHit(target,start,target,.6),0,'pellet starting inside a target contacts immediately');
+assert.equal(sweptSphereHit(start,{x:0,y:1,z:6},target,.6),null,'pellet cannot strike behind the muzzle');
+assert.equal(pelletDamage(1,'flagship'),.2,'one grazing pellet chips armour');
+assert.equal(pelletDamage(5,'flagship'),1,'dense buckshot pattern makes one full hit');
+assert.equal(pelletDamage(9,'flagship'),1,'one shell cannot count as multiple flagship hits');
+assert.equal(pelletDamage(0,'light'),0);
 let f={y:4,velocity:0};for(let i=0;i<60;i++)f=falling(f.y,f.velocity,1/60);assert.ok(f.y<0);assert.ok(Math.abs(f.velocity+9.8)<1e-9);
-console.log('PASS: arena boundaries, steering, forward-only hit cone, falling drone gravity');
+console.log('PASS: arena boundaries, swept buckshot collisions, armour damage, falling drone gravity');

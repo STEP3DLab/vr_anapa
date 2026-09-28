@@ -35,9 +35,9 @@ export function createAudio(){
   if(!shotNoise){shotNoise=c.createBuffer(1,Math.ceil(c.sampleRate*.18),c.sampleRate);const data=shotNoise.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;}
   const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain(),t=c.currentTime;
   source.buffer=shotNoise;filter.type='lowpass';filter.frequency.setValueAtTime(5200,t);filter.frequency.exponentialRampToValueAtTime(380,t+.16);
-  gain.gain.setValueAtTime(.3,t);gain.gain.exponentialRampToValueAtTime(.001,t+.18);
+  gain.gain.setValueAtTime(.36,t);gain.gain.exponentialRampToValueAtTime(.001,t+.18);
   source.connect(filter);filter.connect(gain);gain.connect(master);source.start(t);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
-  tone(90,.16,'triangle',.25);tone(900,.025,'square',.035);
+  tone(80,.19,'triangle',.27);tone(750,.025,'square',.035);
  }
  return {
   unlock(){const c=init();applyScene();return c;},
@@ -49,7 +49,9 @@ export function createAudio(){
    else if(name==='win'){[392,494,587,784].forEach((f,i)=>tone(f,.6,'sine',.16,i*.12));}
    else if(name==='shot')shot();
    else if(name==='hit'){tone(880,.1,'square',.07);tone(110,.16,'triangle',.2);}
-   else if(name==='reload'){tone(180,.09,'square',.05);tone(320,.08,'square',.05,.35);}
+   else if(name==='pump'){tone(350,.055,'square',.055);tone(175,.07,'triangle',.07,.075);}
+   else if(name==='debris'){tone(100,.12,'triangle',.06);}
+   else if(name==='reload'){tone(180,.06,'square',.05);tone(320,.07,'square',.045,.12);}
    else tone(540,.09);
   },
   motor(speed:number){const value=Math.round(Math.abs(speed)*20)/20;if(!context||!motor||!engine||value===lastMotor)return;lastMotor=value;motor.gain.setTargetAtTime(Math.min(.045,value*.02),context.currentTime,.12);engine.frequency.setTargetAtTime(65+value*65,context.currentTime,.1);},
