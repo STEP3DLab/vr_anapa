@@ -1,12 +1,15 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=5.0';
-import {installAtmosphere} from './atmosphere.js?v=5.0';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=5.0';
-import {createTour,floorPoint} from './tour.js?v=5.0';
-import {consolidateArchitecture} from './optimize.js?v=5.0';
-import {Inspection} from './inspection.js?v=5.0';
-import {installMuseumGraphics} from './museum.js?v=5.0';
-import {VRGuide} from './vr-guide.js?v=5.0';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=6.0';
+import {installAtmosphere} from './atmosphere.js?v=6.0';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=6.0';
+import {createTour,floorPoint} from './tour.js?v=6.0';
+import {consolidateArchitecture} from './optimize.js?v=6.0';
+import {Inspection} from './inspection.js?v=6.0';
+import {installMuseumGraphics} from './museum.js?v=6.0';
+import {VRGuide} from './vr-guide.js?v=6.0';
+import {ResonanceGame,gameAction} from './game.js?v=6.0';
+import {AtlasEffects} from './effects.js?v=6.0';
+import {CinematicRenderer} from './cinematic.js?v=6.0';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
@@ -14,6 +17,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let world,renderer,camera,rig,active=false,selected=-1,yaw=0,pitch=0,initialized=false,xrSupported=false,session=null,sessionStarting=false;
 let inspection=null;const inspectionPointers=new Map();
 let vrGuide=null,xrRequestToken=0,xrReady=false,pendingSpawn=null;
+const game=new ResonanceGame();let effects=null,cinematic=null,gamePreviousDay=true,lastGameKey='';
 let initPromise=null,openToken=0,pendingEntry={id:-1,guided:false};
 let quality=matchMedia('(pointer: coarse)').matches?'smooth':'detail';
 const tour=createTour(EXHIBITS.length);
@@ -62,6 +66,7 @@ async function init(){
       // Recast at the gesture; a previous frame may refer to a different target.
       syncXRCamera();const hit=castXRPointer(controller);if(!hit)return;
       if(hit.type==='guide'){if(hit.action)runVRAction(hit.action);}
+      else if(hit.type==='station')void startGame(hit.id);
       else if(hit.type==='exhibit')visit(hit.id,true);else teleport(hit.point.x,hit.point.z);
     });controllers.push(controller);
   }
@@ -69,14 +74,14 @@ async function init(){
   setupPointer();installAtmosphere(renderer,world);applyQuality();
   const resources=await Promise.allSettled([loadSculpture(world,progress=>{$('loading-detail').textContent=progress?'Загружаем скульптуру · '+Math.round(progress*100)+'%':'Загружаем скульптуру…';}),installCollegeMark(world),installMuseumGraphics(world)]);
   const failed=resources.find(result=>result.status==='rejected');if(failed)throw failed.reason;
-  consolidateArchitecture(world);inspection=new Inspection(world);vrGuide=new VRGuide(world.scene,camera,EXHIBITS,questions);initialized=true;
+  consolidateArchitecture(world);effects=new AtlasEffects(world,EXHIBITS,{reduced});cinematic=new CinematicRenderer(renderer);inspection=new Inspection(world);vrGuide=new VRGuide(world.scene,camera,EXHIBITS,questions);initialized=true;applyQuality();
 }
 function disposeFailedInit(){
-  renderer?.setAnimationLoop(null);world?.environmentTarget?.dispose();
+  renderer?.setAnimationLoop(null);world?.environmentTarget?.dispose();cinematic?.dispose();
   const geometries=new Set(),materials=new Set(),textures=new Set();
   world?.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)for(const m of [].concat(o.material)){materials.add(m);for(const value of Object.values(m))if(value?.isTexture)textures.add(value);}});
   geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());
-  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;inspection=null;vrGuide=null;initialized=false;
+  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;inspection=null;vrGuide=null;effects=null;cinematic=null;initialized=false;
 }
 async function enter(id,guided=false){
   const token=++openToken;pendingEntry={id,guided};if(!active)returnFocus=document.activeElement;
@@ -97,6 +102,7 @@ async function enter(id,guided=false){
 $('retry-loading').onclick=()=>enter(pendingEntry.id,pendingEntry.guided);
 $('cancel-loading').onclick=exit;
 async function exit(){
+  if(game.active)stopGame(false);
   if(inspection?.active)closeInspection(false);
   ++openToken;++xrRequestToken;active=false;sessionStarting=false;clearTimeout(moveTimer);keys.clear();drag=null;tour.stop();document.body.classList.remove('panel-expanded');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(session)await endVR();
@@ -108,10 +114,12 @@ async function exit(){
 $('exit-viewer').onclick=exit;
 function setOrientation(target){const v=new THREE.Vector3(...target).sub(new THREE.Vector3(rig.position.x,1.65,rig.position.z));yaw=Math.atan2(-v.x,-v.z);pitch=Math.atan2(v.y,Math.hypot(v.x,v.z));camera.rotation.set(pitch,yaw,0,'YXZ');}
 function updatePanel(id){
+  if(game.active&&id>=0)game.select(id);
   selected=id;tour.select(id);renderTour();document.querySelectorAll('[data-route]').forEach(b=>{const on=Number(b.dataset.route)===id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
   $('object-panel').hidden=id<0;
   if(id>=0){const e=EXHIBITS[id];$('object-category').textContent=e.category;$('object-title').textContent=e.title;$('object-description').textContent=e.description;$('object-fact').textContent=e.fact;$('object-source').hidden=id!==0;$('object-question').textContent=questions[id];setPanelExpanded(!matchMedia('(max-width:700px)').matches);}
   else document.body.classList.remove('panel-expanded');
+  if(game.active)renderGame();
 }
 function visit(id,immediate=false){
   if(!initialized||!world||!Number.isInteger(id)||id < -1||id>=EXHIBITS.length)return;
@@ -134,7 +142,7 @@ function setupPointer(){
   canvas.addEventListener('pointerup',e=>{
     if(inspection?.active){inspectionPointers.delete(e.pointerId);return;}
     if(!drag||drag.id!==e.pointerId)return;
-    if(drag.distance<9){const rect=canvas.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(world.interactive,true)[0];if(hit){const id=exhibitId(hit.object);if(id!==null)visit(id);}}
+    if(drag.distance<9){const rect=canvas.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(world.interactive,true)[0],station=effects?.pick(raycaster);if(station&&(!hit||station.distance<hit.distance))void startGame(station.id);else if(hit){const id=exhibitId(hit.object);if(id!==null)visit(id);}}
     drag=null;
   });canvas.addEventListener('pointercancel',e=>{drag=null;inspectionPointers.delete(e.pointerId);});canvas.addEventListener('lostpointercapture',e=>{drag=null;inspectionPointers.delete(e.pointerId);});
   canvas.addEventListener('wheel',e=>{if(!inspection?.active)return;e.preventDefault();inspection.zoom(Math.exp(THREE.MathUtils.clamp(e.deltaY,-400,400)*.0015));},{passive:false});
@@ -142,6 +150,7 @@ function setupPointer(){
 function exhibitId(object){let o=object;while(o){if(Number.isInteger(o.userData.exhibit))return o.userData.exhibit;o=o.parent;}return null;}
 window.addEventListener('keydown',e=>{
   if(!active||!initialized||session||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;
+  if(game.active&&e.code==='Space'&&!e.target.matches('button')){e.preventDefault();if(!e.repeat)runGameAction(gameAction(game.view()).action);return;}
   if(inspection?.active){
     if(e.code==='Escape'){closeInspection();return;}
     if(e.code==='ArrowLeft')inspection.orbit(-18,0);else if(e.code==='ArrowRight')inspection.orbit(18,0);else if(e.code==='ArrowUp')inspection.orbit(0,-14);else if(e.code==='ArrowDown')inspection.orbit(0,14);else if(e.code==='Equal'||e.code==='NumpadAdd')inspection.zoom(.88);else if(e.code==='Minus'||e.code==='NumpadSubtract')inspection.zoom(1.14);else if(e.code==='Home')inspection.reset();else return;
@@ -194,8 +203,12 @@ function frame(time,xrFrame){
     const f=Number(keys.has('KeyW'))-Number(keys.has('KeyS')),s=Number(keys.has('KeyD'))-Number(keys.has('KeyA'));
     if(f||s){const n=Math.hypot(f,s),speed=dt*2.8/n;const x=rig.position.x+(-Math.sin(yaw)*f+Math.cos(yaw)*s)*speed,z=rig.position.z+(-Math.cos(yaw)*f-Math.sin(yaw)*s)*speed;if(isWalkable(x,rig.position.z))rig.position.x=x;if(isWalkable(rig.position.x,z))rig.position.z=z;}
   }
+  const simulate=!document.hidden&&!document.querySelector('dialog[open]')&&(!session||canUseXR());
+  const previousPhase=game.phase;if(simulate)game.tick(dt);
+  if(game.active){renderGame();if(previousPhase==='celebrating'&&game.phase==='complete'&&session)showVRGuide();}
+  effects?.update(simulate?dt:0,camera,game);
   if($('map-dialog').open)updateMapPosition();
-  renderer.render(world.scene,camera);
+  if(cinematic)cinematic.render(world.scene,camera,{detail:quality==='detail',xr:!!session,energy:effects?.energy||0});else renderer.render(world.scene,camera);
 }
 
 function syncXRCamera(){rig.updateMatrixWorld(true);renderer.xr.updateCamera(camera);world.scene.updateMatrixWorld(true);}
@@ -213,14 +226,15 @@ function clearXRInputs(){controllers.forEach(clearXRPointer);teleportHits.clear(
 function castXRPointer(controller){
   if(!canUseXR()||!controller.visible||!controller.userData.connected)return null;
   world.scene.updateMatrixWorld(true);matrix.identity().extractRotation(controller.matrixWorld);raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);raycaster.ray.direction.set(0,0,-1).applyMatrix4(matrix);
-  const panelHit=vrGuide.hit(raycaster),objectHit=raycaster.intersectObjects(world.interactive,true)[0],floorHit=raycaster.intersectObject(world.floor)[0];
+  const panelHit=vrGuide.hit(raycaster),objectHit=raycaster.intersectObjects(world.interactive,true)[0],floorHit=raycaster.intersectObject(world.floor)[0],stationHit=effects?.pick(raycaster);
   // The small head-relative reopen button remains reachable even next to a plinth.
   if(panelHit&&(!vrGuide.open||panelHit.distance<Math.min(objectHit?.distance??Infinity,floorHit?.distance??Infinity)))return panelHit;
+  if(stationHit&&stationHit.distance<Math.min(objectHit?.distance??Infinity,floorHit?.distance??Infinity))return stationHit;
   if(objectHit&&(!floorHit||objectHit.distance<floorHit.distance))return {type:'exhibit',id:exhibitId(objectHit.object),distance:objectHit.distance};
   if(floorHit&&isWalkable(floorHit.point.x,floorHit.point.z))return {type:'floor',point:floorHit.point,distance:floorHit.distance};
   return null;
 }
-function updateVRGuide(){if(vrGuide)vrGuide.update(selected,{active:tour.active,completed:tour.completed,visited:[...tour.visited],day:world.dayMode});}
+function updateVRGuide(){if(vrGuide){vrGuide.setGame(game.active?game.view():null);vrGuide.update(selected,{active:tour.active,completed:tour.completed,visited:[...tour.visited],day:world.dayMode});}}
 function showVRGuide(){
   if(!session||!xrReady)return;
   syncXRCamera();const forward=new THREE.Vector3(0,0,-1).transformDirection(renderer.xr.getCamera().matrixWorld);
@@ -228,6 +242,7 @@ function showVRGuide(){
 }
 function runVRAction(action){
   if(!canUseXR())return;
+  if(action.startsWith('game:')){runGameAction(action.slice(5));return;}
   if(action.startsWith('page:')){vrGuide.setPage(Number(action.slice(5)));return;}
   if(action==='open')showVRGuide();
   else if(action==='hide'){vrGuide.hide();clearXRInputs();}
@@ -279,7 +294,7 @@ $('enter-vr').onclick=()=>{
     rig.rotation.set(0,0,0);camera.rotation.set(0,0,0);camera.position.set(0,0,0);rig.position.set(0,0,0);renderer.shadowMap.enabled=false;
     await renderer.xr.setSession(xrSession);
     if(token!==xrRequestToken||!active||session!==xrSession){await xrSession.end();return;}
-    document.body.classList.add('xr-active');$('enter-vr').disabled=false;$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
+    document.body.classList.add('xr-active');effects?.configure(quality,true);$('enter-vr').disabled=false;$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
   }).catch(failed);
 };
 $('sound').onclick=async()=>{
@@ -310,6 +325,7 @@ function renderTour(){
   document.body.classList.toggle('tour-running',tour.active);updateVRGuide();
 }
 function startTour(){
+  if(game.active)stopGame(false);
   if(!active||!initialized){enter(0,true);return;}
   tour.start();visit(0);
 }
@@ -322,9 +338,65 @@ $('tour-next').onclick=()=>{
 };
 $('stop-tour').onclick=()=>{tour.stop();renderTour();};
 
+async function startGame(index=0){
+  if(!active||!initialized){await enter(index);if(!active||!initialized)return;}
+  if(inspection?.active)closeInspection(false);
+  if(!game.active){gamePreviousDay=world.dayMode;game.start(index,reduced);world.setLighting(false);syncLightButton();}
+  tour.stop();keys.clear();drag=null;renderTour();renderGame();visit(index,true);
+  if(!session)$('game-action').focus();
+}
+function syncLightButton(){if(!world)return;$('lighting').textContent=world.dayMode?'Свет: день':'Свет: вечер';$('lighting').setAttribute('aria-pressed',String(!world.dayMode));}
+function stopGame(reopenGuide=true){
+  if(!game.active)return;game.stop();world.setLighting(gamePreviousDay);syncLightButton();renderGame();
+  if(reopenGuide&&session)showVRGuide();
+}
+function gameTone(success,finale=false){
+  if(!soundOn||!audioContext||!audioGain)return;
+  const now=audioContext.currentTime,notes=finale?[261.63,329.63,392,523.25]:success?[523.25,783.99]:[174.61];
+  notes.forEach((frequency,i)=>{const osc=audioContext.createOscillator(),gain=audioContext.createGain(),start=now+i*.11;osc.type='sine';osc.frequency.value=frequency;gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(.6,start+.025);gain.gain.exponentialRampToValueAtTime(.001,start+.6);osc.connect(gain);gain.connect(audioGain);osc.start(start);osc.stop(start+.65);osc.onended=()=>{osc.disconnect();gain.disconnect();};});
+}
+function runGameAction(action){
+  if(action==='start'){void startGame(0);return;}
+  if(!game.active||!active||document.hidden||document.querySelector('dialog[open]')||session&&!canUseXR())return;
+  if(action==='strike'){
+    const event=game.strike();if(event){gameTone(event.type!=='miss');if(event.type!=='miss')effects?.trigger(event.index,event.type==='charged');}
+  }else if(action==='next'){const next=game.next();if(next>=0)visit(next,true);}
+  else if(action.startsWith('station:')){const id=Number(action.slice(8));if(game.phase!=='celebrating'&&Number.isInteger(id)&&id>=0&&id<4)visit(id,true);}
+  else if(action==='assist'){if(game.phase==='playing')game.toggleAssist();}
+  else if(action==='pause')game.togglePause();
+  else if(action==='stop'){stopGame();return;}
+  else if(action==='restart'){const assist=game.assist;game.start(0,assist);visit(0,true);}
+  else if(action==='launch'&&game.launch()){
+    visit(-1,true);if(session)vrGuide.hide();else setOrientation([0,4.65,-2]);effects?.trigger(0,true);gameTone(true,true);
+  }
+  renderGame();
+}
+function renderGame(){
+  const view=game.view();vrGuide?.setGame(game.active?view:null);$('game-hud').hidden=!game.active;document.body.classList.toggle('game-running',game.active);
+  if(!game.active){lastGameKey='';return;}
+  $('game-needle').style.left=(view.position*100)+'%';$('game-meter').classList.toggle('in-zone',view.inZone);
+  const key=JSON.stringify([view.phase,view.index,view.locks,view.score,view.feedback,view.assist,view.paused,view.cooldown>0]);if(key===lastGameKey)return;lastGameKey=key;
+  const ending=['ready','celebrating','complete'].includes(view.phase),action=gameAction(view);
+  $('game-hud').classList.toggle('celebrating',view.phase==='celebrating');
+  $('game-title').textContent=view.paused?'Пауза':view.phase==='ready'?'Все системы готовы':view.phase==='celebrating'?'Атлас пробуждается':view.phase==='complete'?'Атлас запущен':view.station.name;
+  $('game-count').textContent=view.charged+' / 4 СТАНЦИИ';$('game-score').textContent=String(view.score).padStart(4,'0');
+  $('game-instruction').textContent=ending?'Четыре источника энергии. Единый Атлас будущего.':view.station.hint;
+  $('game-feedback').textContent=view.paused?'Продолжите, когда будете готовы.':view.feedback;
+  $('game-meter').hidden=ending||view.paused;$('game-locks').hidden=ending;
+  $('game-zone').style.left=((view.target-view.width/2)*100)+'%';$('game-zone').style.width=(view.width*100)+'%';
+  [...$('game-locks').children].forEach((item,i)=>item.classList.toggle('done',i<view.locks[view.index]));$('game-locks').setAttribute('aria-label','Принято импульсов: '+view.locks[view.index]+' из 3');
+  document.querySelectorAll('[data-game-station]').forEach(button=>{const i=Number(button.dataset.gameStation);button.classList.toggle('current',i===view.index);button.classList.toggle('done',view.locks[i]===3);button.setAttribute('aria-pressed',String(i===view.index));button.textContent=(view.locks[i]===3?'✓ ':'')+String(i+1).padStart(2,'0');button.disabled=view.phase==='celebrating';});
+  $('game-action').textContent=action.label;$('game-action').disabled=!!action.disabled;
+  $('game-assist').textContent=view.assist?'Режим: спокойно':'Режим: точно';$('game-assist').setAttribute('aria-pressed',String(view.assist));$('game-assist').disabled=ending;
+  $('game-pause').textContent=view.paused?'Продолжить':'Пауза';$('game-pause').setAttribute('aria-pressed',String(view.paused));$('game-pause').disabled=view.phase==='complete';
+}
+document.querySelectorAll('[data-game]').forEach(button=>button.onclick=()=>startGame());$('viewer-game').onclick=()=>startGame();
+$('game-action').onclick=()=>runGameAction(gameAction(game.view()).action);$('game-close').onclick=()=>stopGame();$('game-assist').onclick=()=>runGameAction('assist');$('game-pause').onclick=()=>runGameAction('pause');
+document.querySelectorAll('[data-game-station]').forEach(button=>button.onclick=()=>runGameAction('station:'+button.dataset.gameStation));
+
 function applyQuality(){
   $('quality').value=quality;if(!renderer)return;
-  renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='smooth'?1:1.5));renderer.shadowMap.enabled=quality==='detail'&&!session;resize();
+  if(!session)renderer.setPixelRatio(Math.min(devicePixelRatio,quality==='smooth'?1:1.5));renderer.shadowMap.enabled=quality==='detail'&&!session;effects?.configure(quality,!!session);resize();
 }
 $('quality').value=quality;$('quality').onchange=()=>{quality=$('quality').value;applyQuality();};
 $('open-settings').onclick=()=>openDialog($('settings-dialog'));
