@@ -57,7 +57,7 @@ export function buildWorld(){
   for(let x=-8;x<=8;x+=4)box([x,8,0],[.12,.15,28],bronze);
   box([0,8.15,0],[20,.05,28],new THREE.MeshBasicMaterial({color:'#c9d7c2',transparent:true,opacity:.26,side:THREE.DoubleSide}));
   // Central ring, banners and friezes.
-  torus(4.5,.18,[0,4,-13.35],bronze);torus(4.26,.035,[0,4,-13.28],glow);
+  torus(3.65,.18,[0,4,-13.35],bronze);torus(3.46,.035,[0,4,-13.28],glow);
   for(const x of [-6.2,6.2]){box([x,4.3,-13.35],[1.6,6.4,.07],red);box([x,7.56,-13.25],[1.9,.09,.09],bronze);textPlate(['МИК','НАУКА','ИСКУССТВО'],1.28,2.3,[x,4.6,-13.25],root,{bg:'#873b2c',border:'#bd9b58',color:'#ecd9af'});}
   textPlate(['АТЛАС БУДУЩЕГО','ИСТОРИЯ ИДЕЙ · ТЕХНОЛОГИИ · ЧЕЛОВЕК'],7.4,1.0,[0,7.2,-13.02]);
   textPlate(['ВИРТУАЛЬНЫЙ ПАВИЛЬОН МИК','Луч + курок по полу — перемещение','Правый стик — поворот'],5,1.2,[0,3.2,13.62]).rotation.y=Math.PI;
