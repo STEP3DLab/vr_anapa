@@ -1,0 +1,29 @@
+{
+  "title": "Bust of Lenin (3D scan)",
+  "creator": "fractalnoise",
+  "source": "https://www.printables.com/model/662942-bust-of-lenin-3d-scan",
+  "license": "CC BY-NC-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "changes": "Decimated from 393084 to 60000 triangles; transformed to Y-up, front +Z, centered base; normalized height 1; bronze PBR material added.",
+  "download": "Public Download button on https://www.printables.com/model/662942-bust-of-lenin-3d-scan/files; no account/sign-in used.",
+  "bounds": [
+    [
+      -0.23188770763923858,
+      -3.544570716864704e-18,
+      -0.26433288982183456
+    ],
+    [
+      0.23188770763923858,
+      1.0,
+      0.26433288982183467
+    ]
+  ],
+  "height": 1,
+  "front_axis": "+Z",
+  "up_axis": "+Y",
+  "faces": 60000,
+  "original_stl_sha256": "f24a3646ee1e51314037505001036593827896d74ac3025d6426510f34708593",
+  "source_file_name": "bust of lenin v2.stl",
+  "source_file_size": 19654284,
+  "author_url": "https://www.printables.com/@fractalnoise"
+}

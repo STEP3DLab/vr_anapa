@@ -1,10 +1,13 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=2.0';
+import {installAtmosphere} from './atmosphere.js?v=2.0';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=2.0';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let world,renderer,camera,rig,active=false,selected=-1,yaw=0,pitch=0,initialized=false,xrSupported=false,session=null,sessionStarting=false;
+let initPromise=null,openToken=0;
 let keys=new Set(),drag=null,lastTime=0,toastTimer,moveTimer,returnFocus=null,audioContext,audioGain,soundOn=false,snapReady=true;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),direction=new THREE.Vector3(),matrix=new THREE.Matrix4();
 const controllers=[],teleportHits=new Map();
@@ -28,7 +31,7 @@ $('close-panel').onclick=()=>{$('object-panel').hidden=true;};
 
 function resize(){if(!renderer||!active)return;const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
 window.addEventListener('resize',resize);
-function init(){
+async function init(){
   world=buildWorld();
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
@@ -45,20 +48,23 @@ function init(){
     });controllers.push(controller);
   }
   renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();toast('Графический контекст потерян. Перезагрузите страницу, чтобы восстановить экспозицию.');renderer.setAnimationLoop(null);});
-  setupPointer();initialized=true;
+  setupPointer();installAtmosphere(renderer,world);
+  await Promise.all([loadSculpture(world,progress=>{$('loading-detail').textContent=progress?'Загружаем скульптуру · '+Math.round(progress*100)+'%':'Загружаем скульптуру…';}),installCollegeMark(world)]);
+  initialized=true;
 }
 async function enter(id){
-  returnFocus=document.activeElement;active=true;experience.hidden=false;landing.inert=true;landing.setAttribute('aria-hidden','true');document.body.classList.add('in-experience');$('loading').hidden=initialized;
+  const token=++openToken;returnFocus=document.activeElement;active=true;experience.hidden=false;landing.inert=true;landing.setAttribute('aria-hidden','true');document.body.classList.add('in-experience');$('loading').hidden=initialized;
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   try{
-    if(!initialized)init();resize();visit(id,true);renderer.setAnimationLoop(frame);$('loading').hidden=true;$('exit-viewer').focus();
+    if(!initPromise)initPromise=init();await initPromise;if(token!==openToken||!active)return;resize();visit(id,true);renderer.setAnimationLoop(frame);$('loading').hidden=true;$('exit-viewer').focus();
     if(matchMedia('(pointer: coarse)').matches)$('hint').textContent='Потяните экран для обзора · Выберите объект внизу';
   }catch(error){
-    console.error(error);$('loading').replaceChildren();const msg=document.createElement('p');msg.textContent='Не удалось открыть 3D-зал. Нужен браузер с поддержкой WebGL 2.';const button=document.createElement('button');button.className='button cream';button.textContent='Вернуться к экспозиции';button.onclick=exit;$('loading').append(msg,button);$('loading').hidden=false;
+    if(token!==openToken||!active)return;
+    console.error(error);$('loading').replaceChildren();const msg=document.createElement('p');msg.textContent='Не удалось загрузить 3D-зал. Проверьте соединение и поддержку WebGL 2 в браузере. Перезагрузите страницу и попробуйте ещё раз.';const button=document.createElement('button');button.className='button cream';button.textContent='Вернуться к экспозиции';button.onclick=exit;$('loading').append(msg,button);$('loading').hidden=false;
   }
 }
 async function exit(){
-  clearTimeout(moveTimer);keys.clear();drag=null;
+  ++openToken;clearTimeout(moveTimer);keys.clear();drag=null;
   if(session){try{await session.end();}catch{}}
   active=false;renderer?.setAnimationLoop(null);experience.hidden=true;landing.inert=false;landing.removeAttribute('aria-hidden');document.body.classList.remove('in-experience');
   if(audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);
@@ -69,7 +75,7 @@ function setOrientation(target){const v=new THREE.Vector3(...target).sub(new THR
 function updatePanel(id){
   selected=id;document.querySelectorAll('[data-route]').forEach(b=>{const on=Number(b.dataset.route)===id;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on));});
   $('object-panel').hidden=id<0;
-  if(id>=0){const e=EXHIBITS[id];$('object-category').textContent=e.category;$('object-title').textContent=e.title;$('object-description').textContent=e.description;$('object-fact').textContent=e.fact;}
+  if(id>=0){const e=EXHIBITS[id];$('object-category').textContent=e.category;$('object-title').textContent=e.title;$('object-description').textContent=e.description;$('object-fact').textContent=e.fact;$('object-source').hidden=id!==0;}
 }
 function visit(id,immediate=false){
   if(!initialized&& !world)return;
@@ -111,7 +117,7 @@ function frame(time){
     world.marker.visible=false;
     for(const controller of controllers){
       if(!controller.visible)continue;
-      matrix.identity().extractRotation(controller.matrixWorld);raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);raycaster.ray.direction.set(0,0,-1).applyMatrix4(matrix);
+      world.scene.updateMatrixWorld(true);matrix.identity().extractRotation(controller.matrixWorld);raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);raycaster.ray.direction.set(0,0,-1).applyMatrix4(matrix);
       const objectHit=raycaster.intersectObjects(world.interactive,true)[0];const floorHit=raycaster.intersectObject(world.floor)[0];
       if(objectHit&&(!floorHit||objectHit.distance<floorHit.distance)){teleportHits.set(controller,{type:'exhibit',id:exhibitId(objectHit.object)});controller.userData.line.scale.z=objectHit.distance;}
       else if(floorHit&&isWalkable(floorHit.point.x,floorHit.point.z)){teleportHits.set(controller,{type:'floor',point:floorHit.point});world.marker.position.copy(floorHit.point);world.marker.position.y=.04;world.marker.visible=true;controller.userData.line.scale.z=floorHit.distance;}
@@ -139,9 +145,9 @@ $('enter-vr').onclick=()=>{
   // Request synchronously from the user gesture: no dynamic import or awaited check before this call.
   navigator.xr.requestSession('immersive-vr',{requiredFeatures:['local-floor'],optionalFeatures:['bounded-floor']}).then(async xrSession=>{
     session=xrSession;
-    session.addEventListener('end',()=>{session=null;sessionStarting=false;document.body.classList.remove('xr-active');rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);world.marker.visible=false;teleportHits.clear();$('enter-vr').textContent='Войти в VR';visit(selected,true);resize();});
+    session.addEventListener('end',()=>{session=null;sessionStarting=false;document.body.classList.remove('xr-active');renderer.shadowMap.enabled=true;rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);world.marker.visible=false;teleportHits.clear();$('enter-vr').textContent='Войти в VR';visit(selected,true);resize();});
     rig.rotation.set(0,0,0);camera.rotation.set(0,0,0);camera.position.set(0,0,0);rig.position.set(0,0,11.7);
-    await renderer.xr.setSession(session);document.body.classList.add('xr-active');$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
+    renderer.shadowMap.enabled=false;await renderer.xr.setSession(session);document.body.classList.add('xr-active');$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
   }).catch(async error=>{console.error(error);sessionStarting=false;if(session){try{await session.end();}catch{}session=null;}toast(error.name==='NotAllowedError'?'VR не запущен: доступ отклонён. Разрешите погружение в браузере шлема.':'Не удалось включить VR. Продолжайте просмотр в 3D или попробуйте браузер шлема.');});
 };
 $('sound').onclick=async()=>{
@@ -151,3 +157,7 @@ $('sound').onclick=async()=>{
     await audioContext.resume();soundOn=!soundOn;audioGain.gain.setTargetAtTime(soundOn ? 0.045 : 0,audioContext.currentTime,.3);$('sound').textContent=soundOn?'Звук вкл.':'Звук выкл.';$('sound').setAttribute('aria-pressed',String(soundOn));
   }catch{toast('Браузер не разрешил воспроизведение звука.');}
 };
+
+$('lighting').onclick=()=>{if(!world)return;world.setLighting(!world.dayMode);$('lighting').textContent=world.dayMode?'Свет: день':'Свет: вечер';$('lighting').setAttribute('aria-pressed',String(!world.dayMode));};
+$('open-credits').onclick=()=>{$('credits-dialog').showModal();};
+$('close-credits').onclick=()=>{$('credits-dialog').close();};
