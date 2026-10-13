@@ -9,7 +9,7 @@ document.addEventListener('click',event=>{
   event.preventDefault();event.stopImmediatePropagation();queued=button;
   panel.hidden=false;retry.hidden=true;title.textContent='Подключаем павильон…';
   if(pending)return;
-  pending=import('./app.js?v=6.1').then(()=>{
+  pending=import('./app.js?v=6.2').then(()=>{
     ready=true;panel.hidden=true;const action=queued;queued=null;
     if(action?.isConnected)action.click();
   }).catch(error=>{

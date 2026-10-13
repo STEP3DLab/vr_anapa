@@ -39,3 +39,5 @@ h1,h2,.exhibit-card h3{font-family:Oswald,'Arial Narrow',Arial,sans-serif}
 .engine-loading{position:fixed;z-index:100;bottom:25px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 32px);display:flex;align-items:center;gap:20px;padding:17px 21px;background:#18322e;color:#ede0c1;border:1px solid #c29b65;box-shadow:0 10px 40px #0005;font-size:13px}.engine-loading button{background:transparent;color:#dec398;border-bottom:1px solid #be9a5b;padding:7px 0;white-space:nowrap;font-size:12px}.in-experience .reactor-ring{animation-play-state:paused}@media(max-width:700px){.engine-loading{flex-wrap:wrap;gap:8px 20px;bottom:14px;font-size:12px}.engine-loading>span{flex-basis:100%}}
 
 .script-note{margin:0;padding:18px 24px;background:#eee5cf;color:#263a33;text-align:center;font-size:14px}
+
+.quality-state{margin:-6px 0 12px;padding:10px 13px;border-left:2px solid #9b633b;background:#dfd5be66;color:#54604d;font-size:11px}.setting-button:disabled{opacity:.5;cursor:default}

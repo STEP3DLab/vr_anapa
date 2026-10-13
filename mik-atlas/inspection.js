@@ -2,7 +2,7 @@ import * as THREE from './vendor/three.module.min.js';
 
 export class Inspection {
   constructor(world){
-    this.world=world;this.active=false;this.index=-1;this.dirty=true;
+    this.world=world;this.active=false;this.index=-1;this.dirty=true;this.shadowDirty=true;
     this.scene=new THREE.Scene();this.scene.background=new THREE.Color('#18211c');
     this.scene.environment=world.scene.environment;this.scene.environmentIntensity=.85;
     this.camera=new THREE.PerspectiveCamera(42,1,.03,70);
@@ -21,7 +21,7 @@ export class Inspection {
     this.subject.scale.setScalar(scale);this.subject.updateMatrixWorld(true);bounds=new THREE.Box3().setFromObject(this.subject);
     const center=bounds.getCenter(new THREE.Vector3());this.subject.position.copy(center).multiplyScalar(-1);this.subject.updateMatrixWorld(true);
     bounds=new THREE.Box3().setFromObject(this.subject);this.radius=bounds.getBoundingSphere(new THREE.Sphere()).radius;this.height=bounds.max.y-bounds.min.y;
-    this.floor.position.y=bounds.min.y-.06;this.index=index;this.active=true;this.reset();return true;
+    this.floor.position.y=bounds.min.y-.06;this.index=index;this.active=true;this.shadowDirty=true;this.reset();return true;
   }
   fitDistance(){
     const vertical=THREE.MathUtils.degToRad(this.camera.fov)/2,horizontal=Math.atan(Math.tan(vertical)*this.camera.aspect);

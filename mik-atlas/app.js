@@ -1,16 +1,17 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=6.1';
-import {installAtmosphere} from './atmosphere.js?v=6.1';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=6.1';
-import {createTour,floorPoint} from './tour.js?v=6.1';
-import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=6.1';
-import {Inspection} from './inspection.js?v=6.1';
-import {installMuseumGraphics} from './museum.js?v=6.1';
-import {VRGuide} from './vr-guide.js?v=6.1';
-import {ResonanceGame,gameAction} from './game.js?v=6.1';
-import {AtlasEffects} from './effects.js?v=6.1';
-import {CinematicRenderer} from './cinematic.js?v=6.1';
-import {renderPixelRatio} from './render-budget.js?v=6.1';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=6.2';
+import {installAtmosphere} from './atmosphere.js?v=6.2';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=6.2';
+import {createTour,floorPoint} from './tour.js?v=6.2';
+import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=6.2';
+import {Inspection} from './inspection.js?v=6.2';
+import {installMuseumGraphics} from './museum.js?v=6.2';
+import {VRGuide} from './vr-guide.js?v=6.2';
+import {ResonanceGame,gameAction} from './game.js?v=6.2';
+import {AtlasEffects} from './effects.js?v=6.2';
+import {CinematicRenderer} from './cinematic.js?v=6.2';
+import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=6.2';
+import {renderPixelRatio} from './render-budget.js?v=6.2';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
@@ -21,7 +22,9 @@ let vrGuide=null,xrRequestToken=0,xrReady=false,pendingSpawn=null;
 const game=new ResonanceGame();let effects=null,cinematic=null,gamePreviousDay=true,lastGameKey='';
 let exhibitPicker=null,contextLost=false,rebuildPromise=null,lastShadow=-Infinity;
 let initPromise=null,openToken=0,pendingEntry={id:-1,guided:false};
-let quality=matchMedia('(pointer: coarse)').matches?'smooth':'detail';
+const adaptive=new AdaptiveQuality({coarse:matchMedia('(pointer: coarse)').matches});
+let quality='auto';try{quality=readQuality(window.localStorage);}catch{}
+let ownsFullscreen=false,fullscreenBusy=false,windowFocused=document.hasFocus?.()??true;
 const tour=createTour(EXHIBITS.length);
 const questions=['Какие черты лица и детали поверхности делают портрет узнаваемым? Обойдите скульптуру и сравните силуэт с разных сторон.','Почему простая сфера и тонкие антенны стали таким сильным визуальным символом? Рассмотрите места соединения деталей.','Что эта скульптура помогает представить — и что скрывает? Чем научная модель отличается от художественного образа?','Какую задачу вы поручили бы роботу в колледже? Найдите детали, которые подсказывают его возможные функции.'];
 let keys=new Set(),drag=null,lastTime=0,toastTimer,moveTimer,returnFocus=null,audioContext,audioGain,soundOn=false,snapReady=true;
@@ -35,7 +38,7 @@ async function checkXR(){
   $('enter-vr').title=xrSupported?'Начать погружение':'Информация о входе в VR';
 }
 checkXR();
-function openDialog(element){keys.clear();drag=null;if(!element.open)element.showModal();}
+function openDialog(element){adaptive.reset();keys.clear();drag=null;if(!element.open)element.showModal();}
 function showHelp(){$('settings-dialog').close();openDialog(dialog);}
 $('help').onclick=showHelp;$('hero-vr').onclick=showHelp;
 document.querySelectorAll('[data-close-dialog]').forEach(b=>b.onclick=()=>dialog.close());
@@ -46,19 +49,20 @@ document.querySelectorAll('[data-route]').forEach(b=>b.onclick=()=>visit(Number(
 $('next-object').onclick=()=>visit((selected+1)%EXHIBITS.length);
 $('close-panel').onclick=()=>{$('object-panel').hidden=true;document.body.classList.remove('panel-expanded');};
 
+function graphicsProfile(){return quality==='auto'?adaptive.profile:QUALITY_PROFILES[quality==='detail'?0:2];}
 function resize(){
   if(!renderer||!active||session)return;const w=Math.max(1,viewport.clientWidth),h=Math.max(1,viewport.clientHeight);
-  const ratio=renderPixelRatio(w,h,devicePixelRatio,quality,Math.min(4096,renderer.capabilities?.maxTextureSize||4096));
+  const ratio=renderPixelRatio(w,h,devicePixelRatio,graphicsProfile(),Math.min(4096,renderer.capabilities?.maxTextureSize||4096));
   renderer.setPixelRatio(ratio);renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();inspection?.resize(w,h);
 }
-function syncAnimationLoop(){if(!renderer)return;lastTime=0;renderer.setAnimationLoop(active&&initialized&&!contextLost&&(!document.hidden||session)?frame:null);}
-window.addEventListener('resize',resize);
+function syncAnimationLoop(){adaptive.reset();if(!renderer)return;lastTime=0;renderer.setAnimationLoop(active&&initialized&&!contextLost&&(!document.hidden||session)?frame:null);}
+window.addEventListener('resize',()=>{adaptive.reset();resize();});
 async function init(){
   world=buildWorld();
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
   renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.xr.enabled=true;renderer.xr.cameraAutoUpdate=false;renderer.xr.setReferenceSpaceType('local-floor');renderer.xr.setFramebufferScaleFactor(1);
-  viewport.appendChild(renderer.domElement);
+  renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','3D-экспозиция. WASD — движение, стрелки — обзор, F — полный экран.');viewport.appendChild(renderer.domElement);
   camera=new THREE.PerspectiveCamera(65,1,.08,70);camera.position.set(0,1.65,0);camera.rotation.order='YXZ';rig=new THREE.Group();rig.add(camera);world.scene.add(rig);
   const marker=new THREE.Mesh(new THREE.RingGeometry(.22,.28,36),new THREE.MeshBasicMaterial({color:'#ffce80',side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.visible=false;world.scene.add(marker);world.marker=marker;
   for(let i=0;i<2;i++){
@@ -132,15 +136,38 @@ function rebuildGraphics(){
 async function exit(){
   if(game.active)stopGame(false);
   if(inspection?.active)closeInspection(false);
-  ++openToken;++xrRequestToken;active=false;sessionStarting=false;clearTimeout(moveTimer);keys.clear();drag=null;tour.stop();document.body.classList.remove('panel-expanded');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
-  if(session)await endVR();
+  const exitToken=++openToken;++xrRequestToken;active=false;sessionStarting=false;clearTimeout(moveTimer);keys.clear();drag=null;tour.stop();document.body.classList.remove('panel-expanded');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
+  if(session)await endVR();if(exitToken!==openToken)return;
   $('enter-vr').disabled=false;$('enter-vr').textContent='Войти в VR';
-  active=false;renderer?.setAnimationLoop(null);experience.hidden=true;landing.inert=false;landing.removeAttribute('aria-hidden');document.body.classList.remove('in-experience');
+  active=false;renderer?.setAnimationLoop(null);await leaveFullscreen();if(exitToken!==openToken)return;experience.hidden=true;landing.inert=false;landing.removeAttribute('aria-hidden');document.body.classList.remove('in-experience');
   cinematic?.release();
   if(audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);
   soundOn=false;$('sound').textContent='Звук выкл.';$('sound').setAttribute('aria-pressed','false');returnFocus?.focus();
 }
 $('exit-viewer').onclick=exit;
+function syncFullscreen(){
+  const available=!!document.fullscreenEnabled&&!!document.documentElement?.requestFullscreen;
+  $('fullscreen').disabled=!available||fullscreenBusy||!!session;
+  const on=document.fullscreenElement===document.documentElement;
+  $('fullscreen').textContent=on?'Выйти из полного экрана':'На весь экран';$('fullscreen').setAttribute('aria-pressed',String(on));
+  $('fullscreen-note').textContent=available?'Клавиша F — переключить. Esc — вернуть окно.':'Этот браузер не предоставляет полноэкранный режим.';
+  if(!document.fullscreenElement)ownsFullscreen=false;
+}
+async function toggleFullscreen(){
+  if(!active||!initialized||session||contextLost||fullscreenBusy||!document.fullscreenEnabled)return;
+  const token=openToken;fullscreenBusy=true;syncFullscreen();$('settings-dialog').close();
+  try{
+    if(document.fullscreenElement===document.documentElement){await document.exitFullscreen();ownsFullscreen=false;}
+    else{await document.documentElement.requestFullscreen();ownsFullscreen=true;if(token!==openToken||!active||session){await document.exitFullscreen();ownsFullscreen=false;}}
+  }catch{toast('Браузер не разрешил полный экран. Просмотр доступен в обычном окне.');}
+  finally{fullscreenBusy=false;syncFullscreen();resize();if(active&&!session)(inspection?.active?$('close-inspection'):game.active?$('game-action'):renderer.domElement)?.focus();}
+}
+async function leaveFullscreen(){
+  if(!ownsFullscreen||document.fullscreenElement!==document.documentElement)return;
+  try{await document.exitFullscreen();ownsFullscreen=false;}catch{}
+}
+$('fullscreen').onclick=toggleFullscreen;
+document.addEventListener('fullscreenchange',()=>{syncFullscreen();resize();});syncFullscreen();
 function setOrientation(target){const v=new THREE.Vector3(...target).sub(new THREE.Vector3(rig.position.x,1.65,rig.position.z));yaw=Math.atan2(-v.x,-v.z);pitch=Math.atan2(v.y,Math.hypot(v.x,v.z));camera.rotation.set(pitch,yaw,0,'YXZ');}
 function updatePanel(id){
   if(game.active&&id>=0)game.select(id);
@@ -179,6 +206,8 @@ function setupPointer(){
 function exhibitId(object){let o=object;while(o){if(Number.isInteger(o.userData.exhibit))return o.userData.exhibit;o=o.parent;}return null;}
 window.addEventListener('keydown',e=>{
   if(!active||!initialized||contextLost||session||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;
+  if(e.code==='Escape'&&document.fullscreenElement===document.documentElement){e.preventDefault();void leaveFullscreen();return;}
+  if(e.code==='KeyF'){e.preventDefault();if(!e.repeat)void toggleFullscreen();return;}
   if(game.active&&e.code==='Space'&&!e.target.matches('button')){e.preventDefault();if(!e.repeat)runGameAction(gameAction(game.view()).action);return;}
   if(inspection?.active){
     if(e.code==='Escape'){closeInspection();return;}
@@ -190,13 +219,15 @@ window.addEventListener('keydown',e=>{
   if(/^Digit[1-4]$/.test(e.code))visit(Number(e.code.slice(-1))-1);
   if(e.code==='Digit0')visit(-1);if(e.code==='Escape'&&!session)exit();
 });
-window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();drag=null;});
+window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();drag=null;windowFocused=false;adaptive.reset();});window.addEventListener('focus',()=>{windowFocused=true;adaptive.reset();});
 document.addEventListener('visibilitychange',()=>{keys.clear();drag=null;syncAnimationLoop();if(document.hidden&&audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);else if(soundOn&&audioGain&&(!session||session.visibilityState==='visible'))audioGain.gain.setTargetAtTime(.045,audioContext.currentTime,.3);});
 
 function frame(time,xrFrame){
   if(!active||!initialized||contextLost||document.hidden&&!session)return;
-  const dt=Math.min((time-lastTime)/1000||0,.04);lastTime=time;
-  if(inspection?.active){if(inspection.dirty){renderer.shadowMap.needsUpdate=true;renderer.render(inspection.scene,inspection.camera);inspection.dirty=false;}return;}
+  const elapsed=lastTime?time-lastTime:0,dt=Math.min(elapsed/1000||0,.04);lastTime=time;
+  const blocked=!!document.querySelector('dialog[open]');
+  if(adaptive.sample(elapsed,quality==='auto'&&windowFocused&&!session&&!inspection?.active&&!blocked)){applyQuality();}
+  if(inspection?.active){if(inspection.dirty){renderer.shadowMap.needsUpdate=inspection.shadowDirty;renderer.render(inspection.scene,inspection.camera);inspection.dirty=false;inspection.shadowDirty=false;}return;}
   if(renderer.shadowMap.enabled&&(time-lastShadow>=50)){renderer.shadowMap.needsUpdate=true;lastShadow=time;}
   if(!reduced){const t=time*.001;world.animated.forEach(a=>{if(a.kind==='orbit')a.group.rotation.z+=dt*a.speed;else if(a.kind==='sputnik')a.group.rotation.y=Math.sin(t*.17)*.18;else if(a.kind==='robot')a.group.rotation.y=Math.sin(t*.35)*.12;});}
   if(session){
@@ -235,12 +266,12 @@ function frame(time,xrFrame){
     const f=Number(keys.has('KeyW'))-Number(keys.has('KeyS')),s=Number(keys.has('KeyD'))-Number(keys.has('KeyA'));
     if(f||s){const n=Math.hypot(f,s),speed=dt*2.8/n;const x=rig.position.x+(-Math.sin(yaw)*f+Math.cos(yaw)*s)*speed,z=rig.position.z+(-Math.cos(yaw)*f-Math.sin(yaw)*s)*speed;if(isWalkable(x,rig.position.z))rig.position.x=x;if(isWalkable(rig.position.x,z))rig.position.z=z;}
   }
-  const simulate=(session?canUseXR():!document.hidden)&&!document.querySelector('dialog[open]');
+  const simulate=(session?canUseXR():!document.hidden)&&!blocked;
   const previousPhase=game.phase;if(simulate)game.tick(dt);
   if(game.active){renderGame();if(previousPhase==='celebrating'&&game.phase==='complete'&&session)showVRGuide();}
   effects?.update(simulate?dt:0,camera,game);
   if($('map-dialog').open)updateMapPosition();
-  if(cinematic)cinematic.render(world.scene,camera,{detail:quality==='detail',xr:!!session,energy:effects?.energy||0});else renderer.render(world.scene,camera);
+  if(cinematic)cinematic.render(world.scene,camera,{detail:graphicsProfile().quality==='detail',xr:!!session,energy:effects?.energy||0});else renderer.render(world.scene,camera);
 }
 
 function syncXRCamera(){rig.updateMatrixWorld(true);renderer.xr.updateCamera(camera);}
@@ -326,7 +357,7 @@ $('enter-vr').onclick=()=>{
     rig.rotation.set(0,0,0);camera.rotation.set(0,0,0);camera.position.set(0,0,0);rig.position.set(0,0,0);renderer.shadowMap.enabled=false;cinematic?.release();
     await renderer.xr.setSession(xrSession);
     if(token!==xrRequestToken||!active||session!==xrSession){await xrSession.end();return;}
-    document.body.classList.add('xr-active');effects?.configure(quality,true);$('enter-vr').disabled=false;$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
+    document.body.classList.add('xr-active');effects?.configure(graphicsProfile().quality,true);$('enter-vr').disabled=false;$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
   }).catch(failed);
 };
 $('sound').onclick=async()=>{
@@ -428,11 +459,13 @@ $('game-action').onclick=()=>runGameAction(gameAction(game.view()).action);$('ga
 document.querySelectorAll('[data-game-station]').forEach(button=>button.onclick=()=>runGameAction('station:'+button.dataset.gameStation));
 
 function applyQuality(){
-  $('quality').value=quality;if(!renderer)return;
-  renderer.shadowMap.enabled=quality==='detail'&&!session;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;lastShadow=-Infinity;
-  if(quality==='smooth'||session)cinematic?.release();if(inspection)inspection.dirty=true;effects?.configure(quality,!!session);resize();
+  const profile=graphicsProfile();$('quality').value=quality;
+  $('quality-state').textContent=quality==='auto'?'Авто · '+profile.label:'Выбран режим «'+profile.label+'»';
+  if(!renderer)return;
+  renderer.shadowMap.enabled=profile.quality==='detail'&&!session;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;lastShadow=-Infinity;
+  if(profile.quality==='smooth'||session)cinematic?.release();if(inspection){inspection.dirty=true;inspection.shadowDirty=true;}effects?.configure(profile.quality,!!session);resize();
 }
-$('quality').value=quality;$('quality').onchange=()=>{quality=$('quality').value;applyQuality();};
+applyQuality();$('quality').onchange=()=>{const value=$('quality').value;if(!['auto','detail','smooth'].includes(value))return;quality=value;adaptive.reset();try{writeQuality(window.localStorage,quality);}catch{}applyQuality();};
 $('open-settings').onclick=()=>openDialog($('settings-dialog'));
 document.querySelectorAll('[data-dismiss]').forEach(b=>b.onclick=()=>$(b.dataset.dismiss).close());
 
@@ -463,7 +496,7 @@ for(const button of document.querySelectorAll('[data-move]')){
 
 
 function openInspection(index){
-  if(!initialized||session||!inspection.open(index))return;
+  if(!initialized||session||contextLost||!inspection.open(index))return;adaptive.reset();
   clearTimeout(moveTimer);keys.clear();drag=null;inspectionPointers.clear();$('fade').classList.remove('visible');
   inspection.resize(viewport.clientWidth,viewport.clientHeight);inspection.reset();
   $('inspection-title').textContent=EXHIBITS[index].title;$('inspection-category').textContent=String(index+1).padStart(2,'0')+' / ДЕТАЛЬНЫЙ ОСМОТР';
@@ -471,7 +504,7 @@ function openInspection(index){
   $('inspection-ui').hidden=false;document.body.classList.add('inspection-active');$('close-inspection').focus();
 }
 function closeInspection(returnToObject=true){
-  if(!inspection?.active)return;const index=inspection.index;inspection.close();inspectionPointers.clear();keys.clear();drag=null;
+  if(!inspection?.active)return;adaptive.reset();const index=inspection.index;inspection.close();inspectionPointers.clear();keys.clear();drag=null;
   $('inspection-ui').hidden=true;document.body.classList.remove('inspection-active');
   if(returnToObject){visit(index,true);$('inspect-exhibit').focus();}
 }
@@ -495,7 +528,7 @@ document.querySelectorAll('[data-inspect]').forEach(button=>button.onclick=async
 $('save-inspection').onclick=async()=>{
   if(!inspection?.active)return;const button=$('save-inspection'),index=inspection.index;button.disabled=true;button.textContent='Сохраняем…';
   try{
-    renderer.render(inspection.scene,inspection.camera);
+    renderer.shadowMap.needsUpdate=inspection.shadowDirty;renderer.render(inspection.scene,inspection.camera);inspection.shadowDirty=false;
     const source=renderer.domElement,canvas=document.createElement('canvas'),width=Math.max(800,Math.min(1800,source.width)),height=Math.round(source.height/source.width*width);
     canvas.width=width;canvas.height=height+180;const ctx=canvas.getContext('2d');ctx.drawImage(source,0,0,width,height);ctx.fillStyle='#eee6d5';ctx.fillRect(0,height,width,180);
     ctx.fillStyle='#8f3929';ctx.font='bold 14px Arial';ctx.fillText('МИК / АТЛАС БУДУЩЕГО / ОБЪЕКТ '+String(index+1).padStart(2,'0'),30,height+30);

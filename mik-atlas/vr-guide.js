@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {gameAction} from './game.js?v=6.1';
+import {gameAction} from './game.js?v=6.2';
 
 const W=1024,H=896,INK='#263a33',RED='#963e2e',PAPER='#efe5cf';
 
