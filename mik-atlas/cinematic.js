@@ -26,18 +26,18 @@ export class CinematicRenderer{
   }
   render(scene,camera,{detail=true,xr=false,energy=0}={}){
     const r=this.renderer;
-    if(!this.available||!detail||xr||r.xr.isPresenting){r.render(scene,camera);return;}
+    if(!this.available||!detail||xr||r.xr.isPresenting){this.release();r.render(scene,camera);return;}
     this.resize();const previous=r.getRenderTarget();
     const pass=(material,target)=>{this.quad.material=material;r.setRenderTarget(target);r.render(this.scene,this.camera);};
     try{
       r.setRenderTarget(this.sceneTarget);r.render(scene,camera);
       this.extract.uniforms.tInput.value=this.sceneTarget.texture;pass(this.extract,this.a);
-      for(let i=0;i<2;i++){
-        this.blur.uniforms.tInput.value=this.a.texture;this.blur.uniforms.uDirection.value.set((1+i)/this.a.width,0);pass(this.blur,this.b);
-        this.blur.uniforms.tInput.value=this.b.texture;this.blur.uniforms.uDirection.value.set(0,(1+i)/this.a.height);pass(this.blur,this.a);
-      }
+      // One wider separable blur replaces two pairs, preserving the broad glow radius.
+      this.blur.uniforms.tInput.value=this.a.texture;this.blur.uniforms.uDirection.value.set(2.236/this.a.width,0);pass(this.blur,this.b);
+      this.blur.uniforms.tInput.value=this.b.texture;this.blur.uniforms.uDirection.value.set(0,2.236/this.a.height);pass(this.blur,this.a);
       this.output.uniforms.tInput.value=this.sceneTarget.texture;this.output.uniforms.tBloom.value=this.a.texture;this.output.uniforms.uStrength.value=.38+energy*.17;pass(this.output,previous);
     }finally{r.setRenderTarget(previous);}
   }
+  release(){if(!this.available||this.width===0)return;for(const target of [this.sceneTarget,this.a,this.b])target.setSize(1,1);this.width=0;this.height=0;}
   dispose(){if(!this.available)return;for(const target of [this.sceneTarget,this.a,this.b])target.dispose();for(const material of [this.extract,this.blur,this.output])material.dispose();this.quad.geometry.dispose();}
 }

@@ -2,7 +2,7 @@ import * as THREE from './vendor/three.module.min.js';
 
 export class Inspection {
   constructor(world){
-    this.world=world;this.active=false;this.index=-1;
+    this.world=world;this.active=false;this.index=-1;this.dirty=true;
     this.scene=new THREE.Scene();this.scene.background=new THREE.Color('#18211c');
     this.scene.environment=world.scene.environment;this.scene.environmentIntensity=.85;
     this.camera=new THREE.PerspectiveCamera(42,1,.03,70);
@@ -32,6 +32,6 @@ export class Inspection {
   detail(){this.target.y=this.height*[.22,.25,0,.27][this.index];this.distance=this.fitDistance()*.58;this.elevation=.08;this.update();}
   orbit(dx,dy){this.theta-=dx*.006;this.elevation=THREE.MathUtils.clamp(this.elevation+dy*.005,-.12,1.15);this.update();}
   zoom(factor){if(!Number.isFinite(factor)||factor<=0)return;this.distance=THREE.MathUtils.clamp(this.distance*factor,this.radius*1.12,this.fitDistance()*1.5);this.update();}
-  update(){const level=this.distance*Math.cos(this.elevation);this.camera.position.set(this.target.x+Math.sin(this.theta)*level,this.target.y+Math.sin(this.elevation)*this.distance,this.target.z+Math.cos(this.theta)*level);this.camera.lookAt(this.target);this.camera.updateMatrixWorld(true);}
+  update(){this.dirty=true;const level=this.distance*Math.cos(this.elevation);this.camera.position.set(this.target.x+Math.sin(this.theta)*level,this.target.y+Math.sin(this.elevation)*this.distance,this.target.z+Math.cos(this.theta)*level);this.camera.lookAt(this.target);this.camera.updateMatrixWorld(true);}
   close(){this.active=false;this.subject.clear();}
 }

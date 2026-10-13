@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {gameAction} from './game.js?v=6.0';
+import {gameAction} from './game.js?v=6.1';
 
 const W=1024,H=896,INK='#263a33',RED='#963e2e',PAPER='#efe5cf';
 
@@ -33,7 +33,7 @@ export class VRGuide {
   setPage(page){this.page=page;this.hover=null;this.draw();}
   setHover(action){if(this.hover===action)return;this.hover=action;this.draw();}
   setGame(view){
-    const key=view?JSON.stringify([view.phase,view.index,view.locks,view.score,view.feedback,view.assist,view.paused,view.cooldown>0]):'';
+    const key=view?view.revision+':'+(view.cooldown>0):'';
     this.gameState=view;this.gameCursor.visible=!!view&&view.phase==='playing'&&view.locks[view.index]<3&&!view.paused;
     if(view){this.gameCursor.position.x=((48+928*view.position)/W-.5)*1.4;this.gameCursor.position.y=(.5-386/H)*1.4*H/W;this.gameCursor.material.color.set(view.inZone?'#fff3cf':'#e29869');}
     if(key!==this.gameKey){this.gameKey=key;this.draw();}

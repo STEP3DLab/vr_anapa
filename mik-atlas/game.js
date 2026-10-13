@@ -10,13 +10,13 @@ export class ResonanceGame{
   constructor(){this.reset();}
   reset(){this.phase='idle';this.index=0;this.locks=[0,0,0,0];this.attempts=0;this.score=0;this.time=0;this.clock=0;this.cooldown=0;this.finale=0;this.feedback='';this.assist=false;this.paused=false;this.revision=0;}
   get active(){return this.phase!=='idle';}
-  get charged(){return this.locks.filter(n=>n===3).length;}
+  get charged(){let count=0;for(const n of this.locks)if(n===3)count++;return count;}
   get target(){return STATIONS[this.index].centers[Math.min(2,this.locks[this.index])];}
   get position(){return this.assist?this.target:(Math.sin(this.clock*Math.PI*2)+1)/2;}
   get inZone(){return Math.abs(this.position-this.target)<=STATIONS[this.index].width/2;}
   start(index=0,assist=false){this.reset();this.phase='playing';this.index=Number.isInteger(index)&&index>=0&&index<4?index:0;this.assist=assist;this.feedback=assist?'Спокойный режим: три нажатия активируют станцию.':'Нажмите, когда указатель войдёт в светлую зону.';this.revision++;}
   stop(){this.phase='idle';this.revision++;}
-  select(index){if(!this.active||!Number.isInteger(index)||index<0||index>3)return;this.index=index;this.clock=0;this.cooldown=0;this.feedback=this.phase==='complete'?'Атлас запущен. Павильон снова полон энергии.':this.phase==='ready'?'Все четыре станции готовы. Запустите Атлас.':this.locks[index]===3?'Станция активирована. Выберите следующую.':this.assist?'Спокойный режим: три нажатия активируют станцию.':'Поймайте импульс в светлой зоне.';this.revision++;}
+  select(index){if(!this.active||!Number.isInteger(index)||index<0||index>3||index===this.index||this.phase==='celebrating')return;this.index=index;this.clock=0;this.feedback=this.phase==='complete'?'Атлас запущен. Павильон снова полон энергии.':this.phase==='ready'?'Все четыре станции готовы. Запустите Атлас.':this.locks[index]===3?'Станция активирована. Выберите следующую.':this.assist?'Спокойный режим: три нажатия активируют станцию.':'Поймайте импульс в светлой зоне.';this.revision++;}
   next(){return this.locks.findIndex(n=>n<3);}
   toggleAssist(){this.assist=!this.assist;this.feedback=this.assist?'Спокойный режим: три нажатия активируют станцию.':'Точный режим: дождитесь светлой зоны.';this.revision++;}
   togglePause(){this.paused=!this.paused;this.revision++;}
