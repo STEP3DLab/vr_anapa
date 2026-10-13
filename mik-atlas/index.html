@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#201e19">
+  <title>АТЛАС БУДУЩЕГО — VR-экспозиция МИК</title>
+  <meta name="description" content="Виртуальный павильон колледжа МИК. Советский ретрофутуризм, история идей и инженерия будущего. Исследуйте 3D-зал в браузере или VR-шлеме.">
+  <link rel="icon" href="./assets/emblem.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preload" as="image" href="./assets/pavilion.webp">
+</head>
+<body>
+<a class="skip" href="#main">К содержанию</a>
+<div id="landing">
+  <header class="header">
+    <a href="#" class="brand" aria-label="МИК — главная"><img src="./assets/emblem.svg" alt="" width="44" height="44"><span class="brand-name">МИК<span>ВИРТУАЛЬНЫЙ ПАВИЛЬОН</span></span></a>
+    <nav aria-label="Основная навигация"><a href="#exhibition">Экспозиция</a><a href="#visit">Как посетить</a><button class="nav-enter" data-enter>Войти в павильон <span>↗</span></button></nav>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-image" role="img" aria-label="Концепция советского павильона с бронзовым бюстом Ленина"></div><div class="hero-shade"></div>
+      <div class="hero-content">
+        <div class="eyebrow"><span class="red-line"></span> КОЛЛЕДЖ МИК · ЭКСПОЗИЦИЯ В VR</div>
+        <h1 id="hero-title">АТЛАС<br><span>БУДУЩЕГО</span><sup>01</sup></h1>
+        <p class="hero-tagline">Будущее, которое<br>когда-то представляли.</p>
+        <p class="hero-description">Шагните в мир больших идей.<br>Монументальная архитектура, энергия атома<br>и инженерная мечта советской эпохи.</p>
+        <div class="hero-actions"><button class="button primary" data-enter><span class="vr-icon" aria-hidden="true">◉—◉</span> Войти в экспозицию <span>↗</span></button><button class="text-button light" id="hero-vr">У меня VR-шлем <span>→</span></button></div>
+        <p class="micro hero-note">В БРАУЗЕРЕ ИЛИ В VR · БЕЗ УСТАНОВКИ</p>
+      </div>
+      <div class="vertical-note">ИСТОРИЯ ИДЕЙ / ТЕХНОЛОГИИ / ЧЕЛОВЕК</div>
+      <div class="hero-caption"><span class="caption-cross">+</span><div><span class="micro">ОБЪЕКТ 01</span><strong>Монумент эпохи</strong><span>Художественная концепция павильона</span></div></div>
+      <div class="hero-footer"><a href="#exhibition" class="micro">ИССЛЕДОВАТЬ ЭКСПОЗИЦИЮ <span>↓</span></a><span class="micro"><i></i> ДЕМОНСТРАЦИОННЫЙ ПРОТОТИП / V.1.0</span></div>
+    </section>
+    <section id="exhibition" class="exhibition section">
+      <div class="section-top"><span class="micro red">01 / ЭКСПОЗИЦИЯ</span><span class="micro">ЧЕТЫРЕ ОБЪЕКТА · ОДНО ПРОСТРАНСТВО</span></div>
+      <div class="section-heading"><h2>МЕЧТАТЬ.<br>ИССЛЕДОВАТЬ. СОЗДАВАТЬ.</h2><p>Необычный взгляд на знакомую эпоху.<br>Пройдите от монументального искусства<br>к технологиям, изменившим мир.</p></div>
+      <div class="exhibit-grid">
+        <button class="exhibit-card" data-exhibit="0"><div class="exhibit-art art-monument"><span class="object-number">01</span><div class="monument-silhouette"><div class="head"></div><div class="torso"></div><div class="pedestal"></div></div><span class="card-arrow">↗</span></div><span class="micro red">ИСТОРИЯ / ИСКУССТВО</span><h3>Монумент эпохи</h3><p>Ленин и язык монументального искусства.</p></button>
+        <button class="exhibit-card" data-exhibit="1"><div class="exhibit-art art-sputnik"><span class="object-number">02</span><div class="sputnik"><i></i><i></i><i></i><i></i><b></b></div><span class="card-arrow">↗</span></div><span class="micro red">КОСМОС / 1957</span><h3>За пределы Земли</h3><p>Первый спутник и начало космической эры.</p></button>
+        <button class="exhibit-card" data-exhibit="2"><div class="exhibit-art art-atom"><span class="object-number">03</span><div class="atom"><i></i><i></i><i></i><b></b></div><span class="card-arrow">↗</span></div><span class="micro red">НАУКА / ЭНЕРГИЯ</span><h3>Сила невидимого</h3><p>Атом как символ научного прогресса.</p></button>
+        <button class="exhibit-card" data-exhibit="3"><div class="exhibit-art art-robot"><span class="object-number">04</span><div class="robot"><b><i></i><i></i></b><span></span><em></em><em></em></div><span class="card-arrow">↗</span></div><span class="micro red">ИНЖЕНЕРИЯ / ФАНТАЗИЯ</span><h3>Человек и машина</h3><p>Ретрофутуристический робот-помощник.</p></button>
+      </div>
+    </section>
+    <section id="visit" class="visit section"><div class="section-top"><span class="micro">02 / ВАШ ВИЗИТ</span><span class="micro">ВХОД ОТКРЫТ</span></div><div class="visit-body"><h2>ПО ТУ СТОРОНУ<br>ЭКРАНА.</h2><div class="visit-options"><article><span class="visit-num">А</span><div><h3>На компьютере или телефоне</h3><p>Откройте павильон. Поворачивайте камеру мышью или пальцем. Выбирайте экспонаты внизу экрана.</p></div></article><article><span class="visit-num">Б</span><div><h3>В VR-шлеме</h3><p>Откройте эту страницу в браузере шлема. Войдите в павильон и нажмите «Войти в VR». Наведите луч на пол и нажмите курок для перемещения.</p></div></article><button class="button cream" data-enter>Начать путешествие <span>↗</span></button></div></div></section>
+  </main>
+  <footer class="footer"><div class="footer-brand">МИК <span>АТЛАС БУДУЩЕГО</span></div><p>Учебная VR-экспозиция · MVP, 2026<br>Авторская интерпретация советского ретрофутуризма.</p><a href="https://github.com/STEP3DLab/vr_anapa/tree/main/mik-atlas" target="_blank" rel="noopener">Исходный код ↗</a></footer>
+</div>
+<section id="experience" hidden aria-label="Интерактивный павильон">
+  <div id="viewport"></div>
+  <div class="viewer-top"><button class="viewer-button" id="exit-viewer">← <span>Вестибюль</span></button><span class="viewer-brand">МИК <i>/</i> АТЛАС БУДУЩЕГО</span><div class="viewer-tools"><button class="viewer-button" id="sound" aria-pressed="false" title="Включить атмосферный звук">Звук выкл.</button><button class="viewer-button" id="help" aria-label="Управление">?</button><button class="viewer-button vr-button" id="enter-vr">Войти в VR</button></div></div>
+  <div id="loading" role="status"><div class="loading-orbit"></div><span>ОТКРЫВАЕМ ПАВИЛЬОН</span><p>Настраиваем свет. Готовим экспонаты.</p></div>
+  <aside id="object-panel" class="object-panel" hidden><div class="panel-top"><span class="micro" id="object-category"></span><button id="close-panel" aria-label="Закрыть описание">×</button></div><h2 id="object-title"></h2><p id="object-description"></p><div id="object-fact"></div><button class="text-button" id="next-object">Следующий объект →</button></aside>
+  <div class="viewer-bottom"><p id="hint">Потяните экран для обзора · WASD для движения · 1–4 для выбора объекта</p><div class="route" role="group" aria-label="Перейти к экспонату"><button data-route="-1" class="active" aria-pressed="true">⌂ <span>Общий вид</span></button><button data-route="0" aria-pressed="false">01 <span>Ленин</span></button><button data-route="1" aria-pressed="false">02 <span>Космос</span></button><button data-route="2" aria-pressed="false">03 <span>Атом</span></button><button data-route="3" aria-pressed="false">04 <span>Робот</span></button></div></div>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <div id="fade" aria-hidden="true"></div>
+</section>
+<dialog id="help-dialog"><button class="dialog-close" data-close-dialog aria-label="Закрыть">×</button><span class="micro red">ПЕРЕД ПОСЕЩЕНИЕМ</span><h2>Добро пожаловать<br>в павильон.</h2><div class="help-rows"><p><b>Мышь / касание</b><span>Потяните, чтобы оглядеться. Нажмите на экспонат, чтобы открыть описание.</span></p><p><b>Клавиатура</b><span>WASD — движение, стрелки — поворот, 1–4 — экспонаты, 0 — общий вид, Esc — вестибюль.</span></p><p><b>VR-контроллеры</b><span>Луч + курок по полу — телепортация; по экспонату — переход к нему. Правый стик — поворот шагами по 30°.</span></p><p><b>VR-шлем</b><span id="xr-status">Проверяем поддержку WebXR…</span></p></div><p class="small-note">Сцена — художественный учебный макет. 3D-бюст Ленина стилизован; объекты не являются точными музейными копиями.</p><button class="button primary" data-close-dialog>Всё понятно <span>→</span></button></dialog>
+<script type="module" src="./app.js"></script>
+</body></html>
