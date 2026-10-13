@@ -1,14 +1,17 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=3.0';
-import {installAtmosphere} from './atmosphere.js?v=3.0';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=3.0';
-import {createTour,floorPoint} from './tour.js?v=3.0';
-import {consolidateArchitecture} from './optimize.js?v=3.0';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=4.0';
+import {installAtmosphere} from './atmosphere.js?v=4.0';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=4.0';
+import {createTour,floorPoint} from './tour.js?v=4.0';
+import {consolidateArchitecture} from './optimize.js?v=4.0';
+import {Inspection} from './inspection.js?v=4.0';
+import {installMuseumGraphics} from './museum.js?v=4.0';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let world,renderer,camera,rig,active=false,selected=-1,yaw=0,pitch=0,initialized=false,xrSupported=false,session=null,sessionStarting=false;
+let inspection=null;const inspectionPointers=new Map();
 let initPromise=null,openToken=0,pendingEntry={id:-1,guided:false};
 let quality=matchMedia('(pointer: coarse)').matches?'smooth':'detail';
 const tour=createTour(EXHIBITS.length);
@@ -35,10 +38,10 @@ document.querySelectorAll('[data-route]').forEach(b=>b.onclick=()=>visit(Number(
 $('next-object').onclick=()=>visit((selected+1)%EXHIBITS.length);
 $('close-panel').onclick=()=>{$('object-panel').hidden=true;document.body.classList.remove('panel-expanded');};
 
-function resize(){if(!renderer||!active)return;const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+function resize(){if(!renderer||!active)return;const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();inspection?.resize(w,h);}
 window.addEventListener('resize',resize);
 async function init(){
-  world=buildWorld();consolidateArchitecture(world);
+  world=buildWorld();
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.xr.enabled=true;renderer.xr.setReferenceSpaceType('local-floor');renderer.xr.setFramebufferScaleFactor(1);
@@ -55,16 +58,16 @@ async function init(){
   }
   renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();toast('Графический контекст потерян. Перезагрузите страницу, чтобы восстановить экспозицию.');renderer.setAnimationLoop(null);});
   setupPointer();installAtmosphere(renderer,world);applyQuality();
-  const resources=await Promise.allSettled([loadSculpture(world,progress=>{$('loading-detail').textContent=progress?'Загружаем скульптуру · '+Math.round(progress*100)+'%':'Загружаем скульптуру…';}),installCollegeMark(world)]);
+  const resources=await Promise.allSettled([loadSculpture(world,progress=>{$('loading-detail').textContent=progress?'Загружаем скульптуру · '+Math.round(progress*100)+'%':'Загружаем скульптуру…';}),installCollegeMark(world),installMuseumGraphics(world)]);
   const failed=resources.find(result=>result.status==='rejected');if(failed)throw failed.reason;
-  initialized=true;
+  consolidateArchitecture(world);inspection=new Inspection(world);initialized=true;
 }
 function disposeFailedInit(){
   renderer?.setAnimationLoop(null);world?.environmentTarget?.dispose();
   const geometries=new Set(),materials=new Set(),textures=new Set();
   world?.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)for(const m of [].concat(o.material)){materials.add(m);for(const value of Object.values(m))if(value?.isTexture)textures.add(value);}});
   geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());
-  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;initialized=false;
+  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;inspection=null;initialized=false;
 }
 async function enter(id,guided=false){
   const token=++openToken;pendingEntry={id,guided};if(!active)returnFocus=document.activeElement;
@@ -85,6 +88,7 @@ async function enter(id,guided=false){
 $('retry-loading').onclick=()=>enter(pendingEntry.id,pendingEntry.guided);
 $('cancel-loading').onclick=exit;
 async function exit(){
+  if(inspection?.active)closeInspection(false);
   ++openToken;clearTimeout(moveTimer);keys.clear();drag=null;tour.stop();document.body.classList.remove('panel-expanded');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(session){try{await session.end();}catch{}}
   active=false;renderer?.setAnimationLoop(null);experience.hidden=true;landing.inert=false;landing.removeAttribute('aria-hidden');document.body.classList.remove('in-experience');
@@ -114,17 +118,24 @@ function teleport(x,z){if(!isWalkable(x,z))return;const head=renderer.xr.getCame
 
 function setupPointer(){
   const canvas=renderer.domElement;
-  canvas.addEventListener('pointerdown',e=>{if(session)return;canvas.setPointerCapture(e.pointerId);drag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,distance:0};});
-  canvas.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId||session)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.distance+=Math.abs(dx)+Math.abs(dy);yaw-=dx*.0035;pitch=THREE.MathUtils.clamp(pitch-dy*.0035,-1.1,1.1);drag.x=e.clientX;drag.y=e.clientY;camera.rotation.set(pitch,yaw,0,'YXZ');});
+  canvas.addEventListener('pointerdown',e=>{if(session)return;if(inspection?.active){canvas.setPointerCapture(e.pointerId);inspectionPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});return;}canvas.setPointerCapture(e.pointerId);drag={id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY,distance:0};});
+  canvas.addEventListener('pointermove',e=>{if(inspection?.active){moveInspection(e);return;}if(!drag||drag.id!==e.pointerId||session)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.distance+=Math.abs(dx)+Math.abs(dy);yaw-=dx*.0035;pitch=THREE.MathUtils.clamp(pitch-dy*.0035,-1.1,1.1);drag.x=e.clientX;drag.y=e.clientY;camera.rotation.set(pitch,yaw,0,'YXZ');});
   canvas.addEventListener('pointerup',e=>{
+    if(inspection?.active){inspectionPointers.delete(e.pointerId);return;}
     if(!drag||drag.id!==e.pointerId)return;
     if(drag.distance<9){const rect=canvas.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);const hit=raycaster.intersectObjects(world.interactive,true)[0];if(hit){const id=exhibitId(hit.object);if(id!==null)visit(id);}}
     drag=null;
-  });canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('lostpointercapture',()=>drag=null);
+  });canvas.addEventListener('pointercancel',e=>{drag=null;inspectionPointers.delete(e.pointerId);});canvas.addEventListener('lostpointercapture',e=>{drag=null;inspectionPointers.delete(e.pointerId);});
+  canvas.addEventListener('wheel',e=>{if(!inspection?.active)return;e.preventDefault();inspection.zoom(Math.exp(THREE.MathUtils.clamp(e.deltaY,-400,400)*.0015));},{passive:false});
 }
 function exhibitId(object){let o=object;while(o){if(Number.isInteger(o.userData.exhibit))return o.userData.exhibit;o=o.parent;}return null;}
 window.addEventListener('keydown',e=>{
   if(!active||!initialized||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;
+  if(inspection?.active){
+    if(e.code==='Escape'){closeInspection();return;}
+    if(e.code==='ArrowLeft')inspection.orbit(-18,0);else if(e.code==='ArrowRight')inspection.orbit(18,0);else if(e.code==='ArrowUp')inspection.orbit(0,-14);else if(e.code==='ArrowDown')inspection.orbit(0,14);else if(e.code==='Equal'||e.code==='NumpadAdd')inspection.zoom(.88);else if(e.code==='Minus'||e.code==='NumpadSubtract')inspection.zoom(1.14);else if(e.code==='Home')inspection.reset();else return;
+    e.preventDefault();return;
+  }
   if(['KeyW','KeyA','KeyS','KeyD','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)){e.preventDefault();keys.add(e.code);}
   if(e.code==='KeyM'){e.preventDefault();showMap();return;}
   if(/^Digit[1-4]$/.test(e.code))visit(Number(e.code.slice(-1))-1);
@@ -135,6 +146,7 @@ document.addEventListener('visibilitychange',()=>{keys.clear();if(document.hidde
 
 function frame(time){
   const dt=Math.min((time-lastTime)/1000||0,.04);lastTime=time;
+  if(inspection?.active){renderer.render(inspection.scene,inspection.camera);return;}
   if(!reduced){const t=time*.001;world.animated.forEach(a=>{if(a.kind==='orbit')a.group.rotation.z+=dt*a.speed;else if(a.kind==='sputnik')a.group.rotation.y=Math.sin(t*.17)*.18;else if(a.kind==='robot')a.group.rotation.y=Math.sin(t*.35)*.12;});}
   if(session){
     world.marker.visible=false;
@@ -165,6 +177,7 @@ $('enter-vr').onclick=()=>{
   if(session){session.end().catch(()=>toast('Завершите VR через меню шлема.'));return;}
   if(!navigator.xr||!xrSupported){showHelp();return;}
   if(sessionStarting||!initialized)return;
+  if(inspection?.active)closeInspection(false);
   clearTimeout(moveTimer);keys.clear();drag=null;$('fade').classList.remove('visible');
   sessionStarting=true;
   // Request synchronously from the user gesture: no dynamic import or awaited check before this call.
@@ -247,3 +260,50 @@ for(const button of document.querySelectorAll('[data-move]')){
   for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,release);
   button.addEventListener('keydown',event=>{if(event.code==='Space'||event.code==='Enter'){event.preventDefault();keys.add(button.dataset.move);}});button.addEventListener('keyup',release);button.addEventListener('blur',release);
 }
+
+
+function openInspection(index){
+  if(!initialized||session||!inspection.open(index))return;
+  clearTimeout(moveTimer);keys.clear();drag=null;inspectionPointers.clear();$('fade').classList.remove('visible');
+  inspection.resize(viewport.clientWidth,viewport.clientHeight);inspection.reset();
+  $('inspection-title').textContent=EXHIBITS[index].title;$('inspection-category').textContent=String(index+1).padStart(2,'0')+' / ДЕТАЛЬНЫЙ ОСМОТР';
+  $('inspection-credit').textContent=index===0?'3D-скан: fractalnoise · CC BY-NC-SA 4.0':'Авторская учебная модель · Павильон МИК';
+  $('inspection-ui').hidden=false;document.body.classList.add('inspection-active');$('close-inspection').focus();
+}
+function closeInspection(returnToObject=true){
+  if(!inspection?.active)return;const index=inspection.index;inspection.close();inspectionPointers.clear();keys.clear();drag=null;
+  $('inspection-ui').hidden=true;document.body.classList.remove('inspection-active');
+  if(returnToObject){visit(index,true);$('inspect-exhibit').focus();}
+}
+function moveInspection(event){
+  if(!inspectionPointers.has(event.pointerId))return;
+  const values=[...inspectionPointers.values()],old=inspectionPointers.get(event.pointerId);
+  const previousGap=values.length===2?Math.hypot(values[0].x-values[1].x,values[0].y-values[1].y):0;
+  inspectionPointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+  if(inspectionPointers.size===1)inspection.orbit(event.clientX-old.x,event.clientY-old.y);
+  else if(inspectionPointers.size===2){const p=[...inspectionPointers.values()],gap=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);if(gap>0&&previousGap>0)inspection.zoom(previousGap/gap);}
+}
+$('inspect-exhibit').onclick=()=>openInspection(selected);
+$('close-inspection').onclick=()=>closeInspection();
+$('inspection-previous').onclick=()=>openInspection((inspection.index+EXHIBITS.length-1)%EXHIBITS.length);
+$('inspection-next').onclick=()=>openInspection((inspection.index+1)%EXHIBITS.length);
+$('inspection-reset').onclick=()=>inspection.reset();$('inspection-detail').onclick=()=>inspection.detail();
+$('inspection-in').onclick=()=>inspection.zoom(.83);$('inspection-out').onclick=()=>inspection.zoom(1.2);
+document.querySelectorAll('[data-inspect]').forEach(button=>button.onclick=async()=>{
+  const index=Number(button.dataset.inspect);await enter(index);if(active&&initialized)openInspection(index);
+});
+$('save-inspection').onclick=async()=>{
+  if(!inspection?.active)return;const button=$('save-inspection'),index=inspection.index;button.disabled=true;button.textContent='Сохраняем…';
+  try{
+    renderer.render(inspection.scene,inspection.camera);
+    const source=renderer.domElement,canvas=document.createElement('canvas'),width=Math.max(800,Math.min(1800,source.width)),height=Math.round(source.height/source.width*width);
+    canvas.width=width;canvas.height=height+180;const ctx=canvas.getContext('2d');ctx.drawImage(source,0,0,width,height);ctx.fillStyle='#eee6d5';ctx.fillRect(0,height,width,180);
+    ctx.fillStyle='#8f3929';ctx.font='bold 14px Arial';ctx.fillText('МИК / АТЛАС БУДУЩЕГО / ОБЪЕКТ '+String(index+1).padStart(2,'0'),30,height+30);
+    ctx.fillStyle='#293227';ctx.font='bold 28px Arial';ctx.fillText(EXHIBITS[index].title,30,height+70,width-60);ctx.font='13px Arial';
+    if(index===0){ctx.fillText('3D-скан: fractalnoise · Адаптация: бронза, оптимизация, постановка света.',30,height+100,width-60);ctx.fillText('Источник: printables.com/model/662942-bust-of-lenin-3d-scan',30,height+124,width-60);ctx.fillText('CC BY-NC-SA 4.0 · creativecommons.org/licenses/by-nc-sa/4.0/',30,height+148,width-60);}
+    else {ctx.fillText('Авторская учебная модель · Виртуальный павильон колледжа МИК',30,height+106,width-60);ctx.fillText('step3dlab.github.io/vr_anapa/mik-atlas/',30,height+137,width-60);}
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('Export unavailable');
+    const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='mik-atlas-object-'+String(index+1).padStart(2,'0')+'.png';link.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Изображение подготовлено с подписью и источником модели.');
+  }catch(error){console.error(error);toast('Не удалось сохранить изображение. Попробуйте ещё раз после завершения загрузки.');}
+  finally{button.disabled=false;button.textContent='Сохранить вид ↓';}
+};

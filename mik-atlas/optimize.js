@@ -17,7 +17,7 @@ export function consolidateArchitecture(world){
     const geometry=mergeGeometries(geometries,false);geometries.forEach(g=>g.dispose());
     if(!geometry)continue;
     geometry.computeBoundingSphere();geometry.computeBoundingBox();
-    const combined=new THREE.Mesh(geometry,meshes[0].material);combined.name='Architectural batch';
+    const combined=new THREE.Mesh(geometry,meshes[0].material);combined.name='Architectural batch';combined.castShadow=meshes.some(mesh=>mesh.castShadow);combined.receiveShadow=meshes.some(mesh=>mesh.receiveShadow);
     world.root.add(combined);meshes.forEach(mesh=>mesh.removeFromParent());removed+=meshes.length-1;
   }
   world.scene.updateMatrixWorld(true);return removed;

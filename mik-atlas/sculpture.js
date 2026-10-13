@@ -12,7 +12,7 @@ export async function loadSculpture(world,onProgress){
   model.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);model.scale.multiplyScalar(scale);holder.add(model);
   const bronze=new THREE.MeshStandardMaterial({color:'#967443',metalness:.8,roughness:.38,envMapIntensity:1});
   model.traverse(o=>{if(o.isMesh){o.material=bronze;o.castShadow=true;o.receiveShadow=true;}});
-  world.groups[0].add(holder);world.sculptureLoaded=true;world.scene.updateMatrixWorld(true);
+  world.groups[0].add(holder);world.models[0]=holder;world.sculptureLoaded=true;world.scene.updateMatrixWorld(true);
   return holder;
 }
 

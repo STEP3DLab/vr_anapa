@@ -7,8 +7,11 @@ export const EXHIBITS = [
   {title:'Человек и машина',category:'04 / ИНЖЕНЕРИЯ И ФАНТАЗИЯ',description:'Робот-смотритель МИК — вымышленный экспонат в духе советской научной фантастики. Эмалевый корпус, металлические шарниры и световой визор соединяют индустриальную форму и дружелюбный характер.',fact:'Задание инженеру: придумайте полезную функцию робота в колледже. Какие датчики, приводы и алгоритмы ему понадобятся?',position:[-5.2,0,6.8],view:[-5.2,0,11.7],target:[-5.2,1.9,6.8],label:['СМОТРИТЕЛЬ МИК','ЧЕЛОВЕК И МАШИНА','Концепт робота-помощника']}
 ];
 
+export const HALL_PILLARS=[-8.8,8.8].flatMap(x=>[-11,-5,1,7,12].map(z=>[x,z]));
+
 export function isWalkable(x,z){
   if(Math.abs(x)>8.5||z < -12.3||z>12.3)return false;
+  if(HALL_PILLARS.some(([px,pz])=>Math.hypot(x-px,z-pz)<.94))return false;
   return !EXHIBITS.some((e,i)=>Math.hypot(x-e.position[0],z-e.position[2])<(i===0?2.1:1.65));
 }
 
@@ -48,7 +51,7 @@ export function buildWorld(){
   for(const x of [-10,10]){box([x,.55,0],[.14,1.1,28],dark);box([x,1.15,0],[.18,.08,28],bronze);}
   box([0,.55,-13.7],[20,1.1,.2],dark);
   // Tall ribbed columns and a glazed, luminous roof.
-  for(const x of [-8.8,8.8])for(const z of [-11,-5,1,7,12]){
+  for(const [x,z] of HALL_PILLARS){
     cylinder([x,.2,z],.68,.4,dark);cylinder([x,3.75,z],.43,6.7,stone);cylinder([x,7.2,z],.65,.25,bronze);
     for(let i=0;i<6;i++){const a=i*Math.PI/3;rod([x+Math.cos(a)*.43,.5,z+Math.sin(a)*.43],[x+Math.cos(a)*.43,7,z+Math.sin(a)*.43],.025,bronze);}
     const l=box([x,3.5,z+.48],[.12,1.9,.08],glow);l.name='architectural-light';
@@ -65,7 +68,7 @@ export function buildWorld(){
   for(let i=0;i<3;i++)torus(1.4,.035,[0,0,0],bronzeLight,chandelier,i*.8,i*.7);
   sphere([0,0,0],[.23,.23,.23],glow,chandelier);rod([0,6.5,-2],[0,8,-2],.035,bronze);
   // Wall displays with abstract constructive reliefs.
-  for(const side of [-1,1])for(const z of [-8,-2,4,10]){
+  for(const side of [-1])for(const z of [-8,-2,4,10]){
     const g=new THREE.Group();g.position.set(side*9.96,3.8,z);g.rotation.y=-side*Math.PI/2;root.add(g);
     box([0,0,0],[3.2,3.6,.12],dark,g);torus(1.1,.055,[0,0,.12],bronzeLight,g);rod([-1,-1,.15],[1,1,.15],.045,redGlow,g);sphere([0,0,.2],[.3,.3,.1],bronzeLight,g);
     box([0,-1.95,0],[3.45,.08,.4],bronze,g);
@@ -129,5 +132,5 @@ export function buildWorld(){
   // Floor destination medallions are visual wayfinding; teleport also works on free floor.
   EXHIBITS.forEach((e,i)=>{const p=[e.view[0],.05,e.view[2]];torus(.34,.017,p,bronzeLight,root,Math.PI/2);const plate=textPlate([String(i+1).padStart(2,'0')],.38,.22,[p[0],.06,p[2]],root);plate.rotation.x=-Math.PI/2;});
   scene.updateMatrixWorld(true);
-  return {scene,interactive,animated,floor,colliders,groups,sun,fill,hemisphere,root,materials:{glow,redGlow,stone,dark,red,bronze,bronzeLight,chrome,enamel}};
+  return {scene,interactive,animated,floor,colliders,groups,models:[null,sputnik,atom,robot],sun,fill,hemisphere,root,materials:{glow,redGlow,stone,dark,red,bronze,bronzeLight,chrome,enamel}};
 }
