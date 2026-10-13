@@ -1,17 +1,19 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=6.2';
-import {installAtmosphere} from './atmosphere.js?v=6.2';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=6.2';
-import {createTour,floorPoint} from './tour.js?v=6.2';
-import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=6.2';
-import {Inspection} from './inspection.js?v=6.2';
-import {installMuseumGraphics} from './museum.js?v=6.2';
-import {VRGuide} from './vr-guide.js?v=6.2';
-import {ResonanceGame,gameAction} from './game.js?v=6.2';
-import {AtlasEffects} from './effects.js?v=6.2';
-import {CinematicRenderer} from './cinematic.js?v=6.2';
-import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=6.2';
-import {renderPixelRatio} from './render-budget.js?v=6.2';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=6.3';
+import {installAtmosphere} from './atmosphere.js?v=6.3';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=6.3';
+import {createTour,floorPoint} from './tour.js?v=6.3';
+import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=6.3';
+import {Inspection} from './inspection.js?v=6.3';
+import {installMuseumGraphics} from './museum.js?v=6.3';
+import {VRGuide} from './vr-guide.js?v=6.3';
+import {ResonanceGame,gameAction} from './game.js?v=6.3';
+import {AtlasEffects} from './effects.js?v=6.3';
+import {CinematicRenderer} from './cinematic.js?v=6.3';
+import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=6.3';
+import {renderPixelRatio} from './render-budget.js?v=6.3';
+
+import {localGameStorage,readPlayer,writePlayer,renderSavedGame} from './game-storage.js?v=6.3';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
@@ -19,6 +21,8 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let world,renderer,camera,rig,active=false,selected=-1,yaw=0,pitch=0,initialized=false,xrSupported=false,session=null,sessionStarting=false;
 let inspection=null;const inspectionPointers=new Map();
 let vrGuide=null,xrRequestToken=0,xrReady=false,pendingSpawn=null;
+const gameStorage=localGameStorage(window),player=readPlayer(gameStorage);let savedRevision=-1,saveAvailable=false;
+renderSavedGame(document,player);
 const game=new ResonanceGame();let effects=null,cinematic=null,gamePreviousDay=true,lastGameKey='';
 let exhibitPicker=null,contextLost=false,rebuildPromise=null,lastShadow=-Infinity;
 let initPromise=null,openToken=0,pendingEntry={id:-1,guided:false};
@@ -220,7 +224,8 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Digit0')visit(-1);if(e.code==='Escape'&&!session)exit();
 });
 window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();drag=null;windowFocused=false;adaptive.reset();});window.addEventListener('focus',()=>{windowFocused=true;adaptive.reset();});
-document.addEventListener('visibilitychange',()=>{keys.clear();drag=null;syncAnimationLoop();if(document.hidden&&audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);else if(soundOn&&audioGain&&(!session||session.visibilityState==='visible'))audioGain.gain.setTargetAtTime(.045,audioContext.currentTime,.3);});
+window.addEventListener('pagehide',()=>persistGame(true));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)persistGame(true);keys.clear();drag=null;syncAnimationLoop();if(document.hidden&&audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);else if(soundOn&&audioGain&&(!session||session.visibilityState==='visible'))audioGain.gain.setTargetAtTime(.045,audioContext.currentTime,.3);});
 
 function frame(time,xrFrame){
   if(!active||!initialized||contextLost||document.hidden&&!session)return;
@@ -297,7 +302,7 @@ function castXRPointer(controller){
   if(floorHit&&isWalkable(floorHit.point.x,floorHit.point.z))return {type:'floor',point:floorHit.point,distance:floorHit.distance};
   return null;
 }
-function updateVRGuide(){if(vrGuide){vrGuide.setGame(game.active?game.view():null);vrGuide.update(selected,{active:tour.active,completed:tour.completed,visited:[...tour.visited],day:world.dayMode});}}
+function updateVRGuide(){if(vrGuide){vrGuide.setGame(game.active?gameView():null);vrGuide.update(selected,{saved:!!player.checkpoint,active:tour.active,completed:tour.completed,visited:[...tour.visited],day:world.dayMode});}}
 function showVRGuide(){
   if(!session||!xrReady)return;
   syncXRCamera();const forward=new THREE.Vector3(0,0,-1).transformDirection(renderer.xr.getCamera().matrixWorld);
@@ -405,13 +410,13 @@ async function startGame(index=0){
   if(contextLost)return;
   if(!active||!initialized){await enter(index);if(!active||!initialized)return;}
   if(inspection?.active)closeInspection(false);
-  if(!game.active){gamePreviousDay=world.dayMode;game.start(index,reduced);world.setLighting(false);syncLightButton();}
+  if(!game.active){gamePreviousDay=world.dayMode;savedRevision=-1;lastGameKey='';if(!game.restore(player.checkpoint))game.start(index,reduced,{briefing:!player.briefingSeen});index=game.index;world.setLighting(false);syncLightButton();}
   tour.stop();keys.clear();drag=null;renderTour();renderGame();visit(index,true);
   if(!session)$('game-action').focus();
 }
 function syncLightButton(){if(!world)return;$('lighting').textContent=world.dayMode?'Свет: день':'Свет: вечер';$('lighting').setAttribute('aria-pressed',String(!world.dayMode));}
 function stopGame(reopenGuide=true){
-  if(!game.active)return;game.stop();world?.setLighting(gamePreviousDay);syncLightButton();renderGame();
+  if(!game.active)return;persistGame(true);game.stop();world?.setLighting(gamePreviousDay);syncLightButton();renderGame();
   if(reopenGuide&&session)showVRGuide();
 }
 function gameTone(success,finale=false){
@@ -422,40 +427,54 @@ function gameTone(success,finale=false){
 function runGameAction(action){
   if(action==='start'){void startGame(0);return;}
   if(!game.active||!active||contextLost||(!session&&document.hidden)||document.querySelector('dialog[open]')||session&&!canUseXR())return;
-  if(action==='strike'){
+  if(action==='begin'){if(game.begin())player.briefingSeen=true;}
+  else if(action==='strike'){
     const event=game.strike();if(event){gameTone(event.type!=='miss');if(event.type!=='miss')effects?.trigger(event.index,event.type==='charged');}
   }else if(action==='next'){const next=game.next();if(next>=0)visit(next,true);}
   else if(action.startsWith('station:')){const id=Number(action.slice(8));if(game.phase!=='celebrating'&&Number.isInteger(id)&&id>=0&&id<4)visit(id,true);}
-  else if(action==='assist'){if(game.phase==='playing')game.toggleAssist();}
+  else if(action==='assist'){game.toggleAssist();}
   else if(action==='pause')game.togglePause();
   else if(action==='stop'){stopGame();return;}
-  else if(action==='restart'){const assist=game.assist;game.start(0,assist);visit(0,true);}
+  else if(action==='restart'&&(game.paused||game.phase==='complete')){const assist=game.assist;game.start(0,assist);savedRevision=-1;lastGameKey='';visit(0,true);}
   else if(action==='launch'&&game.launch()){
     visit(-1,true);if(session)vrGuide.hide();else setOrientation([0,4.65,-2]);effects?.trigger(0,true);gameTone(true,true);
   }
   renderGame();
 }
+function persistGame(force=false){
+  if(!game.active||!force&&savedRevision===game.revision)return;
+  savedRevision=game.revision;
+  player.checkpoint=game.checkpoint();
+  if(game.phase==='complete'){const mode=game.assistUsed?'assisted':'precise';player.best[mode]=Math.max(player.best[mode],game.score);}
+  saveAvailable=writePlayer(gameStorage,player);renderSavedGame(document,player);
+}
+function gameView(){const view=game.view();return {...view,best:player.best[view.assistUsed?'assisted':'precise'],saveAvailable};}
 function renderGame(){
-  const view=game.view();vrGuide?.setGame(game.active?view:null);$('game-hud').hidden=!game.active;document.body.classList.toggle('game-running',game.active);
+  persistGame();const view=gameView();vrGuide?.setGame(game.active?view:null);$('game-hud').hidden=!game.active;document.body.classList.toggle('game-running',game.active);
   if(!game.active){lastGameKey='';return;}
   $('game-needle').style.left=(view.position*100)+'%';$('game-meter').classList.toggle('in-zone',view.inZone);
-  const key=view.revision+':'+(view.cooldown>0);if(key===lastGameKey)return;lastGameKey=key;
-  const ending=['ready','celebrating','complete'].includes(view.phase),action=gameAction(view);
+  const key=view.revision+':'+(view.cooldown>0)+':'+view.saveAvailable;if(key===lastGameKey)return;lastGameKey=key;
+  const briefing=view.phase==='briefing',ending=['ready','celebrating','complete'].includes(view.phase),action=gameAction(view);
+  $('game-hud').classList.toggle('briefing',briefing);$('game-briefing').hidden=!briefing;
+  $('game-result').hidden=view.phase!=='complete';
+  $('game-result').textContent='Точность '+view.accuracy+'% · '+view.hits+' из '+view.attempts+' импульсов. Рекорд '+(view.assistUsed?'с помощью':'точного режима')+': '+view.best+' очков.';
+  $('game-save-note').textContent=view.phase==='briefing'?'Выберите режим и начните, когда будете готовы.':view.saveAvailable?(view.phase==='complete'?'Результат сохранён на этом устройстве.':'Прогресс сохранён на этом устройстве.'):'Прогресс доступен только до закрытия страницы.';
+  $('game-restart').hidden=!view.paused;
   $('game-hud').classList.toggle('celebrating',view.phase==='celebrating');
-  $('game-title').textContent=view.paused?'Пауза':view.phase==='ready'?'Все системы готовы':view.phase==='celebrating'?'Атлас пробуждается':view.phase==='complete'?'Атлас запущен':view.station.name;
+  $('game-title').textContent=briefing?'Протокол запуска':view.paused?'Пауза':view.phase==='ready'?'Все системы готовы':view.phase==='celebrating'?'Атлас пробуждается':view.phase==='complete'?'Атлас запущен':view.station.name;
   $('game-count').textContent=view.charged+' / 4 СТАНЦИИ';$('game-score').textContent=String(view.score).padStart(4,'0');
-  $('game-instruction').textContent=ending?'Четыре источника энергии. Единый Атлас будущего.':view.station.hint;
+  $('game-instruction').textContent=briefing?'Восстановите энергию павильона за три шага.':ending?'Четыре источника энергии. Единый Атлас будущего.':view.station.hint;
   $('game-feedback').textContent=view.paused?'Продолжите, когда будете готовы.':view.feedback;
-  $('game-meter').hidden=ending||view.paused;$('game-locks').hidden=ending;
+  $('game-meter').hidden=ending||view.paused||briefing;$('game-locks').hidden=ending||briefing;
   $('game-zone').style.left=((view.target-view.width/2)*100)+'%';$('game-zone').style.width=(view.width*100)+'%';
   [...$('game-locks').children].forEach((item,i)=>item.classList.toggle('done',i<view.locks[view.index]));$('game-locks').setAttribute('aria-label','Принято импульсов: '+view.locks[view.index]+' из 3');
-  document.querySelectorAll('[data-game-station]').forEach(button=>{const i=Number(button.dataset.gameStation);button.classList.toggle('current',i===view.index);button.classList.toggle('done',view.locks[i]===3);button.setAttribute('aria-pressed',String(i===view.index));button.textContent=(view.locks[i]===3?'✓ ':'')+String(i+1).padStart(2,'0');button.disabled=view.phase==='celebrating';});
+  document.querySelectorAll('[data-game-station]').forEach(button=>{const i=Number(button.dataset.gameStation);button.classList.toggle('current',i===view.index);button.classList.toggle('done',view.locks[i]===3);button.setAttribute('aria-pressed',String(i===view.index));button.textContent=(view.locks[i]===3?'✓ ':'')+String(i+1).padStart(2,'0');button.disabled=view.phase==='celebrating'||briefing;});
   $('game-action').textContent=action.label;$('game-action').disabled=!!action.disabled;
   $('game-assist').textContent=view.assist?'Режим: спокойно':'Режим: точно';$('game-assist').setAttribute('aria-pressed',String(view.assist));$('game-assist').disabled=ending;
-  $('game-pause').textContent=view.paused?'Продолжить':'Пауза';$('game-pause').setAttribute('aria-pressed',String(view.paused));$('game-pause').disabled=view.phase==='complete';
+  $('game-pause').textContent=view.paused?'Продолжить':'Пауза';$('game-pause').setAttribute('aria-pressed',String(view.paused));$('game-pause').disabled=view.phase==='complete'||briefing;
 }
 document.querySelectorAll('[data-game]').forEach(button=>button.onclick=()=>startGame());$('viewer-game').onclick=()=>startGame();
-$('game-action').onclick=()=>runGameAction(gameAction(game.view()).action);$('game-close').onclick=()=>stopGame();$('game-assist').onclick=()=>runGameAction('assist');$('game-pause').onclick=()=>runGameAction('pause');
+$('game-action').onclick=()=>runGameAction(gameAction(game.view()).action);$('game-close').onclick=()=>stopGame();$('game-restart').onclick=()=>runGameAction('restart');$('game-assist').onclick=()=>runGameAction('assist');$('game-pause').onclick=()=>runGameAction('pause');
 document.querySelectorAll('[data-game-station]').forEach(button=>button.onclick=()=>runGameAction('station:'+button.dataset.gameStation));
 
 function applyQuality(){

@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {gameAction} from './game.js?v=6.2';
+import {gameAction} from './game.js?v=6.3';
 
 const W=1024,H=896,INK='#263a33',RED='#963e2e',PAPER='#efe5cf';
 
@@ -33,7 +33,7 @@ export class VRGuide {
   setPage(page){this.page=page;this.hover=null;this.draw();}
   setHover(action){if(this.hover===action)return;this.hover=action;this.draw();}
   setGame(view){
-    const key=view?view.revision+':'+(view.cooldown>0):'';
+    const key=view?view.revision+':'+(view.cooldown>0)+':'+view.saveAvailable:'';
     this.gameState=view;this.gameCursor.visible=!!view&&view.phase==='playing'&&view.locks[view.index]<3&&!view.paused;
     if(view){this.gameCursor.position.x=((48+928*view.position)/W-.5)*1.4;this.gameCursor.position.y=(.5-386/H)*1.4*H/W;this.gameCursor.material.color.set(view.inZone?'#fff3cf':'#e29869');}
     if(key!==this.gameKey){this.gameKey=key;this.draw();}
@@ -90,7 +90,7 @@ export class VRGuide {
     button('light',s.day?'Свет: день':'Свет: вечер',48,722,300,66);
     button('hide','Скрыть панель',362,722,300,66);
     button('exit','Выйти из VR',676,722,300,66);
-    button('game:start','Играть: запустить Атлас →',48,806,928,58);
+    button('game:start',s.saved?'Продолжить игру →':'Играть: запустить Атлас →',48,806,928,58);
     this.texture.needsUpdate=true;
   }
   drawGame(){
@@ -99,21 +99,34 @@ export class VRGuide {
     const button=(action,label,x,y,w,h,disabled=false,primary=false)=>{action='game:'+action;this.buttons.push({action,x,y,w,h,disabled});c.fillStyle=disabled?'#324541':this.hover===action?'#b17b3e':primary?'#dfb374':'#29433e';c.fillRect(x,y,w,h);c.textAlign='center';text(label,x+w/2,y+h/2,27,primary?'#18312c':'#eee0c1',true);c.textAlign='left';};
     const paragraph=(value,y)=>{c.font='29px Arial, sans-serif';let line='';for(const word of value.split(/\s+/)){if(line&&c.measureText(line+' '+word).width>928){text(line,48,y,29);y+=39;line=word;}else line+=(line?' ':'')+word;}text(line,48,y,29);};
     text('МИК / ПРОТОКОЛ «РЕЗОНАНС»',48,49,24,'#cda974',true);text(s.score+' ОЧКОВ',770,49,24,'#cda974',true);
-    const ending=['ready','celebrating','complete'].includes(s.phase);
-    text(s.paused?'Пауза':s.phase==='ready'?'Все системы готовы':s.phase==='celebrating'?'Атлас пробуждается':s.phase==='complete'?'Атлас запущен':s.station.name,48,113,44,'#f3e4c6',true);
+    const briefing=s.phase==='briefing',ending=['ready','celebrating','complete'].includes(s.phase);
+    text(briefing?'Протокол запуска':s.paused?'Пауза':s.phase==='ready'?'Все системы готовы':s.phase==='celebrating'?'Атлас пробуждается':s.phase==='complete'?'Атлас запущен':s.station.name,48,113,44,'#f3e4c6',true);
+    if(briefing){
+      text('01 / ПОЙМАЙТЕ СИГНАЛ',48,202,25,'#cda974',true);
+      paragraph('Наведите луч на большую кнопку. Нажмите курок, когда указатель войдёт в светлую зону.',250);
+      text('02 / ЗАРЯДИТЕ ЧЕТЫРЕ СТАНЦИИ',48,348,25,'#cda974',true);
+      paragraph('Примите по три импульса. Выбирайте станции кнопками 01–04 на этой панели.',396);
+      text('03 / ЗАПУСТИТЕ АТЛАС',48,494,25,'#cda974',true);
+      paragraph('Соберите всю энергию и пробудите ядро. В спокойном режиме спешить не нужно.',542);
+    }else{
     for(let i=0;i<4;i++)button('station:'+i,(s.locks[i]===3?'✓ ':'')+String(i+1).padStart(2,'0'),48+i*236,162,220,62,s.phase==='celebrating',i===s.index);
     paragraph(ending?'Четыре источника энергии. Единый Атлас будущего.':s.station.hint,270);
     if(!ending){
       c.fillStyle='#0c1f20';c.fillRect(48,350,928,72);c.fillStyle='#668f77';c.fillRect(48+(s.target-s.width/2)*928,350,s.width*928,72);
       text(s.assist?'СПОКОЙНЫЙ РЕЖИМ / БЕЗ СПЕШКИ':'КУРОК ПО КНОПКЕ, КОГДА УКАЗАТЕЛЬ В ЗОНЕ',48,456,22,'#c7b691');
       for(let i=0;i<3;i++){c.fillStyle=i<s.locks[s.index]?'#e6bb7c':'#35514a';c.fillRect(48+i*314,490,300,10);}
+    }else if(s.phase==='complete'){
+      text('ТОЧНОСТЬ '+s.accuracy+'%',48,367,42,'#e8c482',true);
+      text(s.hits+' из '+s.attempts+' импульсов принято',48,423,29);
+      text('Рекорд '+(s.assistUsed?'с помощью':'точного режима')+': '+(s.best??s.score)+' очков',48,478,28,'#c7b691');
     }else{for(let i=0;i<4;i++){c.strokeStyle='#c4a470';c.lineWidth=3;c.strokeRect(48+i*236,355,220,116);text('ЭНЕРГИЯ',68+i*236,390,21);text('100%',68+i*236,436,36,'#e8c482',true);}}
     paragraph(s.paused?'Продолжите, когда будете готовы.':s.feedback,550);
+    }
     const action=gameAction(s);button(action.action,action.label,48,636,928,80,!!action.disabled,true);
     button('assist',s.assist?'Режим: спокойно':'Режим: точно',48,733,300,62,ending);
-    button('pause',s.paused?'Продолжить':'Пауза',362,733,300,62,s.phase==='complete');
+    if(!briefing)button(s.paused?'restart':'pause',s.paused?'Начать заново':'Пауза',362,733,300,62,s.phase==='complete');
     button('stop','Выйти из игры',676,733,300,62);
-    text('СТАНЦИИ: '+s.charged+' / 4',48,844,23,'#c7b691');text('СЖАТИЕ — ВЕРНУТЬ ПАНЕЛЬ',548,844,22,'#c7b691');
+    text(briefing?'БЕЗ СПЕШКИ':s.saveAvailable?'ПРОГРЕСС СОХРАНЁН':'ПРОГРЕСС В ЭТОЙ СЕССИИ',48,844,22,'#c7b691');text('СЖАТИЕ — ВЕРНУТЬ ПАНЕЛЬ',548,844,22,'#c7b691');
     this.texture.needsUpdate=true;
   }
 }
