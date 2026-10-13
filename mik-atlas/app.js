@@ -1,17 +1,19 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=4.0';
-import {installAtmosphere} from './atmosphere.js?v=4.0';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=4.0';
-import {createTour,floorPoint} from './tour.js?v=4.0';
-import {consolidateArchitecture} from './optimize.js?v=4.0';
-import {Inspection} from './inspection.js?v=4.0';
-import {installMuseumGraphics} from './museum.js?v=4.0';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=5.0';
+import {installAtmosphere} from './atmosphere.js?v=5.0';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=5.0';
+import {createTour,floorPoint} from './tour.js?v=5.0';
+import {consolidateArchitecture} from './optimize.js?v=5.0';
+import {Inspection} from './inspection.js?v=5.0';
+import {installMuseumGraphics} from './museum.js?v=5.0';
+import {VRGuide} from './vr-guide.js?v=5.0';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let world,renderer,camera,rig,active=false,selected=-1,yaw=0,pitch=0,initialized=false,xrSupported=false,session=null,sessionStarting=false;
 let inspection=null;const inspectionPointers=new Map();
+let vrGuide=null,xrRequestToken=0,xrReady=false,pendingSpawn=null;
 let initPromise=null,openToken=0,pendingEntry={id:-1,guided:false};
 let quality=matchMedia('(pointer: coarse)').matches?'smooth':'detail';
 const tour=createTour(EXHIBITS.length);
@@ -38,36 +40,43 @@ document.querySelectorAll('[data-route]').forEach(b=>b.onclick=()=>visit(Number(
 $('next-object').onclick=()=>visit((selected+1)%EXHIBITS.length);
 $('close-panel').onclick=()=>{$('object-panel').hidden=true;document.body.classList.remove('panel-expanded');};
 
-function resize(){if(!renderer||!active)return;const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();inspection?.resize(w,h);}
+function resize(){if(!renderer||!active||session)return;const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();inspection?.resize(w,h);}
 window.addEventListener('resize',resize);
 async function init(){
   world=buildWorld();
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-  renderer.xr.enabled=true;renderer.xr.setReferenceSpaceType('local-floor');renderer.xr.setFramebufferScaleFactor(1);
+  renderer.xr.enabled=true;renderer.xr.cameraAutoUpdate=false;renderer.xr.setReferenceSpaceType('local-floor');renderer.xr.setFramebufferScaleFactor(1);
   viewport.appendChild(renderer.domElement);
   camera=new THREE.PerspectiveCamera(65,1,.08,70);camera.position.set(0,1.65,0);camera.rotation.order='YXZ';rig=new THREE.Group();rig.add(camera);world.scene.add(rig);
   const marker=new THREE.Mesh(new THREE.RingGeometry(.22,.28,36),new THREE.MeshBasicMaterial({color:'#ffce80',side:THREE.DoubleSide}));marker.rotation.x=-Math.PI/2;marker.visible=false;world.scene.add(marker);world.marker=marker;
   for(let i=0;i<2;i++){
     const controller=renderer.xr.getController(i);rig.add(controller);
     const ray=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,-1)]),new THREE.LineBasicMaterial({color:'#ffe6b7',transparent:true,opacity:.75}));ray.scale.z=10;controller.add(ray);controller.userData.line=ray;
+    const cursor=new THREE.Mesh(new THREE.SphereGeometry(.011,8,6),new THREE.MeshBasicMaterial({color:'#ffdfa1',toneMapped:false}));controller.add(cursor);cursor.visible=false;controller.userData.cursor=cursor;controller.userData.connected=false;
+    controller.addEventListener('connected',()=>{controller.userData.connected=true;});
+    controller.addEventListener('disconnected',()=>{controller.userData.connected=false;clearXRPointer(controller);});
+    controller.addEventListener('squeeze',()=>{if(canUseXR()&&controller.userData.connected)showVRGuide();});
     controller.addEventListener('select',()=>{
-      const hit=teleportHits.get(controller);if(!hit)return;
-      if(hit.type==='exhibit')visit(hit.id,true);else teleport(hit.point.x,hit.point.z);
+      if(!canUseXR())return;
+      // Recast at the gesture; a previous frame may refer to a different target.
+      syncXRCamera();const hit=castXRPointer(controller);if(!hit)return;
+      if(hit.type==='guide'){if(hit.action)runVRAction(hit.action);}
+      else if(hit.type==='exhibit')visit(hit.id,true);else teleport(hit.point.x,hit.point.z);
     });controllers.push(controller);
   }
   renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();toast('Графический контекст потерян. Перезагрузите страницу, чтобы восстановить экспозицию.');renderer.setAnimationLoop(null);});
   setupPointer();installAtmosphere(renderer,world);applyQuality();
   const resources=await Promise.allSettled([loadSculpture(world,progress=>{$('loading-detail').textContent=progress?'Загружаем скульптуру · '+Math.round(progress*100)+'%':'Загружаем скульптуру…';}),installCollegeMark(world),installMuseumGraphics(world)]);
   const failed=resources.find(result=>result.status==='rejected');if(failed)throw failed.reason;
-  consolidateArchitecture(world);inspection=new Inspection(world);initialized=true;
+  consolidateArchitecture(world);inspection=new Inspection(world);vrGuide=new VRGuide(world.scene,camera,EXHIBITS,questions);initialized=true;
 }
 function disposeFailedInit(){
   renderer?.setAnimationLoop(null);world?.environmentTarget?.dispose();
   const geometries=new Set(),materials=new Set(),textures=new Set();
   world?.scene.traverse(o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)for(const m of [].concat(o.material)){materials.add(m);for(const value of Object.values(m))if(value?.isTexture)textures.add(value);}});
   geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());
-  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;inspection=null;initialized=false;
+  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;inspection=null;vrGuide=null;initialized=false;
 }
 async function enter(id,guided=false){
   const token=++openToken;pendingEntry={id,guided};if(!active)returnFocus=document.activeElement;
@@ -89,8 +98,9 @@ $('retry-loading').onclick=()=>enter(pendingEntry.id,pendingEntry.guided);
 $('cancel-loading').onclick=exit;
 async function exit(){
   if(inspection?.active)closeInspection(false);
-  ++openToken;clearTimeout(moveTimer);keys.clear();drag=null;tour.stop();document.body.classList.remove('panel-expanded');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
-  if(session){try{await session.end();}catch{}}
+  ++openToken;++xrRequestToken;active=false;sessionStarting=false;clearTimeout(moveTimer);keys.clear();drag=null;tour.stop();document.body.classList.remove('panel-expanded');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
+  if(session)await endVR();
+  $('enter-vr').disabled=false;$('enter-vr').textContent='Войти в VR';
   active=false;renderer?.setAnimationLoop(null);experience.hidden=true;landing.inert=false;landing.removeAttribute('aria-hidden');document.body.classList.remove('in-experience');
   if(audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);
   soundOn=false;$('sound').textContent='Звук выкл.';$('sound').setAttribute('aria-pressed','false');returnFocus?.focus();
@@ -108,13 +118,14 @@ function visit(id,immediate=false){
   clearTimeout(moveTimer);const e=EXHIBITS[id];const p=e?e.view:[0,0,11.7];const t=e?e.target:[0,2.1,-7];
   const perform=()=>{
     if(session){
-      const head=renderer.xr.getCamera(camera).getWorldPosition(new THREE.Vector3());rig.position.x+=p[0]-head.x;rig.position.z+=p[2]-head.z;rig.position.y=0;
+      if(!xrReady){pendingSpawn=id;updatePanel(id);return;}
+      moveXRTo(p[0],p[2]);
     }else{rig.position.set(...p);rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);setOrientation(t);}
-    updatePanel(id);$('fade').classList.remove('visible');
+    updatePanel(id);if(session)showVRGuide();$('fade').classList.remove('visible');
   };
   if(immediate||session||reduced)perform();else{$('fade').classList.add('visible');moveTimer=setTimeout(perform,130);}
 }
-function teleport(x,z){if(!isWalkable(x,z))return;const head=renderer.xr.getCamera(camera).getWorldPosition(new THREE.Vector3());rig.position.x+=x-head.x;rig.position.z+=z-head.z;rig.position.y=0;}
+function teleport(x,z){if(!canUseXR()||!isWalkable(x,z))return;moveXRTo(x,z);vrGuide.hide();clearXRInputs();}
 
 function setupPointer(){
   const canvas=renderer.domElement;
@@ -130,7 +141,7 @@ function setupPointer(){
 }
 function exhibitId(object){let o=object;while(o){if(Number.isInteger(o.userData.exhibit))return o.userData.exhibit;o=o.parent;}return null;}
 window.addEventListener('keydown',e=>{
-  if(!active||!initialized||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;
+  if(!active||!initialized||session||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;
   if(inspection?.active){
     if(e.code==='Escape'){closeInspection();return;}
     if(e.code==='ArrowLeft')inspection.orbit(-18,0);else if(e.code==='ArrowRight')inspection.orbit(18,0);else if(e.code==='ArrowUp')inspection.orbit(0,-14);else if(e.code==='ArrowDown')inspection.orbit(0,14);else if(e.code==='Equal'||e.code==='NumpadAdd')inspection.zoom(.88);else if(e.code==='Minus'||e.code==='NumpadSubtract')inspection.zoom(1.14);else if(e.code==='Home')inspection.reset();else return;
@@ -142,28 +153,42 @@ window.addEventListener('keydown',e=>{
   if(e.code==='Digit0')visit(-1);if(e.code==='Escape'&&!session)exit();
 });
 window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();drag=null;});
-document.addEventListener('visibilitychange',()=>{keys.clear();if(document.hidden&&audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);else if(soundOn&&audioGain)audioGain.gain.setTargetAtTime(.045,audioContext.currentTime,.3);});
+document.addEventListener('visibilitychange',()=>{keys.clear();if(document.hidden&&audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);else if(soundOn&&audioGain&&(!session||session.visibilityState==='visible'))audioGain.gain.setTargetAtTime(.045,audioContext.currentTime,.3);});
 
-function frame(time){
+function frame(time,xrFrame){
   const dt=Math.min((time-lastTime)/1000||0,.04);lastTime=time;
   if(inspection?.active){renderer.render(inspection.scene,inspection.camera);return;}
   if(!reduced){const t=time*.001;world.animated.forEach(a=>{if(a.kind==='orbit')a.group.rotation.z+=dt*a.speed;else if(a.kind==='sputnik')a.group.rotation.y=Math.sin(t*.17)*.18;else if(a.kind==='robot')a.group.rotation.y=Math.sin(t*.35)*.12;});}
   if(session){
-    world.marker.visible=false;
-    for(const controller of controllers){
-      if(!controller.visible)continue;
-      world.scene.updateMatrixWorld(true);matrix.identity().extractRotation(controller.matrixWorld);raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);raycaster.ray.direction.set(0,0,-1).applyMatrix4(matrix);
-      const objectHit=raycaster.intersectObjects(world.interactive,true)[0];const floorHit=raycaster.intersectObject(world.floor)[0];
-      if(objectHit&&(!floorHit||objectHit.distance<floorHit.distance)){teleportHits.set(controller,{type:'exhibit',id:exhibitId(objectHit.object)});controller.userData.line.scale.z=objectHit.distance;}
-      else if(floorHit&&isWalkable(floorHit.point.x,floorHit.point.z)){teleportHits.set(controller,{type:'floor',point:floorHit.point});world.marker.position.copy(floorHit.point);world.marker.position.y=.04;world.marker.visible=true;controller.userData.line.scale.z=floorHit.distance;}
-      else{teleportHits.delete(controller);controller.userData.line.scale.z=8;}
+    const hadPose=xrReady;
+    xrReady=!sessionStarting&&!!xrFrame?.getViewerPose(renderer.xr.getReferenceSpace());
+    if(xrReady){
+      syncXRCamera();
+      if(pendingSpawn!==null){const id=pendingSpawn;pendingSpawn=null;visit(id,true);}
+      else if(!hadPose&&vrGuide.open)showVRGuide();
     }
-    const right=[...session.inputSources].find(s=>s.handedness==='right'&&s.gamepad);
-    const axis=right?.gamepad.axes[2]??right?.gamepad.axes[0]??0;
-    if(Math.abs(axis)<.3)snapReady=true;
-    if(snapReady&&Math.abs(axis)>.7){
-      const before=renderer.xr.getCamera(camera).getWorldPosition(new THREE.Vector3());rig.rotation.y-=Math.sign(axis)*Math.PI/6;rig.updateMatrixWorld(true);const after=renderer.xr.getCamera(camera).getWorldPosition(new THREE.Vector3());rig.position.x+=before.x-after.x;rig.position.z+=before.z-after.z;snapReady=false;
-    }
+    vrGuide.setEnabled(canUseXR());world.marker.visible=false;
+    if(canUseXR()){
+      let hover=null;
+      for(const controller of controllers){
+        const hit=castXRPointer(controller);
+        if(!hit){clearXRPointer(controller);continue;}
+        teleportHits.set(controller,hit);controller.userData.line.visible=true;controller.userData.line.scale.z=hit.distance;
+        const cursor=controller.userData.cursor;cursor.visible=true;cursor.position.set(0,0,-hit.distance);
+        controller.userData.line.material.color.set(hit.type==='guide'&&hit.action?'#d57743':'#ffe6b7');
+        if(hit.type==='guide'&&hit.action)hover=hit.action;
+        if(hit.type==='floor'){world.marker.position.copy(hit.point);world.marker.position.y=.04;world.marker.visible=true;}
+      }
+      vrGuide.setHover(hover);
+      const right=[...session.inputSources].find(source=>source.handedness==='right'&&source.gamepad);
+      const axis=right?.gamepad.axes[2]??right?.gamepad.axes[0]??0;
+      if(Math.abs(axis)<.3)snapReady=true;
+      if(snapReady&&Math.abs(axis)>.7){
+        const before=xrHead();rig.rotation.y-=Math.sign(axis)*Math.PI/6;syncXRCamera();const after=xrHead();
+        rig.position.x+=before.x-after.x;rig.position.z+=before.z-after.z;syncXRCamera();snapReady=false;
+        if(vrGuide.open)showVRGuide();
+      }
+    }else clearXRInputs();
   }else{
     if(keys.has('ArrowLeft'))yaw+=dt*1.4;if(keys.has('ArrowRight'))yaw-=dt*1.4;if(keys.has('ArrowUp'))pitch=Math.min(1.1,pitch+dt);if(keys.has('ArrowDown'))pitch=Math.max(-1.1,pitch-dt);camera.rotation.set(pitch,yaw,0,'YXZ');
     const f=Number(keys.has('KeyW'))-Number(keys.has('KeyS')),s=Number(keys.has('KeyD'))-Number(keys.has('KeyA'));
@@ -173,20 +198,89 @@ function frame(time){
   renderer.render(world.scene,camera);
 }
 
+function syncXRCamera(){rig.updateMatrixWorld(true);renderer.xr.updateCamera(camera);world.scene.updateMatrixWorld(true);}
+// Read the manager's matrix directly: Object3D world accessors can recompose
+// the unparented ArrayCamera and overwrite its reference-space matrix.
+function xrHead(){return new THREE.Vector3().setFromMatrixPosition(renderer.xr.getCamera().matrixWorld);}
+function canUseXR(){return !!(active&&session&&!sessionStarting&&xrReady&&session.visibilityState==='visible');}
+function moveXRTo(x,z){
+  syncXRCamera();const head=xrHead();rig.position.x+=x-head.x;rig.position.z+=z-head.z;rig.position.y=0;syncXRCamera();clearXRInputs();
+}
+function clearXRPointer(controller){
+  teleportHits.delete(controller);controller.userData.cursor.visible=false;controller.userData.line.visible=false;
+}
+function clearXRInputs(){controllers.forEach(clearXRPointer);teleportHits.clear();if(world?.marker)world.marker.visible=false;vrGuide?.setHover(null);}
+function castXRPointer(controller){
+  if(!canUseXR()||!controller.visible||!controller.userData.connected)return null;
+  world.scene.updateMatrixWorld(true);matrix.identity().extractRotation(controller.matrixWorld);raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);raycaster.ray.direction.set(0,0,-1).applyMatrix4(matrix);
+  const panelHit=vrGuide.hit(raycaster),objectHit=raycaster.intersectObjects(world.interactive,true)[0],floorHit=raycaster.intersectObject(world.floor)[0];
+  // The small head-relative reopen button remains reachable even next to a plinth.
+  if(panelHit&&(!vrGuide.open||panelHit.distance<Math.min(objectHit?.distance??Infinity,floorHit?.distance??Infinity)))return panelHit;
+  if(objectHit&&(!floorHit||objectHit.distance<floorHit.distance))return {type:'exhibit',id:exhibitId(objectHit.object),distance:objectHit.distance};
+  if(floorHit&&isWalkable(floorHit.point.x,floorHit.point.z))return {type:'floor',point:floorHit.point,distance:floorHit.distance};
+  return null;
+}
+function updateVRGuide(){if(vrGuide)vrGuide.update(selected,{active:tour.active,completed:tour.completed,visited:[...tour.visited],day:world.dayMode});}
+function showVRGuide(){
+  if(!session||!xrReady)return;
+  syncXRCamera();const forward=new THREE.Vector3(0,0,-1).transformDirection(renderer.xr.getCamera().matrixWorld);
+  updateVRGuide();vrGuide.show(xrHead(),forward);vrGuide.setEnabled(canUseXR());clearXRInputs();
+}
+function runVRAction(action){
+  if(!canUseXR())return;
+  if(action.startsWith('page:')){vrGuide.setPage(Number(action.slice(5)));return;}
+  if(action==='open')showVRGuide();
+  else if(action==='hide'){vrGuide.hide();clearXRInputs();}
+  else if(action==='previous')visit(Math.max(0,selected-1),true);
+  else if(action==='next')visit((selected+1)%EXHIBITS.length,true);
+  else if(action==='overview')visit(-1,true);
+  else if(action==='start'){tour.start();visit(0,true);}
+  else if(action==='finish'){tour.finish();renderTour();}
+  else if(action==='light')$('lighting').onclick();
+  else if(action==='exit')void endVR();
+}
+function restoreXR(endedSession){
+  if(session!==endedSession)return;
+  session=null;sessionStarting=false;xrReady=false;pendingSpawn=null;snapReady=true;vrGuide?.setEnabled(false);clearXRInputs();
+  document.body.classList.remove('xr-active');$('enter-vr').disabled=false;$('enter-vr').textContent='Войти в VR';
+  rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);camera.fov=65;camera.near=.08;camera.far=70;camera.updateProjectionMatrix();
+  applyQuality();if(active)visit(selected,true);resize();
+}
+async function endVR(){
+  const ending=session;if(!ending)return;
+  try{await ending.end();restoreXR(ending);}catch{toast('Завершите VR через меню шлема.');}
+}
+function xrVisibilityChanged(){
+  keys.clear();snapReady=true;clearXRInputs();vrGuide?.setEnabled(canUseXR());
+  if(audioGain)audioGain.gain.setTargetAtTime(soundOn&&session?.visibilityState==='visible' ? .045 : 0,audioContext.currentTime,.1);
+  if(canUseXR()&&vrGuide.open)showVRGuide();
+}
 $('enter-vr').onclick=()=>{
-  if(session){session.end().catch(()=>toast('Завершите VR через меню шлема.'));return;}
+  if(session){void endVR();return;}
   if(!navigator.xr||!xrSupported){showHelp();return;}
-  if(sessionStarting||!initialized)return;
+  if(sessionStarting||!initialized||!active)return;
   if(inspection?.active)closeInspection(false);
   clearTimeout(moveTimer);keys.clear();drag=null;$('fade').classList.remove('visible');
-  sessionStarting=true;
-  // Request synchronously from the user gesture: no dynamic import or awaited check before this call.
-  navigator.xr.requestSession('immersive-vr',{requiredFeatures:['local-floor'],optionalFeatures:['bounded-floor']}).then(async xrSession=>{
-    session=xrSession;
-    session.addEventListener('end',()=>{session=null;sessionStarting=false;document.body.classList.remove('xr-active');applyQuality();rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);world.marker.visible=false;teleportHits.clear();$('enter-vr').textContent='Войти в VR';visit(selected,true);resize();});
-    rig.rotation.set(0,0,0);camera.rotation.set(0,0,0);camera.position.set(0,0,0);rig.position.set(0,0,11.7);
-    renderer.shadowMap.enabled=false;await renderer.xr.setSession(session);document.body.classList.add('xr-active');$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
-  }).catch(async error=>{console.error(error);sessionStarting=false;if(session){try{await session.end();}catch{}session=null;}toast(error.name==='NotAllowedError'?'VR не запущен: доступ отклонён. Разрешите погружение в браузере шлема.':'Не удалось включить VR. Продолжайте просмотр в 3D или попробуйте браузер шлема.');});
+  sessionStarting=true;const token=++xrRequestToken;$('enter-vr').disabled=true;$('enter-vr').textContent='Подключаем VR…';
+  const failed=async error=>{
+    if(token!==xrRequestToken)return;
+    console.error(error);const failedSession=session;if(failedSession){try{await failedSession.end();}catch{}restoreXR(failedSession);}
+    sessionStarting=false;$('enter-vr').disabled=false;$('enter-vr').textContent='Войти в VR';
+    toast(error.name==='NotAllowedError'?'VR не запущен: доступ отклонён. Разрешите погружение в браузере шлема.':'Не удалось включить VR. Продолжайте просмотр в 3D или попробуйте браузер шлема.');
+  };
+  // Must be invoked synchronously from the user gesture.
+  let request;try{request=navigator.xr.requestSession('immersive-vr',{requiredFeatures:['local-floor'],optionalFeatures:['bounded-floor']});}catch(error){void failed(error);return;}
+  request.then(async xrSession=>{
+    if(token!==xrRequestToken||!active){await xrSession.end();return;}
+    session=xrSession;xrReady=false;pendingSpawn=selected;snapReady=true;
+    xrSession.addEventListener('end',()=>queueMicrotask(()=>restoreXR(xrSession)));
+    xrSession.addEventListener('visibilitychange',()=>{if(session===xrSession)xrVisibilityChanged();});
+    document.querySelectorAll('dialog[open]').forEach(d=>d.close());
+    rig.rotation.set(0,0,0);camera.rotation.set(0,0,0);camera.position.set(0,0,0);rig.position.set(0,0,0);renderer.shadowMap.enabled=false;
+    await renderer.xr.setSession(xrSession);
+    if(token!==xrRequestToken||!active||session!==xrSession){await xrSession.end();return;}
+    document.body.classList.add('xr-active');$('enter-vr').disabled=false;$('enter-vr').textContent='Выйти из VR';sessionStarting=false;
+  }).catch(failed);
 };
 $('sound').onclick=async()=>{
   try{
@@ -196,7 +290,7 @@ $('sound').onclick=async()=>{
   }catch{toast('Браузер не разрешил воспроизведение звука.');}
 };
 
-$('lighting').onclick=()=>{if(!world)return;world.setLighting(!world.dayMode);$('lighting').textContent=world.dayMode?'Свет: день':'Свет: вечер';$('lighting').setAttribute('aria-pressed',String(!world.dayMode));};
+$('lighting').onclick=()=>{if(!world)return;world.setLighting(!world.dayMode);$('lighting').textContent=world.dayMode?'Свет: день':'Свет: вечер';$('lighting').setAttribute('aria-pressed',String(!world.dayMode));updateVRGuide();};
 $('open-credits').onclick=()=>openDialog($('credits-dialog'));
 $('close-credits').onclick=()=>{$('credits-dialog').close();};
 
@@ -213,7 +307,7 @@ function renderTour(){
   $('tour-label').textContent='МАРШРУТ / '+String(Math.max(0,tour.index)+1).padStart(2,'0')+' ИЗ 04';
   $('tour-back').disabled=tour.index<=0;$('tour-next').textContent=tour.index===EXHIBITS.length-1?'Завершить ✓':'Далее →';
   [...$('tour-progress').children].forEach((el,i)=>el.classList.toggle('done',tour.visited.has(i)));
-  document.body.classList.toggle('tour-running',tour.active);
+  document.body.classList.toggle('tour-running',tour.active);updateVRGuide();
 }
 function startTour(){
   if(!active||!initialized){enter(0,true);return;}
