@@ -1,10 +1,11 @@
 import * as THREE from './vendor/three.module.min.js';
+import {createCollectionObjects} from './collection-objects.js?v=7.2';
 
 export const EXHIBITS = [
-  {title:'Монумент эпохи',category:'01 / ИСТОРИЯ И ИСКУССТВО',description:'Центральный экспонат — цифровая копия бюста Владимира Ильича Ленина по реальному 3D-скану. Реальная скульптурная пластика, характерные черты лица и следы поверхности сохранены в модели; бронзовый материал разработан для экспозиции.',fact:'3D-скан: fractalnoise. Адаптация для VR: оптимизация геометрии до 60 000 треугольников, гладкие нормали и бронзовый материал. Лицензия CC BY-NC-SA 4.0.',position:[0,0,-9],view:[0,0,-3.6],target:[0,3.7,-9],label:['В. И. ЛЕНИН','МОНУМЕНТ ЭПОХИ','3D-скан: fractalnoise · CC BY-NC-SA 4.0']},
-  {title:'За пределы Земли',category:'02 / КОСМОС',description:'4 октября 1957 года на орбиту был выведен первый искусственный спутник Земли. Простая сфера с четырьмя антеннами стала одним из самых узнаваемых образов инженерии XX века.',fact:'Посмотрите на форму: лаконичная оболочка, четыре антенны и задача, которая изменила представление о возможном. Здесь показан учебный макет.',position:[-5.2,0,-1.5],view:[-5.2,0,3.5],target:[-5.2,2.6,-1.5],label:['СПУТНИК-1','4 ОКТЯБРЯ 1957','Первый искусственный спутник Земли']},
-  {title:'Сила невидимого',category:'03 / НАУКА И ЭНЕРГИЯ',description:'Орбиты, ядро и свет — художественный образ атома. В советской визуальной культуре он стал знаком научного прогресса и надежды на новые источники энергии.',fact:'Это символическая модель: электронные орбитали реального атома не похожи на планетные траектории. Вопрос для обсуждения: где заканчивается образ и начинается физика?',position:[5.2,0,-1.5],view:[5.2,0,3.5],target:[5.2,2.35,-1.5],label:['ЭНЕРГИЯ АТОМА','СИМВОЛ НАУЧНОГО ПРОГРЕССА','Художественная, не физическая модель']},
-  {title:'Человек и машина',category:'04 / ИНЖЕНЕРИЯ И ФАНТАЗИЯ',description:'Робот-смотритель МИК — вымышленный экспонат в духе советской научной фантастики. Эмалевый корпус, металлические шарниры и световой визор соединяют индустриальную форму и дружелюбный характер.',fact:'Задание инженеру: придумайте полезную функцию робота в колледже. Какие датчики, приводы и алгоритмы ему понадобятся?',position:[-5.2,0,6.8],view:[-5.2,0,11.7],target:[-5.2,1.9,6.8],label:['СМОТРИТЕЛЬ МИК','ЧЕЛОВЕК И МАШИНА','Концепт робота-помощника']}
+  {title:'Монумент эпохи',category:'01 / ИСТОРИЯ И ИСКУССТВО',description:'Центральный экспонат — цифровая копия бюста Владимира Ильича Ленина по реальному 3D-скану. Реальная скульптурная пластика, характерные черты лица и следы поверхности сохранены в модели; бронзовый материал разработан для экспозиции.',fact:'3D-скан: fractalnoise. Адаптация для VR: оптимизация геометрии до 60 000 треугольников, гладкие нормали и бронзовый материал. Лицензия CC BY-NC-SA 4.0.',position:[0,0,-9],view:[0,0,-3.6],eye:2.65,target:[0,3.7,-9],label:['В. И. ЛЕНИН','МОНУМЕНТ ЭПОХИ','3D-скан: fractalnoise · CC BY-NC-SA 4.0']},
+  {title:'За пределы Земли',category:'02 / КОСМОС',description:'4 октября 1957 года на орбиту был выведен первый искусственный спутник Земли. Простая сфера с четырьмя антеннами стала одним из самых узнаваемых образов инженерии XX века.',fact:'Посмотрите на форму: лаконичная оболочка, четыре антенны и задача, которая изменила представление о возможном. Здесь показан учебный макет.',position:[-5.2,0,-1.5],view:[-5.2,0,3.5],eye:2.1,target:[-5.2,2.6,-1.5],label:['СПУТНИК-1','4 ОКТЯБРЯ 1957','Первый искусственный спутник Земли']},
+  {title:'Сила невидимого',category:'03 / НАУКА И ЭНЕРГИЯ',description:'Орбиты, ядро и свет — художественный образ атома. В советской визуальной культуре он стал знаком научного прогресса и надежды на новые источники энергии.',fact:'Это символическая модель: электронные орбитали реального атома не похожи на планетные траектории. Вопрос для обсуждения: где заканчивается образ и начинается физика?',position:[5.2,0,-1.5],view:[5.2,0,3.5],eye:2.1,target:[5.2,2.35,-1.5],label:['ЭНЕРГИЯ АТОМА','СИМВОЛ НАУЧНОГО ПРОГРЕССА','Художественная, не физическая модель']},
+  {title:'Человек и машина',category:'04 / ИНЖЕНЕРИЯ И ФАНТАЗИЯ',description:'Робот-смотритель МИК — вымышленный экспонат в духе советской научной фантастики. Эмалевый корпус, металлические шарниры и световой визор соединяют индустриальную форму и дружелюбный характер.',fact:'Задание инженеру: придумайте полезную функцию робота в колледже. Какие датчики, приводы и алгоритмы ему понадобятся?',position:[-5.2,0,6.8],view:[-5.2,0,11.7],eye:2.15,target:[-5.2,2.5,6.8],label:['СМОТРИТЕЛЬ МИК','ЧЕЛОВЕК И МАШИНА','Концепт робота-помощника']}
 ];
 
 export const HALL_PILLARS=[-8.8,8.8].flatMap(x=>[-11,-5,1,7,12].map(z=>[x,z]));
@@ -47,7 +48,7 @@ export function buildWorld(){
   });
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(20,28),new THREE.MeshBasicMaterial({visible:false}));floor.rotation.x=-Math.PI/2;floor.position.y=.008;root.add(floor);
   box([0,.016,1],[2.4,.03,24],red);for(const x of [-1.25,1.25])box([x,.035,1],[.055,.02,24],bronzeLight);
-  box([0,4,-14],[21,8,.5],stone);box([-10.3,4,0],[.5,8,28],stone);box([10.3,4,0],[.5,8,28],stone);box([0,4,14],[21,8,.5],stone);
+  box([0,4,-14],[21,8,.5],dark);box([-10.3,4,0],[.5,8,28],dark);box([10.3,4,0],[.5,8,28],dark);box([0,4,14],[21,8,.5],stone);
   for(const x of [-10,10]){box([x,.55,0],[.14,1.1,28],dark);box([x,1.15,0],[.18,.08,28],bronze);}
   box([0,.55,-13.7],[20,1.1,.2],dark);
   // Tall ribbed columns and a glazed, luminous roof.
@@ -60,9 +61,8 @@ export function buildWorld(){
   for(let x=-8;x<=8;x+=4)box([x,8,0],[.12,.15,28],bronze);
   box([0,8.15,0],[20,.05,28],new THREE.MeshBasicMaterial({color:'#c9d7c2',transparent:true,opacity:.26,side:THREE.DoubleSide}));
   // Central ring, banners and friezes.
-  torus(3.65,.18,[0,4,-13.35],bronze);torus(3.46,.035,[0,4,-13.28],glow);
-  for(const x of [-6.2,6.2]){box([x,4.3,-13.35],[1.6,6.4,.07],red);box([x,7.56,-13.25],[1.9,.09,.09],bronze);textPlate(['МИК','НАУКА','ИСКУССТВО'],1.28,2.3,[x,4.6,-13.25],root,{bg:'#873b2c',border:'#bd9b58',color:'#ecd9af'});}
-  textPlate(['АТЛАС БУДУЩЕГО','ИСТОРИЯ ИДЕЙ · ТЕХНОЛОГИИ · ЧЕЛОВЕК'],7.4,1.0,[0,7.2,-13.02]);
+  torus(3.1,.095,[0,4,-13.35],bronze);torus(2.99,.018,[0,4,-13.28],glow);
+  for(const x of [-6.2,6.2]){box([x,4.3,-13.35],[1.6,6.4,.07],red);box([x,7.56,-13.25],[1.9,.09,.09],bronze);}
   textPlate(['АТЛАС БУДУЩЕГО','КОЛЛЕКЦИЯ МИК'],5,1.2,[0,3.2,13.62]).rotation.y=Math.PI;
   const chandelier=new THREE.Group();chandelier.position.set(0,6.45,-2);root.add(chandelier);
   for(let i=0;i<3;i++)torus(1.4,.035,[0,0,0],bronzeLight,chandelier,i*.8,i*.7);
@@ -78,32 +78,10 @@ export function buildWorld(){
     cylinder([0,.12,0],i===0?2:1.45,.24,dark,g);cylinder([0,.26,0],i===0?1.82:1.3,.06,bronze,g);
     if(i===0){box([0,1.15,0],[1.65,1.75,1.45],red,g);box([0,2.08,0],[1.87,.16,1.62],bronze,g);}
     else{cylinder([0,.65,0],1,.73,stone,g);cylinder([0,1.05,0],1.05,.07,bronze,g);}
-    const plate=textPlate([e.label[0],String(i+1).padStart(2,'0')+' / КОЛЛЕКЦИЯ МИК'],1.8,.48,[0,.77,1.38],g);plate.rotation.x=-.13;
+    const plate=textPlate([e.label[0],String(i+1).padStart(2,'0')+' / КОЛЛЕКЦИЯ МИК'],1.55,.4,[0,.77,1.38],g,{bg:'#29342d',border:'#8e7755',color:'#d4c6a8'});plate.rotation.x=-.13;
     interactive.push(g);colliders.push({x:e.position[0],z:e.position[2],r:i===0?2.1:1.65});return g;
   });
-  // The central portrait is loaded from the attributed scan in sculpture.js.
-  // Sputnik: reflective sphere with a visible equator and four antennae.
-  const sputnik=new THREE.Group();sputnik.position.set(0,3.03,0);sputnik.rotation.z=.2;groups[1].add(sputnik);
-  sphere([0,0,0],[.59,.59,.59],chrome,sputnik);torus(.592,.012,[0,0,0],bronze,sputnik,Math.PI/2);
-  for(const [x,z] of [[-.33,-.28],[.33,-.28],[-.33,.28],[.33,.28]])rod([x,-.42,z],[x*2.9,-1.75,z*3.5],.018,chrome,sputnik);
-  rod([0,3.64,0],[0,6.4,0],.01,bronze,groups[1]);animated.push({group:sputnik,kind:'sputnik'});
-  // Symbolic orbital sculpture.
-  const atom=new THREE.Group();atom.position.y=2.65;groups[2].add(atom);
-  for(let i=0;i<3;i++){const orbit=new THREE.Group();orbit.rotation.set(i*Math.PI/3,.55,0);atom.add(orbit);torus(1.1,.024,[0,0,0],bronzeLight,orbit);const electron=sphere([1.1,0,0],[.075,.075,.075],glow,orbit);animated.push({group:orbit,kind:'orbit',speed:.2+i*.08});}
-  sphere([0,0,0],[.27,.27,.27],new THREE.MeshStandardMaterial({color:'#ba542b',metalness:.4,roughness:.32,emissive:'#7f290e',emissiveIntensity:.28}),atom);for(const p of [[.2,.07,.04],[-.12,.18,.07],[0,-.17,.16]])sphere(p,[.16,.16,.16],bronzeLight,atom);
-  rod([0,1.08,0],[0,2.4,0],.055,bronze,groups[2]);
-  // Friendly mechanical attendant, original design.
-  const robot=new THREE.Group();robot.position.y=1.38;robot.scale.setScalar(.78);groups[3].add(robot);
-  cylinder([0,.27,0],.44,.28,chrome,robot);sphere([0,.93,0],[.58,.75,.35],enamel,robot);cylinder([0,1.65,0],.12,.18,chrome,robot);
-  sphere([0,2.05,0],[.48,.45,.4],enamel,robot);box([0,2.06,.36],[.7,.16,.12],black,robot);
-  for(const x of [-.18,.18])box([x,2.07,.429],[.12,.035,.03],glow,robot);
-  box([0,1.86,.39],[.22,.025,.028],bronze,robot);textPlate(['МИК'],.45,.24,[0,1.15,.347],robot);
-  for(const side of [-1,1]){
-    sphere([side*.62,1.3,0],[.16,.16,.16],chrome,robot);rod([side*.65,1.23,0],[side*.8,.76,.03],.11,enamel,robot);sphere([side*.8,.73,.03],[.13,.13,.13],bronze,robot);
-    rod([side*.8,.7,.03],[side*.79,.37,.15],.095,chrome,robot);sphere([side*.79,.27,.15],[.13,.15,.13],enamel,robot);
-    cylinder([side*.26,.02,0],.13,.4,chrome,robot);sphere([side*.26,-.2,.12],[.22,.15,.3],dark,robot);
-  }
-  animated.push({group:robot,kind:'robot'});
+  const {sputnik,atom,robot}=createCollectionObjects(groups,animated);
   // Museum pedestals: concentric brass steps, fluted stone and compact spot housings.
   groups.forEach((g,i)=>{
     const radius=i===0?1.83:1.32;
@@ -123,12 +101,6 @@ export function buildWorld(){
     if(side<0){rod([-.7,-1.15,.3],[.8,1.18,.3],.07,bronzeLight,relief);box([.52,.99,.33],[1.15,.27,.24],bronzeLight,relief).rotation.z=-.55;}
     else {const rocket=mesh(geo.cone,bronzeLight,[.25,.68,.36],[.22,.75,.12],relief);rocket.rotation.z=-.45;for(let i=0;i<3;i++)rod([-.15+i*.12,-.1,.26],[-.6+i*.12,-1.25,.26],.025,bronzeLight,relief);}
   }
-  // Sputnik assembly details: equatorial bolts and antenna sleeves.
-  for(let i=0;i<16;i++){const a=i*Math.PI/8;sphere([Math.cos(a)*.585,0,Math.sin(a)*.585],[.017,.017,.017],bronze,sputnik);}
-  for(const [x,z] of [[-.33,-.28],[.33,-.28],[-.33,.28],[.33,.28]])rod([x,-.42,z],[x*1.35,-.62,z*1.4],.038,bronze,sputnik);
-  // A mechanical, not cartoon, finish for the original caretaker.
-  for(let i=0;i<5;i++)box([0,.86-i*.065,.336],[.35,.018,.025],black,robot);
-  for(const side of [-1,1]){torus(.16,.028,[side*.62,1.3,0],bronzeLight,robot,0,Math.PI/2);for(let i=0;i<3;i++)rod([side*.79+(i-1)*.058,.23,.22],[side*.79+(i-1)*.058,.06,.24],.025,chrome,robot);}
   // Floor destination medallions are visual wayfinding; teleport also works on free floor.
   EXHIBITS.forEach((e,i)=>{const p=[e.view[0],.05,e.view[2]];torus(.34,.017,p,bronzeLight,root,Math.PI/2);const plate=textPlate([String(i+1).padStart(2,'0')],.38,.22,[p[0],.06,p[2]],root);plate.rotation.x=-Math.PI/2;});
   scene.updateMatrixWorld(true);

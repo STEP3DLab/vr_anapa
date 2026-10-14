@@ -13,3 +13,5 @@ The adapted `lenin-bust.glb`, `lenin-bust-low.glb` and the derived render `exhib
 Changes: mesh decimation, conversion from STL to GLB, normal generation, normalization to height 1, Y-up orientation with face toward +Z, base centering, bronze PBR material and studio lighting for the rendered preview; lossless WebP encoding for web delivery. No endorsement by the original author is implied. The original sculpture is not claimed to be a museum accession or a historically authenticated artifact.
 
 Machine-readable provenance: `lenin-provenance.json`.
+
+The gallery cover renders `gallery-wide.webp` and `gallery-tall.webp` also contain the adapted Lenin scan and are provided under CC BY-NC-SA 4.0. They were rendered from the project geometry with a native offline renderer, using the same sculpture placement and entrance camera. Material and lighting adjustments and lossy WebP encoding were applied.

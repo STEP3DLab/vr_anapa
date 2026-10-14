@@ -10,7 +10,7 @@ export async function loadSculpture(world,onProgress){
   const height=3.1;const scale=height/size.y;
   const holder=new THREE.Group();holder.name='lenin-scan';holder.position.set(0,2.18,0);
   model.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);model.scale.multiplyScalar(scale);holder.add(model);
-  const bronze=new THREE.MeshStandardMaterial({color:'#967443',metalness:.8,roughness:.38,envMapIntensity:1});
+  const bronze=new THREE.MeshStandardMaterial({color:'#8d7660',metalness:.76,roughness:.51,envMapIntensity:.85});
   model.traverse(o=>{if(o.isMesh){o.material=bronze;o.castShadow=true;o.receiveShadow=true;}});
   world.groups[0].add(holder);world.models[0]=holder;world.sculptureLoaded=true;world.scene.updateMatrixWorld(true);
   return holder;
@@ -21,5 +21,7 @@ export async function installCollegeMark(world){
   const geometry=new THREE.PlaneGeometry(1.5,1.5*texture.image.height/texture.image.width);
   const material=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide});
   for(const x of [-4,4]){const plaque=new THREE.Mesh(geometry,material);plaque.position.set(x,3.9,13.7);plaque.rotation.y=Math.PI;world.root.add(plaque);}
+  const robot=world.models[3],badge=robot?.userData.collegeMark;
+  if(badge){const logo=new THREE.Mesh(geometry,material);logo.scale.setScalar(badge.width/1.5);logo.position.set(...badge.position);robot.add(logo);}
   const mark=new THREE.Mesh(geometry,material);mark.scale.setScalar(.58);mark.position.set(0,6.2,-13.04);world.root.add(mark);
 }

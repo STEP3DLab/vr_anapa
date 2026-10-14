@@ -15,7 +15,7 @@ document.addEventListener('click',event=>{
   event.preventDefault();event.stopImmediatePropagation();queued=button;
   panel.hidden=false;if(!panel.open)panel.showModal();document.getElementById('engine-cancel').focus();retry.hidden=true;title.textContent='Подключаем павильон…';
   if(pending)return;
-  pending=import('./app.js?v=7.1').then(()=>{
+  pending=import('./app.js?v=7.2').then(()=>{
     ready=true;closeLoading();const action=queued;queued=null;
     if(action?.isConnected)action.click();
   }).catch(error=>{

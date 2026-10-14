@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {PAVILION} from './gallery.js?v=7.1';
+import {PAVILION} from './gallery.js?v=7.2';
 const W=1024,H=448,PAPER='#eadfc7',GOLD='#cdb083';
 
 // A compact physical caption below eye level, identical navigation in both eyes.

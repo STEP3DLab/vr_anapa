@@ -1,18 +1,18 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=7.1';
-import {installAtmosphere} from './atmosphere.js?v=7.1';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=7.1';
-import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=7.1';
-import {installMuseumGraphics} from './museum.js?v=7.1';
-import {VRGuide} from './vr-guide.js?v=7.1';
-import {CinematicRenderer} from './cinematic.js?v=7.1';
-import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=7.1';
-import {renderPixelRatio} from './render-budget.js?v=7.1';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=7.2';
+import {installAtmosphere} from './atmosphere.js?v=7.2';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=7.2';
+import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=7.2';
+import {installMuseumGraphics} from './museum.js?v=7.2';
+import {VRGuide} from './vr-guide.js?v=7.2';
+import {CinematicRenderer} from './cinematic.js?v=7.2';
+import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=7.2';
+import {renderPixelRatio} from './render-budget.js?v=7.2';
 
 
-import {COLLECTION,PAVILION,galleryStep} from './gallery.js?v=7.1';
-import {collectionBounds} from './framing.js?v=7.1';
-import {GalleryAtmosphere} from './gallery-atmosphere.js?v=7.1';
+import {COLLECTION,PAVILION,galleryStep} from './gallery.js?v=7.2';
+import {collectionBounds} from './framing.js?v=7.2';
+import {GalleryAtmosphere} from './gallery-atmosphere.js?v=7.2';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
@@ -50,6 +50,10 @@ function showLoading(retry=false){
   document.querySelectorAll('dialog[open]').forEach(d=>{if(d!==panel)d.close();});
   panel.hidden=false;if(!panel.open)panel.showModal();$(retry?'retry-loading':'cancel-loading').focus();
 }
+function revealScene(id){
+  if(reduced||id!==0)return;const token=openToken,cover=$('arrival');cover.style.transition='none';cover.classList.add('visible');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{if(token!==openToken||!active)return;cover.style.transition='';cover.classList.remove('visible');}));
+}
 function hideLoading(){$('loading').close();$('loading').hidden=true;}
 function cancelVisit(){clearTimeout(moveTimer);requestedView=null;$('fade').classList.remove('visible');}
 function dismissHint(){$('hint').classList.add('dismissed');clearTimeout(hintTimer);}
@@ -67,7 +71,7 @@ function frameExhibit(){
   // Frame the fixed viewing position, so a quality/size change never zooms in
   // response to the visitor looking away from the sculpture.
   const view=EXHIBITS[selected].view,fit=new THREE.PerspectiveCamera(65,camera.aspect,.08,70);
-  fit.position.set(view[0],1.65,view[2]);fit.lookAt(...galleryTarget(selected));fit.updateMatrixWorld(true);
+  fit.position.set(view[0],EXHIBITS[selected].eye??1.65,view[2]);fit.lookAt(...galleryTarget(selected));fit.updateMatrixWorld(true);
   const bounds=exhibitBounds[selected],point=new THREE.Vector3();let scale=1;
   for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){
     point.set(x,y,z).project(fit);scale=Math.max(scale,Math.abs(point.x)/.82,Math.abs(point.y)/.65);
@@ -134,7 +138,7 @@ async function enter(id=0){
   try{
     if(!initPromise)initPromise=init().catch(error=>{disposeFailedInit();initPromise=null;throw error;});
     await initPromise;if(token!==openToken||!active)return;
-    resize();visit(id,true);syncAnimationLoop();if(!contextLost){hideLoading();$('exit-viewer').focus();}
+    resize();visit(id,true);syncAnimationLoop();if(!contextLost){revealScene(id);hideLoading();$('exit-viewer').focus();}
     $('hint').classList.remove('dismissed');clearTimeout(hintTimer);hintTimer=setTimeout(dismissHint,6500);
   }catch(error){
     if(token!==openToken||!active)return;
@@ -157,7 +161,7 @@ function rebuildGraphics(){
   })().finally(()=>{rebuildPromise=null;});return rebuildPromise;
 }
 async function exit(){
-  const exitToken=++openToken;++xrRequestToken;active=false;sessionStarting=false;cancelVisit();keys.clear();drag=null;dismissHint();
+  const exitToken=++openToken;++xrRequestToken;active=false;sessionStarting=false;cancelVisit();$('arrival').classList.remove('visible');keys.clear();drag=null;dismissHint();
   ++soundRequest;soundBusy=false;soundOn=false;if(audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);$('sound').textContent='Выключен';$('sound').setAttribute('aria-pressed','false');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(session)await endVR();if(exitToken!==openToken)return;
   if(session){active=true;syncAnimationLoop();vrGuide?.setEnabled(canUseXR());return;}
@@ -191,7 +195,7 @@ async function leaveFullscreen(){
 }
 $('fullscreen').onclick=toggleFullscreen;
 document.addEventListener('fullscreenchange',()=>{syncFullscreen();resize();});syncFullscreen();
-function setOrientation(target){const v=new THREE.Vector3(...target).sub(new THREE.Vector3(rig.position.x,1.65,rig.position.z));yaw=Math.atan2(-v.x,-v.z);pitch=Math.atan2(v.y,Math.hypot(v.x,v.z));camera.rotation.set(pitch,yaw,0,'YXZ');}
+function setOrientation(target){const v=new THREE.Vector3(...target).sub(new THREE.Vector3(rig.position.x,rig.position.y+camera.position.y,rig.position.z));yaw=Math.atan2(-v.x,-v.z);pitch=Math.atan2(v.y,Math.hypot(v.x,v.z));camera.rotation.set(pitch,yaw,0,'YXZ');}
 function updatePanel(id){
   selected=id;const item=COLLECTION[id]||PAVILION;
   $('object-number').textContent=id<0?'МИК / КОЛЛЕКЦИЯ':String(id+1).padStart(2,'0')+' / 04';
@@ -210,7 +214,7 @@ function visit(id,immediate=false){
     if(session){
       if(!xrReady){pendingSpawn=id;updatePanel(id);return;}
       moveXRTo(p[0],p[2]);faceXRTarget(t);
-    }else{rig.position.set(...p);rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);setOrientation(t);}
+    }else{rig.position.set(...p);rig.rotation.set(0,0,0);camera.position.set(0,e?.eye??1.65,0);setOrientation(t);}
     updatePanel(id);if(session)showVRGuide();else frameExhibit();$('fade').classList.remove('visible');
   };
   if(immediate||session||reduced)perform();else{$('fade').classList.add('visible');moveTimer=setTimeout(perform,240);}
@@ -351,7 +355,7 @@ $('enter-vr').onclick=()=>{
   if(session){void endVR();return;}
   if(!navigator.xr||!xrSupported){showHelp();return;}
   if(sessionStarting||!initialized||!active||contextLost)return;
-  cancelVisit();keys.clear();drag=null;
+  cancelVisit();$('arrival').classList.remove('visible');keys.clear();drag=null;
   sessionStarting=true;const token=++xrRequestToken;$('enter-vr').disabled=true;$('enter-vr').textContent='VR…';
   const failed=async error=>{
     if(token!==xrRequestToken)return;

@@ -13,24 +13,32 @@ export function stoneTexture(base,vein,repeat=3){
 export function installAtmosphere(renderer,world){
   const scene=world.scene;
   const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=512;const c=canvas.getContext('2d');
-  const grad=c.createLinearGradient(0,0,0,512);grad.addColorStop(0,'#b8c8cf');grad.addColorStop(.32,'#fff1ce');grad.addColorStop(.49,'#b2a480');grad.addColorStop(.55,'#454237');grad.addColorStop(1,'#191e1a');c.fillStyle=grad;c.fillRect(0,0,1024,512);
-  for(let x=40;x<1024;x+=180){c.fillStyle='#fff8df';c.fillRect(x,70,34,120);c.fillStyle='#be915b';c.fillRect(x+37,70,4,120);}
+  const grad=c.createLinearGradient(0,0,0,512);grad.addColorStop(0,'#728581');grad.addColorStop(.32,'#e6d8bf');grad.addColorStop(.49,'#797968');grad.addColorStop(.55,'#454237');grad.addColorStop(1,'#191e1a');c.fillStyle=grad;c.fillRect(0,0,1024,512);
+  for(let x=40;x<1024;x+=180){c.fillStyle='#fff0d8';c.fillRect(x,70,34,120);c.fillStyle='#be915b';c.fillRect(x+37,70,4,120);}
   const texture=new THREE.CanvasTexture(canvas);texture.mapping=THREE.EquirectangularReflectionMapping;texture.colorSpace=THREE.SRGBColorSpace;
   const pmrem=new THREE.PMREMGenerator(renderer);const env=pmrem.fromEquirectangular(texture);scene.environment=env.texture;scene.environmentIntensity=.7;texture.dispose();pmrem.dispose();
-  const marble=stoneTexture('#c9bea4','rgba(73,69,52,.18)',2),red=stoneTexture('#713d30','rgba(245,190,127,.2)',2),dark=stoneTexture('#384238','rgba(190,174,126,.1)',3);
+  configureMuseumLighting(renderer,world);
+  world.environmentTarget=env;
+}
+
+// Shared scene/material setup also used by the offline geometry renderer.
+export function configureMuseumLighting(renderer,world){
+  const scene=world.scene;
+  const marble=stoneTexture('#c3baa7','rgba(73,69,52,.18)',2),red=stoneTexture('#724a3c','rgba(245,190,127,.2)',2),dark=stoneTexture('#39443e','rgba(190,174,126,.1)',3);
   world.materials.stone.map=marble;world.materials.red.map=red;world.materials.dark.map=dark;
+  for(const name of ['stone','red','dark'])world.materials[name].color.set('#ffffff');
+  world.materials.stone.roughness=.68;world.materials.dark.roughness=.49;world.materials.red.roughness=.62;
   scene.traverse(o=>{if(o.isMesh){const materials=Array.isArray(o.material)?o.material:[o.material];if(materials.every(m=>!m.isMeshBasicMaterial&&!m.transparent)){o.castShadow=true;o.receiveShadow=true;}}});
   const sun=world.sun;sun.castShadow=true;sun.shadow.mapSize.set(1536,1536);sun.shadow.camera.left=-14;sun.shadow.camera.right=14;sun.shadow.camera.top=17;sun.shadow.camera.bottom=-17;sun.shadow.camera.near=.5;sun.shadow.camera.far=50;sun.shadow.bias=-.0008;sun.shadow.normalBias=.035;sun.shadow.radius=3;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  // A quiet permanent accent on the central portrait, with no extra shadow map.
-  const key=new THREE.SpotLight('#ffe3b1',35,18,.55,.75,1.8);key.position.set(2.8,7.2,-4);key.target.position.set(0,3.8,-9);scene.add(key,key.target);
+  // A single architectural shadow; the exhibit key/rim pair lives in GalleryAtmosphere.
+  sun.position.set(-5,11,4);world.fill.position.set(8,5,-8);
   world.dayMode=true;
   world.setLighting=(day)=>{
-    world.dayMode=day;world.hemisphere.intensity=day?1.25:.72;sun.intensity=day?3.3:1.05;world.fill.intensity=day ? .75 : .5;
-    scene.environmentIntensity=day ? .7 : .45;key.intensity=day?35:42;
+    world.dayMode=day;world.hemisphere.intensity=day?.94:.5;sun.intensity=day?2.6:.92;world.fill.intensity=day ? .48 : .24;
+    scene.environmentIntensity=day ? .72 : .55;
     const bg=day?'#868779':'#20261f';scene.background.set(bg);scene.fog.color.set(bg);
-    renderer.toneMappingExposure=day?1.05:1.13;
+    renderer.toneMappingExposure=day?1.0:1.08;
   };
   world.setLighting(true);
-  world.environmentTarget=env;
 }

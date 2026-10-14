@@ -33,7 +33,7 @@ ray.set(new THREE.Vector3(0,3.4,-3.6),new THREE.Vector3(0,0,-1));
 const meshPickMs=measure(()=>ray.intersectObjects(world.interactive,true),120),proxyPickMs=measure(()=>picker.pick(ray),120),matrixUpdateMs=measure(()=>world.scene.updateMatrixWorld(),1000);
 picker.dispose();
 // Lazy-import control: one pending load, last requested action, cancellation and retry UI.
-const boot=fs.readFileSync(file('boot.js'),'utf8').replace(/^import .*;\n/gm,'').replace("import('./app.js?v=7.1')",'load()');
+const boot=fs.readFileSync(file('boot.js'),'utf8').replace(/^import .*;\n/gm,'').replace("import('./app.js?v=7.2')",'load()');
 function bootEnv(){
  const elements=Object.fromEntries(['engine-loading','engine-title','engine-retry','engine-cancel','credits-dialog','open-credits','close-credits'].map(id=>[id,{hidden:true,focus(){this.focused=true;},addEventListener(name,fn){this[name]=fn;},showModal(){this.open=true;},close(){this.open=false;}}]));let handler,resolve,reject,loads=0,reloads=0;
  const pending=new Promise((yes,no)=>{resolve=yes;reject=no;});
