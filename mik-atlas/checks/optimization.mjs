@@ -33,9 +33,9 @@ ray.set(new THREE.Vector3(0,3.4,-3.6),new THREE.Vector3(0,0,-1));
 const meshPickMs=measure(()=>ray.intersectObjects(world.interactive,true),120),proxyPickMs=measure(()=>picker.pick(ray),120),matrixUpdateMs=measure(()=>world.scene.updateMatrixWorld(),1000);
 picker.dispose();
 // Lazy-import control: one pending load, last requested action, cancellation and retry UI.
-const boot=fs.readFileSync(file('boot.js'),'utf8').replace(/^import .*;\n/gm,'').replace("import('./app.js?v=7.0')",'load()');
+const boot=fs.readFileSync(file('boot.js'),'utf8').replace(/^import .*;\n/gm,'').replace("import('./app.js?v=7.1')",'load()');
 function bootEnv(){
- const elements=Object.fromEntries(['engine-loading','engine-title','engine-retry','engine-cancel','credits-dialog','open-credits','close-credits'].map(id=>[id,{hidden:true,showModal(){this.open=true;},close(){this.open=false;}}]));let handler,resolve,reject,loads=0,reloads=0;
+ const elements=Object.fromEntries(['engine-loading','engine-title','engine-retry','engine-cancel','credits-dialog','open-credits','close-credits'].map(id=>[id,{hidden:true,focus(){this.focused=true;},addEventListener(name,fn){this[name]=fn;},showModal(){this.open=true;},close(){this.open=false;}}]));let handler,resolve,reject,loads=0,reloads=0;
  const pending=new Promise((yes,no)=>{resolve=yes;reject=no;});
  const context={window:{},localGameStorage:()=>null,readPlayer:()=>({}),renderSavedGame:()=>{},document:{getElementById:id=>elements[id],addEventListener:(name,fn)=>handler=fn},load:()=>{loads++;return pending;},console:{error(){}},location:{reload(){reloads++;}}};vm.runInNewContext(boot,context);
  const button=()=>({hasAttribute:()=>true,clicks:0,isConnected:true,closest:()=>null,click(){this.clicks++;},focus(){this.focused=true;}});
@@ -46,5 +46,6 @@ const settle=()=>new Promise(r=>setImmediate(r));
 const about=bootEnv();about.elements['open-credits'].onclick();assert(about.elements['credits-dialog'].open);assert.equal(about.loads,0);about.elements['close-credits'].onclick();assert(!about.elements['credits-dialog'].open);
 const b=bootEnv(),first=b.button(),last=b.button();assert.equal(b.loads,0);b.click(first);b.click(last);assert.equal(b.loads,1);b.resolve();await settle();assert.equal(first.clicks,0);assert.equal(last.clicks,1);assert(b.elements['engine-loading'].hidden);
 const c=bootEnv(),cancelled=c.button();c.click(cancelled);c.elements['engine-cancel'].onclick();c.resolve();await settle();assert.equal(cancelled.clicks,0);assert(cancelled.focused);
+const aborted=bootEnv();aborted.click(aborted.button());assert(aborted.elements['engine-loading'].open);assert(aborted.elements['engine-cancel'].focused);aborted.elements['engine-loading'].cancel({preventDefault(){}});aborted.reject(Error('late network failure'));await settle();assert(aborted.elements['engine-loading'].hidden);assert(!aborted.elements['engine-loading'].open);
 const d=bootEnv();d.click(d.button());d.reject(Error('network'));await settle();assert(!d.elements['engine-retry'].hidden);d.elements['engine-retry'].onclick();assert.equal(d.reloads,1);
 console.log(JSON.stringify({status:'pass',before,after,meshPickMs,proxyPickMs,matrixUpdateMs,scope:'CPU microbenchmark; basic hall and actual GLB; texture flags, no GPU/DOM/browser/WebXR'},null,2));

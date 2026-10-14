@@ -22,12 +22,12 @@ export function installAtmosphere(renderer,world){
   scene.traverse(o=>{if(o.isMesh){const materials=Array.isArray(o.material)?o.material:[o.material];if(materials.every(m=>!m.isMeshBasicMaterial&&!m.transparent)){o.castShadow=true;o.receiveShadow=true;}}});
   const sun=world.sun;sun.castShadow=true;sun.shadow.mapSize.set(1536,1536);sun.shadow.camera.left=-14;sun.shadow.camera.right=14;sun.shadow.camera.top=17;sun.shadow.camera.bottom=-17;sun.shadow.camera.near=.5;sun.shadow.camera.far=50;sun.shadow.bias=-.0008;sun.shadow.normalBias=.035;sun.shadow.radius=3;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  // One focused key light on the central portrait, with no extra shadow map.
-  const key=new THREE.SpotLight('#ffe3b1',85,18,.55,.75,1.8);key.position.set(2.8,7.2,-4);key.target.position.set(0,3.8,-9);scene.add(key,key.target);
+  // A quiet permanent accent on the central portrait, with no extra shadow map.
+  const key=new THREE.SpotLight('#ffe3b1',35,18,.55,.75,1.8);key.position.set(2.8,7.2,-4);key.target.position.set(0,3.8,-9);scene.add(key,key.target);
   world.dayMode=true;
   world.setLighting=(day)=>{
     world.dayMode=day;world.hemisphere.intensity=day?1.25:.72;sun.intensity=day?3.3:1.05;world.fill.intensity=day ? .75 : .5;
-    scene.environmentIntensity=day ? .7 : .45;key.intensity=day?85:90;
+    scene.environmentIntensity=day ? .7 : .45;key.intensity=day?35:42;
     const bg=day?'#868779':'#20261f';scene.background.set(bg);scene.fog.color.set(bg);
     renderer.toneMappingExposure=day?1.05:1.13;
   };

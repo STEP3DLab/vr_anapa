@@ -1,30 +1,31 @@
 import * as THREE from './vendor/three.module.min.js';
-import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=7.0';
-import {installAtmosphere} from './atmosphere.js?v=7.0';
-import {loadSculpture,installCollegeMark} from './sculpture.js?v=7.0';
-import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=7.0';
-import {installMuseumGraphics} from './museum.js?v=7.0';
-import {VRGuide} from './vr-guide.js?v=7.0';
-import {CinematicRenderer} from './cinematic.js?v=7.0';
-import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=7.0';
-import {renderPixelRatio} from './render-budget.js?v=7.0';
+import {buildWorld,EXHIBITS,isWalkable} from './world.js?v=7.1';
+import {installAtmosphere} from './atmosphere.js?v=7.1';
+import {loadSculpture,installCollegeMark} from './sculpture.js?v=7.1';
+import {consolidateArchitecture,freezeArchitecture,createExhibitPicker} from './optimize.js?v=7.1';
+import {installMuseumGraphics} from './museum.js?v=7.1';
+import {VRGuide} from './vr-guide.js?v=7.1';
+import {CinematicRenderer} from './cinematic.js?v=7.1';
+import {AdaptiveQuality,QUALITY_PROFILES,readQuality,writeQuality} from './adaptive-quality.js?v=7.1';
+import {renderPixelRatio} from './render-budget.js?v=7.1';
 
 
-import {COLLECTION,PAVILION,galleryStep} from './gallery.js?v=7.0';
-import {GalleryAtmosphere} from './gallery-atmosphere.js?v=7.0';
+import {COLLECTION,PAVILION,galleryStep} from './gallery.js?v=7.1';
+import {collectionBounds} from './framing.js?v=7.1';
+import {GalleryAtmosphere} from './gallery-atmosphere.js?v=7.1';
 
 const $=id=>document.getElementById(id);
 const experience=$('experience'),landing=$('landing'),viewport=$('viewport'),dialog=$('help-dialog');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let world,renderer,camera,rig,active=false,selected=-1,yaw=0,pitch=0,initialized=false,xrSupported=false,session=null,sessionStarting=false;
 let vrGuide=null,xrRequestToken=0,xrReady=false,pendingSpawn=null;
-let effects=null,cinematic=null,hintTimer;
-let exhibitPicker=null,contextLost=false,rebuildPromise=null,lastShadow=-Infinity;
+let effects=null,cinematic=null,hintTimer,requestedView=null;
+let exhibitBounds=[],exhibitPicker=null,contextLost=false,rebuildPromise=null,lastShadow=-Infinity;
 let initPromise=null,openToken=0,pendingEntry={id:0};
 const adaptive=new AdaptiveQuality({coarse:matchMedia('(pointer: coarse)').matches});
 let quality='auto';try{quality=readQuality(window.localStorage);}catch{}
 let ownsFullscreen=false,fullscreenBusy=false,windowFocused=document.hasFocus?.()??true;
-let keys=new Set(),drag=null,lastTime=0,toastTimer,moveTimer,returnFocus=null,audioContext,audioGain,soundOn=false,snapReady=true;
+let keys=new Set(),drag=null,lastTime=0,toastTimer,moveTimer,returnFocus=null,audioContext,audioGain,soundOn=false,snapReady=true,soundRequest=0,soundBusy=false;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),direction=new THREE.Vector3(),matrix=new THREE.Matrix4();
 const controllers=[],teleportHits=new Map();
 
@@ -41,9 +42,16 @@ $('help').onclick=showHelp;
 document.querySelectorAll('[data-close-dialog]').forEach(b=>b.onclick=()=>dialog.close());
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 document.querySelectorAll('[data-enter]').forEach(b=>b.onclick=()=>enter(0));
-$('previous-object').onclick=()=>visit(galleryStep(selected,-1));
-$('next-object').onclick=()=>visit(galleryStep(selected,1));
+$('previous-object').onclick=()=>visit(galleryStep(requestedView??selected,-1));
+$('next-object').onclick=()=>visit(galleryStep(requestedView??selected,1));
 $('open-object').onclick=()=>openDialog($('object-dialog'));
+function showLoading(retry=false){
+  const panel=$('loading');$('retry-loading').hidden=!retry;$('loading-actions').hidden=false;
+  document.querySelectorAll('dialog[open]').forEach(d=>{if(d!==panel)d.close();});
+  panel.hidden=false;if(!panel.open)panel.showModal();$(retry?'retry-loading':'cancel-loading').focus();
+}
+function hideLoading(){$('loading').close();$('loading').hidden=true;}
+function cancelVisit(){clearTimeout(moveTimer);requestedView=null;$('fade').classList.remove('visible');}
 function dismissHint(){$('hint').classList.add('dismissed');clearTimeout(hintTimer);}
 
 function graphicsProfile(){return quality==='auto'?adaptive.profile:QUALITY_PROFILES[quality==='detail'?0:2];}
@@ -55,12 +63,12 @@ function resize(){
 function frameExhibit(){
   if(!camera||session)return;
   camera.fov=65;camera.updateProjectionMatrix();
-  const model=world?.models[selected];if(!model)return;
+  const model=world?.models[selected];if(!model||!exhibitBounds[selected])return;
   // Frame the fixed viewing position, so a quality/size change never zooms in
   // response to the visitor looking away from the sculpture.
   const view=EXHIBITS[selected].view,fit=new THREE.PerspectiveCamera(65,camera.aspect,.08,70);
   fit.position.set(view[0],1.65,view[2]);fit.lookAt(...galleryTarget(selected));fit.updateMatrixWorld(true);
-  const bounds=new THREE.Box3().setFromObject(model),point=new THREE.Vector3();let scale=1;
+  const bounds=exhibitBounds[selected],point=new THREE.Vector3();let scale=1;
   for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){
     point.set(x,y,z).project(fit);scale=Math.max(scale,Math.abs(point.x)/.82,Math.abs(point.y)/.65);
   }
@@ -68,7 +76,7 @@ function frameExhibit(){
 }
 function galleryTarget(id){
   const target=[...(EXHIBITS[id]?.target||[0,2.1,-7])];
-  if(id===1&&world?.models[id])target[0]=new THREE.Box3().setFromObject(world.models[id]).getCenter(new THREE.Vector3()).x;
+  if(id===1&&world?.models[id])target[0]=exhibitBounds[id].getCenter(new THREE.Vector3()).x;
   return target;
 }
 function syncAnimationLoop(){adaptive.reset();if(!renderer)return;lastTime=0;renderer.setAnimationLoop(active&&initialized&&!contextLost&&(!document.hidden||session)?frame:null);}
@@ -99,14 +107,14 @@ async function init(){
   const owner=renderer;
   renderer.domElement.addEventListener('webglcontextlost',e=>{
     e.preventDefault();if(owner!==renderer)return;contextLost=true;++xrRequestToken;sessionStarting=false;$('enter-vr').disabled=false;$('enter-vr').textContent='VR ↗';keys.clear();drag=null;owner.setAnimationLoop(null);clearXRInputs();
-    $('loading-title').textContent='ВОССТАНАВЛИВАЕМ ГРАФИКУ';$('loading-detail').textContent='Восстанавливаем свет и скульптуры…';$('loading').hidden=false;$('loading-actions').hidden=false;
+    $('loading-title').textContent='ВОССТАНАВЛИВАЕМ ГРАФИКУ';$('loading-detail').textContent='Восстанавливаем свет и скульптуры…';if(active)showLoading(true);
   });
   renderer.domElement.addEventListener('webglcontextrestored',()=>{if(owner===renderer&&contextLost&&initialized)void rebuildGraphics();});
   setupPointer();installAtmosphere(renderer,world);world.setLighting(false);syncLightButton();applyQuality();
   const resources=await Promise.allSettled([loadSculpture(world,progress=>{$('loading-detail').textContent=progress?'Загружаем скульптуру · '+Math.round(progress*100)+'%':'Загружаем скульптуру…';}),installCollegeMark(world),installMuseumGraphics(world)]);
   const failed=resources.find(result=>result.status==='rejected');if(failed)throw failed.reason;
   if(renderer.getContext?.().isContextLost())throw new Error('WebGL context lost during initialization');
-  consolidateArchitecture(world);freezeArchitecture(world);exhibitPicker=createExhibitPicker(world);effects=new GalleryAtmosphere(world,EXHIBITS,{reduced});cinematic=new CinematicRenderer(renderer);vrGuide=new VRGuide(world.scene,camera,COLLECTION);initialized=true;contextLost=false;applyQuality();
+  exhibitBounds=collectionBounds(world);consolidateArchitecture(world);freezeArchitecture(world);exhibitPicker=createExhibitPicker(world);effects=new GalleryAtmosphere(world,EXHIBITS,{reduced});cinematic=new CinematicRenderer(renderer);vrGuide=new VRGuide(world.scene,camera,COLLECTION);initialized=true;contextLost=false;applyQuality();
 }
 function disposeFailedInit(){
   renderer?.setAnimationLoop(null);world?.environmentTarget?.dispose();cinematic?.dispose();exhibitPicker?.dispose();
@@ -114,27 +122,28 @@ function disposeFailedInit(){
   const collect=o=>{if(o.geometry)geometries.add(o.geometry);if(o.material)for(const m of [].concat(o.material)){materials.add(m);for(const value of Object.values(m))if(value?.isTexture)textures.add(value);}o.shadow?.map?.dispose();};
   world?.scene.traverse(collect);
   geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());
-  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;vrGuide=null;effects=null;cinematic=null;exhibitPicker=null;initialized=false;contextLost=false;
+  renderer?.dispose();renderer?.domElement.remove();controllers.length=0;teleportHits.clear();world=null;renderer=null;vrGuide=null;effects=null;cinematic=null;exhibitPicker=null;exhibitBounds=[];initialized=false;contextLost=false;
 }
 async function enter(id=0){
   if(contextLost&&initialized){if(active)return rebuildGraphics();disposeFailedInit();initPromise=null;}
   const token=++openToken;pendingEntry={id};if(!active)returnFocus=document.activeElement;
   active=true;experience.hidden=false;landing.inert=true;landing.setAttribute('aria-hidden','true');document.body.classList.add('in-experience');
-  $('loading').hidden=initialized;$('loading-actions').hidden=true;$('loading-title').textContent='ОТКРЫВАЕМ ПАВИЛЬОН';$('loading-detail').textContent='Готовим скульптуры…';
+  if(initialized)hideLoading();else showLoading();$('loading-title').textContent='ОТКРЫВАЕМ ПАВИЛЬОН';$('loading-detail').textContent='Готовим скульптуры…';
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   if(token!==openToken||!active)return;
   try{
     if(!initPromise)initPromise=init().catch(error=>{disposeFailedInit();initPromise=null;throw error;});
     await initPromise;if(token!==openToken||!active)return;
-    resize();visit(id,true);syncAnimationLoop();$('loading').hidden=!contextLost;$('exit-viewer').focus();
+    resize();visit(id,true);syncAnimationLoop();if(!contextLost){hideLoading();$('exit-viewer').focus();}
     $('hint').classList.remove('dismissed');clearTimeout(hintTimer);hintTimer=setTimeout(dismissHint,6500);
   }catch(error){
     if(token!==openToken||!active)return;
-    console.error(error);$('loading-title').textContent='ПАВИЛЬОН НЕ ЗАГРУЗИЛСЯ';$('loading-detail').textContent='Проверьте соединение. Для просмотра нужен браузер с WebGL 2.';$('loading-actions').hidden=false;$('loading').hidden=false;
+    console.error(error);$('loading-title').textContent='ПАВИЛЬОН НЕ ЗАГРУЗИЛСЯ';$('loading-detail').textContent='Проверьте соединение. Для просмотра нужен браузер с WebGL 2.';showLoading(true);
   }
 }
 $('retry-loading').onclick=()=>contextLost&&initialized?rebuildGraphics():enter(pendingEntry.id);
 $('cancel-loading').onclick=exit;
+$('loading').addEventListener('cancel',event=>{event.preventDefault();void exit();});
 function rebuildGraphics(){
   if(rebuildPromise)return rebuildPromise;
   const id=selected,day=world?.dayMode??false;
@@ -148,9 +157,11 @@ function rebuildGraphics(){
   })().finally(()=>{rebuildPromise=null;});return rebuildPromise;
 }
 async function exit(){
-  const exitToken=++openToken;++xrRequestToken;active=false;sessionStarting=false;clearTimeout(moveTimer);keys.clear();drag=null;dismissHint();document.querySelectorAll('dialog[open]').forEach(d=>d.close());
+  const exitToken=++openToken;++xrRequestToken;active=false;sessionStarting=false;cancelVisit();keys.clear();drag=null;dismissHint();
+  ++soundRequest;soundBusy=false;soundOn=false;if(audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);$('sound').textContent='Выключен';$('sound').setAttribute('aria-pressed','false');document.querySelectorAll('dialog[open]').forEach(d=>d.close());
   if(session)await endVR();if(exitToken!==openToken)return;
-  $('enter-vr').disabled=false;$('enter-vr').textContent='VR ↗';
+  if(session){active=true;syncAnimationLoop();vrGuide?.setEnabled(canUseXR());return;}
+  hideLoading();$('enter-vr').disabled=false;$('enter-vr').textContent='VR ↗';
   active=false;renderer?.setAnimationLoop(null);await leaveFullscreen();if(exitToken!==openToken)return;experience.hidden=true;landing.inert=false;landing.removeAttribute('aria-hidden');document.body.classList.remove('in-experience');
   cinematic?.release();
   if(audioGain)audioGain.gain.setTargetAtTime(0,audioContext.currentTime,.1);
@@ -185,6 +196,7 @@ function updatePanel(id){
   selected=id;const item=COLLECTION[id]||PAVILION;
   $('object-number').textContent=id<0?'МИК / КОЛЛЕКЦИЯ':String(id+1).padStart(2,'0')+' / 04';
   $('object-title').textContent=item.title;$('object-caption').textContent=item.caption;
+  $('collection-status').textContent=item.title+(id<0?'':', '+(id+1)+' из '+COLLECTION.length);
   $('object-dialog-title').textContent=item.title;$('object-category').textContent=item.category;
   $('object-description').textContent=item.description;$('object-source').hidden=id!==0;
   $('open-object').setAttribute('aria-label','Об экспонате: '+item.title);
@@ -192,11 +204,12 @@ function updatePanel(id){
 }
 function visit(id,immediate=false){
   if(!initialized||!world||!Number.isInteger(id)||id < -1||id>=EXHIBITS.length)return;
-  clearTimeout(moveTimer);const e=EXHIBITS[id];const p=e?e.view:[0,0,11.7];const t=galleryTarget(id);
+  clearTimeout(moveTimer);requestedView=id;const token=openToken;const e=EXHIBITS[id];const p=e?e.view:[0,0,11.7];const t=galleryTarget(id);
   const perform=()=>{
+    if(token!==openToken||!active)return;requestedView=null;
     if(session){
       if(!xrReady){pendingSpawn=id;updatePanel(id);return;}
-      moveXRTo(p[0],p[2]);
+      moveXRTo(p[0],p[2]);faceXRTarget(t);
     }else{rig.position.set(...p);rig.rotation.set(0,0,0);camera.position.set(0,1.65,0);setOrientation(t);}
     updatePanel(id);if(session)showVRGuide();else frameExhibit();$('fade').classList.remove('visible');
   };
@@ -219,7 +232,7 @@ window.addEventListener('keydown',e=>{
   if(!active||!initialized||contextLost||session||document.querySelector('dialog[open]')||e.target.matches('input,textarea,select'))return;
   if(e.code==='Escape'&&document.fullscreenElement===document.documentElement){e.preventDefault();void leaveFullscreen();return;}
   if(e.code==='KeyF'){e.preventDefault();if(!e.repeat)void toggleFullscreen();return;}
-  if(['ArrowLeft','ArrowRight'].includes(e.code)){e.preventDefault();if(!e.repeat){dismissHint();visit(galleryStep(selected,e.code==='ArrowRight'?1:-1));}return;}
+  if(['ArrowLeft','ArrowRight'].includes(e.code)){e.preventDefault();if(!e.repeat){dismissHint();visit(galleryStep(requestedView??selected,e.code==='ArrowRight'?1:-1));}return;}
   if(['KeyW','KeyA','KeyS','KeyD','ArrowUp','ArrowDown'].includes(e.code)){e.preventDefault();keys.add(e.code);dismissHint();}
   if(/^Digit[1-4]$/.test(e.code))visit(Number(e.code.slice(-1))-1);
   if(e.code==='Digit0')visit(-1);if(e.code==='Escape'&&!session)exit();
@@ -283,6 +296,12 @@ function canUseXR(){return !!(active&&!contextLost&&session&&!sessionStarting&&x
 function moveXRTo(x,z){
   syncXRCamera();const head=xrHead();rig.position.x+=x-head.x;rig.position.z+=z-head.z;rig.position.y=0;syncXRCamera();clearXRInputs();
 }
+function faceXRTarget(target){
+  const head=xrHead(),forward=new THREE.Vector3(0,0,-1).transformDirection(renderer.xr.getCamera().matrixWorld);
+  const desired=Math.atan2(target[0]-head.x,target[2]-head.z),current=Math.atan2(forward.x,forward.z);
+  rig.rotation.y+=desired-current;syncXRCamera();const after=xrHead();
+  rig.position.x+=head.x-after.x;rig.position.z+=head.z-after.z;syncXRCamera();
+}
 function clearXRPointer(controller){
   teleportHits.delete(controller);controller.userData.cursor.visible=false;controller.userData.line.visible=false;
 }
@@ -307,8 +326,8 @@ function runVRAction(action){
   if(!canUseXR())return;
   if(action==='open')showVRGuide();
   else if(action==='hide'){vrGuide.hide();clearXRInputs();}
-  else if(action==='previous')visit(galleryStep(selected,-1),true);
-  else if(action==='next')visit(galleryStep(selected,1),true);
+  else if(action==='previous')visit(galleryStep(requestedView??selected,-1),true);
+  else if(action==='next')visit(galleryStep(requestedView??selected,1),true);
   else if(action==='info')vrGuide.toggleInfo();
   else if(action==='exit')void endVR();
 }
@@ -332,7 +351,7 @@ $('enter-vr').onclick=()=>{
   if(session){void endVR();return;}
   if(!navigator.xr||!xrSupported){showHelp();return;}
   if(sessionStarting||!initialized||!active||contextLost)return;
-  clearTimeout(moveTimer);keys.clear();drag=null;$('fade').classList.remove('visible');
+  cancelVisit();keys.clear();drag=null;
   sessionStarting=true;const token=++xrRequestToken;$('enter-vr').disabled=true;$('enter-vr').textContent='VR…';
   const failed=async error=>{
     if(token!==xrRequestToken)return;
@@ -355,11 +374,14 @@ $('enter-vr').onclick=()=>{
   }).catch(failed);
 };
 $('sound').onclick=async()=>{
+  if(!active||soundBusy)return;const token=openToken,request=++soundRequest,desired=!soundOn;soundBusy=true;
   try{
     if(!audioContext){const Audio=window.AudioContext||window.webkitAudioContext;audioContext=new Audio();audioGain=audioContext.createGain();audioGain.gain.value=0;audioGain.connect(audioContext.destination);
       for(const f of [55,82.41,110]){const o=audioContext.createOscillator();o.type='sine';o.frequency.value=f;const g=audioContext.createGain();g.gain.value=.28;o.connect(g);g.connect(audioGain);o.start();}}
-    await audioContext.resume();soundOn=!soundOn;audioGain.gain.setTargetAtTime(soundOn ? 0.045 : 0,audioContext.currentTime,.3);$('sound').textContent=soundOn?'Включён':'Выключен';$('sound').setAttribute('aria-pressed',String(soundOn));
-  }catch{toast('Браузер не разрешил воспроизведение звука.');}
+    await audioContext.resume();if(request!==soundRequest||token!==openToken||!active)return;
+    soundOn=desired;audioGain.gain.setTargetAtTime(soundOn&&!document.hidden&&(!session||session.visibilityState==='visible') ? 0.045 : 0,audioContext.currentTime,.3);$('sound').textContent=soundOn?'Включён':'Выключен';$('sound').setAttribute('aria-pressed',String(soundOn));
+  }catch{if(request===soundRequest&&token===openToken&&active)toast('Браузер не разрешил воспроизведение звука.');}
+  finally{if(request===soundRequest)soundBusy=false;}
 };
 
 $('lighting').onclick=()=>{if(!world)return;world.setLighting(!world.dayMode);syncLightButton();};

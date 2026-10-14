@@ -32,7 +32,7 @@ export function buildWorld(){
   function textPlate(lines,w,h,p,parent=root,opts={}){
     const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=Math.round(1024*h/w);const c=canvas.getContext('2d');
     c.fillStyle=opts.bg||'#ece0c3';c.fillRect(0,0,canvas.width,canvas.height);c.strokeStyle=opts.border||'#9e5b38';c.lineWidth=5;c.strokeRect(16,16,canvas.width-32,canvas.height-32);c.textAlign='center';c.textBaseline='middle';
-    lines.forEach((l,i)=>{c.font=`${i===0?'700':'400'} ${i===0?65:29}px Arial`;c.fillStyle=opts.color||(i===0?'#9b3d28':'#4b493b');c.fillText(l,512,canvas.height*(.3+i*.23),950);});
+    lines.forEach((l,i)=>{c.font=`${i===0?'700':'400'} ${Math.min(i===0?65:29,canvas.height*(i===0?.36:.2))}px Arial`;c.fillStyle=opts.color||(i===0?'#9b3d28':'#4b493b');c.fillText(l,512,canvas.height*(lines.length===1?.5:lines.length===2?.35+i*.36:.3+i*.23),950);});
     const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
     const o=mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide}),p,[1,1,1],parent);return o;
   }
@@ -76,9 +76,9 @@ export function buildWorld(){
   const groups=EXHIBITS.map((e,i)=>{
     const g=new THREE.Group();g.position.set(...e.position);g.userData.exhibit=i;root.add(g);
     cylinder([0,.12,0],i===0?2:1.45,.24,dark,g);cylinder([0,.26,0],i===0?1.82:1.3,.06,bronze,g);
-    if(i===0){box([0,1.15,0],[1.65,1.75,1.45],red,g);box([0,2.08,0],[1.87,.16,1.62],bronze,g);textPlate(['ЛЕНИН','1870 — 1924'],1.32,.45,[0,1.17,.736],g);}
+    if(i===0){box([0,1.15,0],[1.65,1.75,1.45],red,g);box([0,2.08,0],[1.87,.16,1.62],bronze,g);}
     else{cylinder([0,.65,0],1,.73,stone,g);cylinder([0,1.05,0],1.05,.07,bronze,g);}
-    const plate=textPlate(e.label,2.3,.72,[0,.77,1.38],g);plate.rotation.x=-.13;
+    const plate=textPlate([e.label[0],String(i+1).padStart(2,'0')+' / КОЛЛЕКЦИЯ МИК'],1.8,.48,[0,.77,1.38],g);plate.rotation.x=-.13;
     interactive.push(g);colliders.push({x:e.position[0],z:e.position[2],r:i===0?2.1:1.65});return g;
   });
   // The central portrait is loaded from the attributed scan in sculpture.js.

@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {PAVILION} from './gallery.js?v=7.0';
+import {PAVILION} from './gallery.js?v=7.1';
 const W=1024,H=448,PAPER='#eadfc7',GOLD='#cdb083';
 
 // A compact physical caption below eye level, identical navigation in both eyes.
@@ -34,9 +34,9 @@ export class VRGuide{
     const c=this.ctx,item=this.exhibits[this.index]||PAVILION;this.buttons=[];
     c.fillStyle='#19261f';c.fillRect(0,0,W,H);c.strokeStyle='#8c7854';c.lineWidth=2;c.strokeRect(1,1,W-2,H-2);c.textAlign='left';c.textBaseline='middle';
     const text=(value,x,y,size=30,color=PAPER)=>{c.font=`${size}px Arial, sans-serif`;c.fillStyle=color;c.fillText(value,x,y);};
-    const button=(action,label,x,y,w,h)=>{this.buttons.push({action,x,y,w,h});c.fillStyle=this.hover===action?'#514b37':'#29362b';c.fillRect(x,y,w,h);c.textAlign='center';text(label,x+w/2,y+h/2,28);c.textAlign='left';};
+    const button=(action,label,x,y,w,h,quiet=false)=>{this.buttons.push({action,x,y,w,h});c.fillStyle=this.hover===action?'#514b37':'#29362b';if(!quiet||this.hover===action)c.fillRect(x,y,w,h);c.textAlign='center';text(label,x+w/2,y+h/2,quiet?24:28,quiet?'#d1c9b7':PAPER);c.textAlign='left';};
     text('МИК / АТЛАС БУДУЩЕГО',40,40,21,GOLD);
-    button('info',this.info?'К скульптуре':'Об объекте',772,18,212,48);
+    button('info',this.info?'К объекту':'Об объекте',772,18,212,48);
     button('previous','←',40,99,82,76);button('next','→',902,99,82,76);
     c.textAlign='center';text(item.title,512,136,46);c.textAlign='left';
     if(this.info){
@@ -44,7 +44,8 @@ export class VRGuide{
       for(const word of item.description.split(/\s+/)){const next=line?line+' '+word:word;if(line&&c.measureText(next).width>936){text(line,44,y,27);y+=35;line=word;}else line=next;}if(line)text(line,44,y,27);
       if(this.index===0)text('3D-скан: fractalnoise · CC BY-NC-SA 4.0',44,322,21,GOLD);
     }else{c.textAlign='center';text(item.caption,512,239,28,GOLD);text(this.index<0?'КОЛЛЕКЦИЯ':String(this.index+1).padStart(2,'0')+' / 04',512,298,21,'#b9b7a2');c.textAlign='left';}
-    button('hide','Скрыть панель',40,364,452,54);button('exit','Выйти из VR',512,364,472,54);
+    c.strokeStyle='#51604c';c.lineWidth=1;c.beginPath();c.moveTo(40,350);c.lineTo(984,350);c.stroke();
+    button('hide','Скрыть панель',40,364,452,54,true);button('exit','Выйти из VR',512,364,472,54,true);
     this.texture.needsUpdate=true;
   }
 }
