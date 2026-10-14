@@ -63,7 +63,7 @@ export function buildWorld(){
   torus(3.65,.18,[0,4,-13.35],bronze);torus(3.46,.035,[0,4,-13.28],glow);
   for(const x of [-6.2,6.2]){box([x,4.3,-13.35],[1.6,6.4,.07],red);box([x,7.56,-13.25],[1.9,.09,.09],bronze);textPlate(['МИК','НАУКА','ИСКУССТВО'],1.28,2.3,[x,4.6,-13.25],root,{bg:'#873b2c',border:'#bd9b58',color:'#ecd9af'});}
   textPlate(['АТЛАС БУДУЩЕГО','ИСТОРИЯ ИДЕЙ · ТЕХНОЛОГИИ · ЧЕЛОВЕК'],7.4,1.0,[0,7.2,-13.02]);
-  textPlate(['ВИРТУАЛЬНЫЙ ПАВИЛЬОН МИК','Луч + курок по полу — перемещение','Правый стик — поворот'],5,1.2,[0,3.2,13.62]).rotation.y=Math.PI;
+  textPlate(['АТЛАС БУДУЩЕГО','КОЛЛЕКЦИЯ МИК'],5,1.2,[0,3.2,13.62]).rotation.y=Math.PI;
   const chandelier=new THREE.Group();chandelier.position.set(0,6.45,-2);root.add(chandelier);
   for(let i=0;i<3;i++)torus(1.4,.035,[0,0,0],bronzeLight,chandelier,i*.8,i*.7);
   sphere([0,0,0],[.23,.23,.23],glow,chandelier);rod([0,6.5,-2],[0,8,-2],.035,bronze);

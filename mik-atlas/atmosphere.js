@@ -26,9 +26,9 @@ export function installAtmosphere(renderer,world){
   const key=new THREE.SpotLight('#ffe3b1',85,18,.55,.75,1.8);key.position.set(2.8,7.2,-4);key.target.position.set(0,3.8,-9);scene.add(key,key.target);
   world.dayMode=true;
   world.setLighting=(day)=>{
-    world.dayMode=day;world.hemisphere.intensity=day?1.25:.55;sun.intensity=day?3.3:.48;world.fill.intensity=day ? .75 : .6;
-    scene.environmentIntensity=day ? .7 : .37;key.intensity=day?85:115;
-    const bg=day?'#868779':'#222b28';scene.background.set(bg);scene.fog.color.set(bg);
+    world.dayMode=day;world.hemisphere.intensity=day?1.25:.72;sun.intensity=day?3.3:1.05;world.fill.intensity=day ? .75 : .5;
+    scene.environmentIntensity=day ? .7 : .45;key.intensity=day?85:90;
+    const bg=day?'#868779':'#20261f';scene.background.set(bg);scene.fog.color.set(bg);
     renderer.toneMappingExposure=day?1.05:1.13;
   };
   world.setLighting(true);
