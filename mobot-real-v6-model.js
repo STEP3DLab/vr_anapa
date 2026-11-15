@@ -1,0 +1,454 @@
+// MOBOT-CH-HV-2 / source-led high-detail research reconstruction / 2026-11-15
+// Purpose: visually realistic inspection model; NOT a dimensional CAD certification.
+export function makeMobot(THREE, quality='auto') {
+  const root=new THREE.Group(); root.name='Мобот-Ч-ХВ-2 / исследовательская реконструкция';
+  const parts={}, meshes=[], materialRegistry={};
+  const isMobile=quality==='mobile'||(quality==='auto'&&window.innerWidth<760);
+  let count=0;
+  const mat=(name,color,metal=.6,rough=.49)=> {
+    const m=new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough});
+    materialRegistry[name]=m;return m;
+  };
+  const m={
+    panel:mat('Светлый алюминий',0xb0b8b5,.71,.43),
+    frame:mat('Тёмная конструкционная сталь',0x454d4b,.72,.58),
+    satin:mat('Механически обработанная сталь',0x8e9795,.84,.36),
+    bright:mat('Кромки деталей',0xc4c9c4,.78,.30),
+    shadow:mat('Внутренние поверхности',0x252d2d,.62,.67),
+    olive:mat('Потемневший защитный металл',0x6f7870,.57,.62),
+    rubber:mat('Полиуретановые траки',0x202727,.08,.92),
+    tread:mat('Рёбра гусениц',0x343b38,.18,.86),
+    cable:mat('Кабельная оболочка',0x252a29,.07,.87),
+    lens:new THREE.MeshPhysicalMaterial({color:0x203943,metalness:.30,roughness:.11,clearcoat:1,clearcoatRoughness:.10}),
+    brass:mat('Точки крепежа',0x9b927b,.69,.39),
+    darkBolt:mat('Заворонённый крепёж',0x303738,.76,.46),
+    joint:mat('Материал шарниров',0x687370,.73,.42),
+  };
+  // Deterministic fine roughness and stamped metallic micrograin; not photographic texture.
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
+  const ctx=canvas.getContext('2d');
+  let seed=458762;
+  const rand=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;};
+  if(ctx){
+    const img=ctx.createImageData(128,128);
+    for(let y=0;y<128;y++)for(let x=0;x<128;x++){
+      const p=(y*128+x)*4;
+      const n=130+45*rand()+7*Math.sin(y*.88)+10*Math.sin(x*.19);
+      const v=Math.max(42,Math.min(235,n|0));
+      img.data[p]=img.data[p+1]=img.data[p+2]=v;img.data[p+3]=255;
+    }
+    ctx.putImageData(img,0,0);
+    const grain=new THREE.CanvasTexture(canvas);grain.wrapS=grain.wrapT=THREE.RepeatWrapping;
+    grain.repeat.set(3.5,3.5);
+    for(const key of ['panel','frame','satin','bright','olive']){
+      m[key].bumpMap=grain;m[key].bumpScale=key==='frame'?.007:.003;
+      m[key].needsUpdate=true;
+    }
+  }
+  const unitY=new THREE.Vector3(0,1,0);
+  const V=(a)=>new THREE.Vector3(...a);
+  function section(id,label,parent=root) {
+    const g=new THREE.Group();g.name=label||id;g.userData.part=id;
+    parent.add(g);parts[id]=g;return g;
+  }
+  function mesh(parent,geo,material,partId,label=''){
+    const o=new THREE.Mesh(geo,material);o.name=label;o.castShadow=true;o.receiveShadow=true;
+    o.userData.part=partId;parent.add(o);meshes.push(o);count++;return o;
+  }
+  function box(parent,s,p,material,id,label='',rotate=0){
+    const o=mesh(parent,new THREE.BoxGeometry(...s),material,id,label);
+    o.position.set(...p);o.rotation.z=rotate;return o;
+  }
+  function cylinder(parent,rt,rb,h,p,material,id,axis='y',segments=28){
+    const o=mesh(parent,new THREE.CylinderGeometry(rt,rb,h,segments),material,id);
+    o.position.set(...p);
+    if(axis==='z')o.rotation.x=Math.PI/2;
+    if(axis==='x')o.rotation.z=Math.PI/2;
+    return o;
+  }
+  function ring(parent,r,t,p,material,id,orientation='z'){
+    const o=mesh(parent,new THREE.TorusGeometry(r,t,8,48),material,id);
+    o.position.set(...p);
+    if(orientation==='y')o.rotation.x=Math.PI/2;
+    if(orientation==='x')o.rotation.y=Math.PI/2;
+    return o;
+  }
+  function beam(parent,a,b,r,material,id,radial=12){
+    const A=V(a),B=V(b),vec=B.clone().sub(A),len=vec.length();
+    const o=mesh(parent,new THREE.CylinderGeometry(r,r,len,radial),material,id);
+    o.position.copy(A).addScaledVector(vec,.5);
+    o.quaternion.setFromUnitVectors(unitY,vec.normalize());return o;
+  }
+  function tube(parent,pts,r,material,id,seg=42){
+    const line=new THREE.CatmullRomCurve3(pts.map(V));
+    return mesh(parent,new THREE.TubeGeometry(line,seg,r,7,false),material,id);
+  }
+  function plate(parent,points,depth,z,material,id){
+    const s=new THREE.Shape();
+    points.forEach(([x,y],i)=>i?s.lineTo(x,y):s.moveTo(x,y));s.closePath();
+    const g=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:true,bevelThickness:.009,bevelSize:.012,bevelSegments:1,steps:1,curveSegments:8});
+    const p=mesh(parent,g,material,id);p.position.z=z;return p;
+  }
+  function bolt(parent,p,axis,material,id,r=.016){
+    const b=cylinder(parent,r,r,.018,p,material,id,axis,6);
+    if(axis==='z') b.position.z+=.009;
+    if(axis==='y') b.position.y+=.009;
+    if(axis==='x') b.position.x+=.009;
+    return b;
+  }
+  function motor(parent,p,axis,id,s=1){
+    cylinder(parent,.115*s,.115*s,.28*s,p,m.frame,id,axis,28);
+    cylinder(parent,.087*s,.087*s,.292*s,p,m.satin,id,axis,24);
+    const off=axis==='z'?[p[0],p[1],p[2]+.149*s]:axis==='x'?[p[0]+.149*s,p[1],p[2]]:[p[0],p[1]+.149*s,p[2]];
+    cylinder(parent,.07*s,.07*s,.026*s,off,m.shadow,id,axis,22);
+    for(let i=0;i<10;i++){
+      const a=2*Math.PI*i/10;
+      if(axis==='z')beam(parent,[p[0]+Math.cos(a)*.091*s,p[1]+Math.sin(a)*.091*s,p[2]-.13*s],
+        [p[0]+Math.cos(a)*.091*s,p[1]+Math.sin(a)*.091*s,p[2]+.13*s],.006*s,m.olive,id,6);
+    }
+  }
+
+  // TRACK MODULES: symmetric polyurethane pads, suspension bogies, end sprockets and dozens of visible fasteners.
+  const tracks=section('tracks','Ходовая часть: два гусеничных борта');
+  function trackSide(z,sign) {
+    const g=new THREE.Group();g.position.z=z;tracks.add(g);
+    const id='tracks',r=.19,c=.68,cy=.322,top=cy+r,bottom=cy-r;
+    const P=2*(2*c)+2*Math.PI*r;
+    function pathAt(s){
+      s=((s%P)+P)%P;
+      const run=2*c,arc=Math.PI*r;
+      if(s<run)return [-c+s,top,0];
+      s-=run;
+      if(s<arc){const a=s/r;return [c+r*Math.sin(a),cy+r*Math.cos(a),-a];}
+      s-=arc;
+      if(s<run)return [c-s,bottom,Math.PI];
+      s-=run;const a=s/r;
+      return [-c-r*Math.sin(a),cy-r*Math.cos(a),Math.PI-a];
+    }
+    // Lower running wheels and output sprockets.
+    const wheelXs=[-.62,-.43,-.24,-.05,.14,.33,.52];
+    wheelXs.forEach((x,i)=>{
+      const y=.315,outer=.104+(i%2===0?.006:0);
+      cylinder(g,outer,outer,.115,[x,y,sign*.020],m.shadow,id,'z',32);
+      cylinder(g,outer-.015,outer-.015,.120,[x,y,sign*.055],m.satin,id,'z',32);
+      cylinder(g,.052,.052,.131,[x,y,sign*.090],m.frame,id,'z',24);
+      ring(g,.067,.008,[x,y,sign*.121],m.bright,id,'z');
+      for(let j=0;j<6;j++){
+        const a=2*Math.PI*j/6;
+        bolt(g,[x+.072*Math.cos(a),y+.072*Math.sin(a),sign*.123],'z',m.darkBolt,id,.009);
+      }
+      // Separate exposed rocker support for each small wheel.
+      beam(g,[x,.42,-.045*sign],[x+.065,.34,.015*sign],.026,m.olive,id);
+      cylinder(g,.046,.046,.08,[x,.425,sign*.045],m.joint,id,'z');
+    });
+    for(const x of [-c,c]){
+      cylinder(g,.172,.172,.12,[x,cy,sign*.006],m.shadow,id,'z',34);
+      cylinder(g,.14,.14,.124,[x,cy,sign*.06],m.joint,id,'z',32);
+      cylinder(g,.084,.084,.139,[x,cy,sign*.076],m.satin,id,'z',24);
+      ring(g,.132,.016,[x,cy,sign*.124],m.frame,id);
+      for(let j=0;j<12;j++){
+        const a=Math.PI*2*j/12;
+        const b=box(g,[.033,.04,.042],[x+.157*Math.cos(a),cy+.157*Math.sin(a),sign*.062],m.satin,id);
+        b.rotation.z=a;
+      }
+      for(let j=0;j<8;j++){
+        const a=2*Math.PI*j/8;
+        bolt(g,[x+.094*Math.cos(a),cy+.094*Math.sin(a),sign*.133],'z',m.darkBolt,id,.011);
+      }
+    }
+    // An exposed metallic side rail with stiffeners behind the track pads.
+    box(g,[1.45,.08,.075],[0,.52,0],m.shadow,id);
+    box(g,[1.4,.07,.064],[0,.17,0],m.olive,id);
+    for(let j=0;j<8;j++){
+      const x=-.64+j*.183;
+      box(g,[.039,.27,.040],[x,.33,sign*.048],m.frame,id,Math.PI/40);
+      bolt(g,[x,.48,sign*.087],'z',m.satin,id,.012);
+    }
+    // Link geometry is instanced for mobile rendering performance.
+    const linkCount=isMobile?54:66;
+    const treadGeo=new THREE.BoxGeometry(P/linkCount*.91,.048,.298);
+    const tread=new THREE.InstancedMesh(treadGeo,m.rubber,linkCount);
+    tread.name='Отдельные полиуретановые траки';tread.userData.part=id;
+    tread.castShadow=true;tread.receiveShadow=true;g.add(tread);meshes.push(tread);count++;
+    const shoeGeo=new THREE.BoxGeometry(P/linkCount*.62,.024,.310);
+    const cleats=new THREE.InstancedMesh(shoeGeo,m.tread,linkCount);
+    cleats.userData.part=id;cleats.castShadow=true;cleats.receiveShadow=true;g.add(cleats);meshes.push(cleats);count++;
+    const a=new THREE.Object3D(),b=new THREE.Object3D();
+    for(let i=0;i<linkCount;i++){
+      const [x,y,ang]=pathAt(i*P/linkCount);
+      a.position.set(x,y,0);a.rotation.set(0,0,ang);a.updateMatrix();tread.setMatrixAt(i,a.matrix);
+      const nx=-Math.sin(ang),ny=Math.cos(ang);
+      b.position.set(x+nx*.034,y+ny*.034,0);b.rotation.set(0,0,ang);b.updateMatrix();cleats.setMatrixAt(i,b.matrix);
+    }
+    tread.instanceMatrix.needsUpdate=true;cleats.instanceMatrix.needsUpdate=true;
+    // Two guide strips are visible behind articulated pad links.
+    for(const side of [-.106,.106]){
+      const pts=[];
+      for(let i=0;i<=96;i++){const [x,y]=pathAt(i*P/96);pts.push([x,y,side]);}
+      tube(g,pts,.010,m.darkBolt,id,96);
+    }
+    return g;
+  }
+  trackSide(-.63,-1);trackSide(.63,1);
+
+  // WELDED CHASSIS & POWER PACK.
+  const body=section('body','Корпус и рама');
+  box(body,[1.61,.19,1.05],[0,.57,0],m.frame,'body');
+  box(body,[1.58,.045,.99],[0,.677,0],m.satin,'body');
+  box(body,[1.50,.06,.71],[.09,.714,0],m.shadow,'body');
+  for(const side of [-1,1]){
+    box(body,[1.53,.13,.055],[0,.620,side*.535],m.olive,'body');
+    beam(body,[-.78,.58,side*.54],[.78,.58,side*.54],.018,m.satin,'body');
+    for(let i=0;i<12;i++)bolt(body,[-.69+i*.123,.648,side*.568],'z',m.darkBolt,'body',.012);
+    for(let x of [-.58,-.26,.1,.4,.65]){
+      box(body,[.12,.11,.012],[x,.56,side*.579],m.frame,'body');
+      bolt(body,[x,.56,side*.589],'z',m.satin,'body',.014);
+    }
+  }
+  // Rear vaulted engine cowl shaped with a curved profile (not a flat box).
+  const hoodPts=[ [.08,.73],[.14,.96],[.25,1.005],[.68,.997],[.83,.92],[.91,.74] ];
+  plate(body,[[.08,.71],...hoodPts,[.91,.70]],.80,-.40,m.panel,'body');
+  plate(body,[[.76,.74],[.85,.74],[.86,.90],[.81,.945]],.85,-.425,m.olive,'body');
+  for(const s of [-1,1]){
+    plate(body,[[.12,.72],[.18,.92],[.32,.986],[.71,.98],[.81,.90],[.88,.71]],.028,s*.410-.015,m.satin,'body');
+    const z=s*.435;
+    for(let j=0;j<7;j++){
+      const x=.25+j*.076;
+      box(body,[.041,.010,.016],[x,.994,z],m.frame,'body',.055);
+    }
+    for(const x of [.20,.80])bolt(body,[x,.86,z],'z',m.darkBolt,'body',.012);
+  }
+  // Low deck and service panels forward of the drive enclosure.
+  box(body,[.50,.06,.77],[-.41,.76,0],m.panel,'body');
+  box(body,[.47,.055,.50],[-.41,.796,0],m.olive,'body');
+  for(const x of [-.58,-.25]){
+    for(const z of [-.21,.21])bolt(body,[x,.83,z],'y',m.darkBolt,'body',.014);
+  }
+  for(let i=0;i<9;i++){
+    box(body,[.16,.012,.020],[.52,.998,-.31+i*.076],m.frame,'body');
+  }
+  // Transverse torsion-housing details exposed between track frames.
+  for(const x of [-.60,-.35,-.1,.16,.42]){
+    cylinder(body,.035,.035,1.05,[x,.47,0],m.shadow,'body','z',18);
+    for(const s of [-1,1])cylinder(body,.051,.051,.075,[x,.47,s*.51],m.olive,'body','z',18);
+  }
+  // Rear cable exit and protected sheave.
+  cylinder(body,.072,.072,.14,[.92,.65,-.17],m.satin,'body','x',22);
+  ring(body,.082,.012,[.99,.65,-.17],m.frame,'body','x');
+  tube(body,[[.94,.65,-.17],[1.02,.62,-.2],[1.19,.57,-.22],[1.32,.52,-.27]],.021,m.cable,'body',32);
+
+  // ROTARY PEDESTAL & VISIBLE TRANSMISSION
+  const base=section('turret','Поворотная опора манипулятора');
+  cylinder(base,.36,.37,.11,[.06,.79,0],m.frame,'turret','y',48);
+  cylinder(base,.30,.30,.035,[.06,.853,0],m.satin,'turret','y',48);
+  cylinder(base,.24,.24,.12,[.06,.927,0],m.panel,'turret','y',40);
+  cylinder(base,.17,.17,.06,[.06,1.009,0],m.shadow,'turret','y',40);
+  ring(base,.333,.023,[.06,.853,0],m.bright,'turret','y');
+  for(let i=0;i<24;i++){
+    const a=i*Math.PI*2/24;
+    bolt(base,[.06+.329*Math.cos(a),.873,.329*Math.sin(a)],'y',m.darkBolt,'turret',.013);
+  }
+  for(const s of [-1,1]){
+    box(base,[.39,.38,.075],[.12,1.12,s*.26],m.panel,'turret');
+    plate(base,[[-.09,1.02],[.31,1.02],[.36,1.37],[.20,1.42],[-.04,1.26]],.05,s*.285-.025,m.frame,'turret');
+    for(const p of [[.00,1.13],[.24,1.13],[.26,1.32]])
+      bolt(base,[p[0],p[1],s*.335],'z',m.satin,'turret',.016);
+  }
+  cylinder(base,.10,.10,.79,[.17,1.17,0],m.satin,'turret','z',36);
+  for(const s of [-1,1])ring(base,.119,.015,[.17,1.17,s*.42],m.darkBolt,'turret','z');
+
+  // MAIN TRUSS: paired C-section beams and diagonal bracing in the archival silhouette.
+  const armPivot=section('arm','Подъёмная стрела с приводом',root);
+  armPivot.position.set(.15,1.18,0);
+  const distal=[-1.20,.99,0],prox=[0,0,0];
+  // The end is raised at rest: far closer to the high diagonal 1987 photographs.
+  for(const s of [-1,1]){
+    const z=s*.17;
+    beam(armPivot,[0,0,z],[-1.20,.99,z],.063,m.panel,'arm',12);
+    beam(armPivot,[.03,-.11,z],[-1.19,.88,z],.042,m.frame,'arm',12);
+    beam(armPivot,[0,0,z],[-.44,.52,z],.034,m.satin,'arm',12);
+    beam(armPivot,[-.41,.41,z],[-.82,.58,z],.025,m.satin,'arm',12);
+    beam(armPivot,[-.79,.60,z],[-1.07,.91,z],.024,m.satin,'arm',12);
+    for(const t of [.12,.29,.47,.65,.83]){
+      const px=-1.2*t,py=.99*t;
+      beam(armPivot,[px,py-.09,z],[px,py+.035,z],.018,m.frame,'arm',8);
+      bolt(armPivot,[px,py,s*.212],'z',m.darkBolt,'arm',.015);
+    }
+    cylinder(armPivot,.087,.087,.08,[0,0,s*.23],m.shadow,'arm','z',24);
+    cylinder(armPivot,.075,.075,.065,[-1.2,.99,s*.20],m.joint,'arm','z',24);
+    // Long screw jack along the diagonal, with separate telescoping rod.
+    const E1=[-.10,.19,s*.28],E2=[-.95,.88,s*.28];
+    beam(armPivot,E1,E2,.047,m.frame,'arm',20);
+    beam(armPivot,[-.29,.37,s*.28],[-1.00,.96,s*.28],.024,m.bright,'arm',18);
+    cylinder(armPivot,.055,.055,.16,[-.13,.21,s*.28],m.shadow,'arm','z',20);
+  }
+  // Archival upper helical spring: 29 visible turns along a tension member.
+  function spring(parent,a,b,rad,turns,coil,id) {
+    const A=V(a),B=V(b),dir=B.clone().sub(A),len=dir.length();
+    const up=dir.clone().normalize();const ref=new THREE.Vector3(0,0,1);
+    const u=ref.clone().cross(up).normalize(),v=up.clone().cross(u).normalize();
+    const pts=[];
+    for(let i=0;i<=turns*10;i++){
+      const t=i/(turns*10),ang=t*turns*Math.PI*2;
+      pts.push(A.clone().addScaledVector(dir,t).addScaledVector(u,Math.cos(ang)*rad).addScaledVector(v,Math.sin(ang)*rad));
+    }
+    const curve=new THREE.CatmullRomCurve3(pts);
+    const o=mesh(parent,new THREE.TubeGeometry(curve,Math.min(480,turns*12),coil,6,false),m.satin,id);
+    beam(parent,a,b,.023,m.frame,id,12);return o;
+  }
+  spring(armPivot,[-.04,.20,-.27],[-1.02,.98,-.27],.048,isMobile?17:29,.012,'arm');
+  // Bundled protected lines over the truss.
+  for(const s of [-1,1])tube(armPivot,[[.13,.08,s*.22],[-.2,.44,s*.225],[-.65,.72,s*.223],[-1.08,.91,s*.205]],.013,m.cable,'arm',40);
+  for(let i=0;i<12;i++){
+    const t=i/11;bolt(armPivot,[-1.15*t,.91*t+.04,.22],'z',m.darkBolt,'arm',.010);
+  }
+  motor(armPivot,[.1,.15,-.29],'z','arm',.86);
+
+  // END-EFFECTOR / paired mechanically linked fingers.
+  const gripper=section('gripper','Сменный двупалый схват',armPivot);
+  gripper.position.set(-1.22,.99,0);
+  cylinder(gripper,.103,.103,.45,[0,.01,0],m.joint,'gripper','z',24);
+  cylinder(gripper,.075,.075,.48,[0,.01,0],m.shadow,'gripper','z',26);
+  box(gripper,[.30,.085,.32],[-.11,-.10,0],m.panel,'gripper',-.10);
+  for(const s of [-1,1]){
+    box(gripper,[.19,.06,.066],[-.30,-.145,s*.15],m.satin,'gripper',-.18);
+    box(gripper,[.065,.29,.065],[-.42,-.29,s*.15],m.panel,'gripper',.17);
+    box(gripper,[.044,.085,.086],[-.47,-.41,s*.15],m.frame,'gripper',.13);
+    cylinder(gripper,.038,.038,.12,[-.28,-.13,s*.18],m.shadow,'gripper','z',20);
+    beam(gripper,[-.06,-.09,s*.17],[-.35,-.26,s*.17],.022,m.satin,'gripper');
+    for(const x of [-.12,-.27])bolt(gripper,[x,-.10,s*.22],'z',m.darkBolt,'gripper',.010);
+  }
+  tube(gripper,[[.11,.16,0],[.04,.05,-.08],[-.22,-.09,-.15]],.012,m.cable,'gripper',24);
+
+  // FRONT LOADER: outside-frame lifting links and a genuine open bucket silhouette.
+  const bucket=section('bucket','Фронтальный погрузчик и ковш');
+  bucket.position.set(-1.03,.48,0);
+  for(const s of [-1,1]){
+    const z=s*.69;
+    beam(bucket,[1.30,.17,z],[.34,-.09,z],.052,m.frame,'bucket',12);
+    beam(bucket,[1.31,.17,z],[.37,.02,z],.023,m.satin,'bucket',12);
+    cylinder(bucket,.090,.090,.11,[1.31,.17,z],m.olive,'bucket','z',24);
+    cylinder(bucket,.072,.072,.10,[.35,-.09,z],m.bright,'bucket','z',24);
+    beam(bucket,[.97,.30,z],[.41,.03,z],.039,m.shadow,'bucket',16);
+    beam(bucket,[.79,.23,z],[.43,.04,z],.019,m.satin,'bucket',16);
+    for(const t of [.13,.34,.56,.8]){
+      const x=1.31-(1.31-.35)*t,y=.17+(-.09-.17)*t;
+      bolt(bucket,[x,y,z+s*.055],'z',m.darkBolt,'bucket',.011);
+    }
+  }
+  // Articulated scooping assembly: bottom wear plate, sloping back plate, vertical side cheeks.
+  box(bucket,[.72,.045,1.21],[-.09,-.17,0],m.panel,'bucket');
+  const back=box(bucket,[.06,.43,1.21],[.23,.005,0],m.panel,'bucket',-.29);
+  for(const s of [-1,1]){
+    const z=s*.59;
+    plate(bucket,[[-.46,-.19],[.28,-.19],[.31,.25],[.12,.37],[-.27,.09]],.04,z-.02,m.frame,'bucket');
+    beam(bucket,[-.47,-.14,z],[.29,-.14,z],.021,m.satin,'bucket');
+    for(const x of [-.28,.03,.26])bolt(bucket,[x,-.18,z+s*.025],'z',m.darkBolt,'bucket',.014);
+  }
+  box(bucket,[.82,.026,1.22],[-.15,-.200,0],m.bright,'bucket');
+  for(let i=0;i<9;i++){
+    const z=(i-4)*.132;
+    const tooth=box(bucket,[.18,.043,.068],[-.48,-.20,z],m.satin,'bucket');
+    tooth.rotation.z=-.10;
+    bolt(bucket,[-.39,-.167,z],'y',m.darkBolt,'bucket',.012);
+  }
+  for(const z of [-.42,-.19,.19,.42]){
+    beam(bucket,[.24,.25,z],[.24,-.14,z],.023,m.olive,'bucket');
+    beam(bucket,[.28,.25,z],[.03,-.14,z],.013,m.satin,'bucket');
+  }
+  cylinder(bucket,.07,.07,1.34,[.32,.04,0],m.darkBolt,'bucket','z',22);
+
+  // Two distinct television cameras (front drive & manipulator observation).
+  const cameras=section('cameras','Две телевизионные камеры');
+  function addCamera(x,y,z,scale,ang){
+    const group=new THREE.Group();group.position.set(x,y,z);group.rotation.z=ang;cameras.add(group);group.userData.part='cameras';
+    box(group,[.27*scale,.20*scale,.20*scale],[0,0,0],m.panel,'cameras');
+    box(group,[.12*scale,.15*scale,.22*scale],[-.175*scale,.02*scale,0],m.frame,'cameras');
+    cylinder(group,.068*scale,.068*scale,.045*scale,[-.25*scale,.015*scale,0],m.shadow,'cameras','x',32);
+    cylinder(group,.050*scale,.050*scale,.052*scale,[-.273*scale,.015*scale,0],m.lens,'cameras','x',32);
+    ring(group,.064*scale,.011*scale,[-.278*scale,.015*scale,0],m.satin,'cameras','x');
+    box(group,[.1*scale,.08*scale,.06*scale],[0,-.14*scale,0],m.frame,'cameras');
+    for(const s of [-1,1])bolt(group,[0,.044*scale,s*.115*scale],'z',m.darkBolt,'cameras',.012*scale);
+    return group;
+  }
+  const frontCamera=addCamera(-.69,1.04,-.26,1,0);
+  const armCamera=addCamera(.13,1.43,.31,.8,-.13);
+  beam(cameras,[-.69,.93,-.26],[-.58,.76,-.26],.03,m.frame,'cameras');
+  beam(cameras,[.13,1.31,.31],[.13,1.12,.31],.023,m.frame,'cameras');
+  tube(cameras,[[.1,1.32,.31],[.24,1.12,.30],[.37,.85,.33]],.010,m.cable,'cameras',25);
+  tube(cameras,[[-.68,.96,-.26],[-.55,.89,-.31],[-.25,.77,-.29]],.010,m.cable,'cameras',25);
+
+  // Cable management with service hatch: the winding drum is an internal reconstruction.
+  const cabling=section('cable','Внутренний кабелеукладчик');
+  cylinder(cabling,.22,.22,.43,[.48,.71,0],m.shadow,'cable','z',36);
+  for(const s of [-1,1]){
+    cylinder(cabling,.24,.24,.029,[.48,.71,s*.225],m.satin,'cable','z',36);
+    for(let i=0;i<6;i++){
+      const a=2*Math.PI*i/6;
+      bolt(cabling,[.48+.17*Math.cos(a),.71+.17*Math.sin(a),s*.251],'z',m.darkBolt,'cable',.013);
+    }
+  }
+  for(let i=0;i<14;i++)ring(cabling,.198,.012,[.48,.71,-.18+i*.027],m.cable,'cable','z');
+  cylinder(cabling,.05,.05,.75,[.48,.71,0],m.satin,'cable','z',20);
+  tube(cabling,[[.74,.66,-.18],[.94,.63,-.21],[1.15,.59,-.23],[1.30,.50,-.30]],.022,m.cable,'cable');
+  // Exposed maintenance aperture/cover adjacent to the spool, shown only in service mode.
+  const cover=box(cabling,[.51,.030,.48],[.49,1.015,0],m.olive,'cable');
+  for(const x of [.27,.72])for(const z of [-.19,.19])bolt(cabling,[x,1.035,z],'y',m.darkBolt,'cable',.012);
+  cabling.userData.cover=cover;
+
+  // Coupling: approximate geometry, visibly marked unconfirmed in the interface.
+  const dock=section('dock','Полуавтоматический стыковочный узел');
+  const liftPosition=[.48,1.13,.01];
+  cylinder(dock,.145,.145,.075,liftPosition,m.frame,'dock','y',28);
+  for(const s of [-1,1]){
+    beam(dock,[.26,.88,s*.22],[.49,1.22,s*.08],.034,m.satin,'dock');
+    bolt(dock,[.49,1.20,s*.14],'z',m.darkBolt,'dock',.013);
+  }
+  cylinder(dock,.08,.08,.17,[.48,1.27,.01],m.satin,'dock','y',28);
+  ring(dock,.126,.032,[.48,1.40,.01],m.bright,'dock','y');
+  beam(dock,[.355,1.40,.01],[.605,1.40,.01],.024,m.frame,'dock',12);
+
+  // Dosimeter housing and the associated inspection probe are indicative, not a scanned instrument.
+  const dose=section('dose','Блок дозиметрии ИМД-21Б');
+  box(dose,[.23,.13,.19],[.36,1.05,-.38],m.panel,'dose');
+  box(dose,[.18,.025,.14],[.36,1.123,-.38],m.shadow,'dose');
+  cylinder(dose,.042,.042,.06,[.36,1.148,-.38],m.satin,'dose','y',22);
+  beam(dose,[.34,1.03,-.38],[-.30,1.30,-.35],.017,m.frame,'dose',12);
+  cylinder(dose,.039,.039,.19,[-.34,1.30,-.35],m.olive,'dose','x',18);
+  tube(dose,[[.38,1.07,-.44],[.15,1.18,-.48],[-.23,1.32,-.42],[-.34,1.30,-.35]],.010,m.cable,'dose',32);
+
+  // Secondary fasteners, junctions, mechanical guarding, service seams.
+  const mechanics=section('mechanics','Крепления и узлы шасси');
+  for(const s of [-1,1]){
+    const z=s*.53;
+    beam(mechanics,[-.61,.67,z],[.54,.69,z],.016,m.satin,'mechanics');
+    for(const x of [-.64,-.30,.06,.42,.70]){
+      bolt(mechanics,[x,.695,z],'y',m.darkBolt,'mechanics',.012);
+      box(mechanics,[.045,.05,.045],[x,.66,z],m.panel,'mechanics');
+    }
+    tube(mechanics,[[.82,.71,s*.38],[.65,.68,s*.52],[.22,.67,s*.56],[-.35,.68,s*.55]],.010,m.cable,'mechanics',38);
+  }
+  for(const x of [-.7,-.5,-.3])for(const z of [-.37,.37]){
+    box(mechanics,[.06,.03,.09],[x,.737,z],m.frame,'mechanics');
+    bolt(mechanics,[x,.764,z],'y',m.satin,'mechanics',.011);
+  }
+  // Surface highlights: two subtly separate shades for rebuilt welded steel.
+  const info={
+    tracks:{name:'Гусеничный движитель',status:'Архив подтверждает полиуретановые траки и многокатковую ходовую часть. Детальная геометрия траков и катков интерпретирована по фото.',basis:'СКТБ ПР · фото и описание МРК'},
+    body:{name:'Корпус и рама',status:'Обводы защитного кожуха, листовые панели и крепеж восстановлены визуально. Не все люки и толщины металла документированы.',basis:'СКТБ ПР · архивный профиль'},
+    turret:{name:'Поворотная опора',status:'Восстановлена система шарнирных опор и фланцев. Внутренние подшипники и редукторы показаны условно.',basis:'Фото, функциональная реконструкция'},
+    arm:{name:'Манипулятор',status:'Парная ферменная стрела, пружина и система электромеханических тяг построены по основной силуэтной схеме. Ходы привода условны.',basis:'СКТБ ПР · фото 1987, электромеханический привод'},
+    gripper:{name:'Двупалый захват',status:'Сменный двупалый захват подтвержден историческим описанием; размеры пальцев и схема сопряжения приблизительны.',basis:'СКТБ ПР · модернизация Ч-ХВ-2'},
+    bucket:{name:'Фронтальный погрузчик',status:'Открытый ковш, боковые направляющие за гусеницами, шарниры и силовые тяги уточнены визуально, точные углы неизвестны.',basis:'СКТБ ПР · рабочие органы'},
+    cameras:{name:'Телевизионная система',status:'Наличие двух телекамер подтверждено. Их форма и координаты ориентировочные; необходимы дополнительные фотографии.',basis:'СКТБ ПР · два телевизионных канала'},
+    cable:{name:'Кабелеукладчик',status:'Полуавтоматическая внутренняя укладка кабеля подтверждена. Барабан и укладка в данном виде визуализированы схематично.',basis:'СКТБ ПР · 200 м кабеля, вставка до 400 м'},
+    dock:{name:'Стыковочное устройство',status:'Функция известна, а верхний узел геометрически условен. Нельзя утверждать точное расположение точки подъёма.',basis:'СКТБ ПР · устройство Ч-ХВ-2'},
+    dose:{name:'Дозиметрический блок',status:'Дозиметрия входила в рабочий цикл. Геометрия крепления и положение датчика требуют архивной сверки.',basis:'Первичные материалы проекта и СКТБ'},
+    mechanics:{name:'Крепёж и коммуникации',status:'Служебная детализация добавлена по инженерным аналогам. Болтовые группы и магистрали требуют подтверждения.',basis:'Реконструкция, не паспортные сборочные чертежи'}
+  };
+  const mechanisms={arm:armPivot,bucket,gripper,cameras,cover};
+  // Model's nominal dimensions are scene units only. This scale is not equal to verified metres.
+  root.userData.nominalOnly=true;
+  root.userData.source='https://sktbpr.ru/foto-alb/65';
+  return {root,parts,info,meshes,materials:materialRegistry,mechanisms,meshCount:count,quality:isMobile?'mobile':'desktop'};
+}
