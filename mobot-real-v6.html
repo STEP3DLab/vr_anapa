@@ -192,7 +192,8 @@ h1 em{font-size:.54em;color:var(--gold);letter-spacing:-.025em;display:inline-bl
  <div class="refimage"><img src="https://sktbpr.ru/sites/default/files/foto_album/2.jpg" alt="Исторический снимок реального Мобота из фотогалереи СКТБ ПР" loading="lazy" id="referenceImg"></div>
  <div class="reffoot"><p>Сопоставляйте общую форму гусеничной рамы, высоту диагональной стрелы, ковш, шарнирные узлы и электрооборудование. При отсутствии размеров нельзя утверждать точное совпадение масштаба.</p>
  <a href="https://sktbpr.ru/foto-alb/65" target="_blank" rel="noopener">Полная архивная фотогалерея СКТБ</a><a href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">Техническое описание Мобот-Ч-ХВ / Ч-ХВ-2</a>
- <a href="https://step3dlab.github.io/Technopark_project/mobot/" target="_blank" rel="noopener">Предыдущая покадровая реконструкция проекта</a></div>
+ <a href="https://step3dlab.github.io/Technopark_project/mobot/" target="_blank" rel="noopener">Предыдущая покадровая реконструкция проекта</a>
+ <a href="https://github.com/STEP3DLab/Technopark_project/blob/main/mobot/audits/2026-11-14/Mobot_audit_3_experts.pdf" target="_blank" rel="noopener">Аудит конструкции · 14 ноября 2026</a></div>
 </section>
 <div class="load" id="loading"><div class="loadbox"><div class="loadsymbol"></div><b>Подготовка детализированной модели</b><p>Гусеничный ход, узлы манипулятора, фронтальный погрузчик и инженерные материалы.</p></div></div>
 <script type="module">
@@ -263,7 +264,7 @@ function installEnvironment(){
 installEnvironment();
 
 const model=makeMobot(THREE,mobile?'mobile':'desktop');
-const machine=model.root;machine.position.y=.09;machine.rotation.y=-.32;scene.add(machine);
+const machine=model.root;machine.position.y=.005;machine.rotation.y=-.32;scene.add(machine);
 const currentParts=Object.keys(model.info);
 const ordered=['tracks','body','turret','arm','gripper','bucket','cameras','cable','dock','dose','mechanics'];
 let chosen='tracks',autoSpin=false,exploded=false,cutaway=false,arcOpen=false;
