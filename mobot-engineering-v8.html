@@ -477,7 +477,7 @@ $('copyReview').addEventListener('click',async()=>{
  try{await navigator.clipboard.writeText(lines.join('\n\n'));$('noteCounter').textContent='Скопировано';}
  catch(e){$('noteCounter').textContent='Доступен экспорт JSON';}
 });
-const machine=model.root;machine.position.y=.005;machine.rotation.y=-.32;scene.add(machine);
+const machine=model.root;machine.position.y=-.05;machine.rotation.y=-.32;scene.add(machine);
 const currentParts=Object.keys(model.info);
 const ordered=['tracks','body','turret','arm','gripper','bucket','cameras','cable','dock','dose','mechanics'];
 let chosen='tracks',autoSpin=false,exploded=false,cutaway=false,arcOpen=false;
