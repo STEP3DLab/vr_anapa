@@ -1,0 +1,698 @@
+{
+  "schema": "mobot-engineering-evidence/1.0",
+  "title": "Мобот-Ч-ХВ-2 — инженерная реконструкция v14: единый расчёт для 3D и SVG",
+  "version": "v14.0",
+  "date": "2026-11-16",
+  "modification": "Мобот-Ч-ХВ-2 (1987), НЕ Мобот-Ч-ХВ (1986)",
+  "scope": "Единый исследовательский модуль расчёта кинематических положений ковша для 3D/WebGL-модели и GPU-независимого SVG-атласа. Цель — согласованность программных расчётов, а не подтверждение заводской кинематики или масштаба.",
+  "globalStatus": {
+    "historicallyIdentified": true,
+    "photogrammetryCalibrated": false,
+    "realScaleKnown": false,
+    "dimensionalCAD": false,
+    "originalManufacturingDrawingsAvailable": false,
+    "approvedByDesigner": false,
+    "liveBrowserRenderVerified": false,
+    "note": "Геометрия и архивные допущения сохраняются без новых доказательств исторической точности. В v14 устранено расхождение расчетов между 2D и 3D: общий модуль использует 21 точку, шаг 2°, 936 положений и 493 флага.",
+    "independentReviewStrategy": "Внутренний технический аудит по архивным данным и воспроизводимым тестам без персональных согласований"
+  },
+  "evidenceClasses": {
+    "A": "Документально подтверждено наличие или назначение агрегата (не форма)",
+    "B": "Опознаваемые признаки или расположение видны на архивном снимке, без точных размеров",
+    "C": "Предполагаемая геометрия / детали привода / скрытые узлы; требуется подтверждение"
+  },
+  "sources": [
+    {
+      "id": "SKTB-ARTICLE",
+      "type": "primary-text",
+      "url": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
+      "title": "СКТБ ПР: применение Мобот-Ч-ХВ и Мобот-Ч-ХВ-2"
+    },
+    {
+      "id": "SKTB-GALLERY",
+      "type": "primary-photo-gallery",
+      "url": "https://sktbpr.ru/foto-alb/65",
+      "title": "СКТБ ПР: архивные фотографии"
+    },
+    {
+      "id": "SKTB-PHOTO-02",
+      "type": "primary-photo",
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "title": "Архивный боковой ракурс Ч-ХВ-2"
+    },
+    {
+      "id": "AUDIT-2026-11-14",
+      "type": "internal-review",
+      "url": "https://github.com/STEP3DLab/Technopark_project/blob/main/mobot/audits/2026-11-14/Mobot_audit_3_experts.pdf",
+      "title": "Предварительный технический аудит трёх экспертов"
+    },
+    {
+      "id": "ARSENAL-2026",
+      "type": "historical-article-photo",
+      "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "title": "Александр Батанов, Владимир Лосицкий. «Чернобыльская крыша», 29.09.2026",
+      "relevance": "Подтверждает существование двух модернизированных комплексов и иллюстрирует реальные положения рабочих органов на снегу"
+    },
+    {
+      "id": "ARSENAL-PAIR-1987",
+      "type": "original-photo-archive",
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "title": "Архивный снимок двух «Мобот-Ч-ХВ-2» зимой 1987 года",
+      "relevance": "Независимый ракурс и две конфигурации роботов; фотография не является ортографическим боковым видом"
+    },
+    {
+      "id": "SRC-MRK46M-DISTINCTION",
+      "type": "academic-secondary-source-for-distinguishing-robots",
+      "url": "https://cpt.srcipt.ru/wp-content/uploads/CPT2021-2022.pdf",
+      "title": "Сборник CPT2021–2022: статья о МРК-46М и Мобот-Ч-ХВ-2, стр. 65–66",
+      "interpretation": "Информация о шести опорных катках и восьми армированных элементах гусеницы относится к более позднему МРК-46М, а НЕ автоматически к Мобот-Ч-ХВ-2.",
+      "prohibitedMisuse": "Do not cite MRK-46M wheel/track segment numbers as factual CH-HV-2 specifications."
+    },
+    {
+      "id": "ARSENAL-BALANCERS-1987",
+      "type": "historical-testimony",
+      "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "title": "Александр Батанов, Владимир Лосицкий. Чернобыльская крыша (29.09.2026): неисправность балансиров ходовой части зимой 1987 года",
+      "quoteGuidance": "Section describing deformation of the suspension balance levers due to insufficient heat treatment and repair at the Pripyat workshop.",
+      "supports": [
+        "Existence of suspension rocker/balancer elements on CH-HV-2",
+        "Service failure and repair context"
+      ],
+      "does_not_support": [
+        "Their exact layout",
+        "3 paired levers per side",
+        "Spring rates",
+        "Wheel-centre dimensions"
+      ]
+    }
+  ],
+  "photoAnnotations": {
+    "imageId": "SKTB-PHOTO-02",
+    "imageSize": [
+      512,
+      512
+    ],
+    "method": "Ручная разметка одного исторического бокового изображения; дополнительная фотография двух роботов служит качественным подтверждением компоновки, не используется для метрических измерений.",
+    "approximatePixelFeatures": [
+      {
+        "id": "pivot",
+        "type": "point",
+        "xy": [
+          275,
+          303
+        ],
+        "comment": "Ориентировочный центр поворотной опоры стрелы"
+      },
+      {
+        "id": "armTop",
+        "type": "point",
+        "xy": [
+          490,
+          37
+        ],
+        "comment": "Верхняя видимая точка манипулятора"
+      },
+      {
+        "id": "trackLower",
+        "type": "point",
+        "xy": [
+          235,
+          477
+        ],
+        "comment": "Опорный контур гусеницы"
+      },
+      {
+        "id": "loader",
+        "type": "point",
+        "xy": [
+          475,
+          312
+        ],
+        "comment": "Передняя зона ковша"
+      }
+    ],
+    "warning": "Изображения сняты в перспективе, частично перекрывают механизмы. Нельзя вывести точную ширину, углы или кинематические пары без масштаба и калибровки."
+  },
+  "assemblies": [
+    {
+      "id": "tracks",
+      "title": "Гусеничный ход",
+      "functional": "A",
+      "geometry": "B/C",
+      "confirmed": [
+        "Полиуретановые траки",
+        "Гусеничное шасси",
+        "Наличие балансиров ходовой части, подтверждённое сообщением о ремонте зимой 1987 года"
+      ],
+      "inferred": [
+        "Семь видимых нижних опорных ступиц на борту в исследуемом боковом ракурсе",
+        "Асимметричный верхний и передний гусеничный контур",
+        "Движение траков по замкнутому профилю (синтетическая анимация)",
+        "Условное объединение шести колёс в три парных балансира на борт и отдельная опора седьмого колеса",
+        "Гипотеза A: три парных балансира и отдельная опора на каждом борту",
+        "Гипотеза B: семь индивидуальных рычагов",
+        "Исходный режим без неподтверждённых рычагов"
+      ],
+      "unverified": [
+        "Заводское число катков, расположение балансиров и зубьев",
+        "Точное расстояние между осями и диаметр катков",
+        "Реальная кинематическая пара ведущей звёздочки и шаг полиуретановой ленты",
+        "Точный шаг траков",
+        "Количество зубьев, балансиры и фиксаторы",
+        "База, колея, ширина траков",
+        "Точное число опорных катков на каждого борту",
+        "Не переносить шесть опорных катков и восемь элементов гусеницы из описания МРК-46М",
+        "Число и расположение реальных балансирных узлов, их точки крепления и жёсткость",
+        "Фактическая топология балансиров, точки опоры и связь колёс с рычагами не установлены"
+      ],
+      "sources": [
+        "SKTB-ARTICLE",
+        "SKTB-PHOTO-02",
+        "ARSENAL-PAIR-1987",
+        "SRC-MRK46M-DISTINCTION",
+        "ARSENAL-BALANCERS-1987"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "body",
+      "title": "Корпус и кожух",
+      "functional": "A",
+      "geometry": "B/C",
+      "confirmed": [
+        "Внутреннее размещение кабелеукладчика"
+      ],
+      "inferred": [
+        "Форма заднего округлого кожуха"
+      ],
+      "unverified": [
+        "Габариты",
+        "Внутренние перегородки",
+        "Люки, толщины листов и крепёж"
+      ],
+      "sources": [
+        "SKTB-PHOTO-02",
+        "ARSENAL-PAIR-1987"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "turret",
+      "title": "Поворотная опора",
+      "functional": "B",
+      "geometry": "C",
+      "confirmed": [
+        "Манипулятор на центральной опоре виден на фото"
+      ],
+      "inferred": [
+        "Положение поворотного узла относительно гусениц"
+      ],
+      "unverified": [
+        "Тип подшипника",
+        "Подробная схема редуктора",
+        "Диапазон поворота"
+      ],
+      "sources": [
+        "SKTB-PHOTO-02",
+        "ARSENAL-PAIR-1987"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "arm",
+      "title": "Манипулятор",
+      "functional": "A",
+      "geometry": "B/C",
+      "confirmed": [
+        "Манипулятор и его функциональное назначение",
+        "Электромеханические приводы комплекса"
+      ],
+      "inferred": [
+        "Осевая диагональная форма",
+        "Наличие наружной пружины/направляющих в видимом ракурсе",
+        "Визуальное изменение длины условной тяги при движении стрелы"
+      ],
+      "unverified": [
+        "Шаг винта, схема передачи",
+        "Точки опоры всех тяг",
+        "Точная длина звеньев и реальная кинематическая цепь",
+        "Достоверное соединение тяг и приводной винтовой передачи"
+      ],
+      "sources": [
+        "SKTB-ARTICLE",
+        "SKTB-PHOTO-02",
+        "ARSENAL-PAIR-1987"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "gripper",
+      "title": "Сменный двупалый захват",
+      "functional": "A",
+      "geometry": "C",
+      "confirmed": [
+        "На модернизированной версии есть двупалый сменный схват"
+      ],
+      "inferred": [
+        "Общая геометрия рабочего органа"
+      ],
+      "unverified": [
+        "Оси вращения пальцев",
+        "Реальный механизм их смыкания",
+        "Рабочий ход и привод"
+      ],
+      "sources": [
+        "SKTB-ARTICLE",
+        "ARSENAL-PAIR-1987"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "bucket",
+      "title": "Фронтальный погрузчик",
+      "functional": "A",
+      "geometry": "B/C",
+      "confirmed": [
+        "Две степени подвижности",
+        "Сгребание, подъём, выгрузка материалов"
+      ],
+      "inferred": [
+        "Ковш, открытые боковые тяги",
+        "Точка рамы для оси подъёма и демонстрационные тяги привода",
+        "Двухшарнирная расчётная цепочка погрузчика с 21 контрольной точкой по кромке и зубьям ковша"
+      ],
+      "unverified": [
+        "Места осей двух степеней подвижности",
+        "Передаточные отношения",
+        "Реальный объём ковша",
+        "Точная координата шарнира и длина электромеханических актуаторов",
+        "Реальные предельные углы и контакт ковша с кровлей",
+        "Точное расположение зубьев и листа ковша в заводской конструкции"
+      ],
+      "sources": [
+        "SKTB-ARTICLE",
+        "SKTB-PHOTO-02",
+        "ARSENAL-PAIR-1987"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "cameras",
+      "title": "Телевизионные камеры",
+      "functional": "A",
+      "geometry": "C",
+      "confirmed": [
+        "Две телекамеры"
+      ],
+      "inferred": [
+        "Ориентировочные боковые позиции"
+      ],
+      "unverified": [
+        "Точные модели камер",
+        "Крепления, диапазоны наведения",
+        "Расположение второй камеры в конкретный период"
+      ],
+      "sources": [
+        "SKTB-ARTICLE",
+        "SKTB-PHOTO-02",
+        "ARSENAL-PAIR-1987"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "cable",
+      "title": "Кабелеукладчик",
+      "functional": "A",
+      "geometry": "C",
+      "confirmed": [
+        "Полуавтоматическая укладка внутри корпуса",
+        "200 м основного кабеля; до 400 м со вставкой",
+        "В Ч-ХВ-2 изменено место выхода кабеля"
+      ],
+      "inferred": [
+        "Катушка и наружный кабель"
+      ],
+      "unverified": [
+        "Форма барабана",
+        "Привод намотки",
+        "Точное расположение выпускного канала"
+      ],
+      "sources": [
+        "SKTB-ARTICLE"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "dock",
+      "title": "Стыковочный узел",
+      "functional": "A",
+      "geometry": "C",
+      "confirmed": [
+        "Полуавтоматическая стыковка с подъёмным механизмом"
+      ],
+      "inferred": [
+        "Верхняя точка сцепления"
+      ],
+      "unverified": [
+        "Профиль фиксатора",
+        "Кинематическая блокировка",
+        "Способ автоматического срабатывания"
+      ],
+      "sources": [
+        "SKTB-ARTICLE"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "dose",
+      "title": "Дозиметрия",
+      "functional": "A",
+      "geometry": "C",
+      "confirmed": [
+        "Роботы вели дозиметрическую разведку",
+        "Применялся ИМД-21"
+      ],
+      "inferred": [
+        "Внешний измерительный блок"
+      ],
+      "unverified": [
+        "Расположение и крепление на Ч-ХВ-2",
+        "Форма конкретной измерительной головки"
+      ],
+      "sources": [
+        "SKTB-ARTICLE"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "mechanics",
+      "title": "Крепёж, магистрали и вспомогательные узлы",
+      "functional": "C",
+      "geometry": "C",
+      "confirmed": [],
+      "inferred": [
+        "Визуально ожидаемые болтовые соединения"
+      ],
+      "unverified": [
+        "Число и шаг болтов",
+        "Трассы вспомогательной проводки",
+        "Размеры редукторов и сервисных элементов"
+      ],
+      "sources": [
+        "SKTB-PHOTO-02"
+      ],
+      "priority": 3
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "reference",
+      "label": "Утвердить архивные исходные фотографии и модификацию",
+      "status": "partial"
+    },
+    {
+      "id": "profile",
+      "label": "Сопоставить относительные боковые пропорции по нескольким подлинным ракурсам и найти реальный масштаб",
+      "status": "partial"
+    },
+    {
+      "id": "dims",
+      "label": "Подтвердить физический масштаб хотя бы по одному первичному размеру, не по предположениям",
+      "status": "open"
+    },
+    {
+      "id": "tracked",
+      "label": "Разрешить конкурирующие схемы балансиров по первичным материалам и подтвердить число катков",
+      "status": "partial"
+    },
+    {
+      "id": "kin",
+      "label": "Проверить кинематическую цепь и реальные допустимые углы; текущая карта — только модельная гипотеза",
+      "status": "partial"
+    },
+    {
+      "id": "texture",
+      "label": "Подтвердить материалы и фактуру по исходным фото",
+      "status": "open"
+    },
+    {
+      "id": "accept",
+      "label": "Выполнить независимый внутренний технический аудит и зафиксировать все неподтверждённые детали",
+      "status": "partial"
+    }
+  ],
+  "build": {
+    "revision": "v14",
+    "web": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v14.html",
+    "model": "mobot-engineering-v14-model.js",
+    "project": "STEP3DLab/vr_anapa",
+    "changes": [
+      "Создан общий чистый JS-модуль mobot-kinematics-v14.js без WebGL, содержащий условный профиль гусениц, местоположения расчетных шарниров, 21 точку кромки, расчет поз и перебор углов.",
+      "3D-проект v14 теперь вызывает единый расчетный модуль для анализа ковша и формирует исходный профиль из одних и тех же данных.",
+      "SVG-атлас v14 использует тот же 21-точечный расчет; прежний приближенный независимый 3-точечный алгоритм удален.",
+      "SVG-карта теперь использует 24 x 39 клеток и шаг 2°, как и в 3D-модели: 936 комбинаций, 493 сигнала условного пересечения. Ранее на 2D-карте было только 576 комбинаций и 303 сигнала.",
+      "3D-страница получила автоматическое сравнение результатов двух интерфейсов для выявления будущей рассинхронизации.",
+      "Проведен программный тест 120 промежуточных положений ковша и выборка для двух профилей качества: 3D и общий модуль дали нулевую разность, 2D-карта построила 936 клеток и выдала то же число предупреждений.",
+      "Все исходные архивные изображения сохранены неизменными, гипотетические рычаги и реальные габариты по-прежнему не подтверждены."
+    ],
+    "runtimeGeometrySmokeTest": {
+      "scope": "Executable procedural model in a minimal Three.js-compatible test scene, not actual GPU WebGL renderer",
+      "status": "pass",
+      "profiles": [
+        {
+          "name": "desktop",
+          "meshObjects": 570,
+          "fastenerInstances": 290,
+          "assemblyCount": 11,
+          "probes": 21
+        },
+        {
+          "name": "mobile",
+          "meshObjects": 570,
+          "fastenerInstances": 290,
+          "assemblyCount": 11,
+          "probes": 21
+        }
+      ],
+      "sweepSamples": 936,
+      "possibleCrossings": 493,
+      "prototypeAnglesVerifiedOnly": true,
+      "actualWebGLVisualValidated": false,
+      "diagramActualBrowserValidated": false
+    },
+    "limitations": [
+      "Число и диаметр катков, шаг траков не привязаны к оригинальной документации",
+      "Рабочие рычаги показаны как функциональные связи с примерными точками крепления",
+      "Нет подтверждения осей в трёхмерных координатах и реальной траектории ковша",
+      "Форма кабелеукладчика, редукторов и внутренних элементов корпуса условна",
+      "Несколько архивных фоторакурсов для геометрического восстановления ещё не сопоставлены",
+      "Размерные характеристики не подтверждены"
+    ],
+    "referenceComparison": {
+      "method": "Dimensionless approximate profile check on a single perspective archival image",
+      "image": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "feature": "Forward projection of tip beyond visible track edge divided by visible track length",
+      "archiveRoughRatio": 0.19,
+      "previousModelRoughRatio": 0.053,
+      "revisedModelNominalRatio": 0.205,
+      "status": "provisional: source photo is cropped; image points manually estimated, no lens/scale calibration",
+      "instruction": "Do not cite these numbers as geometric tolerances or real lengths."
+    },
+    "photographicNotes": [
+      {
+        "id": "photo-1",
+        "source": "SKTB-PHOTO-02",
+        "purpose": "Отношения протяжённости шасси, видимой опорной части, верхнего кожуха, диагональной стрелы и положения ковша",
+        "confidence": "low-to-medium"
+      },
+      {
+        "id": "photo-2",
+        "source": "ARSENAL-PAIR-1987",
+        "purpose": "Подтверждение двух машин в разных положениях манипуляторов и рабочих органов",
+        "confidence": "medium for identification; low for geometry"
+      }
+    ],
+    "qaReport": "https://github.com/STEP3DLab/vr_anapa/blob/main/mobot-engineering-v14-qa.json",
+    "calibration": {
+      "kind": "non-metric",
+      "baseline": {
+        "id": "nominal-crawler-X-span",
+        "scene_units": 1.78,
+        "real_meters": null
+      },
+      "warning": "Процентное отношение расстояния к длине гусеницы является внутренним измерением модели и НЕ доказывает визуальную/историческую точность.",
+      "next_steps": [
+        "Найти подтверждённый паспортный размер 1987 Мобота",
+        "Обосновать число и расположение опорных катков по двум независимым снимкам",
+        "Привязать модельные точки к метрическим документам",
+        "Проверить реальную схему движения погрузчика"
+      ]
+    },
+    "modelVariants": {
+      "target": "Мобот-Ч-ХВ-2 (1987)",
+      "exclude": [
+        "Мобот-Ч-ХВ (1986)",
+        "МРК-46М (поздняя разработка)",
+        "МРК-25М"
+      ],
+      "warning": "Внешнее сходство семейства и родство конструкций не позволяют механически переносить размеры и характеристики между модификациями."
+    },
+    "suspensionHypothesis": {
+      "verifiedExistence": true,
+      "verifiedGeometry": false,
+      "visibleRoadWheelsPerSide": 7,
+      "nominalPairedRockersPerSide": 3,
+      "nominalTerminalSupportPerSide": 1,
+      "nominalDimensions": "arbitrary scene units",
+      "source": "ARSENAL-BALANCERS-1987",
+      "note": "Подвеска не воспроизведена по сборочным чертежам и пока не связана с моделированием упругих элементов/кинематикой катков."
+    },
+    "photoregistration": {
+      "source_image": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "method": "Browser-generated orthographic 3D screenshot + manual visual overlay with CSS; source photo never modified or drawn to HTML canvas",
+      "measurements": "No camera calibration, no similarity transform estimation, no automated pixel discrepancy metric",
+      "controls": [
+        "alpha",
+        "scale",
+        "translation-x-percent",
+        "translation-y-percent"
+      ],
+      "result": "Exported visual-alignment parameter JSON",
+      "caveat": "A perspective original photograph cannot establish accurate 3D dimensions from manually scaled orthographic image."
+    },
+    "suspensionHypotheses": {
+      "evidence": {
+        "fact": "На Мобот-Ч-ХВ-2 существовали балансиры, в 1987 году выполнялся ремонт после деформаций",
+        "source": "ARSENAL-BALANCERS-1987"
+      },
+      "modes": {
+        "bare": {
+          "label": "Исходная условная ходовая без предполагаемой схемы балансиров",
+          "status": "display only"
+        },
+        "paired": {
+          "label": "3 парных балансира и отдельная опора на каждом борту",
+          "status": "unverified engineering hypothesis"
+        },
+        "independent": {
+          "label": "Отдельный рычаг на каждое из 7 видимых опорных колёс",
+          "status": "unverified engineering hypothesis"
+        }
+      },
+      "realWheelCountVerified": false,
+      "realDimensionsVerified": false,
+      "acceptance": "Выбор нельзя делать по внешнему виду. Требуется первичный чертёж или достаточные подлинные фотографии с видимыми шарнирами."
+    },
+    "bucketClearanceProxy": {
+      "type": "21-point planar rigid-chain edge screening (not collision solver)",
+      "exactCodeMethod": "Rotate probe around scoop joint; translate by scoop offset; rotate around loader pivot; translate by loader offset; compare root-model Y with a nominal lower crawler level.",
+      "probeCount": 21,
+      "distribution": "2 corner samples per 9 tooth edges + 3 lower blade sheet samples",
+      "referencePlaneYScene": 0.14,
+      "planeMeaning": "Nominal crawler-bottom Y in uncalibrated model root coordinates",
+      "angleDomain": {
+        "liftDegrees": [
+          -18,
+          28
+        ],
+        "scoopDegrees": [
+          -38,
+          38
+        ],
+        "stepDegrees": 2
+      },
+      "samples": 936,
+      "flaggedBelowNominalPlane": 493,
+      "worstSample": {
+        "liftDeg": 28,
+        "tipDeg": 38,
+        "minClearanceScene": -0.98474
+      },
+      "neutralPoseMinClearanceScene": 0.118,
+      "status": "Identical non-metric hypothesis in 3D and 2D; NOT historical collision validation",
+      "insufficiencies": [
+        "No real wheel/ground contact geometry",
+        "No physical dimensions or manufacturer torque/angle limits",
+        "Only sampled blade-edge control points; no full triangle collision check",
+        "No self-collision/contact of robot arms, cable or housing",
+        "Archival photos are perspective; real joint locations not calibrated"
+      ],
+      "sharedSource": "mobot-kinematics-v14.js",
+      "domains": {
+        "liftDeg": [
+          -18,
+          28
+        ],
+        "tipDeg": [
+          -38,
+          38
+        ],
+        "stepDeg": 2
+      }
+    },
+    "standalone2D": "https://step3dlab.github.io/vr_anapa/mobot-schematic-v14.html",
+    "kinematicAtlas": {
+      "url": "https://step3dlab.github.io/vr_anapa/mobot-schematic-v14.html",
+      "tech": "Vanilla SVG+JavaScript, self-contained and GPU/WebGL independent",
+      "representedParts": [
+        "Photo-inspired track contour",
+        "7 hypothesized lower road-wheel centres",
+        "arm pivot and working end",
+        "loader axis",
+        "scoop axis",
+        "front edge samples"
+      ],
+      "mechanisms": [
+        "arm",
+        "loader lift",
+        "scoop tipping",
+        "indicative two-finger gripper"
+      ],
+      "outputs": [
+        "kinematic-study.svg",
+        "pose-report.json"
+      ],
+      "warning": "Engineering schematic in uncalibrated coordinates; not a fabrication drawing.",
+      "canonicalModule": "mobot-kinematics-v14.js",
+      "sampleMethod": "Exactly same 2-degree grid used by 3D model, not 24x24 cell-centre interpolation",
+      "numberOfProbes": 21,
+      "samples": 936,
+      "flagged": 493,
+      "browserNoWebGLNeeded": true,
+      "historicalMetricsVerified": false
+    },
+    "canonicalEngine": "mobot-kinematics-v14.js",
+    "validation": {
+      "type": "source and mock 3D runtime",
+      "core": {
+        "probes": 21,
+        "samples": 936,
+        "warnings": 493
+      },
+      "desktop": {
+        "meshObjects": 570,
+        "fastenerInstances": 290,
+        "assemblies": 11,
+        "profilePoints": 14
+      },
+      "mobile": {
+        "meshObjects": 570,
+        "fastenerInstances": 290,
+        "assemblies": 11,
+        "profilePoints": 14
+      },
+      "comparison": {
+        "poseSamples": 120,
+        "maxNumericError": 0,
+        "sweepMatches": true
+      },
+      "SVGAtlas": {
+        "cells": 936,
+        "flags": 493,
+        "rangeInputAndReset": true
+      },
+      "actualBrowserWebGL": false,
+      "originalDimensionsKnown": false
+    }
+  }
+}
