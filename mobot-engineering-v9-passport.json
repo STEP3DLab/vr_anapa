@@ -417,11 +417,25 @@
       "В режиме проверки добавлены подсветка вероятных и условных форм, два архивных изображения и резервный интерфейс без WebGL."
     ],
     "runtimeGeometrySmokeTest": {
-      "scope": "Geometry unit test in scripted Three.js-compatible stand-in, independent of WebGL rendering",
-      "result": "pending additional track curve simulation test",
+      "scope": "Procedural assembly tested with Three-compatible stand-in for geometry and transformation; WebGL screenshot not verified",
+      "result": "passed",
       "assemblies": 11,
-      "geometryMeasured": false,
-      "browserRendererVerified": false
+      "meshObjectsDesktop": 715,
+      "meshObjectsMobile": 618,
+      "trackSegmentsPerSide": {
+        "desktop": 114,
+        "mobile": 78
+      },
+      "wheelHubs": 14,
+      "actuatorSegments": 6,
+      "testMotionSamples": 31,
+      "actuatorLengthSceneUnits": [
+        0.552,
+        1.008
+      ],
+      "treadPhaseChangedInstanceMatrices": true,
+      "caveat": "Count of visible road wheels and mechanical dimensions inferred, not verified from manufacturer drawings.",
+      "actualBrowserWebGL": false
     },
     "limitations": [
       "Число и диаметр катков, шаг траков не привязаны к оригинальной документации",
@@ -454,6 +468,7 @@
         "purpose": "Подтверждение двух машин в разных положениях манипуляторов и рабочих органов",
         "confidence": "medium for identification; low for geometry"
       }
-    ]
+    ],
+    "qaReport": "https://github.com/STEP3DLab/vr_anapa/blob/main/mobot-engineering-v9-qa.json"
   }
 }
