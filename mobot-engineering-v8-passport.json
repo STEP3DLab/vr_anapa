@@ -392,10 +392,11 @@
       "Продольная координата основания стрелы и поворотной опоры скорректирована по относительной форме бокового архивного снимка: вылет стрелы за передний контур гусениц визуально стал ближе к источнику."
     ],
     "runtimeGeometrySmokeTest": {
-      "scope": "Mocked object hierarchy and Three.js-compatible transformation interface, not GPU browser render",
-      "result": "passed",
+      "scope": "Procedural assembly execution with mocked Three-compatible objects; not GPU browser render",
+      "result": "passed after final source-photo-based longitudinal adjustment",
       "assemblies": 11,
       "meshCountDesktop": 739,
+      "meshCountMobile": 638,
       "fingerGroups": 2,
       "bucketPivotScene": [
         0.28,
@@ -404,8 +405,12 @@
       ],
       "actuatorSegments": 6,
       "linkageLengthsPositiveForPositions": true,
-      "browserRendererVerified": false,
-      "note": "Retesting dynamic linkage extremes after longitudinal arm reposition is required; prior tests preceded this last geometry adjustment."
+      "testedMotionSamples": 31,
+      "actuatorSegmentLengthRange": [
+        0.546,
+        1.008
+      ],
+      "browserRendererVerified": false
     },
     "limitations": [
       "Число и диаметр катков, шаг траков не привязаны к оригинальной документации",
