@@ -711,7 +711,7 @@ $('workToolBtn').addEventListener('click',()=>{
  const i=workModes.indexOf(activeWorkTool);
  setWorkMode(workModes[(i+1)%workModes.length]);
 });
-setWorkMode('gripper');
+// Default gripper is installed by makeMobot(); do not touch scene globals before initialization.
 const suspensionVariants=['bare','paired','independent'];
 const suspensionLabels={
  bare:'без предполагаемых рычагов',
