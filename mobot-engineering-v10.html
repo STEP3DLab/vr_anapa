@@ -243,6 +243,20 @@ body.evidence-mode .hero-disclaimer{color:#f1d0a2}
  .fallback-archive{padding:10px}
 }
 
+
+.eng-tool{position:fixed;z-index:13;left:26px;bottom:111px;width:min(435px,calc(100vw - 52px));padding:15px;border:1px solid #786044;background:rgba(18,28,33,.97);border-radius:15px;box-shadow:0 18px 56px #000a}
+.eng-tool[hidden]{display:none!important}
+.eng-tool-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.eng-tool-header strong{font-size:14px;color:#f1d5b1}
+.eng-tool-header button{background:#314047;border:1px solid #637178;border-radius:7px;width:30px;height:29px;color:white;font-size:18px}
+.eng-tool p{font-size:11px;line-height:1.5;color:#aabcc2;margin:9px 0}
+.eng-tool-result{border:1px solid #78614b;background:#312b25;border-radius:9px;color:#f3c895;padding:13px;font-size:12px;line-height:1.6;font-weight:730;white-space:pre-wrap}
+.eng-tool-notice{font-size:10px!important}
+.eng-tool-actions{display:flex;gap:8px}
+.eng-tool-actions button{background:#334148;border:1px solid #56666e;border-radius:9px;padding:10px 11px;color:#e7ebed;font-size:11px;font-weight:700}
+#measureBtn.is-on,#diagnosticsBtn.is-on{background:#e3ba84;color:#211a12}
+@media(max-width:760px){.eng-tool{left:9px;right:9px;width:auto;bottom:178px;max-height:40vh;overflow:auto}}
+
 </style>
 </head>
 <body>
@@ -260,6 +274,8 @@ body.evidence-mode .hero-disclaimer{color:#f1d0a2}
   <button id="compareBtn" class="pill primary" type="button">Сравнить фото и 3D</button>
   <button id="passportBtn" class="pill" type="button">Паспорт точности</button>
   <button id="evidenceBtn" class="pill" type="button" aria-pressed="false">Условные узлы</button>
+  <button id="measureBtn" class="pill" type="button" aria-pressed="false">Измерить</button>
+  <button id="diagnosticsBtn" class="pill" type="button" aria-pressed="false">Проверить 3D</button>
   <button id="referenceBtn" class="pill" type="button">Архив</button>
   <button id="explodeBtn" class="pill" type="button" aria-pressed="false">Разнести узлы</button>
   <button id="cutawayBtn" class="pill" type="button" aria-pressed="false">Внутри корпуса</button>
@@ -362,6 +378,14 @@ body.evidence-mode .hero-disclaimer{color:#f1d0a2}
  </div>
 </section>
 
+
+<section id="engineeringTools" class="eng-tool" hidden>
+ <div class="eng-tool-header"><strong id="toolTitle">Инженерные измерения</strong><button id="toolClose" type="button" aria-label="Закрыть">×</button></div>
+ <p id="toolHelp">Выберите на модели две точки. Измерение — только в условных единицах сцены, не в метрах.</p>
+ <div id="toolResult" class="eng-tool-result">Нажмите на первую точку.</div>
+ <p class="eng-tool-notice">Величины не являются подтверждёнными размерами реального робота. Относительное сравнение выполняется с номинальной длиной гусеничного контура модели (1,78 ед.).</p>
+ <div class="eng-tool-actions"><button id="toolClear" type="button">Сброс</button><button id="toolExport" type="button">Экспорт JSON</button></div>
+</section>
 <div class="load" id="loading"><div class="loadbox"><div class="loadsymbol"></div><b>Подготовка исследовательской 3D-сборки</b><p>Референсы 1987 года, гусеничный контур, кинематические связи и архивные источники.</p></div></div>
 <section id="fallback" class="fallback-archive" hidden>
   <div class="fallback-inner">
@@ -617,6 +641,7 @@ $('sideBtn').addEventListener('click',()=>view('side'));
 $('topBtn').addEventListener('click',()=>view('top'));
 $('resetBtn').addEventListener('click',()=>{
  exploded=false;cutaway=false;
+ if(measuring.mode!=='off')setToolMode('off');
  if(driveActive)toggleDrive(false);
  if(demoActive)toggleDemo(false);
  if(evidenceActive)setEvidence(false);
@@ -788,6 +813,86 @@ $('infoArchive').addEventListener('click',()=>setReference(true));
 $('referenceClose').addEventListener('click',()=>setReference(false));
 $('mobilePartButton').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+
+const measuring={mode:'off',points:[],markers:[],line:null};
+const measurePointMaterial=new THREE.MeshBasicMaterial({color:0xeac488,depthTest:false});
+function resetMeasurement(){
+ for(const v of measuring.markers){scene.remove(v);v.geometry.dispose();}measuring.markers=[];
+ if(measuring.line){scene.remove(measuring.line);measuring.line.geometry.dispose();measuring.line.material.dispose();measuring.line=null;}
+ measuring.points=[];if(measuring.mode==='measure')$('toolResult').textContent='Нажмите на первую точку.';
+}
+function setToolMode(mode){
+ measuring.mode=mode;
+ $('engineeringTools').hidden=mode==='off';
+ $('measureBtn').classList.toggle('is-on',mode==='measure');
+ $('diagnosticsBtn').classList.toggle('is-on',mode==='diagnostics');
+ $('measureBtn').setAttribute('aria-pressed',String(mode==='measure'));
+ $('diagnosticsBtn').setAttribute('aria-pressed',String(mode==='diagnostics'));
+ if(mode==='measure'){
+  autoSpin=false;$('spinBtn').classList.remove('is-on');
+  if(demoActive)toggleDemo(false);if(driveActive)toggleDrive(false);
+  resetMeasurement();
+  $('toolTitle').textContent='Относительные размеры';
+  $('toolHelp').textContent='Нажмите две точки модели. Полученное расстояние — в условных единицах сцены, не в метрах.';
+ }else if(mode==='diagnostics'){
+  $('toolTitle').textContent='Диагностика WebGL';
+  $('toolHelp').textContent='Показатели WebGL на текущем устройстве. Автоматической отправки нет.';
+  showDiagnostics();
+ }
+}
+function markPoint(point){
+ if(measuring.points.length===2)resetMeasurement();
+ const p=point.clone();
+ measuring.points.push(p);
+ const marker=new THREE.Mesh(new THREE.SphereGeometry(.026,12,8),measurePointMaterial);
+ marker.position.copy(p);marker.renderOrder=45;scene.add(marker);measuring.markers.push(marker);
+ if(measuring.points.length===1){$('toolResult').textContent='Точка A выбрана. Нажмите вторую точку.';return;}
+ const [A,B]=measuring.points;
+ measuring.line=new THREE.Line(new THREE.BufferGeometry().setFromPoints([A,B]),
+   new THREE.LineBasicMaterial({color:0xffc285,depthTest:false}));
+ measuring.line.renderOrder=44;scene.add(measuring.line);
+ const length=A.distanceTo(B),nominal=model.root.userData.nominalTrackLength||1.78;
+ $('toolResult').textContent='Длина: '+length.toFixed(3)+' усл. ед.\nДоля от условной длины гусеницы: '+(length/nominal*100).toFixed(1)+'%';
+}
+function toolData(){
+ if(measuring.mode==='diagnostics'){
+  const r=renderer.info;
+  return {revision:'v10',kind:'browser-3d-diagnostics',date:new Date().toISOString(),
+    webgl2:!!renderer.capabilities.isWebGL2,draw_calls:r.render.calls,triangles:r.render.triangles,
+    geometries:r.memory.geometries,textures:r.memory.textures,viewport:[innerWidth,innerHeight],
+    pixel_ratio:renderer.getPixelRatio(),quality:model.quality,
+    mesh_objects:model.meshCount,batched_fasteners:model.renderedFasteners,
+    disclaimer:'Browser statistics only; historical accuracy is not established.'};
+ }
+ const a=measuring.points[0],b=measuring.points[1],nominal=model.root.userData.nominalTrackLength||1.78;
+ const length=a&&b?a.distanceTo(b):null;
+ return {revision:'v10',kind:'relative-3d-measurement',date:new Date().toISOString(),
+   unit:'arbitrary model units',physical_calibration:false,
+   A:a?[a.x,a.y,a.z]:null,B:b?[b.x,b.y,b.z]:null,
+   distance:length===null?null:Number(length.toFixed(6)),
+   nominal_track_reference:nominal,
+   ratio_to_reference:length===null?null:Number((length/nominal).toFixed(6)),
+   disclaimer:'Do not interpret scene distances as actual robot dimensions.'};
+}
+function showDiagnostics(){
+ const x=toolData();
+ $('toolResult').textContent='WebGL2: '+x.webgl2+
+ '\nВызовов отрисовки: '+x.draw_calls+'\nТреугольников: '+x.triangles+
+ '\nОбъектов сцены: '+x.mesh_objects+'\nКрепежей в пакетах: '+x.batched_fasteners+
+ '\nКачество: '+x.quality+'\nПиксельный коэффициент: '+x.pixel_ratio;
+}
+function exportTool(){
+ const blob=new Blob([JSON.stringify(toolData(),null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='mobot-v10-'+(measuring.mode==='diagnostics'?'diagnostics':'measurement')+'.json';
+ a.click();setTimeout(()=>URL.revokeObjectURL(url),1800);
+}
+$('measureBtn').addEventListener('click',()=>setToolMode(measuring.mode==='measure'?'off':'measure'));
+$('diagnosticsBtn').addEventListener('click',()=>setToolMode(measuring.mode==='diagnostics'?'off':'diagnostics'));
+$('toolClose').addEventListener('click',()=>setToolMode('off'));
+$('toolClear').addEventListener('click',()=>measuring.mode==='diagnostics'?showDiagnostics():resetMeasurement());
+$('toolExport').addEventListener('click',exportTool);
+
 let pointerDown=null;
 renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};autoSpin=false;$('spinBtn').classList.remove('is-on');});
 renderer.domElement.addEventListener('pointerup',e=>{
@@ -796,6 +901,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
  pointer.x=(e.clientX/innerWidth)*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;
  raycaster.setFromCamera(pointer,camera);
  const hits=raycaster.intersectObjects(model.meshes,false);
+ if(measuring.mode==='measure'){if(hits[0])markPoint(hits[0].point);return;}
  for(const hit of hits){const id=hit.object.userData.part;if(id&&model.info[id]){selectPart(id,true);return;}}
 });
 $('shotBtn').addEventListener('click',()=>{
@@ -817,7 +923,7 @@ $('referenceImg').addEventListener('error',()=>{
 });
 window.addEventListener('keydown',e=>{
  if(e.target?.closest('input,textarea,select,button'))return;
- if(e.key==='Escape'){$('sidebar').classList.remove('open');setReference(false);togglePassport(false);setCompare(false);}
+ if(e.key==='Escape'){$('sidebar').classList.remove('open');setReference(false);togglePassport(false);setCompare(false);setToolMode('off');}
  if(e.key==='1')view('home');
  if(e.key==='2')view('side');
  if(e.key==='3')view('top');
@@ -872,7 +978,7 @@ function frame(now){
 }
 try{
  selectPart('tracks',false);
- $('status').innerHTML='<b>MODEL 10</b> · '+model.meshCount+' объектов · '+model.quality+' · условный масштаб';
+ $('status').innerHTML='<b>MODEL 10</b> · '+model.meshCount+' объектов · '+model.quality+' · '+model.renderedFasteners+' креплений в пакетах · условный масштаб';
  document.body.dataset.viewerReady='true';
  $('loading').classList.add('done');
  requestAnimationFrame(frame);
