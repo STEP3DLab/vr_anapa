@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f3eb"><meta name="description" content="Управляйте гусеницами и ковшом Мобота-Ч-ХВ-2. Интерактивный сценарий выставочного стенда для экрана и VR.">
+<title>Расчистка кровли · Мобот-Ч-ХВ-2</title>
+<link rel="stylesheet" href="./mobot-assets/workbench-v16.css"><link rel="stylesheet" href="./mobot-assets/roof.css"></head>
+<body><header class="mast"><div class="brand"><span class="glyph" aria-hidden="true"><i></i><i></i><i></i></span>Архив робототехники</div><nav aria-label="Разделы"><a href="./mobot-latest.html">Модель</a><a href="./mobot-roof.html" aria-current="page">Стенд и VR</a><a href="./mobot-latest.html#archive">Фотосверка</a></nav></header>
+<main><div class="intro"><div><div class="eyebrow"><i></i> МОБОТ-Ч-ХВ-2 <span>/</span> УЧЕБНЫЙ СЦЕНАРИЙ</div><h1>Расчистка кровли</h1></div><p>Подберите обломки ковшом и перевезите их на площадку выгрузки.</p></div>
+<section class="bench"><div class="study">
+<div id="stage" class="stage"><div id="surface" class="surface"></div><div class="stagehead"><span class="stagelabel"><i></i> УЧАСТОК КРОВЛИ</span><div class="views" aria-label="Ракурс"><button data-view="overview" aria-pressed="true">Общий</button><button data-view="tool" aria-pressed="false">Ковш</button><button data-view="plan" aria-pressed="false">Сверху</button></div></div>
+<div id="load" class="loading" role="status">Подготовка стенда…</div><div class="stagefoot"><span class="keyhint">Потяните, чтобы повернуть вид</span><button id="vr" class="vr" disabled>Войти в VR</button></div></div>
+<div class="stage-meta"><span><i class="swatch"></i> Площадка выгрузки</span><span>Условный масштаб</span></div><p id="vrInfo" class="vr-note" hidden></p></div>
+<aside class="panel"><div class="panel-top"><h2>Пульт оператора</h2><button id="reset" title="Начать сначала" aria-label="Начать сначала">↺</button></div>
+<div id="instruction" aria-live="polite" aria-atomic="true"><span class="eyebrow" id="counter">ДЕЙСТВИЕ 1 / 5</span><h3 id="stepName">Опустить раму</h3><p id="hint">Опустите ковш к поверхности кровли.</p></div>
+<div class="progress" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div id="commands">
+<fieldset data-axis="drive"><legend>Гусеницы</legend><div class="cmdpair"><button data-command="back" disabled>Назад</button><button data-command="forward" disabled>Вперёд</button></div></fieldset>
+<fieldset data-axis="lift"><legend>Рама погрузчика</legend><div class="cmdpair"><button data-command="lower">Опустить</button><button data-command="raise">Поднять</button></div></fieldset>
+<fieldset data-axis="tip"><legend>Ковш</legend><div class="cmdpair"><button data-command="curl" disabled>Вернуть</button><button data-command="dump" disabled>Наклонить</button></div></fieldset></div>
+<p class="controlhint" id="controlHint">Удерживайте кнопку для движения. С клавиатуры — пробел на выбранной кнопке.</p>
+<button id="again" hidden>Повторить сценарий</button></aside></section>
+<footer><span>Мобот-Ч-ХВ-2 <b>/</b> Экспозиционный стенд</span><div><a href="./mobot-latest.html#passport">Паспорт модели ↗</a><a href="https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha" target="_blank" rel="noopener">Историческое описание ↗</a></div></footer>
+<details class="basis"><summary>Что реконструировано</summary><p>В 1987 году «Моботы-Ч-ХВ-2» участвовали в очистке кровли третьего энергоблока от обломков. Для стенда выбран один учебный цикл работы погрузчика. Расстановка фрагментов, площадка выгрузки, размеры и скорость движений иллюстративны.</p></details>
+<noscript>Для управления роботом включите JavaScript в браузере.</noscript>
+</main><script type="module" src="./mobot-assets/roof-stand.js"></script></body></html>
