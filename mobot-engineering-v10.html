@@ -828,6 +828,8 @@ function setToolMode(mode){
  $('diagnosticsBtn').classList.toggle('is-on',mode==='diagnostics');
  $('measureBtn').setAttribute('aria-pressed',String(mode==='measure'));
  $('diagnosticsBtn').setAttribute('aria-pressed',String(mode==='diagnostics'));
+ if(mode==='off'){resetMeasurement();return;}
+ $('toolClear').textContent=mode==='diagnostics'?'Обновить':'Сброс';
  if(mode==='measure'){
   autoSpin=false;$('spinBtn').classList.remove('is-on');
   if(demoActive)toggleDemo(false);if(driveActive)toggleDrive(false);
@@ -835,6 +837,7 @@ function setToolMode(mode){
   $('toolTitle').textContent='Относительные размеры';
   $('toolHelp').textContent='Нажмите две точки модели. Полученное расстояние — в условных единицах сцены, не в метрах.';
  }else if(mode==='diagnostics'){
+  resetMeasurement();
   $('toolTitle').textContent='Диагностика WebGL';
   $('toolHelp').textContent='Показатели WebGL на текущем устройстве. Автоматической отправки нет.';
   showDiagnostics();
