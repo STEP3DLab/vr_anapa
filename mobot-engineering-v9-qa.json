@@ -1,0 +1,98 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v9.0",
+  "checkDate": "2026-11-16",
+  "basis": "Static code inspection, source registration and executable procedural-geometry smoke testing",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "JS parse",
+      "status": "pass",
+      "detail": "v9 model and inline viewer module parse without syntax error"
+    },
+    {
+      "name": "Desktop geometry",
+      "status": "pass",
+      "detail": "715 object meshes, 11 assemblies, 14 wheel flanges, 114 track plates per side in stand-in Three.js engine"
+    },
+    {
+      "name": "Mobile geometry",
+      "status": "pass",
+      "detail": "618 object meshes, 11 assemblies, 14 wheel flanges, 78 track plates per side"
+    },
+    {
+      "name": "Tread movement",
+      "status": "pass",
+      "detail": "Both crawler loops update instanced plate positions when phase changes"
+    },
+    {
+      "name": "Roller movement",
+      "status": "pass",
+      "detail": "Fourteen visible wheel hubs rotate with tread phase"
+    },
+    {
+      "name": "Linkage extremes",
+      "status": "pass",
+      "detail": "31 motion poses checked, six visual actuator segments remain finite and positive; lengths 0.552..1.008 SCENE UNITS"
+    },
+    {
+      "name": "WebGL-disabled fallback",
+      "status": "pass-with-scope",
+      "detail": "Chromium DOM smoke test showed static archive notice when WebGL disabled; full site not rendered"
+    },
+    {
+      "name": "GitHub Pages",
+      "status": "pass",
+      "detail": "Deployment success reported for v9 model, viewer and passport"
+    },
+    {
+      "name": "Visual browser comparison",
+      "status": "not-done",
+      "detail": "Cannot inspect live WebGL scene through available browser runtime"
+    },
+    {
+      "name": "Dimensional accuracy",
+      "status": "unverified",
+      "detail": "No original dimensions or calibrated photos; estimates should not be cited as true engineering dimensions"
+    },
+    {
+      "name": "Road wheel count",
+      "status": "visual-hypothesis",
+      "detail": "Seven visible lower wheel hubs inferred from photo #2; not proven for entire vehicle suspension"
+    },
+    {
+      "name": "Animation historicity",
+      "status": "demonstration-only",
+      "detail": "Bench movement is illustrative, not recorded original speed/trajectories"
+    }
+  ],
+  "blockers": [
+    "Acquire an independent orthogonal or close-to-front archive view with distinguishable joints",
+    "Establish at least one physical verified reference dimension for scale",
+    "Cross-check the robot's exact cabling, cameras and internal driving configuration",
+    "Perform actual WebGL visual screenshot test and compare model silhouette",
+    "Separate verified design features from scene-detailing approximations"
+  ],
+  "status": "Research model updated and published; historical reconstruction accuracy remains unverified and should not be upgraded based only on mesh count."
+}
