@@ -539,7 +539,14 @@ function setEvidence(on){
    if(!o.isMesh||!o.userData?.part)return;
    if(!evidenceOriginals.has(o))evidenceOriginals.set(o,o.material);
    const grade=passportLookup.get(o.userData.part)?.geometry||'C';
-   o.material=grade==='B/C'?evidenceMaterials.seen:evidenceMaterials.unknown;
+   let speculative=false;
+   for(let parent=o.parent;parent;parent=parent.parent){
+     if(parent.name==='Парные балансиры — условная версия A'||parent.name==='Независимые рычаги — условная версия B'){
+       speculative=true;break;
+     }
+   }
+   o.material=speculative?evidenceMaterials.unknown:
+     (grade==='B/C'?evidenceMaterials.seen:evidenceMaterials.unknown);
   });
  }else{
   evidenceOriginals.forEach((material,o)=>{o.material=material;});evidenceOriginals.clear();
@@ -548,7 +555,7 @@ function setEvidence(on){
  $('evidenceBtn').setAttribute('aria-pressed',String(evidenceActive));
  document.body.classList.toggle('evidence-mode',evidenceActive);
  $('status').textContent=evidenceActive
-   ? 'Геометрия: янтарный = архивный силуэт / красный = условная реконструкция'
+   ? 'Янтарный = видимая схема; красный = неподтверждённые детали и варианты балансиров'
    : ('MODEL 12 · '+model.meshCount+' объектов · условный масштаб');
 }
 $('evidenceBtn').addEventListener('click',()=>setEvidence(!evidenceActive));
@@ -663,7 +670,11 @@ $('suspensionBtn').addEventListener('click',()=>{
  showSuspensionVariant(suspensionVariants[(idx+1)%suspensionVariants.length]);
 });
 showSuspensionVariant('bare');
-function updateClearance(){
+let lastClearanceDisplay=0;
+function updateClearance(force=false){
+ const now=performance.now();
+ if(!force&&now-lastClearanceDisplay<240)return;
+ lastClearanceDisplay=now;
  const c=model.mechanisms.estimateBucketClearance();
  const diff=c.relativeClearanceScene;
  const danger=diff<-.01,near=diff<.06;
@@ -743,7 +754,7 @@ $('resetBtn').addEventListener('click',()=>{
  model.mechanisms.bucketLift.rotation.z=0;
  model.mechanisms.bucketTilt.rotation.z=0;
  model.mechanisms.fingers.forEach(({group})=>{group.rotation.y=0;});
- model.mechanisms.updateLinkages();updateClearance();
+ model.mechanisms.updateLinkages();updateClearance(true);
  autoSpin=false;$('spinBtn').classList.remove('is-on');
  machine.rotation.y=-.32;view('home');updateHighlight();
 });
@@ -816,7 +827,7 @@ for(const [id,apply] of Object.entries(actuation)){
   if(demoActive)toggleDemo(false);
   const deg=Number($(id).value),radians=THREE.MathUtils.degToRad(deg);
   $(id.replace('Range','Value')).textContent=deg+'°';
-  apply(radians);model.mechanisms.updateLinkages();updateClearance();updateHighlight();
+  apply(radians);model.mechanisms.updateLinkages();updateClearance(true);updateHighlight();
  });
 }
 function setReference(open){
