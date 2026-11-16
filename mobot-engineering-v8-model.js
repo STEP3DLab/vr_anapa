@@ -248,6 +248,9 @@ export function makeMobot(THREE, quality='auto') {
 
   // ROTARY PEDESTAL & VISIBLE TRANSMISSION
   const base=section('turret','Поворотная опора манипулятора');
+  // Shift toward the front according to the approximate archival side-view silhouette.
+  // This is an uncalibrated relative alignment, NOT a factory coordinate.
+  base.position.x=-.20;
   cylinder(base,.36,.37,.11,[.06,.79,0],m.frame,'turret','y',48);
   cylinder(base,.30,.30,.035,[.06,.853,0],m.satin,'turret','y',48);
   cylinder(base,.24,.24,.12,[.06,.927,0],m.panel,'turret','y',40);
@@ -268,7 +271,7 @@ export function makeMobot(THREE, quality='auto') {
 
   // MAIN TRUSS: paired C-section beams and diagonal bracing in the archival silhouette.
   const armPivot=section('arm','Подъёмная стрела с приводом',root);
-  armPivot.position.set(.15,1.18,0);
+  armPivot.position.set(-.14,1.18,0); // forward shift: arm tip projects beyond crawler nose as in archival side view
   const distal=[-1.20,.99,0],prox=[0,0,0];
   // The end is raised at rest: far closer to the high diagonal 1987 photographs.
   for(const s of [-1,1]){
