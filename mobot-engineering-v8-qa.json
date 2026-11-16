@@ -32,7 +32,7 @@
     {
       "id": "actuator-proxy",
       "status": "pass",
-      "result": "Six visible actuator segment meshes update without invalid lengths over 20 simulated motion values; sample length range .546–.846 arbitrary scene units"
+      "result": "Six actuator segments updated across 31 extremal motion samples in both desktop/mobile geometry profiles; no negative/nonfinite lengths; range 0.546–1.008 arbitrary scene units."
     },
     {
       "id": "render",
@@ -48,11 +48,16 @@
       "id": "historical-approval",
       "status": "not-tested",
       "result": "No approval by A. F. Batanov or original drawings."
+    },
+    {
+      "id": "relative-side-silhouette",
+      "status": "provisional",
+      "result": "Arm forward projection in nominal units revised from 0.053 to 0.205 of tracked length, vs rough 0.19 photographic projection. Cropped perspective image, not metric photogrammetry."
     }
   ],
   "conclusion": "Visual research model only; cannot claim historical reconstruction correctness or CAD-level accuracy.",
   "next_acceptance_steps": [
-    "Photographically verify front and side profiles against at least 2 authentic views",
+    "Verify side proportions on two independent original images, with the same front/rear direction",
     "Acquire 1 original chassis dimension and ground true scene scale",
     "Verify bucket lift and tip axes and relative actuator mountings",
     "Validate electronics and cameras positions with designer",
