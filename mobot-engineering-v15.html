@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d1417">
-<meta name="description" content="Интерактивная исследовательская реконструкция Мобота-Ч-ХВ-2. Асимметричный гусеничный контур, работающие механизмы и два архивных источника.">
+<meta name="description" content="Мобот-Ч-ХВ-2 v15: сменный двупалый схват, отбойный молоток на манипуляторе или погрузчике, уточнённая непрерывная кромка ковша и архивная фотосверка.">
 <meta property="og:title" content="МОБОТ · Ч-ХВ-2 — рабочее оснащение и 3D-механика v15">
-<meta property="og:description" content="Инженерное исследование конструкции 1987 года: гусеницы, стрела, ковш, телекамеры. Сравнение с архивом СКТБ.">
+<meta property="og:description" content="Инженерная реконструкция v15 по архивам СКТБ: три сменных рабочих оснащения, обновлённая кромка ковша и 2D-атлас.">
 <meta property="og:image" content="https://step3dlab.github.io/Technopark_project/mobot/assets/poster.jpg">
 <meta property="og:type" content="website">
 <link rel="preload" href="./mobot-engineering-v15-model.js" as="script" crossorigin>
@@ -703,9 +703,9 @@ function setWorkMode(mode){
  $('workToolNote').textContent=activeWorkTool==='gripper'
   ? 'Сменный двупалый схват: функция подтверждена, конструкция рычагов и привода приблизительна.'
   : 'Отбойный молоток: документально подтверждена возможность установки. Геометрия и посадка показаны условно.';
- if(activeWorkTool==='breaker-loader')chosen='bucket';
- if(activeWorkTool==='breaker-arm')chosen='gripper';
- if(typeof updateHighlight==='function')updateHighlight();
+ // Synchronise selected assembly, highlight and explanatory evidence panel.
+ selectPart(activeWorkTool==='breaker-loader'?'bucket':'gripper',false);
+ updateHighlight();
 }
 $('workToolBtn').addEventListener('click',()=>{
  const i=workModes.indexOf(activeWorkTool);
