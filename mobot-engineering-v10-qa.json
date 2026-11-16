@@ -1,0 +1,93 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v10.0",
+  "checkDate": "2026-11-16",
+  "basis": "Static JS parse, procedural geometry smoke test and GitHub Pages publication status. Browser WebGL remains unverified.",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Model JavaScript syntax",
+      "status": "pass",
+      "detail": "v10 model parses; browser viewer inline module also parses without syntax errors"
+    },
+    {
+      "name": "Desktop procedural geometry",
+      "status": "pass",
+      "detail": "476 mesh objects, 11 engineering assemblies, geometry generation completed in Three-compatible stand-in"
+    },
+    {
+      "name": "Mobile procedural geometry",
+      "status": "pass",
+      "detail": "476 mesh objects, same 272 visible fastener instances; no mobile bolt removal"
+    },
+    {
+      "name": "Instanced fastener batches",
+      "status": "pass",
+      "detail": "272 bolts rendered as 33 InstancedMesh batches; all instance matrices initialized"
+    },
+    {
+      "name": "Structure and actuation",
+      "status": "pass",
+      "detail": "Two jaw groups, independent bucket tilt and lift retained; phase control and linkages execute in geometry test"
+    },
+    {
+      "name": "Scene source variants",
+      "status": "pass",
+      "detail": "Explicit separation of MRK-46M later 6-wheel/8-belt-segment specification from Mobot-CH-HV-2"
+    },
+    {
+      "name": "Measured relative reference",
+      "status": "nonmetric",
+      "detail": "Nominal crawler X extent = 1.78 scene units. It is neither measured in meters nor independently calibrated"
+    },
+    {
+      "name": "3D relative measuring UI",
+      "status": "static-tested",
+      "detail": "Raycaster point-pair measurement, line and marker objects, JSON export; JS parses and DOM IDs are unique. Real WebGL click test not executed"
+    },
+    {
+      "name": "Browser performance UI",
+      "status": "static-tested",
+      "detail": "Reads WebGL2, render draw calls, triangles and mesh counts locally; actual GPU values must be verified on user's device"
+    },
+    {
+      "name": "Historical dimensional accuracy",
+      "status": "not-tested",
+      "detail": "No original metric drawing or qualified multi-view photogrammetry; cannot claim enhanced historical precision"
+    },
+    {
+      "name": "Real browser WebGL rendering",
+      "status": "not-tested",
+      "detail": "Available chromium sandbox lacks WebGL context; successful Pages deployment != WebGL visual success"
+    }
+  ],
+  "blockers": [
+    "Acquire a verified physical scale for at least one original dimension",
+    "Distinguish Mobot-CH-HV-2 (1987) mechanics from MRK-46M and first Mobot-CH-HV",
+    "Validate geometry in genuine WebGL browser and inspect screenshots on Android/desktop",
+    "Cross-check original archival viewpoints and manipulator kinematics",
+    "Match visible track wheel hubs and rocker suspension with independent source photos"
+  ],
+  "status": "v10 implements batched hardware detailing and non-metric measurement tools. Programmatic geometry validated; dimensional/historical accuracy remains unverified."
+}
