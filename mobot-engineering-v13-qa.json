@@ -1,0 +1,94 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v13.0",
+  "checkDate": "2026-11-16",
+  "basis": "GitHub source inspection, JavaScript parsing, executable procedural geometry tests with a minimal Three-like stand-in, and independent SVG UI unit simulation. Not a real WebGL/GPU browser run.",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false,
+    "independentExpertCertified": false,
+    "manualPhotoOverlayCalibrated": false,
+    "geometryMockRun": true,
+    "diagramDomSimulation": true,
+    "historicalJointLocationsKnown": false,
+    "browserPixelRenderVerified": false
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Source loading and module syntax",
+      "status": "pass",
+      "detail": "v13 procedural model parses and instantiates in both quality modes. v13 viewer and standalone 2D inline JavaScript both parse without syntax errors."
+    },
+    {
+      "name": "Desktop procedural assembly",
+      "status": "pass-in-mock",
+      "detail": "570 mesh objects, 290 fastener instances, 11 registered engineering assemblies. Instanced matrices initialized."
+    },
+    {
+      "name": "Mobile procedural assembly",
+      "status": "pass-in-mock",
+      "detail": "570 mesh objects, 290 fastener instances, 11 assemblies, 21 edge probes. No unexpected matrix gaps."
+    },
+    {
+      "name": "Model-relative bucket probes",
+      "status": "pass-in-mock",
+      "detail": "21 distinct probe records: 2 points per 9 nominal tooth edges plus 3 lower sheet points. In nominal zero pose minimum clearance = +0.118 scene units."
+    },
+    {
+      "name": "Nested rotation chain",
+      "status": "pass-in-mock",
+      "detail": "Pose sweep uses scoop rotation, scoop-pivot translation, loader rotation, loader-pivot translation, then compares root-model Y with nominal crawler plane y=0.14."
+    },
+    {
+      "name": "Swept bucket angle screen",
+      "status": "pass-in-mock",
+      "detail": "936 combinations across [-18,28] lift and [-38,38] bucket tip at 2-degree step; 493 flagged below nominal level. Worst sampled margin -0.98474 scene units at lift=28, tip=38 degrees."
+    },
+    {
+      "name": "WebGL-independent SVG atlas runtime",
+      "status": "pass-in-mock-dom",
+      "detail": "Standalone 2D script executed in simulated SVG/DOM; 32 drawing elements and 580 heatmap SVG nodes created (576 cells), 303 cells flagged. Inputs changed warning text, reset restored zero pose."
+    },
+    {
+      "name": "SVG exports and click controls",
+      "status": "static-tested",
+      "detail": "Export code and event listeners present; actual browser file-download, PDF/screenshot and SVG pixel output not tested."
+    },
+    {
+      "name": "Source fidelity",
+      "status": "unverified",
+      "detail": "Side shape and joint coordinates remain photo-inspired; no original measured scale, technical drawings, orthographic camera calibration or mechanical constraints."
+    },
+    {
+      "name": "Real GPU WebGL viewer",
+      "status": "not-verified",
+      "detail": "GPU WebGL not available in this execution environment. GitHub Pages deployment only confirms publishing."
+    }
+  ],
+  "blockers": [
+    "Acquire and cross-check original camera views and at least one real dimension for metric calibration.",
+    "Obtain verifiable drawing or clear source for joint axes and true bucket/workspace limits.",
+    "Run v13 WebGL page on a real desktop and mobile browser and inspect actual rendered model and atlas iframe.",
+    "Replace 2D sampled ground-reference screen with a mesh-level swept collision test only after verified geometry exists.",
+    "Keep unverified suspension alternatives and model-only limits clearly labelled."
+  ],
+  "status": "v13 source-level engineering tests passed. New multi-probe bucket screen and GPU-free SVG atlas operate in code-level simulations; historical accuracy still unverified and should not be scored higher."
+}
