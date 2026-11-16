@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Мобот-Ч-ХВ-2 · единый кинематический атлас · v14</title>
+<meta name="theme-color" content="#111b20">
+<meta name="description" content="Независимый от WebGL инженерный 2D-просмотрщик Мобота-Ч-ХВ-2: оси механизмов, подвижный ковш, кинематическая карта и архивные источники.">
+<meta property="og:title" content="МОБОТ · Кинематический атлас v14">
+<meta property="og:image" content="https://step3dlab.github.io/Technopark_project/mobot/assets/poster.jpg">
+<style>
+:root{--bg:#0c151b;--panel:#15232b;--line:#344751;--text:#eaf0ed;--muted:#a4b8be;--accent:#e8bb86;--blue:#83b8c6;--warn:#ef9f77}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#f4c992}
+button,input{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #ffda9d;outline-offset:2px}
+.page{max-width:1520px;margin:auto;padding:24px}
+.header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;border-bottom:1px solid #33474f;padding:6px 0 22px}
+.kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:800}
+h1{font-size:clamp(32px,4vw,58px);letter-spacing:-.05em;line-height:1;margin:9px 0 9px}
+header p{color:var(--muted);font-size:12px;line-height:1.58;max-width:620px;margin:0}
+.header-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;padding-top:9px}
+.header-links a{font-size:11px;text-decoration:none;border:1px solid #58616a;border-radius:11px;padding:10px 12px;white-space:nowrap;color:#efc48e;background:#253038}
+.workspace{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(300px,.85fr);gap:17px;margin-top:20px}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:16px;min-width:0;overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:9px;justify-content:space-between;padding:15px 17px;border-bottom:1px solid var(--line)}
+.panel-head strong{font-size:13px;letter-spacing:.015em}
+.panel-head small{font-size:10px;color:var(--muted)}
+.blueprint{position:relative;padding:10px;background:linear-gradient(145deg,#101b21,#0b141a);height:auto}
+.blueprint svg{display:block;width:100%;height:auto;border-radius:8px}
+.blueprint-caption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding:12px 16px 15px;font-size:11px;color:#b0c1c6;line-height:1.5;border-top:1px solid #2d424c}
+.blueprint-caption b{color:#f2c995}
+.side{display:grid;gap:14px;align-content:start}
+.controls-body{padding:17px}
+.control{display:grid;gap:7px;margin-bottom:18px}
+.control-header{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:680}
+.control-header output{color:var(--accent);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.actions button{background:#293a44;color:var(--text);border:1px solid #527079;border-radius:10px;padding:10px 12px;font-size:11px;font-weight:750}
+.actions button:hover{border-color:#d4ae79}
+.actions button.is-on{background:#e9b57b;color:#251d17;border-color:#e9b57b}
+.status{background:#203035;border:1px solid #49636b;border-left:4px solid var(--blue);padding:13px;border-radius:10px;font-size:12px;line-height:1.54;color:#d6e2e3;margin-top:15px}
+.status.warn{border-left-color:var(--warn);background:#382b28}
+.status small{display:block;color:#abc0c4;font-size:10px;margin-top:6px}
+.headnote{font-size:11px;line-height:1.58;color:#aebec4;margin:15px 0 0}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:11px 15px 15px}
+.metric{padding:9px;border:1px solid #41545c;border-radius:10px;background:#1b2b33}
+.metric b{display:block;font-size:19px;letter-spacing:-.035em;color:var(--accent);font-variant-numeric:tabular-nums}
+.metric span{display:block;font-size:9px;color:#a7bbbf;line-height:1.4;margin-top:3px}
+.heatmap{padding:12px 15px 14px}
+.heatmap svg{width:100%;display:block;border-radius:9px;overflow:visible}
+.heatkey{display:flex;align-items:center;gap:13px;margin-top:8px;font-size:10px;color:#abc0c2}
+.heatkey span{display:flex;align-items:center;gap:6px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:3px}
+.note{padding:15px 17px;font-size:11px;line-height:1.55;color:#a7bdc2;border-top:1px solid var(--line)}
+.sources{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px}
+.sourcecard{padding:15px;display:grid;gap:10px;align-content:start}
+.sourcecard h3{font-size:13px;margin:0}
+.sourcecard p{color:#adc0c7;font-size:11px;line-height:1.55;margin:0}
+.sourcecard img{width:100%;height:185px;object-fit:contain;background:#081015;border:1px solid #36434a;border-radius:10px}
+.sourcecard a{font-size:11px;text-decoration:none;font-weight:700}
+.footnote{font-size:10px;color:#839aa2;line-height:1.6;padding:17px 0 28px}
+@media(max-width:1120px){.workspace{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.metrics{padding:11px}}
+@media(max-width:720px){.page{padding:12px}.header{display:grid;padding:12px 4px}.header-links{justify-content:flex-start}.workspace{grid-template-columns:1fr;gap:11px}.side{grid-template-columns:1fr}.sources{grid-template-columns:1fr}.sourcecard img{height:170px}.panel-head{padding:12px}.controls-body{padding:13px}.blueprint{padding:1px}.blueprint-caption{padding:11px}.sourcecard{padding:12px}}
+</style>
+</head><body><div class="page">
+<header class="header"><div><div class="kicker">Живая инженерная память · Исследовательский чертёж v14</div>
+<h1>МОБОТ <span style="color:#e6b886">Ч-ХВ-2</span></h1>
+<p>Кинематический атлас для самостоятельной проверки. Боковая схема построена в условных координатах модели. Историческая компоновка, размеры, оси и ограничения не подтверждены заводскими чертежами.</p></div>
+<div class="header-links"><a href="./mobot-engineering-v14.html">Перейти к 3D-модели</a><a href="./mobot-engineering-v14-passport.json">Паспорт достоверности</a><a href="./mobot-latest.html">Последняя версия</a></div></header>
+<main class="workspace">
+<section class="panel"><div class="panel-head"><strong>Боковая схема · условные координаты</strong><small>Работает без WebGL</small></div>
+ <div class="blueprint">
+ <svg id="diagram" viewBox="0 0 980 620" role="img" aria-label="Технический боковой вид условной реконструкции робота с шарнирами и гусеничным ходом">
+ <defs><pattern id="minorgrid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#31454e" stroke-width=".6"/></pattern><pattern id="majorgrid" width="160" height="160" patternUnits="userSpaceOnUse"><path d="M160 0H0V160" fill="none" stroke="#38535e" stroke-width="1"/></pattern></defs>
+ <rect width="980" height="620" fill="#101d25"/><rect width="980" height="620" fill="url(#minorgrid)"/><rect width="980" height="620" fill="url(#majorgrid)"/>
+ <g id="drawing" stroke-linecap="round" stroke-linejoin="round"></g>
+ <text x="22" y="35" fill="#f3ca92" font-family="system-ui" font-weight="760" font-size="16">ИНЖЕНЕРНАЯ СХЕМА · МРК 1987</text>
+ <text x="22" y="56" fill="#8fa7b2" font-family="system-ui" font-size="12">Модельная проекция — НЕ размерный чертёж</text>
+ <text x="28" y="584" fill="#d5ac78" font-family="system-ui" font-size="12">Оси и тяги: геометрические гипотезы</text>
+ </svg></div>
+ <div class="blueprint-caption">
+ <span><b>Голубой</b> — подтверждённый тип рабочего узла, но не его размеры</span>
+ <span><b>Золотой</b> — схематизированные оси и сопряжения</span>
+ <span><b>Красный</b> — возможное пересечение с условной опорной плоскостью</span>
+ </div>
+</section>
+<div class="side">
+ <section class="panel"><div class="panel-head"><strong>Управление механизмами</strong><small>две оси погрузчика</small></div>
+  <div class="controls-body">
+  <div class="control"><div class="control-header"><label for="arm">Стрела манипулятора</label><output id="armOut">0°</output></div><input id="arm" type="range" min="-18" max="28" step="1" value="0"></div>
+  <div class="control"><div class="control-header"><label for="lift">Подъём погрузчика</label><output id="liftOut">0°</output></div><input id="lift" type="range" min="-18" max="28" step="1" value="0"></div>
+  <div class="control"><div class="control-header"><label for="tip">Опрокидывание ковша</label><output id="tipOut">0°</output></div><input id="tip" type="range" min="-38" max="38" step="1" value="0"></div>
+  <div class="control"><div class="control-header"><label for="jaw">Раскрытие схвата (условно)</label><output id="jawOut">0°</output></div><input id="jaw" type="range" min="0" max="42" step="1" value="0"></div>
+  <div class="actions"><button id="reset" type="button">Сброс позы</button><button id="animate" type="button" aria-pressed="false">Анимация</button><button id="export" type="button">Протокол JSON</button><button id="svgExport" type="button">Схема SVG</button></div>
+  <div id="poseState" class="status" aria-live="polite">Расчёт положения…</div>
+  <p class="headnote">Движения демонстрационные; диапазоны углов не взяты из заводского паспорта. Красный маркер означает геометрический сигнал, а не доказательство физического столкновения.</p>
+  </div>
+ </section>
+ <section class="panel"><div class="panel-head"><strong>Карта положений ковша</strong><small>геометрический экран</small></div>
+  <div class="heatmap"><svg id="heatmap" viewBox="0 0 450 235" role="img" aria-label="Сетка приближённых просветов рабочего ковша при разных углах подъёма и опрокидывания"></svg>
+   <div class="heatkey"><span><i class="dot" style="background:#5a97a3"></i>Выше плоскости</span><span><i class="dot" style="background:#ad5b4e"></i>Ниже плоскости</span></div>
+  </div>
+  <div class="metrics"><div class="metric"><b id="count">0</b><span>положений проверено</span></div><div class="metric"><b id="warnings">0</b><span>с сигналом пересечения</span></div><div class="metric"><b id="lowest">—</b><span>минимальный просвет, усл. ед.</span></div></div>
+  <div class="note">Нажатие на клетку карты задаёт углы подъёма и ковша. Здесь используются те же 21 точка и 936 поз, что и в 3D-модели. Сетка исследует условные координаты конструкции, не проверяет прочность, взаимодействие с реальным основанием или заводские ограничения.</div>
+ </section>
+</div>
+</main>
+<div class="sources">
+ <section class="panel sourcecard"><h3>Исходный демонстрационный снимок</h3><img src="https://sktbpr.ru/sites/default/files/foto_album/2.jpg" loading="lazy" alt="Архивный снимок Мобота-Ч-ХВ-2 СКТБ ПР"><p>Показывает ходовую часть, расположение стрелы, наружных механизмов и ковша. Ракурс перспективный, размеры по нему не откалиброваны.</p><a href="https://sktbpr.ru/foto-alb/65" target="_blank" rel="noopener">Архив СКТБ ПР</a></section>
+ <section class="panel sourcecard"><h3>Дополнительная историческая фотография</h3><img src="https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg" loading="lazy" alt="Два комплекса Мобот-Ч-ХВ-2 в 1987 году"><p>Два модернизированных комплекса в разных положениях рабочих органов. В статье А. Ф. Батанова и В. Лосицкого описаны деформация и ремонт балансиров.</p><a href="https://secure.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha" target="_blank" rel="noopener">Публикация «Чернобыльская крыша»</a></section>
+</div>
+<p class="footnote">Проект STEP3DLab / v14 · 16.11.2026. Статус: исследовательская визуальная модель. Назначение погрузчика, схвата и балансиров подтверждено историческими источниками; показанные оси и геометрия предположительны. Не использовать SVG, значения углов или проверку просвета как рабочую конструкторскую документацию.</p>
+</div>
+<script type="module">
+import {PROFILE_V14,auditBucketPose as sharedBucketAudit,sweepBucketEnvelope as sharedSweep,rotate2D,add2D} from './mobot-kinematics-v14.js';
+(()=>{'use strict';
+ const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',S=215,OX=475,OY=585,TO_RAD=Math.PI/180;
+ const track=PROFILE_V14.trackContour.map(p=>[...p]);
+ const wheels=PROFILE_V14.wheelXs.slice();
+ const armPivot=PROFILE_V14.armPivot.slice(),armDistal=PROFILE_V14.armDistalLocal.slice();
+ const loaderPivot=PROFILE_V14.loaderPivot.slice(),scoopRelative=PROFILE_V14.scoopRelative.slice();
+ const probeXY=PROFILE_V14.probes.map(p=>[p.x,p.y]);
+ const nose=[[-.88,-.262],[-.62,-.262],[-.4,-.07],[-.36,.18],[-.66,.1]];
+ const svg=$('diagram'),drawing=$('drawing'),heat=$('heatmap');
+ const screens=[['arm','armOut'],['lift','liftOut'],['tip','tipOut'],['jaw','jawOut']];
+ let playing=false,startedAt=0,frameId=null;
+ const cp=(xy)=>[OX-xy[0]*S,OY-xy[1]*S];
+ const rot=rotate2D,add=add2D;
+ function report(liftDeg=+ $('lift').value,tipDeg=+ $('tip').value){
+  const p=sharedBucketAudit(liftDeg*TO_RAD,tipDeg*TO_RAD);
+  return {minY:p.lowestPoint.y,gap:p.minClearanceScene,below:p.potentialGroundCrossing,
+    probeCount:p.probeCount,negativeProbeCount:p.negativeProbeCount,liftDeg,tipDeg};
+ }
+ function el(name,attr={},text){const e=document.createElementNS(NS,name);for(const [key,v] of Object.entries(attr))e.setAttribute(key,String(v));if(text!==undefined)e.textContent=text;return e}
+ function line(a,b,color,width=2,dash=''){const A=cp(a),B=cp(b);return el('line',{x1:A[0],y1:A[1],x2:B[0],y2:B[1],stroke:color,'stroke-width':width,'stroke-dasharray':dash})}
+ function circle(p,r,color,fill='#111d24'){const q=cp(p);return el('circle',{cx:q[0],cy:q[1],r:r*S,stroke:color,fill,'stroke-width':2})}
+ function path(points,stroke,fill='none',width=2){return el('path',{d:points.map((p,i)=>(i?'L':'M')+cp(p).map(v=>v.toFixed(2)).join(',')).join(' ')+' Z',stroke,fill,'stroke-width':width})}
+ function label(p,t,color='#d8e2e0',dy=0){const [x,y]=cp(p);return el('text',{x:x+8,y:y-6+dy,fill:color,'font-size':13,'font-family':'system-ui','font-weight':700},t)}
+ function values(){return Object.fromEntries(screens.map(([k])=>[k,+$(k).value]))}
+ function draw(){
+  const v=values(),rad=v.arm*TO_RAD,lift=v.lift*TO_RAD,tip=v.tip*TO_RAD;
+  drawing.replaceChildren();
+  // Ground datum is a diagram aid, not a physical reference plane.
+  drawing.append(line([-2.1,.14],[1.18,.14],'#506b74',2,'9 8'));
+  drawing.append(label([.94,.18],'Y = 0.14','#91a8b4'));
+  drawing.append(path(track,'#95b8c1','rgba(47,70,79,.45)',7));
+  wheels.forEach(x=>drawing.append(circle([x,.25],.098,'#b1bfbc','#293a3d')));
+  for(const x of [-.63,.63])drawing.append(circle([x,.47],.18,'#a4b3ab','#35464a'));
+  drawing.append(path([[.07,.71],[.14,1.01],[.25,1.08],[.7,1.08],[.9,.76],[.75,.72]],'#d1b989','rgba(103,111,98,.36)',3));
+  // Approximate structural axes, not historical fabrication geometry.
+  drawing.append(line([-.14,.78],[.28,.78],'#a5b6ab',3));
+  const armEnd=add(armPivot,rot(armDistal,rad));
+  const armSide=add(armPivot,rot([-1.10,.88],rad));
+  drawing.append(line(armPivot,armEnd,'#8fc5d2',9));
+  drawing.append(line([armPivot[0]+.07,armPivot[1]-.06],armSide,'#a5bcc0',3));
+  drawing.append(line([.40,.84],add(armPivot,rot([-.45,.55],rad)),'#d2b27f',4));
+  drawing.append(circle(armPivot,.04,'#f2ca91','#151d21'),label(armPivot,'Ось стрелы','#efc487'));
+  drawing.append(circle(armEnd,.037,'#85c1ce','#12242c'));
+  drawing.append(label(armEnd,'Двупалый схват','#d6e6e6'));
+  const spread=v.jaw*.004;
+  drawing.append(line(armEnd,add(armEnd,[-.20,-.10-spread]),'#e9c08d',5));
+  drawing.append(line(armEnd,add(armEnd,[-.20,-.19+spread]),'#e9c08d',5));
+  const hinge=add(loaderPivot,rot(scoopRelative,lift));
+  const scoopPt=p=>add(hinge,rot(p,lift+tip));
+  const scoopShape=nose.map(scoopPt),q=report();
+  drawing.append(line(loaderPivot,hinge,'#d7b580',6));
+  drawing.append(line([.56,.83],add(loaderPivot,rot([-.74,.02],lift)),'#8dabb7',4));
+  drawing.append(circle(loaderPivot,.038,'#f1c285','#1c282d'));
+  drawing.append(label(loaderPivot,'Ось погрузчика','#eec188'));
+  drawing.append(circle(hinge,.037,'#efc58e','#1c282d'));
+  drawing.append(label(hinge,'Ось ковша','#eac48c',18));
+  drawing.append(path(scoopShape,q.below?'#e99d80':'#9ecad3','rgba(99,147,152,.16)',3));
+  const tooth=scoopPt([- .88,-.262]);
+  drawing.append(circle(tooth,.032,q.below?'#ed806e':'#f3c88d','#1b2529'));
+  drawing.append(label(tooth,q.below?'Контроль ниже уровня':'Рабочая кромка',q.below?'#f1a18c':'#b4d9e1',14));
+  const st=$('poseState');st.classList.toggle('warn',q.below);
+  st.innerHTML='<strong>'+(q.below?'Есть сигнал возможного пересечения':'Ниже условной плоскости не обнаружено')+'</strong>'+
+    '<small>Минимальный условный просвет: '+q.gap.toFixed(3)+' ед. · Контроль '+q.probeCount+' точек, не всей поверхности ковша. Реальные границы движения неизвестны.</small>';
+  for(const [k,out] of screens)$(out).textContent=v[k]+'°';
+  updateSelectedHeat(v.lift,v.tip);
+ }
+ let heatMapCells=[],heatMarker;
+ function createHeatmap(){
+  heat.replaceChildren();
+  heat.append(el('rect',{x:0,y:0,width:450,height:235,fill:'#132128'}));
+  const cols=24,rows=39,x0=37,y0=23,gw=398,gh=188;
+  heatMapCells=[];
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+   const lift=-18+2*i;
+   const tip=38-2*j;
+   const r=report(lift,tip);
+   const rect=el('rect',{x:x0+i*gw/cols+.5,y:y0+j*gh/rows+.5,
+    width:gw/cols-1,height:gh/rows-1,rx:1,fill:r.below?'#9d544d':'#528b97',
+    opacity:.87,cursor:'pointer'});
+   rect.addEventListener('click',()=>{stopAnimation();$('lift').value=Math.round(lift);$('tip').value=Math.round(tip);draw()});
+   heat.append(rect);heatMapCells.push(r);
+  }
+  heat.append(el('text',{x:37,y:15,fill:'#b6c9cb','font-size':12,'font-family':'system-ui'},'Погрузчик: −18° ← → +28°'));
+  heat.append(el('text',{x:7,y:229,fill:'#b6c9cb','font-size':11,'font-family':'system-ui'},'Опрокидывание: −38° .. +38°'));
+  heatMarker=el('circle',{cx:0,cy:0,r:8,fill:'none',stroke:'#fff4db','stroke-width':2.5,'pointer-events':'none'});
+  heat.append(heatMarker);
+  const canonical=sharedSweep(-18,28,-38,38,2);
+  const flagged=heatMapCells.filter(x=>x.below).length;
+  if(canonical.samples!==heatMapCells.length || canonical.potentialGroundCrossings!==flagged){
+    throw Error('Kinematics mismatch: SVG atlas vs canonical shared module');
+  }
+  $('count').textContent=String(canonical.samples);
+  $('warnings').textContent=String(canonical.potentialGroundCrossings);
+  $('lowest').textContent=Math.min(...heatMapCells.map(x=>x.gap)).toFixed(2);
+ }
+ function updateSelectedHeat(lift,tip){
+  if(!heatMarker)return;
+  heatMarker.setAttribute('cx',37+((lift+18)/2+.5)*(398/24));
+  heatMarker.setAttribute('cy',23+((38-tip)/2+.5)*(188/39));
+ }
+ function stopAnimation(){playing=false;$('animate').classList.remove('is-on');$('animate').setAttribute('aria-pressed','false');$('animate').textContent='Анимация';if(frameId)cancelAnimationFrame(frameId);frameId=null}
+ function play(time){
+  if(!playing)return;
+  const t=Math.min(1,(time-startedAt)/11500);
+  const pose=(k,val)=>$(k).value=String(Math.round(val));
+  pose('arm',7+14*Math.sin(Math.PI*t));
+  pose('lift',3+22*Math.sin(Math.PI*t));
+  pose('tip',-12+30*Math.max(0,Math.min(1,(t-.35)*2)));
+  pose('jaw',15+20*Math.sin(2*Math.PI*t));
+  draw();if(t<1)frameId=requestAnimationFrame(play);else stopAnimation();
+ }
+ screens.forEach(([id])=>$(id).addEventListener('input',()=>{stopAnimation();draw()}));
+ $('reset').addEventListener('click',()=>{stopAnimation();screens.forEach(([id])=>$(id).value='0');draw()});
+ $('animate').addEventListener('click',()=>{if(playing)return stopAnimation();playing=true;startedAt=performance.now();$('animate').classList.add('is-on');$('animate').setAttribute('aria-pressed','true');$('animate').textContent='Остановить';frameId=requestAnimationFrame(play)});
+ function download(text,name,type){const b=new Blob([text],{type}),url=URL.createObjectURL(b),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+ $('export').addEventListener('click',()=>{const v=values(),r=report();download(JSON.stringify({project:'Мобот-Ч-ХВ-2',revision:'v14',source:'Canonical shared module mobot-kinematics-v14.js',anglesDeg:v,screening:r,metricCalibration:false,historicalJointLimitsVerified:false,note:'2D model-relative screen, not a verified manufacturing drawing or collision simulation'},null,2),'mobot-v14-pose-report.json','application/json')});
+ $('svgExport').addEventListener('click',()=>{
+  const clone=svg.cloneNode(true);
+  clone.setAttribute('xmlns',NS);
+  clone.querySelector('#drawing')?.replaceChildren(...Array.from(drawing.childNodes).map(n=>n.cloneNode(true)));
+  download('<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(clone),'mobot-v14-kinematic-study.svg','image/svg+xml');
+ });
+ createHeatmap();draw();
+})();
+</script></body></html>
