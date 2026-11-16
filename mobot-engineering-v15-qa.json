@@ -1,0 +1,103 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v15.0",
+  "checkDate": "2026-11-16",
+  "basis": "GitHub code inspection; executable Three-compatible geometry mock for both profiles and all three work-tool modes; shared SVG DOM runtime mock. Actual WebGL browser rasterization not performed.",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false,
+    "independentExpertCertified": false,
+    "manualPhotoOverlayCalibrated": false,
+    "geometryMockRun": true,
+    "diagramDomSimulation": true,
+    "historicalJointLocationsKnown": false,
+    "browserPixelRenderVerified": false,
+    "geometricParityRuntime": true,
+    "svgDomRuntime": true,
+    "sourcePhotoToolGeometryConfirmed": false,
+    "archivalCrossSectionVerified": false
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Model and viewer syntax",
+      "status": "pass",
+      "detail": "v15 procedural model, v15 main WebGL viewer, v15 pure kinematic module and v15 SVG atlas scripts parse."
+    },
+    {
+      "name": "Desktop procedural geometry",
+      "status": "pass-in-mock",
+      "detail": "581 mesh objects, 290 fastener instances. All 11 historical subsystem registries available."
+    },
+    {
+      "name": "Mobile procedural geometry",
+      "status": "pass-in-mock",
+      "detail": "581 mesh objects, 290 fastener instances, mobile track LOD applied."
+    },
+    {
+      "name": "Three exclusive work-tool modes",
+      "status": "pass-in-mock",
+      "detail": "Tested gripper, breaker-arm and breaker-loader; exactly one active working-head assembly visible per mode."
+    },
+    {
+      "name": "Tool capability provenance",
+      "status": "supported",
+      "detail": "SKTB's original description confirms interchangeable gripper and breaker installed in place of gripper or on front loader. Model shape and attachments explicitly marked speculative."
+    },
+    {
+      "name": "Unsupported tooth geometry",
+      "status": "corrected",
+      "detail": "Nine unsupported protruding teeth removed from the 3D bucket. Continuous model scraper lip remains a hypothesis, not a factory claim."
+    },
+    {
+      "name": "Single 21-probe source",
+      "status": "pass",
+      "detail": "v15 pure JS engine measures 7 transverse sections×3 longitudinal points over continuous nominal lip; shared with 3D and SVG."
+    },
+    {
+      "name": "Bucket sweep",
+      "status": "pass",
+      "detail": "936 nominal angles, 481 alarms; worst at lift=28°, tip=38°, margin≈-0.973 uncalibrated scene units. No real collision interpretation."
+    },
+    {
+      "name": "SVG atlas mock runtime",
+      "status": "pass-in-mock-dom",
+      "detail": "v15 atlas script executed with simulated DOM; created 936 cells, 481 alarms; worst pose warning and reset handlers worked."
+    },
+    {
+      "name": "Real WebGL rendering",
+      "status": "not-verified",
+      "detail": "No confirmed real browser frame or phone GPU screenshot; mock object graph and Pages deployment do not prove visuals."
+    },
+    {
+      "name": "Historic physical accuracy",
+      "status": "unverified",
+      "detail": "Dimensions, mechanism topologies, exact bucket lip and breaker geometry not verified against original engineering drawings."
+    }
+  ],
+  "blockers": [
+    "Find manufacturer drawings or additional first-party photos of the actual scraper edge and interchangeable breaker.",
+    "Resolve thickness, length, width and placement of scraper and tool mount using grounded dimensions.",
+    "Compare front-loader profile and manipulator pivot geometry from independent historical views.",
+    "Run real device WebGL screenshot, click and photo overlay inspection.",
+    "Do not infer improved historical fit from a lower number of model-only blade-plane alarms."
+  ],
+  "status": "v15 removes an unsupported detailed feature and adds functionality documented in primary source. Programmatic model and 2D runtime tests passed. Actual historical dimensional accuracy remains unverified."
+}
