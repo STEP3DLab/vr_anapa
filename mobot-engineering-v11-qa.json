@@ -1,0 +1,95 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v11.0",
+  "checkDate": "2026-11-16",
+  "basis": "Static JS syntax/DOM checks, procedural 3D geometry execution with a Three-compatible mock, published archival sources; no live WebGL rasterization.",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false,
+    "independentExpertCertified": false,
+    "manualPhotoOverlayCalibrated": false
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "JavaScript module syntax",
+      "status": "pass",
+      "detail": "v11 model parses; v11 viewer module parses. Control IDs are unique and all queried IDs are defined."
+    },
+    {
+      "name": "Desktop geometry smoke test",
+      "status": "pass",
+      "detail": "520 mesh objects, 11 parts, 290 fastener instances, 2 track groups in isolated Three-compatible object graph."
+    },
+    {
+      "name": "Mobile geometry smoke test",
+      "status": "pass",
+      "detail": "520 mesh objects, 11 parts, 290 fastener instances (same geometry), two moving track assemblies."
+    },
+    {
+      "name": "Suspension existence",
+      "status": "source-supported",
+      "detail": "A. Batanov/V. Lositsky retrospective describes deformed balance arms and their field repair in Pripyat in early 1987."
+    },
+    {
+      "name": "Suspension geometry",
+      "status": "hypothesis-only",
+      "detail": "Three paired rockers and one seventh-wheel support per side are explicit visual hypotheses; no factory dimensions or pairing topology documented."
+    },
+    {
+      "name": "Actuator motion extremes",
+      "status": "pass-in-mock",
+      "detail": "31 pose samples; six indicative actuator lengths remained finite/positive, .547..1.008 model units."
+    },
+    {
+      "name": "Photographic overlay",
+      "status": "static-tested",
+      "detail": "Dedicated orthographic camera and opacity/scale/X/Y manual alignment controls; no live GPU screen check, no camera calibration, no calculated accuracy."
+    },
+    {
+      "name": "Photographic source separation",
+      "status": "static-tested",
+      "detail": "Source selection disables manual overlay for independent two-robot image, since perspective/pose differ."
+    },
+    {
+      "name": "Old note migration",
+      "status": "static-tested",
+      "detail": "Stable local storage key with fallback to v9 notes, preserving prior observations in the same browser."
+    },
+    {
+      "name": "Real GPU WebGL rendering",
+      "status": "not-verified",
+      "detail": "No successful direct browser WebGL screenshot or click-through evaluation; user-device verification outstanding."
+    },
+    {
+      "name": "Historical dimensional/kinematic accuracy",
+      "status": "unverified",
+      "detail": "No actual scale, complete photogrammetry, manufacturer assembly drawing or verified pivot geometry."
+    }
+  ],
+  "blockers": [
+    "Historical image is perspective; automatic metric comparison would require camera/lens calibration and at least one known physical dimension.",
+    "No first-party original mechanical drawing or reliable wheel/balancer topology currently identified.",
+    "Two-robot archival photo is qualitatively useful but different pose/viewpoint cannot be used for orthographic point-by-point comparison.",
+    "Real GPU WebGL renderer and overlay functionality need mobile/desktop visual testing.",
+    "External review not required for publication, but provenance and uncertainty must remain visible."
+  ],
+  "status": "Prototype v11 geometry and UI implemented and syntactically checked. Do not claim a higher historical-accuracy score until photo and dimensional validation."
+}
