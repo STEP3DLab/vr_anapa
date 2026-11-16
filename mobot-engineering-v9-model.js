@@ -10,6 +10,7 @@ export function makeMobot(THREE, quality='auto') {
   let count=0;
   let fastenerCounter=0;
   const driveModules=[];
+  const rotatingHubs=[];
   const mat=(name,color,metal=.6,rough=.49)=> {
     const m=new THREE.MeshStandardMaterial({color,metalness:metal,roughness:rough});
     materialRegistry[name]=m;return m;
@@ -145,10 +146,15 @@ export function makeMobot(THREE, quality='auto') {
       cylinder(g,outer-.015,outer-.015,.120,[x,y,sign*.055],m.satin,id,'z',32);
       cylinder(g,.052,.052,.131,[x,y,sign*.090],m.frame,id,'z',24);
       ring(g,.067,.008,[x,y,sign*.121],m.bright,id,'z');
+      const movingHub=new THREE.Group();
+      movingHub.name='Вращающийся фланец опорного катка';
+      movingHub.position.set(x,y,sign*.123);
+      movingHub.userData.part=id;g.add(movingHub);
       for(let j=0;j<6;j++){
         const a=2*Math.PI*j/6;
-        bolt(g,[x+.072*Math.cos(a),y+.072*Math.sin(a),sign*.123],'z',m.darkBolt,id,.009);
+        bolt(movingHub,[.072*Math.cos(a),.072*Math.sin(a),0],'z',m.darkBolt,id,.009);
       }
+      rotatingHubs.push({group:movingHub,radius:outer});
       // Separate exposed rocker support for each small wheel.
       beam(g,[x,.43,-.045*sign],[x+.065,.275,.015*sign],.023,m.olive,id);
       cylinder(g,.046,.046,.08,[x,.426,sign*.045],m.joint,id,'z');
@@ -208,6 +214,7 @@ export function makeMobot(THREE, quality='auto') {
   const linkTransform=new THREE.Object3D(),cleatTransform=new THREE.Object3D();
   function setTrackPhase(phase){
     const phaseUnits=Number.isFinite(phase)?phase:0;
+    for(const hub of rotatingHubs)hub.group.rotation.z=phaseUnits/hub.radius;
     for(const mod of driveModules){
       for(let i=0;i<mod.linkCount;i++){
         const [x,y,ang]=mod.pathAt((i/mod.linkCount)*mod.P+phaseUnits);
@@ -564,7 +571,7 @@ export function makeMobot(THREE, quality='auto') {
   root.userData.trackLoopMethod='closed Catmull-Rom profile, estimated from photo #2';
   root.userData.roadWheelsPerSide=7;
   root.userData.roadWheelConfidence='visual count only, no technical drawings';
-  root.userData.trackDriveAnimation='tread phase animation for engineering inspection, robot body stationary';
+  root.userData.trackDriveAnimation='track pad loop and visible wheel hub motion for stand inspection; drive-speed and sprocket transmission not measured';
 
   root.userData.modelRailPivot='chassis local x=0.28 y=0.65; estimated from 1987 photo';
   root.userData.loaderDriveRendering='electromechanical screw links shown schematically and length-adjust dynamically';
