@@ -1,0 +1,85 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v12.0",
+  "checkDate": "2026-11-16",
+  "basis": "Source-controlled static interface inspection and procedural 3D geometry smoke testing using a Three-compatible stand-in. No real GPU WebGL rendering.",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false,
+    "independentExpertCertified": false,
+    "manualPhotoOverlayCalibrated": false
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Viewer script syntax and DOM",
+      "status": "pass",
+      "detail": "v12 HTML module parses, IDs are unique, and all referenced UI IDs exist."
+    },
+    {
+      "name": "Desktop geometry",
+      "status": "pass-in-mock",
+      "detail": "570 objects including 290 batched fasteners, 11 engineering parts and two track assemblies."
+    },
+    {
+      "name": "Mobile geometry",
+      "status": "pass-in-mock",
+      "detail": "570 objects, 290 batched fasteners; desktop and mobile construction tests both complete."
+    },
+    {
+      "name": "Suspension alternatives",
+      "status": "pass-in-mock",
+      "detail": "Three modes: bare (no hypothetical rocker group visible), paired (two visible paired groups), independent (two visible independent groups)."
+    },
+    {
+      "name": "Suspension historical geometry",
+      "status": "unverified",
+      "detail": "Balance arms existed, but actual rocker topology and joint geometry are unknown."
+    },
+    {
+      "name": "Nominal blade-level proxy",
+      "status": "pass-in-mock",
+      "detail": "41 motion combinations produced finite values, relative margin -0.891 to 1.216 arbitrary scene units; 21 values indicate possible crossing of nominal lower crawler level."
+    },
+    {
+      "name": "Real collision physics",
+      "status": "not-tested",
+      "detail": "No triangle-level intersection, self-contact, drive constraints, load/dynamics or verified physical geometry. Proxy cannot prove safe movement."
+    },
+    {
+      "name": "WebGL visual render",
+      "status": "not-tested",
+      "detail": "Local Chromium WebGL init failed with EGL/ANGLE errors; real 3D appearance and overlay not browser-certified."
+    },
+    {
+      "name": "Historical dimensional accuracy",
+      "status": "unverified",
+      "detail": "No documented scale or calibrated photogrammetry; relative 3D scene ratios are internal."
+    }
+  ],
+  "blockers": [
+    "Obtain authentic original front/side images showing balance-link pivot joints.",
+    "Acquire physical dimensions or manufacturer blueprints before accepting any geometry.",
+    "Use actual WebGL browser on user's device to validate rendering, raycasting, input and archive overlay.",
+    "Determine functional angle limits before labeling arbitrary slider bounds as real mechanical limits.",
+    "Verify whether model bucket tip and crawler profile intersect in more rigorous geometry check."
+  ],
+  "status": "v12 implements a source-aware comparison of suspension hypotheses and warnings for a simulated bucket-blade proxy. Geometry smoke tests pass; historical accuracy remains unverified."
+}
