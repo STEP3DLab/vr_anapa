@@ -388,7 +388,8 @@
       "Оставлены две степени подвижности погрузчика и независимое раскрытие двупалого захвата.",
       "Боковая камера развернута так, чтобы задний кожух и передний рабочий орган в просмотрщике соответствовали архивной фотографии.",
       "Для мобильного режима уменьшено количество декоративных болтов, без удаления основных узлов.",
-      "Добавлены отмеченные ориентиры на архивном кадре, журнал замечаний по узлам и экспорт протокола JSON."
+      "Добавлены отмеченные ориентиры на архивном кадре, журнал замечаний по узлам и экспорт протокола JSON.",
+      "Продольная координата основания стрелы и поворотной опоры скорректирована по относительной форме бокового архивного снимка: вылет стрелы за передний контур гусениц визуально стал ближе к источнику."
     ],
     "runtimeGeometrySmokeTest": {
       "scope": "Mocked object hierarchy and Three.js-compatible transformation interface, not GPU browser render",
@@ -403,7 +404,8 @@
       ],
       "actuatorSegments": 6,
       "linkageLengthsPositiveForPositions": true,
-      "browserRendererVerified": false
+      "browserRendererVerified": false,
+      "note": "Retesting dynamic linkage extremes after longitudinal arm reposition is required; prior tests preceded this last geometry adjustment."
     },
     "limitations": [
       "Число и диаметр катков, шаг траков не привязаны к оригинальной документации",
@@ -412,6 +414,16 @@
       "Форма кабелеукладчика, редукторов и внутренних элементов корпуса условна",
       "Несколько архивных фоторакурсов для геометрического восстановления ещё не сопоставлены",
       "Размерные характеристики не подтверждены"
-    ]
+    ],
+    "referenceComparison": {
+      "method": "Dimensionless approximate profile check on a single perspective archival image",
+      "image": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "feature": "Forward projection of tip beyond visible track edge divided by visible track length",
+      "archiveRoughRatio": 0.19,
+      "previousModelRoughRatio": 0.053,
+      "revisedModelNominalRatio": 0.205,
+      "status": "provisional: source photo is cropped; image points manually estimated, no lens/scale calibration",
+      "instruction": "Do not cite these numbers as geometric tolerances or real lengths."
+    }
   }
 }
