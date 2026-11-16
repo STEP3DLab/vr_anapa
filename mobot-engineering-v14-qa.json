@@ -1,0 +1,101 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "version": "v14.0",
+  "checkDate": "2026-11-16",
+  "basis": "GitHub JS source inspection + executed core-geometry and SVG DOM mock tests. This confirms internal numeric consistency only; live WebGL browser and archival dimensional accuracy not validated.",
+  "scopeLimits": {
+    "actualWebGLInBrowser": false,
+    "archivePhotogrammetry": false,
+    "dimensionalScale": false,
+    "userDeviceVerified": false,
+    "sourceReviewCompleted": false,
+    "browserFallbackDOMTest": true,
+    "expertExternallyApproved": false,
+    "needExternalApproval": false,
+    "independentExpertCertified": false,
+    "manualPhotoOverlayCalibrated": false,
+    "geometryMockRun": true,
+    "diagramDomSimulation": true,
+    "historicalJointLocationsKnown": false,
+    "browserPixelRenderVerified": false,
+    "geometricParityRuntime": true,
+    "svgDomRuntime": true
+  },
+  "sourcePhotos": [
+    {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "label": "СКТБ ПР: демонстрационный боковой снимок",
+      "role": "qualitative shape comparison"
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "label": "Исторический вид двух роботов зимой 1987 года (публикация 29.09.2026)",
+      "role": "secondary visual evidence, not geometrically registered"
+    }
+  ],
+  "checks": [
+    {
+      "name": "Canonical source module",
+      "status": "pass",
+      "detail": "mobot-kinematics-v14.js evaluates; contains exactly 21 points across nine modeled teeth and lower bucket sheet; no Three/WebGL dependency."
+    },
+    {
+      "name": "3D and 2D source imports",
+      "status": "pass",
+      "detail": "v14 3D procedural model and SVG atlas reference the same pure module. Both are version-pinned under stable repository paths."
+    },
+    {
+      "name": "Canonical swept pose test",
+      "status": "pass",
+      "detail": "Angles -18..28 lift and -38..38 tip, step 2 degrees => 936 positions; 493 potential model-ground crossings; worst at +28/+38, nominal margin -0.98474 scene units."
+    },
+    {
+      "name": "3D desktop geometry",
+      "status": "pass-in-mock",
+      "detail": "570 mesh objects, 290 fastener instances, 11 engineering assemblies; 3D module output equals pure core over sample domain."
+    },
+    {
+      "name": "3D mobile geometry",
+      "status": "pass-in-mock",
+      "detail": "570 mesh objects, 290 fastener instances, 11 engineering assemblies, all instanced buffers initialized."
+    },
+    {
+      "name": "Numeric random-pose parity",
+      "status": "pass",
+      "detail": "120 equally spaced intermediate lift/tip poses compared between model audit and pure module: maximum difference 0 model units."
+    },
+    {
+      "name": "SVG atlas initialization",
+      "status": "pass-in-mock-dom",
+      "detail": "Atlas executed with mocked SVG DOM; 936 interactive cells created, 493 flagged, angle change signaled warning and reset restored neutral pose."
+    },
+    {
+      "name": "Consistent SVG/3D grid",
+      "status": "pass",
+      "detail": "Old SVG 24×24 cell-centre approximation (576 positions, 303 flagged) replaced by 24×39 exact 2-degree angular grid (936, 493) shared with 3D."
+    },
+    {
+      "name": "Viewer parity indicator",
+      "status": "static-tested",
+      "detail": "v14 viewer compares model sweep to pure module and displays failure/success. The full GPU page was not rendered on a real device."
+    },
+    {
+      "name": "Archival accuracy",
+      "status": "unverified",
+      "detail": "Photographic reconstruction remains hypothesis, with no measured factory dimensions or calibrated camera and no physical collision solver."
+    },
+    {
+      "name": "Real GPU/WebGL rendering",
+      "status": "not-verified",
+      "detail": "Browser runtime can't fetch repository/GitHub Pages and has not rendered the full 3D; publication success proves file deployment, not visual function."
+    }
+  ],
+  "blockers": [
+    "Recover at least one verified original physical dimension and independent orthogonal photograph before estimating metric error.",
+    "Obtain a view or drawing of actual loader pivots and linkage limits; current angles remain demonstrative.",
+    "Execute a full WebGL click-through and SVG export using a real browser on desktop/mobile for visual acceptance.",
+    "Determine genuine suspension topology before raising structural fidelity score.",
+    "Review speculative cameras, cabling and mechanical details separately from known functions."
+  ],
+  "status": "v14 fixes a genuine calculation divergence and makes independent numeric tests reproducible; it does not materially establish higher historical physical accuracy."
+}
