@@ -872,6 +872,7 @@ function frame(now){
 try{
  selectPart('tracks',false);
  $('status').innerHTML='<b>MODEL 09</b> · '+model.meshCount+' объектов · '+model.quality+' · условный масштаб';
+ document.body.dataset.viewerReady='true';
  $('loading').classList.add('done');
  requestAnimationFrame(frame);
 }catch(e){
@@ -880,7 +881,39 @@ try{
 }
 </script>
 <script>
-window.addEventListener('error',function(e){if(document.getElementById('loading')&&!document.getElementById('loading').classList.contains('done')){document.getElementById('loading').querySelector('.loadbox').innerHTML='<b>Не удалось загрузить 3D-сцену</b><p>Проверьте соединение, обновите страницу или откройте версию v5.</p><a href="./mobot-final-v5.html" style="color:#e5b581">Предыдущая версия</a>'; }});
+(function(){
+ const loading=document.getElementById('loading');
+ const fallback=document.getElementById('fallback');
+ function showFallback(message){
+  if(document.body.dataset.viewerReady==='true')return;
+  if(fallback){
+   fallback.hidden=false;
+   const p=fallback.querySelector('.fallback-inner p');
+   if(p&&message)p.textContent=message;
+  }
+  if(loading)loading.classList.add('done');
+ }
+ document.getElementById('fallbackDismiss')?.addEventListener('click',()=>{
+  fallback.hidden=true;
+ });
+ let available=false;
+ try{
+  const c=document.createElement('canvas');
+  available=!!(c.getContext('webgl2')||c.getContext('webgl'));
+ }catch(e){available=false;}
+ if(!available){
+  showFallback('На устройстве недоступен WebGL. Архивные фотографии и паспорт реконструкции можно просмотреть без 3D.');
+ }
+ window.addEventListener('error',e=>{
+  if(!document.body.dataset.viewerReady)showFallback('3D-модель не запустилась. Доступны архивные изображения и паспорт проекта.');
+ });
+ window.addEventListener('unhandledrejection',e=>{
+  if(!document.body.dataset.viewerReady)showFallback('Ошибка загрузки 3D-компонентов. Архив и паспорт доступны независимо от модели.');
+ });
+ setTimeout(()=>{
+  if(loading&&!loading.classList.contains('done'))showFallback('3D-сцена запускается слишком долго. Откройте архив или используйте другой браузер.');
+ },12000);
+})();
 </script>
 </body>
 </html>
