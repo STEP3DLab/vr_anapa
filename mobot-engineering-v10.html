@@ -257,6 +257,16 @@ body.evidence-mode .hero-disclaimer{color:#f1d0a2}
 #measureBtn.is-on,#diagnosticsBtn.is-on{background:#e3ba84;color:#211a12}
 @media(max-width:760px){.eng-tool{left:9px;right:9px;width:auto;bottom:178px;max-height:40vh;overflow:auto}}
 
+
+body.focus-model header,body.focus-model .sidebar,body.focus-model .info,
+body.focus-model .status,body.focus-model .hint,body.focus-model #vignette{display:none!important}
+body.focus-model .topactions .pill:not(#focusBtn){display:none!important}
+body.focus-model .topactions{max-width:none}
+body.focus-model #focusBtn{background:#d7aa75;color:#221a12;border-color:#d7aa75}
+@media(max-width:760px){
+ body.focus-model .topactions{bottom:62px;left:auto;right:9px;justify-content:flex-end;width:auto;max-width:160px}
+}
+
 </style>
 </head>
 <body>
@@ -276,6 +286,7 @@ body.evidence-mode .hero-disclaimer{color:#f1d0a2}
   <button id="evidenceBtn" class="pill" type="button" aria-pressed="false">Условные узлы</button>
   <button id="measureBtn" class="pill" type="button" aria-pressed="false">Измерить</button>
   <button id="diagnosticsBtn" class="pill" type="button" aria-pressed="false">Проверить 3D</button>
+  <button id="focusBtn" class="pill" type="button" aria-pressed="false">Чистый просмотр</button>
   <button id="referenceBtn" class="pill" type="button">Архив</button>
   <button id="explodeBtn" class="pill" type="button" aria-pressed="false">Разнести узлы</button>
   <button id="cutawayBtn" class="pill" type="button" aria-pressed="false">Внутри корпуса</button>
@@ -813,6 +824,18 @@ $('infoArchive').addEventListener('click',()=>setReference(true));
 $('referenceClose').addEventListener('click',()=>setReference(false));
 $('mobilePartButton').addEventListener('click',()=>$('sidebar').classList.toggle('open'));
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+let focusMode=false;
+function toggleFocusMode(on){
+ focusMode=!!on;document.body.classList.toggle('focus-model',focusMode);
+ $('focusBtn').classList.toggle('is-on',focusMode);
+ $('focusBtn').setAttribute('aria-pressed',String(focusMode));
+ $('focusBtn').textContent=focusMode?'Показать панели':'Чистый просмотр';
+ if(focusMode){
+  $('sidebar').classList.remove('open');
+  setReference(false);setCompare(false);togglePassport(false);setToolMode('off');
+ }
+}
+$('focusBtn').addEventListener('click',()=>toggleFocusMode(!focusMode));
 
 const measuring={mode:'off',points:[],markers:[],line:null};
 const measurePointMaterial=new THREE.MeshBasicMaterial({color:0xeac488,depthTest:false});
@@ -931,6 +954,7 @@ window.addEventListener('keydown',e=>{
  if(e.key==='2')view('side');
  if(e.key==='3')view('top');
  if(e.key.toLowerCase()==='r')$('resetBtn').click();
+ if(e.key.toLowerCase()==='f')toggleFocusMode(!focusMode);
 });
 window.addEventListener('resize',()=>{
  const w=window.innerWidth,h=window.innerHeight;
