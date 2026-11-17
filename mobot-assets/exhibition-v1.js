@@ -58,5 +58,20 @@ function start(){if(new URL(location).searchParams.has('fallback')){fallback('С
 function zoom(f){if(!camera)return;camera.zoom=T.MathUtils.clamp(camera.zoom*f,.5,4);camera.updateProjectionMatrix();invalidate();}
 $('assembly').onchange=()=>{renderControls();setView()};$('pose').onchange=()=>preset(+$('pose').value);$('reset').onclick=()=>preset(0);$('tool').onchange=()=>{tool=$('tool').value;model?.mechanisms.setWorkTool(tool);if(tool==='breaker-loader'){state.bucket=36;state.tip=0;}apply();renderControls();setView()};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));$('zoomIn').onclick=()=>zoom(1.2);$('zoomOut').onclick=()=>zoom(1/1.2);$('home').onclick=()=>setView();$('presentation').onclick=()=>{document.body.classList.toggle('present');$('presentation').textContent=document.body.classList.contains('present')?'Выйти из показа':'Режим показа';resize()};
-document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>{const key=b.dataset.panel;for(const name of ['archive','passport','backup'])$(name).hidden=name!==key;document.querySelectorAll('[data-panel]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
+const evidencePanels=['archive','passport','backup'];
+function selectEvidencePanel(key){
+ if(!evidencePanels.includes(key))return;
+ for(const name of evidencePanels)$(name).hidden=name!==key;
+ document.querySelectorAll('[data-panel]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.panel===key)));
+}
+document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>selectEvidencePanel(b.dataset.panel));
+function restoreEvidenceHash(){
+ const key=location.hash.slice(1);
+ if(evidencePanels.includes(key)){
+  selectEvidencePanel(key);
+  requestAnimationFrame(() => $(key).scrollIntoView({block:'start'}));
+ }
+}
+window.addEventListener('hashchange',restoreEvidenceHash);
+restoreEvidenceHash();
 try{start()}catch(error){console.error(error);fallback('Не удалось запустить 3D.');}
