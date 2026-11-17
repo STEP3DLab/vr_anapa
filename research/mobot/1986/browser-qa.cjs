@@ -113,7 +113,10 @@ async function range(id,num){
       throw Error('Mobile tap: '+JSON.stringify(diagnostic),{cause:error});
     }
     assert.equal(await page.locator('.stage-head h2').textContent(),'Гусеничная ходовая');
-    return {widths:[320,360,390,720],touchOrbit:true};
+    await page.locator('#isolate').tap();
+    await page.waitForFunction(()=>!window.mobotV6.state.isolated);
+    const actions=await page.evaluate(()=>window.touchTrace.filter(e=>e[0]==='click'&&e[1]==='isolate').length);
+    assert.equal(actions,2,'one activation per tap');return {widths:[320,360,390,720],touchOrbit:true,activationsForTwoTaps:actions};
   });
   await test('Static fallback with WebGL disabled',async()=>{
     const f=await browser.newPage({viewport:{width:390,height:844}});

@@ -13,6 +13,30 @@ function showTab(pose){
 }
 $('partsTab').onclick=()=>showTab(false);$('poseTab').onclick=()=>showTab(true);
 
+// Chromium can omit the compatibility click immediately after a canvas orbit.
+// Handle a stationary single-finger tap once; leave scroll, pinch and keyboard native.
+let touchButton=null;
+document.addEventListener('touchstart',event=>{
+  const button=event.target.closest('button');
+  const finger=event.touches[0];
+  touchButton=button&&!button.disabled&&event.touches.length===1?
+    {button,id:finger.identifier,x:finger.clientX,y:finger.clientY}:null;
+},{passive:true});
+document.addEventListener('touchmove',event=>{
+  if(!touchButton)return;
+  const t=event.touches[0];
+  if(event.touches.length!==1||Math.hypot(t.clientX-touchButton.x,t.clientY-touchButton.y)>8)touchButton=null;
+},{passive:true});
+document.addEventListener('touchcancel',()=>{touchButton=null;},{passive:true});
+document.addEventListener('touchend',event=>{
+  const tap=touchButton;touchButton=null;
+  if(!tap||event.touches.length||!event.cancelable)return;
+  const t=event.changedTouches[0],hit=document.elementFromPoint(t.clientX,t.clientY);
+  if(t.identifier!==tap.id||!tap.button.contains(hit)||tap.button.disabled)return;
+  event.preventDefault();
+  tap.button.focus({preventScroll:true});tap.button.click();
+},{passive:false});
+
 function fallback(message){
   viewport.querySelector('canvas')?.remove();$('still').hidden=false;
   $('mode').textContent='Статический вид';$('hint').textContent=message;
