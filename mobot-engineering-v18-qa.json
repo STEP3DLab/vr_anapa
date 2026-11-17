@@ -65,8 +65,18 @@
     },
     {
       "test": "MODEL-THREE-RUNTIME",
-      "status": "not-run-this-pass",
-      "notes": "No actual 3D engine assembly/mesh test of new v18 candidate"
+      "status": "pass-in-three-compatible-V8-mock",
+      "desktop": {
+        "objects": 569,
+        "fastenerInstances": 266,
+        "parts": 11
+      },
+      "mobile": {
+        "objects": 569,
+        "fastenerInstances": 266,
+        "parts": 11
+      },
+      "notes": "Model graph assembled for desktop/mobile; sourceProfile returns v18 X positions; tool switching, track phase and linkage updates executed. This MOCK does not validate true Three.js GPU rendering, mesh intersections or optical fidelity."
     },
     {
       "test": "DESKTOP-GPU-RENDER",
@@ -99,7 +109,9 @@
     "actualThreeRenderer": false,
     "physicalRealWorldDimensions": false,
     "promoteToLatest": false,
-    "reason": "All new track coordinates are C-grade single-perspective approximations; no independent geometry/photo alignment and no real GPU acceptance."
+    "reason": "All new track coordinates are C-grade single-perspective approximations; no independent geometry/photo alignment and no real GPU acceptance.",
+    "threeCompatibleModelMock": true,
+    "realThreeRenderer": false
   },
   "future": [
     "Find another high-resolution unoccluded 1987 side or opposite-side SKTB photo",
