@@ -226,7 +226,7 @@ export function makeMobot(THREE, quality='auto') {
       rotatingHubs.push({group:movingHub,radius:outer});
       // Wheel centers are kept as independent nominal coordinates.
       // Their exact relationship to each rocker remains unverified by original plans.
-      cylinder(g,.040,.040,.075,[x,.426,sign*.045],m.joint,id,'z');
+      // Unsupported floating upper pivot caps omitted; hidden suspension remains C.
     });
     // Three paired rockers and a single terminal support: VISUAL HYPOTHESIS.
     // Main proof from archives: balance arms existed; pivot spacing/arm shape not established.
@@ -404,7 +404,7 @@ export function makeMobot(THREE, quality='auto') {
   armPivot.position.set(-.14,1.18,0);
   const boom=new THREE.Group();
   boom.rotation.z=-Math.atan2(.68,1.06);
-  boom.scale.set(.81,.81,1); // provisional silhouette fit to full-resolution SKTB photo2
+  boom.scale.set(.86,.86,1); // provisional silhouette fit to full-resolution SKTB photo2
   armPivot.add(boom);
   for(const side of [-1,1]){
     const z=side*.118;
@@ -445,7 +445,7 @@ export function makeMobot(THREE, quality='auto') {
   // The photographed head has an open dark frame and broad light-coloured
   // lower surfaces. Exact division into moving and fixed parts is inferred.
   const gripper=section('gripper','Сменная рабочая головка',armPivot);
-  gripper.position.set(-1.06,.68,0);
+  gripper.position.copy(new THREE.Vector3(-1.46,.01,0).multiply(boom.scale).applyAxisAngle(new THREE.Vector3(0,0,1),boom.rotation.z)); // Share the actual distal pin; no detached head.
   cylinder(gripper,.083,.083,.275,[0,0,0],m.frame,'gripper','z',28);
   for(const side of [-1,1]){
     cylinder(gripper,.062,.062,.022,[0,0,side*.144],m.satin,'gripper','z',28);
@@ -471,7 +471,8 @@ export function makeMobot(THREE, quality='auto') {
       beam(finger,[-.07,-side*.025,z],[-.25,side*.14,z],.016,m.satin,'gripper');
     }
     // Broad side surface; no invented count of edge serrations.
-    plate(finger,[[-.18,side*.18],[-.41,side*.18],[-.43,side*.025],[-.23,side*.025]],.31,-.155,m.panel,'gripper');
+    for(const z of [-.155,.133])plate(finger,[[-.18,side*.18],[-.41,side*.18],[-.43,side*.025],[-.23,side*.025]],.022,z,m.panel,'gripper');
+    box(finger,[.20,.024,.31],[-.33,side*.025,0],m.panel,'gripper');
     cylinder(finger,.026,.026,.28,[0,0,0],m.frame,'gripper','z',20);
     fingerMechanisms.push({side,group:finger});
   }
@@ -658,7 +659,7 @@ export function makeMobot(THREE, quality='auto') {
     const theta=armPivot.rotation.z;
     const ca=Math.cos(theta),sa=Math.sin(theta);
     const armMountA=new THREE.Vector3(.10,1.04,-.24);
-    const x=-.52,y=.42;
+    const x=-.45,y=.20; // attachment on the revised lower boom member; C
     const armMountB=new THREE.Vector3(armPivot.position.x +x*ca-y*sa,
       armPivot.position.y +x*sa+y*ca,-.17);
     setSegment(actuatorArmHousing,armMountA,interpolate(armMountA,armMountB,.68),.048);
@@ -754,7 +755,7 @@ export function makeMobot(THREE, quality='auto') {
     bucketLiftPivot:[bucket.position.x,bucket.position.y],
     bucketTiltPivotRelative:[bucketScoop.position.x,bucketScoop.position.y],
     armPivot:[armPivot.position.x,armPivot.position.y],
-    armDistalLocal:[-1.06,.68],
+    armDistalLocal:[gripper.position.x,gripper.position.y],
     lowerTrackDatum:groundReferenceY,
     bucketProbes:bladeProbes.map(p=>({...p})),
     canonicalModule:'mobot-kinematics-v15.js',

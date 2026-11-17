@@ -8,7 +8,7 @@ async function ready(page){await page.waitForFunction(()=>window.__mobotQA?.getS
 async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));}
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
- const result={started:new Date().toISOString(),base,engine:'real Chromium with SwiftShader software WebGL2',mockThree:false,runs:[],limits:['No physical phone GPU or headset tested','No factory-dimensional verification','No complete mesh-to-mesh collision solver']};
+ const result={baselines:[],started:new Date().toISOString(),base,engine:'real Chromium with SwiftShader software WebGL2',mockThree:false,runs:[],limits:['No physical phone GPU or headset tested','No factory-dimensional verification','No complete mesh-to-mesh collision solver']};
  // Produce both reserve frames first, before auditing any backup-image request.
  for(const year of ['1986','1987']){
   const page=await browser.newPage({viewport:{width:1440,height:1000}});
@@ -27,7 +27,7 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
   await page.screenshot({path:path.join(out,year+'-'+suffix+'.png')});
   if(!mobile){await page.locator('#stage').screenshot({path:path.join(out,year+'-model.png')});await page.locator('[data-view="side"]').click();await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-side.png')});}
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert(!overflow,'horizontal overflow');
-  const presets=[];for(const i of [0,1,2]){await page.selectOption('#pose',String(i));await settle(page);const s=await page.evaluate(()=>window.__mobotQA.getState());assert(Number.isFinite(s.clearance));presets.push(s);}
+  const presets=[];for(const i of [0,1,2]){await page.selectOption('#pose',String(i));await settle(page);const s=await page.evaluate(()=>window.__mobotQA.getState());assert(Number.isFinite(s.clearance));assert(s.clearance>=0,'preset below support plane');presets.push(s);}
   const sliders=[];
   for(const assembly of ['all','arm','bucket','tracks']){
    await page.selectOption('#assembly',assembly);
@@ -44,12 +44,13 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
   const finite=await page.evaluate(()=>{const bad=[];window.__mobotQA.getModel().root.traverse(o=>{if(!o.matrixWorld.elements.every(Number.isFinite))bad.push(o.name)});return bad});assert.deepEqual(finite,[]);
   const sources=[];for(const b of await page.locator('[data-source]').all()){await b.click();await page.locator('#archivePhoto').evaluate(img=>img.decode());sources.push(await page.locator('#archivePhoto').getAttribute('src'));}
   await page.locator('[data-panel="passport"]').click();assert(await page.locator('#passport').isVisible());await page.locator('[data-panel="backup"]').click();assert(await page.locator('#backup').isVisible());
+  assert.deepEqual(errors,[],'browser console errors');assert.deepEqual(failed,[],'failed requests');
   result.runs.push({year,profile:suffix,initial,presets,sliderSamples:sliders,tools,mouseOrTouchOrbit:true,keyboardOrbit:true,zoomButton:true,finiteTransforms:true,archiveImages:sources,horizontalOverflow:overflow,errors,failed});
   await context.close();
  }
  // Baseline real browser renders kept separate from historical mock QA.
  for(const [name,file,selector] of [['1986-v4','mobot-ch-hv-1986-research-v4.html','#stage'],['1987-v19','mobot-engineering-v19.html','#stage']]){
-  const page=await browser.newPage({viewport:{width:1440,height:1000}});await page.goto(new URL(file,base).href,{waitUntil:'networkidle'});await page.waitForSelector('canvas');await settle(page);await page.locator(selector).screenshot({path:path.join(out,name+'-before.png')});await page.close();
+  const page=await browser.newPage({viewport:{width:1440,height:1000}});await page.goto(new URL(file,base).href,{waitUntil:'networkidle'});await page.waitForSelector('canvas');await settle(page);const gl=await page.locator('canvas').first().evaluate(c=>{const g=c.getContext('webgl2');return g?g.getParameter(g.VERSION):null});assert(gl?.includes('WebGL 2'));result.baselines.push({name,webglVersion:gl});await page.locator(selector).screenshot({path:path.join(out,name+'-before.png')});await page.close();
  }
  // Actual absence of WebGL must take the tested static fallback path.
  const blocked=await browser.newContext({viewport:{width:390,height:844}});await blocked.addInitScript(()=>{const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){if(kind==='webgl2'||kind==='webgl')return null;return get.call(this,kind,...args)}});

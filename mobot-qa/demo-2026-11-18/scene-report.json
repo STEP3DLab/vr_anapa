@@ -1,0 +1,83 @@
+{
+  "engine": "real vendored THREE geometry under Node; no WebGL",
+  "canvasTextureGenerated": false,
+  "models": [
+    {
+      "name": "1986-v5",
+      "meshes": 146,
+      "instances": 518,
+      "vertices": 15119,
+      "finiteGeometry": true,
+      "box": {
+        "min": [
+          -1.5900000005960466,
+          0.06874742560875793,
+          -0.8150000007450581
+        ],
+        "max": [
+          1.827500001490116,
+          2.1860011516189277,
+          0.8150000007450581
+        ]
+      },
+      "wheelAdjacentCircleOverlaps": 0,
+      "poseSamples": 162,
+      "negativeClearances": 72,
+      "checks": [],
+      "fullCollisionDetection": false
+    },
+    {
+      "name": "1987-v20",
+      "meshes": 490,
+      "instances": 1139,
+      "vertices": 65011,
+      "finiteGeometry": true,
+      "box": {
+        "min": [
+          -2.13218748081206,
+          -0.2550000002980233,
+          -0.823999998986721
+        ],
+        "max": [
+          1.3300217390060425,
+          2.0947247337577197,
+          0.8250000040233135
+        ]
+      },
+      "wheelAdjacentCircleOverlaps": 0,
+      "poseSamples": 81,
+      "negativeClearances": 27,
+      "checks": [
+        {
+          "distalPinGap": 2.220446049250313e-16
+        }
+      ],
+      "fullCollisionDetection": false
+    },
+    {
+      "name": "1987-v19",
+      "meshes": 569,
+      "instances": 1243,
+      "vertices": 72577,
+      "finiteGeometry": true,
+      "box": {
+        "min": [
+          -2.3943812891166885,
+          -0.2550000002980233,
+          -0.823999998986721
+        ],
+        "max": [
+          1.3300217390060425,
+          2.36675774872303,
+          0.8250000040233135
+        ]
+      },
+      "wheelAdjacentCircleOverlaps": 0,
+      "poseSamples": 81,
+      "negativeClearances": 27,
+      "checks": [],
+      "fullCollisionDetection": false
+    }
+  ],
+  "latestPreserved": true
+}

@@ -21,14 +21,14 @@ const c=configs[year];let model,scene,camera,controls,renderer,canvas,state={...
 const photoPath=name=>'./mobot-assets/archive/'+name;
 $('robotName').textContent=c.name;$('yearLabel').textContent=year+' / '+c.version+' / ИССЛЕДОВАТЕЛЬСКАЯ ГЕОМЕТРИЯ';$('description').textContent=c.description;$('modelTitle').textContent=c.title;
 $('passportLink').href='./'+c.module+'-passport.json';$('qaLink').href='./'+c.module+'-qa.json';$('versionLink').href='./'+c.module+'.html';$('versionLink').textContent='Отдельная версия '+c.version+' ↗';
-document.querySelector('[data-robot="'+year+'"]').setAttribute('aria-current','page');
+document.querySelector('.robot-tabs a[data-robot="'+year+'"]').setAttribute('aria-current','page');
 $('toolField').hidden=year!=='1987';
 const cameraDirs=year==='1986'?{three:[3.1,1.6,5.5],side:[0,.01,6],front:[6,.01,0],top:[.001,6,0]}:{three:[-3.1,1.6,-5.5],side:[0,.01,-6],front:[-6,.01,0],top:[.001,6,0]};
 function draw(){scheduled=false;if(!renderer||document.hidden)return;controls.update();renderer.render(mode==='canvas2d'?model.root:scene,camera);renderCount++;$('loading').hidden=true;}
 function invalidate(){if(!scheduled){scheduled=true;requestAnimationFrame(draw);}}
 function resize(){if(!renderer)return;const b=$('surface').getBoundingClientRect();if(!b.width||!b.height)return;if(mode==='canvas2d')renderer.resize(Math.round(b.width),Math.round(b.height));else renderer.setSize(b.width,b.height,false);fitProjection();invalidate();}
 function fitProjection(){const b=$('surface').getBoundingClientRect(),a=b.width/b.height;const s=frameBounds?.size||new T.Vector3(4,3,2);const span=Math.max(s.y*1.20,s.x/a*1.20,s.z/a*1.20,2.2);camera.left=-span*a/2;camera.right=span*a/2;camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix();}
-function setView(next='three',refit=true){if(!camera)return;view=next;model.root.updateMatrixWorld(true);const box=new T.Box3().setFromObject(model.root);frameBounds={center:box.getCenter(new T.Vector3()),size:box.getSize(new T.Vector3())};
+function setView(next='three',refit=true){if(!camera)return;view=next;model.root.updateMatrixWorld(true);const box=new T.Box3();model.root.traverseVisible(o=>{if(o.isMesh)box.union(new T.Box3().setFromObject(o))});frameBounds={center:box.getCenter(new T.Vector3()),size:box.getSize(new T.Vector3())};
   const part=$('assembly').value;if(part==='tracks'){frameBounds={center:new T.Vector3(0,.40,0),size:new T.Vector3(2.5,1.2,1.7)}}
   if(part==='arm'){frameBounds={center:new T.Vector3(year==='1986'?-.5:-.7,1.65,0),size:new T.Vector3(3.1,2.3,1.8)}}
   if(part==='bucket'){frameBounds={center:new T.Vector3(year==='1986'?.9:-.8,.65,0),size:new T.Vector3(2.8,1.6,1.8)}}
