@@ -1,0 +1,163 @@
+{
+  "schema": "mobot-research-qa/1.3",
+  "date": "2026-11-17",
+  "variant": "Мобот-Ч-ХВ (1986)",
+  "revision": "research-v4",
+  "file": "mobot-ch-hv-1986-research-v4.html",
+  "previousVersion": "mobot-ch-hv-1986-research-v3.html",
+  "source": {
+    "text": "Овчинников В. В., Батанов А. Ф., Мингалеев С. Г. «Роботы в Чернобыле». Технологии гражданской безопасности, т.16, №4 (62), 2019, с.74, рис.6",
+    "pdf": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=5",
+    "originalPage": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+    "verifiedObservation": "Figure 6 shows truss and hanging grapple on one side of the tracked chassis, front loader bucket on the opposite side. The figure is an original 1986 unit according to article section.",
+    "confidence": "B for relative end location only, C for geometric measurements"
+  },
+  "corrected": {
+    "previously": "V3 model placed front loader and truss/grapple on the negative scene X end; contradicts historical Fig.6",
+    "now": "V4 loader placed on positive X end, truss/grapple remains on negative X end. Loader linkage attachment points and scoop wall layouts mirrored to follow new direction.",
+    "noChanges": [
+      "track wheel count remains undocumented, no decorative wheel additions",
+      "1986 truss and grapple volumes still uncalibrated",
+      "1987 CH-HV-2 v17 stable model and v18 research candidate unchanged"
+    ]
+  },
+  "checks": [
+    {
+      "id": "V8-JAVASCRIPT-PARSE",
+      "status": "pass",
+      "method": "node --check on extracted full HTML ES module"
+    },
+    {
+      "id": "SCENE-ASSEMBLY",
+      "status": "pass-in-Three-compatible-mock",
+      "objects": 78,
+      "groups": 12,
+      "notes": "These are procedural render object counts, NOT historical component counts."
+    },
+    {
+      "id": "OPPOSITE-ENDS",
+      "status": "pass-in-Three-compatible-mock",
+      "sceneX": {
+        "grapple": -0.65,
+        "loaderScoop": 1.39
+      },
+      "notes": "Model coordinates are arbitrary scene units; not metres."
+    },
+    {
+      "id": "KINEMATIC-ORIENTATION-BOOM",
+      "status": "pass-model-math",
+      "samplesDeg": [
+        -15,
+        0,
+        24,
+        58,
+        72
+      ],
+      "grappleWorldXRangeScene": [
+        -1.67423,
+        -0.18295
+      ],
+      "notes": "Across illustrative boom states, original 1986 grapple remains at opposite side from loader."
+    },
+    {
+      "id": "KINEMATIC-ORIENTATION-LOADER",
+      "status": "pass-model-math",
+      "samplesDeg": [
+        -15,
+        0,
+        25
+      ],
+      "bucketWorldXRangeScene": [
+        1.27658,
+        1.47514
+      ],
+      "notes": "Candidate poses stay on loader/front side. No real joint-limit verification."
+    },
+    {
+      "id": "GRAPPLE-VERTICAL",
+      "status": "pass-in-mock",
+      "boomAngles": [
+        -15,
+        0,
+        24,
+        58,
+        72
+      ],
+      "globalGrappleRad": 0,
+      "notes": "Kinematic visualization trick only, physical suspension not established."
+    },
+    {
+      "id": "DESKTOP-CHROMIUM-DOM",
+      "status": "pass-with-Three-renderer-stub",
+      "viewportPx": [
+        1250,
+        900
+      ],
+      "exceptions": 0,
+      "controls": [
+        "pose6",
+        "pose9",
+        "boom",
+        "loader",
+        "tip",
+        "grab",
+        "reset"
+      ],
+      "canvasCount": 1,
+      "imagesInDom": 2,
+      "notes": "Remote archive image loads intentionally blocked; no real GPU visual validation."
+    },
+    {
+      "id": "MOBILE-CHROMIUM-DOM",
+      "status": "pass-with-Three-renderer-stub",
+      "viewportPx": [
+        390,
+        780
+      ],
+      "exceptions": 0,
+      "controls": [
+        "pose6",
+        "pose9",
+        "boom",
+        "loader",
+        "tip",
+        "grab",
+        "reset"
+      ],
+      "canvasCount": 1,
+      "imagesInDom": 2,
+      "notes": "Real touchscreen gestures and mobile GPU/WebGL not tested."
+    },
+    {
+      "id": "REAL-WEBGL",
+      "status": "not-tested",
+      "notes": "Available local browser had only Three-compatible stub; screenshot shows blank drawing region."
+    },
+    {
+      "id": "EXTERNAL-ARCHIVE-IMAGE",
+      "status": "source-reviewed",
+      "notes": "2019 PDF source visual checked; live image fetch by HTML not confirmed."
+    },
+    {
+      "id": "GITHUB-CONTENTS",
+      "status": "created",
+      "notes": "File written in STEP3DLab/vr_anapa using GitHub connector; exact commit available."
+    },
+    {
+      "id": "PUBLIC-PAGES",
+      "status": "not-verified",
+      "notes": "Page URL inaccessible to web browsing environment; no claim of successful Pages deployment."
+    },
+    {
+      "id": "FACTORY-GEOMETRY",
+      "status": "unverified",
+      "notes": "No measured scale, wheel spacing, suspension axes, bucket pivots, or hopper profile."
+    }
+  ],
+  "evidenceLevels": {
+    "A": "function or archival attribution in source",
+    "B": "visible relative orientation",
+    "C": "all numeric 3D coordinates, model motion parameters, hidden mechanisms"
+  },
+  "releaseGate": "Research only. Keep canonical 1987 mobot-latest.html -> v17; v4 must not be promoted to a verified reconstruction without independent multi-view photo alignment and real browser WebGL acceptance."
+}
