@@ -94,12 +94,30 @@ export function makeMobot1986(T) {
   }
   setTrackPhase();
   const body=group('Рама и округлый кожух',root,'B contours in fig6');
-  box(body,[1.83,.095,1.04],[0,.745,0],materials.steel,'Несущая платформа');
-  box(body,[1.67,.16,.88],[0,.60,0],materials.dark,'Центральная рама');
-  const hood=[[-.98,.80],[-.98,.86]];
-  for(let i=0;i<=20;i++){const a=Math.PI-i*Math.PI/20;hood.push([-.53+.45*Math.cos(a),.86+.27*Math.sin(a)]);}
-  hood.push([-.08,.80]);plate(body,hood,.83,-.415,materials.dark,'Округлый задний кожух, внешняя оболочка');
-  // Visible shape B; interpreting internals as a cable reel would be C, so not shown.
+  box(body,[1.96,.045,1.01],[-.015,.747,0],materials.steel,'Настил платформы');
+  for(const z of [-.438,.438]){
+    box(body,[1.86,.215,.060],[-.01,.639,z],materials.dark,'Продольная стенка платформы');
+  }
+  for(const x of [-.80,-.12,.72]){
+    box(body,[.082,.18,1.07],[x,.59,0],materials.steel,'Поперечная балка к бортам');
+  }
+  box(body,[.48,.033,.59],[.29,.779,0],materials.structure,'Плита под поворотной опорой');
+  const hoodBase=.800, hoodX=-.524, hoodHalf=.456;
+  const hoodOutline=[[-.980,hoodBase]];
+  for(let i=0;i<=32;i++){
+    const a=Math.PI-i*Math.PI/32;
+    hoodOutline.push([hoodX+hoodHalf*Math.cos(a),.838+.281*Math.sin(a)]);
+  }
+  hoodOutline.push([-.068,hoodBase]);
+  plate(body,hoodOutline,.755,-.3775,materials.dark,'Арочный кожух');
+  for(const sign of [-1,1]){
+    const z=sign*.385;
+    plate(body,hoodOutline,.015,z-.0075,materials.steel,'Торцевой лист кожуха');
+    box(body,[.94,.040,.051],[hoodX,.785,sign*.371],materials.steel,'Опорный отбортованный край');
+    box(body,[.064,.045,.012],[hoodX-.075,.890,sign*.398],materials.structure,'Наружная накладка, форма C');
+    beam(body,[hoodX-.075,.89,sign*.408],[hoodX-.075,.936,sign*.408],.012,materials.steel,'Скоба накладки');
+  }
+
   const turntable=group('Поворотная опора',root,'B appearance; yaw inferred from figs6,9');turntable.position.set(.29,.83,0);
   cyl(turntable,.28,.09,[0,0,0],materials.steel,'Поворотное основание','y');
   const mast=group('Высокая решётчатая стойка',turntable,'B');
@@ -163,9 +181,17 @@ export function makeMobot1986(T) {
   cyl(upper,.105,.017,[.21,0,0],materials.dark,'Торец корпуса','x');
   beam(turntable,[.1,.97,0],[.12,1.15,0],.045,materials.steel,'Опора верхней камеры');
   const front=group('Оборудование на конце у ковша',root,'B silhouettes; exact function C');
-  cyl(front,.085,.30,[.78,.94,0],materials.structure,'Низкий цилиндрический корпус','x');
-  for(const z of [-.24,.24])cyl(front,.082,.035,[.91,.91,z],materials.structure,'Круглый фронтальный элемент, назначение не установлено','x');
-  box(front,[.30,.055,.68],[.75,.82,0],materials.steel,'Площадка оборудования');
+  box(front,[.36,.040,.70],[.756,.790,0],materials.steel,'Площадка переднего оборудования');
+  for(const x of [.672,.823]){
+    box(front,[.035,.065,.082],[x,.835,0],materials.steel,'Седло цилиндрического корпуса');
+  }
+  cyl(front,.085,.30,[.773,.931,0],materials.structure,'Низкий цилиндрический корпус','x');
+  cyl(front,.068,.009,[.927,.931,0],materials.dark,'Торцевая вставка','x');
+  for(const z of [-.238,.238]){
+    beam(front,[.807,.803,z],[.878,.884,z],.027,materials.steel,'Кронштейн круглого элемента');
+    cyl(front,.085,.054,[.889,.913,z],materials.dark,'Обод переднего элемента','x');
+    cyl(front,.071,.009,[.920,.913,z],materials.structure,'Светлый круглый диск, назначение C','x');
+  }
   const cablePath=new T.CatmullRomCurve3([[-.96,.68,.08],[-1.06,.50,.10],[-1.32,.19,.18]].map(p=>new T.Vector3(...p)));
   mesh(body,new T.TubeGeometry(cablePath,24,.012,6,false),materials.dark,'Кабель: видимый вывод, трасса C');
   const defaults={yaw:0,boom:0,loader:0,tip:0,grab:0,track:0};let state={...defaults};
