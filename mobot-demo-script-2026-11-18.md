@@ -1,8 +1,14 @@
 # Демонстрация 18 ноября · 3–5 минут
 
-Основная ссылка: https://step3dlab.github.io/vr_anapa/mobot-demo.html
+Основная ссылка (две машины): https://step3dlab.github.io/vr_anapa/mobot-demo.html
 
-Резерв: https://step3dlab.github.io/vr_anapa/mobot-backup.html
+Мобот-Ч-ХВ (1986), v5: https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v5.html
+
+Мобот-Ч-ХВ-2 (1987), v20 — постоянная ссылка: https://step3dlab.github.io/vr_anapa/mobot-latest.html
+
+Архив прежней стабильной v17 (не основная версия): https://step3dlab.github.io/vr_anapa/mobot-engineering-v17.html
+
+Резерв без WebGL: https://step3dlab.github.io/vr_anapa/mobot-backup.html
 
 ## До начала
 
