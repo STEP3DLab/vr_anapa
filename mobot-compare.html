@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f3ed">
+<meta name="description" content="Две исследовательские 3D-реконструкции роботов ЧАЭС в синхронном сравнении: 1986 и 1987 годы, узлы, сменные рабочие органы и архивные источники.">
+<meta property="og:title" content="МОБОТ / 1986—1987 · сравнение 3D">
+<title>МОБОТ / Сравнение двух машин · 1986—1987</title>
+<link rel="stylesheet" href="./mobot-assets/compare-v1.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+<header class="site-header">
+  <a class="wordmark" href="./mobot-demo.html" aria-label="МОБОТ — главная"><strong>МОБОТ</strong><span>/ Архив инженерной мысли</span></a>
+  <nav aria-label="Навигация проекта"><a href="./mobot-demo.html">Общая экспозиция</a><a href="./mobot-latest.html">Модель v20</a><a href="./mobot-backup.html">Резерв</a></nav>
+</header>
+<main>
+<section class="intro">
+  <div><p class="kicker">ЧЕРНОБЫЛЬСКАЯ АЭС · ИССЛЕДОВАТЕЛЬСКИЕ 3D-МОДЕЛИ</p><h1>Две машины.<br><em>Два инженерных решения.</em></h1></div>
+  <div class="intro-aside"><p>Сравните исходный «Мобот-Ч-ХВ» (1986) и модернизированный «Мобот-Ч-ХВ-2» (1987). Поверните одну модель — вторая повторит ракурс.</p><p class="caution">Пропорции условные. Синхронный обзор не означает совпадение заводских масштабов.</p></div>
+</section>
+<section class="toolbar" aria-label="Управление сравнением">
+ <label class="check"><input type="checkbox" id="sync" checked> Синхронизировать ракурсы</label>
+ <div class="views" role="group" aria-label="Быстрые ракурсы">
+  <button type="button" data-angle="three" aria-pressed="true">¾</button>
+  <button type="button" data-angle="side" aria-pressed="false">Сбоку</button>
+  <button type="button" data-angle="front" aria-pressed="false">Спереди</button>
+  <button type="button" data-angle="top" aria-pressed="false">Сверху</button>
+ </div>
+ <div class="views" role="group" aria-label="Масштаб и сброс">
+  <button type="button" id="zoomOut" aria-label="Уменьшить обе модели">−</button>
+  <button type="button" id="zoomIn" aria-label="Увеличить обе модели">+</button>
+  <button type="button" id="reset">Сбросить</button>
+ </div>
+ <p id="syncStatus" class="toolbar-status" role="status">Синхронизация включена</p>
+</section>
+<section class="compare-grid" aria-label="Два 3D-просмотрщика">
+ <article class="viewer" data-year="1986">
+  <div class="viewer-head"><div><span class="year">1986</span><h2>Мобот-Ч-ХВ</h2><p>Исходная машина · v5</p></div><a href="./mobot-ch-hv-1986-research-v5.html">Открыть отдельно</a></div>
+  <div class="stage" id="stage86" aria-label="Трёхмерная модель Мобот-Ч-ХВ 1986 года">
+    <div id="canvas86" class="canvas-host"></div>
+    <img src="./mobot-qa/demo-2026-11-18/1986-model.png" alt="Резервный кадр модели 1986 года" id="fallback86" class="fallback" hidden>
+    <div class="stage-caption" id="status86" role="status">Подготовка WebGL…</div>
+  </div>
+  <div class="viewer-body">
+   <label for="pose86">Демонстрационное положение</label>
+   <select id="pose86"><option value="neutral">Исходная поза</option><option value="raised">Поднятая решётчатая стрела</option><option value="loader">Подъём ковша</option></select>
+   <label for="node86">Рассмотреть узел</label>
+   <select id="node86"><option value="all">Вся конструкция</option><option value="tracks">Гусеничная ходовая</option><option value="body">Корпус</option><option value="mast">Высокая опора</option><option value="arm">Решётчатая стрела</option><option value="gripper">Грейфер</option><option value="bucket">Фронтальный погрузчик</option></select>
+   <div class="node-note"><p id="note86">Выберите узел или коснитесь детали модели для справки.</p><button id="focus86" type="button">Приблизить узел</button></div>
+  </div>
+ </article>
+ <article class="viewer" data-year="1987">
+  <div class="viewer-head"><div><span class="year">1987</span><h2>Мобот-Ч-ХВ-2</h2><p>Модернизированный комплекс · v20</p></div><a href="./mobot-engineering-v20.html">Открыть отдельно</a></div>
+  <div class="stage" id="stage87" aria-label="Трёхмерная модель Мобот-Ч-ХВ-2 1987 года">
+    <div id="canvas87" class="canvas-host"></div>
+    <img src="./mobot-qa/demo-2026-11-18/1987-model.png" alt="Резервный кадр модели 1987 года" id="fallback87" class="fallback" hidden>
+    <div class="stage-caption" id="status87" role="status">Подготовка WebGL…</div>
+  </div>
+  <div class="viewer-body">
+   <label for="pose87">Демонстрационное положение</label>
+   <select id="pose87"><option value="neutral">Перед отправкой</option><option value="snow">Вид с другой стороны</option><option value="loader">Подъём ковша</option></select>
+   <label for="tool87">Рабочий орган</label>
+   <select id="tool87"><option value="gripper">Двупалый схват</option><option value="breaker-arm">Отбойный молоток на стреле</option><option value="breaker-loader">Молоток на погрузчике · геометрия гипотетическая</option></select>
+   <label for="node87">Рассмотреть узел</label>
+   <select id="node87"><option value="all">Вся конструкция</option><option value="tracks">Гусеничная ходовая</option><option value="body">Корпус</option><option value="turret">Поворотная опора</option><option value="arm">Стрела</option><option value="gripper">Сменная головка</option><option value="bucket">Фронтальный погрузчик</option><option value="cameras">Внешние камеры</option></select>
+   <div class="node-note"><p id="note87">Выберите узел или коснитесь детали модели для справки.</p><button id="focus87" type="button">Приблизить узел</button></div>
+  </div>
+ </article>
+</section>
+<p class="control-note">Мышь или палец — вращение. Колесо мыши или два пальца — масштаб. Клавиши со стрелками — вращение при фокусе на модели. Нажатие на деталь открывает описание соответствующего узла.</p>
+<section id="evidence" class="evidence">
+ <div class="eyebrow">Что действительно известно</div>
+ <h2>Исторические признаки ≠ проверенные размеры</h2>
+ <div class="facts">
+  <article><span>A · ДОКУМЕНТ</span><h3>Назначение узлов</h3><p>Оригинальное описание СКТБ фиксирует функции рабочих органов. Для модернизированной машины описано сменное оснащение.</p></article>
+  <article><span>B · ФОТОГРАФИЯ</span><h3>Внешняя конфигурация</h3><p>Фотографии позволяют проверять видимую форму кожухов, гусениц, стрелы и захватов, но не скрытые передачи.</p></article>
+  <article><span>C · ГИПОТЕЗА</span><h3>Кинематика и размеры</h3><p>Численные размеры, оси, ходы, внутренние узлы и модельные пределы движений не имеют заводской метрической калибровки.</p></article>
+ </div>
+ <p class="sources">Источники и ограничения: <a href="./mobot-archive-audit-2026-11-18.md">архивная сверка</a>, <a href="./mobot-geometry-changes-2026-11-18.md">изменения геометрии</a>, <a href="./mobot-engineering-v20-passport.json">паспорт v20</a>, <a href="./mobot-ch-hv-1986-research-v5-passport.json">паспорт v5</a>.</p>
+</section>
+<footer>Проект «МОБОТ» · сравнение исследовательских версий v5 и v20 · <a href="./mobot-demo.html">Вернуться к экспозиции</a></footer>
+</main>
+<noscript><p style="padding:2rem">Для интерактивного сравнения требуется JavaScript. <a href="./mobot-backup.html">Открыть изображения двух моделей без JavaScript.</a></p></noscript>
+<script type="module" src="./mobot-assets/compare-v1.js"></script>
+</body></html>
