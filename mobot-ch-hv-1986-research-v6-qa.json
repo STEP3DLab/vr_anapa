@@ -1,26 +1,156 @@
 {
   "version": "1986-v6",
-  "sceneReport": "research/mobot/1986/scene-results.json",
+  "baseRevision": "1b40bb9386448b074f30ef42dfe8908b8a20ef37",
+  "verifiedImplementation": "aead8e998f71474822cb0a2633967c6957521a81",
+  "scope": "Мобот-Ч-ХВ 1986 года. Все геометрические величины в условных единицах.",
+  "branch": "codex/mobot-1986-v6-20261118",
+  "pullRequest": "https://github.com/STEP3DLab/vr_anapa/pull/4",
+  "verificationRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170664606",
   "tests": [
     {
-      "name": "Контроль геометрии и кинематики",
+      "name": "Vertices, normals, transforms and instance matrices",
       "status": "PASS",
-      "poses": 2025
+      "meshes": 280,
+      "drawnInstances": 604,
+      "vertices": 30503
     },
     {
-      "name": "Chromium / WebGL 2 в рабочей среде",
+      "name": "Wheel centres, gaps, closed belt and continuous contact",
+      "status": "PASS",
+      "trackSamples": 5000,
+      "wheelCountPerSide": 9,
+      "maxContactResidual": 8.908329827538725e-7,
+      "units": "scene"
+    },
+    {
+      "name": "Six independent motions and return to neutral",
+      "status": "PASS",
+      "coordinates": 6,
+      "maxJawLipGap": 0.39214512036471083
+    },
+    {
+      "name": "Structural joints, linkage endpoints and selected collision envelopes",
+      "status": "PASS",
+      "poses": 2025,
+      "minBucketGroundClearance": 0.016534671560331934,
+      "minGrappleGroundClearance": 1.03381589939765,
+      "units": "scene",
+      "scope": "Samples; grapple against hood, scoop and deck; scoop and grapple against floor. Not all-pairs collision detection."
+    },
+    {
+      "name": "Desktop Chromium: live WebGL2 and non-uniform framebuffer",
+      "status": "PASS",
+      "isWebGL2": true,
+      "glError": 0,
+      "drawCalls": 283,
+      "triangles": 22820,
+      "version": "1986-v6",
+      "dark": 5865,
+      "bright": 26529
+    },
+    {
+      "name": "Seven assemblies: highlights, isolation and exact restoration",
+      "status": "PASS",
+      "assemblies": [
+        "tracks",
+        "body",
+        "mast",
+        "boom",
+        "grab",
+        "loader",
+        "cameras"
+      ]
+    },
+    {
+      "name": "Camera controls, ray selection and reversible explosion",
+      "status": "PASS",
+      "picked": "cameras"
+    },
+    {
+      "name": "Six motion controls, archive poses and local source files",
+      "status": "PASS",
+      "inputs": 6,
+      "archivePoses": 2,
+      "linkedFiles": 5
+    },
+    {
+      "name": "Mobile Chromium with touch: layout, tap selection and touch orbit",
+      "status": "PASS",
+      "widths": [
+        320,
+        360,
+        390,
+        720
+      ],
+      "touchOrbit": true,
+      "activationsForTwoTaps": 2
+    },
+    {
+      "name": "Static fallback with WebGL disabled",
+      "status": "PASS"
+    },
+    {
+      "name": "No page exceptions or missing same-origin resources",
+      "status": "PASS"
+    },
+    {
+      "name": "Существующие геометрические проверки, браузерные сценарии v5/v20 и сравнения",
+      "status": "PASS",
+      "workflowStep": "Existing browser regressions"
+    },
+    {
+      "name": "Сохранность прежних версий и общих файлов",
+      "status": "PASS",
+      "method": "Все пути в разнице с исходным main добавлены для v6; существующие файлы v5, 1987 и сравнения отсутствуют в разнице."
+    },
+    {
+      "name": "Физический Android/iOS",
       "status": "NOT RUN",
-      "reason": "Chromium завершился до создания страницы: socket() failed: Operation not permitted. Проверка перенесена на GitHub Actions."
+      "reason": "Четыре ширины и сенсорное управление испытаны в мобильном Chromium с эмуляцией."
     },
     {
-      "name": "Публикация",
-      "status": "NOT RUN"
+      "name": "Полный попарный контакт всех треугольников и историческая калибровка по обмерам",
+      "status": "NOT RUN",
+      "reason": "Проверены выбранные ограничивающие объёмы и оси. Заводские обмеры отсутствуют."
     }
   ],
-  "controlImages": [
-    "research/mobot/1986/overview.jpg",
-    "research/mobot/1986/side.jpg",
-    "research/mobot/1986/grapple.jpg",
-    "research/mobot/1986/front.jpg"
+  "publication": {
+    "status": "NOT RUN",
+    "scope": "На момент проверки ветки. Проверка опубликованных байтов и WebGL выполняется после слияния.",
+    "target": "https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v6.html"
+  },
+  "geometryReport": "research/mobot/1986/scene-results.json",
+  "browserReport": "research/mobot/1986/browser/browser-results.json",
+  "decisionLog": "research/mobot/1986/DECISIONS.md",
+  "resume": "research/mobot/1986/STATE.md",
+  "controlImages": {
+    "softwareZBuffer": [
+      "research/mobot/1986/overview.jpg",
+      "research/mobot/1986/side.jpg",
+      "research/mobot/1986/front.jpg",
+      "research/mobot/1986/grapple.jpg"
+    ],
+    "chromium": [
+      "research/mobot/1986/browser/desktop.jpg",
+      "research/mobot/1986/browser/exploded.jpg",
+      "research/mobot/1986/browser/mobile.jpg"
+    ]
+  },
+  "history": [
+    {
+      "status": "FAIL",
+      "stage": "Геометрия F до корректировки оголовка",
+      "finding": "В крайних позах пересекались габариты грейфера с кожухом или ковшом."
+    },
+    {
+      "status": "FAIL",
+      "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170256222",
+      "finding": "После поворота сцены сенсорная последовательность над кнопкой завершалась без click."
+    },
+    {
+      "status": "PASS",
+      "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170664606",
+      "finding": "Два касания после поворота вызывают ровно две активации. Пройдены все тесты предпросмотра и предыдущих версий."
+    }
   ]
 }

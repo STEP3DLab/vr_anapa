@@ -1,0 +1,71 @@
+{
+  "base": "http://127.0.0.1:4173/",
+  "url": "http://127.0.0.1:4173/mobot-ch-hv-1986-research-v6.html?qa=1",
+  "commit": "aead8e998f71474822cb0a2633967c6957521a81",
+  "tests": [
+    {
+      "name": "Desktop Chromium: live WebGL2 and non-uniform framebuffer",
+      "status": "PASS",
+      "isWebGL2": true,
+      "glError": 0,
+      "drawCalls": 283,
+      "triangles": 22820,
+      "version": "1986-v6",
+      "dark": 5865,
+      "bright": 26529
+    },
+    {
+      "name": "Seven assemblies: highlights, isolation and exact restoration",
+      "status": "PASS",
+      "assemblies": [
+        "tracks",
+        "body",
+        "mast",
+        "boom",
+        "grab",
+        "loader",
+        "cameras"
+      ]
+    },
+    {
+      "name": "Camera controls, ray selection and reversible explosion",
+      "status": "PASS",
+      "picked": "cameras"
+    },
+    {
+      "name": "Six motion controls, archive poses and local source files",
+      "status": "PASS",
+      "inputs": 6,
+      "archivePoses": 2,
+      "linkedFiles": 5
+    },
+    {
+      "name": "Mobile Chromium with touch: layout, tap selection and touch orbit",
+      "status": "PASS",
+      "widths": [
+        320,
+        360,
+        390,
+        720
+      ],
+      "touchOrbit": true,
+      "activationsForTwoTaps": 2
+    },
+    {
+      "name": "Static fallback with WebGL disabled",
+      "status": "PASS"
+    },
+    {
+      "name": "No page exceptions or missing same-origin resources",
+      "status": "PASS"
+    }
+  ],
+  "screenshotFiles": [
+    "desktop.jpg",
+    "exploded.jpg",
+    "mobile.jpg"
+  ],
+  "chromium": "141.0.7390.37",
+  "errors": [],
+  "httpErrors": []
+}
