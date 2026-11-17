@@ -453,7 +453,7 @@ export function makeMobot(THREE, quality='auto') {
     }else{
       // A possible substitution at the loader tilt pin. The adapter is class C.
       g.position.set(0,0,0);
-      cylinder(g,.044,.044,1.39,[0,0,0],m.frame,id,'z',24);
+      cylinder(g,.044,.044,1.72,[0,0,0],m.frame,id,'z',24);
       box(g,[.18,.35,.18],[0,-.10,0],m.frame,id);
       cylinder(g,.083,.088,.31,[0,-.26,0],m.olive,id,'y',28);
       cylinder(g,.05,.05,.12,[0,-.47,0],m.satin,id,'y',20);
@@ -469,62 +469,50 @@ export function makeMobot(THREE, quality='auto') {
   // FRONT LOADER: outside-frame lifting links and a genuine open bucket silhouette.
   const bucket=section('bucket','Фронтальный погрузчик и ковш');
   bucket.position.set(-1.03,.48,0);
-  for(const s of [-1,1]){
-    const z=s*.69;
-    beam(bucket,[1.30,.17,z],[.34,-.09,z],.052,m.frame,'bucket',12);
-    beam(bucket,[1.31,.17,z],[.37,.02,z],.023,m.satin,'bucket',12);
-    cylinder(bucket,.090,.090,.11,[1.31,.17,z],m.olive,'bucket','z',24);
-    cylinder(bucket,.072,.072,.10,[.35,-.09,z],m.bright,'bucket','z',24);
-    beam(bucket,[.97,.30,z],[.41,.03,z],.039,m.shadow,'bucket',16);
-    beam(bucket,[.79,.23,z],[.43,.04,z],.019,m.satin,'bucket',16);
-    for(const t of [.13,.34,.56,.8]){
-      const x=1.31-(1.31-.35)*t,y=.17+(-.09-.17)*t;
-      bolt(bucket,[x,y,z+s*.055],'z',m.darkBolt,'bucket',.011);
-    }
-  }
-  // Distinct bucket tilt joint (second loader DOF): articulated attachment rotates without rotating support links.
-  const bucketScoop=new THREE.Group();
-  bucketScoop.name='Ковш: отдельная ось опрокидывания';bucketScoop.userData.part='bucket';
-  bucket.add(bucketScoop);
-  // Articulated scooping assembly: bottom wear plate, sloping back plate, vertical side cheeks.
-  box(bucketScoop,[.72,.045,1.21],[-.09,-.17,0],m.panel,'bucket');
-  const back=box(bucketScoop,[.06,.43,1.21],[.23,.005,0],m.panel,'bucket',-.29);
-  for(const s of [-1,1]){
-    const z=s*.59;
-    plate(bucketScoop,[[-.46,-.19],[.28,-.19],[.31,.25],[.12,.37],[-.27,.09]],.04,z-.02,m.frame,'bucket');
-    beam(bucketScoop,[-.47,-.14,z],[.29,-.14,z],.021,m.satin,'bucket');
-    for(const x of [-.28,.03,.26])bolt(bucketScoop,[x,-.18,z+s*.025],'z',m.darkBolt,'bucket',.014);
-  }
-  box(bucketScoop,[.82,.026,1.22],[-.15,-.200,0],m.bright,'bucket');
-  // Smooth continuous scraper edge: nine separately invented teeth in v14 were
-  // not confirmed by the original side photo. The precise shape remains provisional.
-  box(bucketScoop,[.18,.024,1.24],[-.50,-.210,0],m.satin,'bucket');
-  beam(bucketScoop,[-.58,-.206,-.615],[-.58,-.206,.615],.012,m.bright,'bucket',12);
-  for(const z of [-.48,-.24,0,.24,.48]){
-    // Broad backing plates only, not tooth tips. Their number is provisional.
-    box(bucketScoop,[.07,.022,.042],[-.40,-.176,z],m.frame,'bucket');
-    bolt(bucketScoop,[-.40,-.15,z],'y',m.darkBolt,'bucket',.012);
-  }
-  for(const z of [-.42,-.19,.19,.42]){
-    beam(bucketScoop,[.24,.25,z],[.24,-.14,z],.023,m.olive,'bucket');
-    beam(bucketScoop,[.28,.25,z],[.03,-.14,z],.013,m.satin,'bucket');
-  }
-  cylinder(bucketScoop,.07,.07,1.34,[.32,.04,0],m.darkBolt,'bucket','z',22);
-
-  // Place pivot at the leading attachment axis; keep original geometry location at 0°.
-  const scoopPivot=new THREE.Vector3(.31,.04,0);
-  for(const element of bucketScoop.children)element.position.sub(scoopPivot);
-  bucketScoop.position.copy(scoopPivot);
-  // Change the loader's lift-axis to the inboard CHASSIS joint.
-  // At 0° it keeps the v7 silhouette, but lift rotates around the frame, not around the bucket.
-  const originalLoaderBase=bucket.position.clone();
   const loaderPivotLocal=new THREE.Vector3(1.31,.17,0);
-  for(const child of bucket.children) child.position.sub(loaderPivotLocal);
-  bucket.position.copy(originalLoaderBase).add(loaderPivotLocal);
-  const scoopShell=new THREE.Group();
-  scoopShell.name='Съёмный ковш';scoopShell.userData.part='bucket';
-  scoopShell.add(...bucketScoop.children.slice());
-  bucketScoop.add(scoopShell);
+  const scoopPivot=new THREE.Vector3(.02,.015,0);
+  bucket.position.add(loaderPivotLocal);
+  const bucketScoop=new THREE.Group();
+  bucketScoop.name='Ось наклона оснастки';bucketScoop.userData.part='bucket';
+  bucketScoop.position.copy(scoopPivot).sub(loaderPivotLocal);bucket.add(bucketScoop);
+  const liftPins=[], framePins=[];
+  for(const side of [-1,1]){
+    const z=side*.835;
+    // Broad inclined carrier, outer crank and a continuous forward ear (photo 2).
+    // Its lateral offset clears the track shoes. Bearing and plate sections are C.
+    const profile=[[.04,.075],[-.24,.09],[-.66,-.09],[-1.24,-.10],[-1.33,-.13],
+      [-1.33,-.20],[-1.24,-.22],[-.63,-.20],[-.20,-.035],[.04,-.035]];
+    plate(bucket,profile,.043,z-.0215,m.frame,'bucket');
+    cylinder(bucket,.068,.068,.078,[0,0,z],m.joint,'bucket','z');
+    cylinder(bucket,.058,.058,.091,[bucketScoop.position.x,bucketScoop.position.y,z],m.satin,'bucket','z');
+    const liftAnchor=cylinder(bucket,.038,.038,.095,[-.66,-.14,z],m.joint,'bucket','z');
+    liftPins.push(liftAnchor);
+    // Fixed trunnions project from above the track, never from a free point in space.
+    box(body,[.16,.055,.23],[.28,.682,side*.735],m.frame,'body');
+    cylinder(body,.048,.048,.13,[.28,.65,side*.793],m.satin,'body','z');
+    box(body,[.11,.07,.22],[.51,.71,side*.735],m.frame,'body');
+    const framePin=cylinder(body,.040,.040,.11,[.51,.72,z],m.joint,'body','z');
+    framePins.push(framePin);
+  }
+  const scoopShell=new THREE.Group();scoopShell.name='Съёмный ковш';
+  scoopShell.userData.part='bucket';bucketScoop.add(scoopShell);
+  // An open transverse pan with a folded back and a single working lip (#2, #4).
+  // The cross-section is shared by floor and cheeks to avoid detached sheets.
+  const sectionXY=[[-.60,-.21],[-.48,-.18],[-.10,-.13],[.015,-.04],[.075,.23]];
+  function sheetBetween(a,b,width,thickness){
+    const dx=b[0]-a[0],dy=b[1]-a[1];
+    return box(scoopShell,[Math.hypot(dx,dy)+.006,thickness,width],
+      [(a[0]+b[0])/2,(a[1]+b[1])/2,0],m.panel,'bucket',Math.atan2(dy,dx));
+  }
+  for(let i=1;i<sectionXY.length;i++)sheetBetween(sectionXY[i-1],sectionXY[i],1.52,.027);
+  const blade=sheetBetween([-.64,-.216],sectionXY[1],1.56,.019);
+  blade.name='Сплошная рабочая кромка';
+  for(const side of [-1,1]){
+    const z=side*.75;
+    plate(scoopShell,[...sectionXY,[-.07,.245],[-.42,-.01]],.034,z-.017,m.frame,'bucket');
+    beam(scoopShell,[.052,.15,z],[0,0,z],.04,m.frame,'bucket');
+  }
+  cylinder(scoopShell,.046,.046,1.72,[0,0,0],m.joint,'bucket','z');
   const breakerLoader=buildBreaker(bucketScoop,'bucket','loader');
   // Modes are EXCLUSIVE; historical text documents either working location,
   // not simultaneous installation of both breakers.
@@ -631,13 +619,9 @@ export function makeMobot(THREE, quality='auto') {
     setSegment(actuatorArmHousing,armMountA,interpolate(armMountA,armMountB,.68),.048);
     setSegment(actuatorArmScrew,interpolate(armMountA,armMountB,.46),armMountB,.027);
 
-    const beta=bucket.rotation.z,cb=Math.cos(beta),sb=Math.sin(beta);
     for(let i=0;i<2;i++){
-      const side=i===0?-1:1;
-      const a=new THREE.Vector3(.69,.79,side*.65);
-      const relX=-.64,relY=.10;
-      const b=new THREE.Vector3(bucket.position.x+relX*cb-relY*sb,
-        bucket.position.y+relX*sb+relY*cb,side*.68);
+      const a=actuatorVisual.worldToLocal(framePins[i].getWorldPosition(new THREE.Vector3()));
+      const b=actuatorVisual.worldToLocal(liftPins[i].getWorldPosition(new THREE.Vector3()));
       setSegment(loaderHousings[i].o,a,interpolate(a,b,.66),.035);
       setSegment(loaderScrews[i].o,interpolate(a,b,.45),b,.020);
     }
@@ -671,10 +655,18 @@ export function makeMobot(THREE, quality='auto') {
   // Coordinates for physically moving groups are read from the actual model:
   // if a future model edit changes pivots, the assessment updates automatically.
 
-  const bladeProbes=PROFILE_V15.probes.map(p=>({...p}));
+  const bladeProbes=[];
+  blade.updateMatrix();
+  const vertices=blade.geometry.getAttribute('position');
+  for(let i=0;i<vertices.count;i++){
+    const p=new THREE.Vector3().fromBufferAttribute(vertices,i).applyMatrix4(blade.matrix);
+    if(!bladeProbes.some(q=>q.x===p.x&&q.y===p.y&&q.z===p.z))
+      bladeProbes.push({x:p.x,y:p.y,z:p.z,label:'вершина кромки'});
+  }
   function activePlanarProfile(){
     return {
       ...PROFILE_V15,
+      probes:bladeProbes,
       loaderPivot:[bucket.position.x,bucket.position.y],
       scoopRelative:[bucketScoop.position.x,bucketScoop.position.y],
       groundY:groundReferenceY
@@ -721,6 +713,7 @@ export function makeMobot(THREE, quality='auto') {
   const mechanisms={turntable,arm:armPivot,bucketLift:bucket,bucketTilt:bucketScoop,setWorkTool,updateLinkages,setTrackPhase,
     estimateBucketClearance,auditBucketPose,sweepBucketEnvelope,sourceProfile,
     distalPin,armFixed,armMoving,actuatorArmHousing,actuatorArmScrew,
+    framePins,liftPins,loaderHousings,loaderScrews,blade,
     fingerHead,breakerArm,breakerLoader,scoopShell,
     gripper,fingers:fingerMechanisms,cameras,cover};
   // Model's nominal dimensions are scene units only. This scale is not equal to verified metres.
@@ -730,7 +723,7 @@ export function makeMobot(THREE, quality='auto') {
   root.userData.verificationPolicy="Do not assert reconstructed hinge dimensions, speeds, or assembly topology as historical facts.";
   root.userData.sharedKinematics='mobot-kinematics-v15.js';
   root.userData.bucketEnvelope={
-    probeCount:bladeProbes.length,kind:'7 transverse cross-sections of continuous blade edge and underside',
+    probeCount:bladeProbes.length,kind:'actual corners of continuous wear lip',
     limits:'sampled demonstrative slider values only, not actual physical limits',
     solver:'rigid planar Z rotations; no real collision calculation'
   };
