@@ -147,7 +147,7 @@ export function makeMobot1986(T) {
   for(const z of [-.175,.175])cyl(mast,.061,.075,[-.132,.960,z],materials.dark,'Корпус опоры оси стрелы');
   const boom=group('Решётчатая стрела',turntable,'B пространственные боковины / C раскосы и оси');
   boom.position.set(-.132,.960,0);
-  const tipX=-1.49, tipY=.26;
+  const tipX=-1.49, tipY=.30;
   function boomNode(i,upper,side){
     const t=i/4, y0=upper?0:-.51, y1=upper?tipY+.043:tipY-.043;
     return [tipX*t,y0+(y1-y0)*t,side*(.237-.133*t)];
@@ -168,7 +168,7 @@ export function makeMobot1986(T) {
   }
   cyl(boom,.038,.527,[0,0,0],materials.structure,'Палец наклона стрелы');
 
-  const grab=group('Подвес и грейфер',boom,'A function / B outline / C mechanism');grab.position.set(-1.49,.26,0);
+  const grab=group('Подвес и грейфер',boom,'A function / B outline / C mechanism');grab.position.set(tipX,tipY,0);
   cyl(grab,.035,.268,[0,0,0],materials.structure,'Палец подвеса');
   for(const z of [-.062,.062]){
     plate(grab,[[-.054,.028],[.054,.028],[.047,-.135],[-.047,-.135]],.019,z-.0095,materials.steel,'Щека серьги');
@@ -266,17 +266,38 @@ export function makeMobot1986(T) {
     cyl(front,.085,.054,[.889,.913,z],materials.dark,'Обод переднего элемента','x');
     cyl(front,.071,.009,[.920,.913,z],materials.structure,'Светлый круглый диск, назначение C','x');
   }
-  const cablePath=new T.CatmullRomCurve3([[-.96,.68,.08],[-1.06,.50,.10],[-1.32,.19,.18]].map(p=>new T.Vector3(...p)));
-  mesh(body,new T.TubeGeometry(cablePath,24,.012,6,false),materials.dark,'Кабель: видимый вывод, трасса C');
-  const defaults={yaw:0,boom:0,loader:0,tip:0,grab:0,track:0};let state={...defaults};
+  box(turntable,[.27,.035,.33],[.082,.973,0],materials.steel,'Верхняя монтажная плита');
+  cyl(body,.036,.095,[-.929,.666,.435],materials.steel,'Условный вывод кабеля','x');
+  const cablePath=new T.CatmullRomCurve3([[-.972,.666,.435],[-1.052,.544,.40],[-1.247,.23,.32],[-1.43,.139,.26]].map(p=>new T.Vector3(...p)));
+  mesh(body,new T.TubeGeometry(cablePath,24,.012,6,false),materials.dark,'Кабель, видимая часть и условная трасса');
+  const defaults={yaw:0,boom:0,loader:0,tip:0,grab:0,track:0};
+  // Independent demonstration ranges, in degrees except track phase. Positive boom = lift.
+  const limits={yaw:[-180,180],boom:[0,32],loader:[0,16],tip:[-5,25],grab:[0,32],track:[-100,100]};
+  let state={...defaults};
   function setPose(p={}){
-    state={...state,...p};for(const [k,v] of Object.entries(state))if(!Number.isFinite(v))throw Error('Nonfinite pose '+k);
-    const rad=T.MathUtils.degToRad;turntable.rotation.y=rad(state.yaw);boom.rotation.z=rad(state.boom);grab.rotation.z=-boom.rotation.z;
+    const next={...state};
+    for(const [key,value] of Object.entries(p)){
+      if(!Object.hasOwn(limits,key)||!Number.isFinite(value))throw new RangeError('Некорректная координата '+key);
+      next[key]=T.MathUtils.clamp(value,...limits[key]);
+    }
+    state=next;
+    const rad=T.MathUtils.degToRad;
+    turntable.rotation.y=rad(state.yaw);
+    boom.rotation.z=-rad(state.boom);grab.rotation.z=-boom.rotation.z;
     loader.rotation.z=rad(state.loader);scoop.rotation.z=rad(state.tip);updateTiltLinks();
     for(const {jaw,sign} of jaws)jaw.rotation.z=sign*rad(state.grab);
-    setTrackPhase(state.track*.015);root.updateMatrixWorld(true);return {...state};
+    setTrackPhase(state.track*.015);
+    root.updateMatrixWorld(true);
+    return {...state};
   }
-  function auditPose(){root.updateMatrixWorld(true);const probe=new T.Vector3(.49,-.283,0);scoop.localToWorld(probe);const g=new T.Vector3(0,-.90,0);grab.localToWorld(g);return {bucketClearance:probe.y-.12,grappleClearance:g.y-.12,fullCollisionTest:false};}
-  setPose();root.userData={version:'1986-v6',basis:'B external topology from identified figs6,9',allDimensions:'C',units:'arbitrary scene units',historicallyCalibrated:false,roadWheelsPerSide:7};
-  return {root,sections,objects,materials,setPose,auditPose,defaults,mechanisms:{turntable,boom,grab,loader,scoop},sourceProfile:()=>({wheelXs,wheelRadius,wheelY,endWheels,shoeThickness,cleatHeight,width,pitch,length,onBelt,contour,dimensionsVerified:false})};
+  const groundY=wheelY-wheelRadius-shoeThickness-cleatHeight;
+  function auditPose(){
+    root.updateMatrixWorld(true);
+    return {bucketClearance:new T.Box3().setFromObject(scoop,true).min.y-groundY,
+      grappleClearance:new T.Box3().setFromObject(grab,true).min.y-groundY,fullCollisionTest:false};
+  }
+  setPose();
+  root.userData={version:'1986-v6',basis:'B, рис. 6 и 9',allDimensions:'C',units:'arbitrary scene units',historicallyCalibrated:false,roadWheelsPerSide:7};
+
+  return {root,sections,objects,materials,setPose,auditPose,defaults,limits,groundY,mechanisms:{turntable,boom,grab,loader,scoop},sourceProfile:()=>({wheelXs,wheelRadius,wheelY,endWheels,shoeThickness,cleatHeight,width,pitch,length,onBelt,contour,dimensionsVerified:false})};
 }
