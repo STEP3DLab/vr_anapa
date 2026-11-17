@@ -5,6 +5,7 @@ on:
     paths:
       - 'mobot-engineering-v21*'
       - 'mobot-latest.html'
+      - 'scripts/mobot-scene-qa.mjs'
       - 'research/mobot/1987/viewer.*'
       - 'research/mobot/1987/browser.cjs'
       - '.github/workflows/mobot-1987-v21-qa.yml'
@@ -36,6 +37,7 @@ jobs:
         run: |
           node mobot-geometry-gate.cjs
           node scripts/mobot-compare-contract.cjs
+          node scripts/mobot-scene-qa.mjs
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/mobot21-integration.log 2>&1 &
           export CHROMIUM_PATH="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
           node scripts/mobot-browser-qa.cjs

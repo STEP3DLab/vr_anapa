@@ -29,3 +29,5 @@
 [Запуск GitHub Actions](https://github.com/STEP3DLab/vr_anapa/actions/runs/44169457763) · [первичный JSON браузера](browser-local.json). Контрольные кадры интерфейса: [1440×1000](webgl-1440x1000.webp), [390×844](webgl-390x844.webp), [360×800](webgl-360x800.webp).
 
 Публичный выпуск [efad030](https://github.com/STEP3DLab/vr_anapa/commit/efad030a28397e6840c282e1f1eab646138a65ee), [браузерный прогон на Pages](https://github.com/STEP3DLab/vr_anapa/actions/runs/44170435474), [исходный JSON](browser-pages.json). Целевые размеры, режим отказа WebGL, загрузка v20, сетевой журнал и все механизмы получили PASS.
+
+При первом полном общем запуске после переключения найдено устаревшее требование `latest = v20` внутри архивного теста сцен ([ошибка](https://github.com/STEP3DLab/vr_anapa/actions/runs/44171535879)). Отдельная проверка v21 на Pages и инженерная геометрия успешны. Исправлена проверка адреса, геометрические тесты v5, v19 и v20 сохранены. Повторный общий публичный прогон обязателен.
