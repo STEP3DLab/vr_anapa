@@ -205,7 +205,7 @@ export function makeMobot(THREE, quality='auto') {
     const g=new THREE.Group();g.position.z=z;tracks.add(g);
     const id='tracks';
     // Axles bridge the faces and a simplified inner carrier. Depth and support design are C.
-    box(g,[1.65,.24,.035],[.02,.38,-sign*.081],m.frame,id);
+    box(g,[1.52,.045,.035],[.02,.395,-sign*.081],m.frame,id);
     for(const {x,y,r:outer} of lowerWheels){
       beam(g,[x,y,-sign*.085],[x,.38,-sign*.085],.025,m.frame,id);
       cylinder(g,.025,.025,.16,[x,y,-sign*.036],m.satin,id,'z',16);
@@ -402,7 +402,7 @@ export function makeMobot(THREE, quality='auto') {
   gripper.add(fingerHead);
   // The opposing broad plates read across the frontal image (#3).
   // Roll about the hanging tool axis remains a single-view interpretation.
-  fingerHead.rotation.x=Math.PI/2;
+  fingerHead.rotation.x=Math.PI*.32;
   for(const z of [-.09,.09]){
     beam(fingerHead,[0,0,z],[-.08,.085,z],.020,m.frame,'gripper');
     beam(fingerHead,[0,0,z],[-.08,-.085,z],.020,m.frame,'gripper');
