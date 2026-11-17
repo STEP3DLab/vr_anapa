@@ -1,0 +1,207 @@
+{
+  "baseHeightScale": 1,
+  "candidateHeightScale": 1.0948084887790155,
+  "bands": {
+    "fig6": {
+      "upper": [
+        710,
+        915,
+        377,
+        22
+      ],
+      "lower": [
+        695,
+        892,
+        718,
+        16
+      ],
+      "heel": [
+        746,
+        390,
+        32
+      ]
+    },
+    "fig9": {
+      "upper": [
+        478,
+        659,
+        474,
+        32
+      ],
+      "lower": [
+        414,
+        594,
+        706,
+        22
+      ],
+      "heel": [
+        510,
+        486,
+        44
+      ]
+    }
+  },
+  "baseline": {
+    "fig6": {
+      "selected": {
+        "angles": [
+          33.882,
+          0.0
+        ],
+        "nosePx": 0.18,
+        "heelPx": 12.99,
+        "heightResidualPx": -29.53,
+        "projectedHeightPx": 311.47,
+        "topWidthResidualPx": -55.06
+      },
+      "solutions": [
+        {
+          "angles": [
+            -4.344,
+            0.0
+          ],
+          "nosePx": 44.81,
+          "heelPx": 13.19,
+          "heightResidualPx": -30.22,
+          "projectedHeightPx": 310.78,
+          "topWidthResidualPx": -60.09
+        },
+        {
+          "angles": [
+            33.882,
+            0.0
+          ],
+          "nosePx": 0.18,
+          "heelPx": 12.99,
+          "heightResidualPx": -29.53,
+          "projectedHeightPx": 311.47,
+          "topWidthResidualPx": -55.06
+        }
+      ]
+    },
+    "fig9": {
+      "selected": {
+        "angles": [
+          110.863,
+          32.0
+        ],
+        "nosePx": 11.33,
+        "heelPx": 68.41,
+        "heightResidualPx": 12.38,
+        "projectedHeightPx": 244.38,
+        "topWidthResidualPx": -53.66
+      },
+      "solutions": [
+        {
+          "angles": [
+            -180.0,
+            32.0
+          ],
+          "nosePx": 52.28,
+          "heelPx": 64.37,
+          "heightResidualPx": 13.18,
+          "projectedHeightPx": 245.18,
+          "topWidthResidualPx": -51.05
+        },
+        {
+          "angles": [
+            110.863,
+            32.0
+          ],
+          "nosePx": 11.33,
+          "heelPx": 68.41,
+          "heightResidualPx": 12.38,
+          "projectedHeightPx": 244.38,
+          "topWidthResidualPx": -53.66
+        },
+        {
+          "angles": [
+            170.72,
+            32.0
+          ],
+          "nosePx": 42.63,
+          "heelPx": 67.45,
+          "heightResidualPx": 12.99,
+          "projectedHeightPx": 244.99,
+          "topWidthResidualPx": -56.79
+        }
+      ]
+    }
+  },
+  "candidate": {
+    "fig6": {
+      "selected": {
+        "angles": [
+          35.725,
+          0.0
+        ],
+        "nosePx": 28.84,
+        "heelPx": 35.47,
+        "heightResidualPx": 0.08,
+        "projectedHeightPx": 341.08,
+        "topWidthResidualPx": -52.68
+      },
+      "solutions": [
+        {
+          "angles": [
+            35.725,
+            0.0
+          ],
+          "nosePx": 28.84,
+          "heelPx": 35.47,
+          "heightResidualPx": 0.08,
+          "projectedHeightPx": 341.08,
+          "topWidthResidualPx": -52.68
+        }
+      ]
+    },
+    "fig9": {
+      "selected": {
+        "angles": [
+          108.113,
+          29.438
+        ],
+        "nosePx": 0.0,
+        "heelPx": 83.07,
+        "heightResidualPx": 35.68,
+        "projectedHeightPx": 267.68,
+        "topWidthResidualPx": -52.08
+      },
+      "solutions": [
+        {
+          "angles": [
+            -180.0,
+            32.0
+          ],
+          "nosePx": 33.25,
+          "heelPx": 79.25,
+          "heightResidualPx": 36.48,
+          "projectedHeightPx": 268.48,
+          "topWidthResidualPx": -51.05
+        },
+        {
+          "angles": [
+            108.113,
+            29.438
+          ],
+          "nosePx": 0.0,
+          "heelPx": 83.07,
+          "heightResidualPx": 35.68,
+          "projectedHeightPx": 267.68,
+          "topWidthResidualPx": -52.08
+        },
+        {
+          "angles": [
+            172.016,
+            32.0
+          ],
+          "nosePx": 19.32,
+          "heelPx": 81.56,
+          "heightResidualPx": 36.31,
+          "projectedHeightPx": 268.31,
+          "topWidthResidualPx": -55.78
+        }
+      ]
+    }
+  }
+}
