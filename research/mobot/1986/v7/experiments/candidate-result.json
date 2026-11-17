@@ -1,0 +1,108 @@
+{
+  "phase": "candidate",
+  "status": "PASS",
+  "extension": 0.105,
+  "selected": {
+    "extension": 0.105,
+    "discreteScene": "PASS",
+    "firstError": null,
+    "verticalErrorPx": {
+      "fig6": 68.28,
+      "fig9": 155.7
+    }
+  },
+  "baseline": {
+    "extension": 0.06,
+    "discreteScene": "PASS",
+    "firstError": null,
+    "verticalErrorPx": {
+      "fig6": 84.25,
+      "fig9": 168.28
+    }
+  },
+  "url": "https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v7.html?suspension=0.105",
+  "trials": [
+    {
+      "extension": 0.06,
+      "discreteScene": "PASS",
+      "firstError": null,
+      "verticalErrorPx": {
+        "fig6": 84.25,
+        "fig9": 168.28
+      }
+    },
+    {
+      "extension": 0.075,
+      "discreteScene": "PASS",
+      "firstError": null,
+      "verticalErrorPx": {
+        "fig6": 78.93,
+        "fig9": 164.09
+      }
+    },
+    {
+      "extension": 0.09,
+      "discreteScene": "PASS",
+      "firstError": null,
+      "verticalErrorPx": {
+        "fig6": 73.61,
+        "fig9": 159.89
+      }
+    },
+    {
+      "extension": 0.105,
+      "discreteScene": "PASS",
+      "firstError": null,
+      "verticalErrorPx": {
+        "fig6": 68.28,
+        "fig9": 155.7
+      }
+    },
+    {
+      "extension": 0.12,
+      "discreteScene": "FAIL",
+      "firstError": "grapple overlap at -180,0,16,25,32",
+      "verticalErrorPx": {
+        "fig6": 62.96,
+        "fig9": 151.51
+      }
+    },
+    {
+      "extension": 0.135,
+      "discreteScene": "FAIL",
+      "firstError": "grapple overlap at -180,0,16,25,16",
+      "verticalErrorPx": {
+        "fig6": 57.64,
+        "fig9": 147.31
+      }
+    },
+    {
+      "extension": 0.15,
+      "discreteScene": "FAIL",
+      "firstError": "grapple overlap at -180,0,16,25,16",
+      "verticalErrorPx": {
+        "fig6": 52.32,
+        "fig9": 143.12
+      }
+    },
+    {
+      "extension": 0.165,
+      "discreteScene": "FAIL",
+      "firstError": "grapple overlap at -180,0,16,10,32",
+      "verticalErrorPx": {
+        "fig6": 47.0,
+        "fig9": 138.93
+      }
+    },
+    {
+      "extension": 0.18,
+      "discreteScene": "FAIL",
+      "firstError": "grapple overlap at -180,0,16,-5,32",
+      "verticalErrorPx": {
+        "fig6": 41.68,
+        "fig9": 134.73
+      }
+    }
+  ],
+  "scope": "Вертикальная проекция условного расстояния оголовок–траверса. Выбор по рис. 6, вето по рис. 9. Кинематика проверена в сцене. Длина и ракурс остаются C."
+}
