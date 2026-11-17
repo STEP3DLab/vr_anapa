@@ -1,0 +1,146 @@
+{
+  "schema": "mobot-research-qa/1.0",
+  "date": "2026-11-17",
+  "variant": "Мобот-Ч-ХВ 1986",
+  "revision": "research-v2",
+  "file": "mobot-ch-hv-1986-research-v2.html",
+  "parent": "mobot-ch-hv-1986-research-v1.html",
+  "changes": [
+    {
+      "id": "PHOTO-COMPARISON",
+      "description": "Linked 1986 original figures 6 (journal p.74) and 9 (p.75), with UI photo comparison; images are externally linked originals, not generated"
+    },
+    {
+      "id": "BOOM-POSES",
+      "description": "Qualitative raised / lower boom presets driven by one consistent boom joint",
+      "scenePresetDegrees": [
+        0,
+        58
+      ],
+      "physicalLimitsVerified": false
+    },
+    {
+      "id": "GRAB-STABILIZATION",
+      "description": "Original grab remains vertically oriented as boom rotates (grab.rotation.z = -boom.rotation.z)",
+      "provenance": "Photographic orientation in both figures; physical mounting mechanism not proven"
+    },
+    {
+      "id": "RELEASE-ISOLATION",
+      "description": "New 1986 research page, no modifications to 1987 v17 geometry or mobot-latest.html"
+    }
+  ],
+  "testResults": [
+    {
+      "name": "NODE-ESMODULE-SYNTAX",
+      "status": "pass",
+      "detail": "node --check on extracted 1986 v2 inline ES module"
+    },
+    {
+      "name": "THREE-COMPATIBLE-SCENE-GRAPH",
+      "status": "pass-with-mock",
+      "objectCount": 78,
+      "sectionCount": 12,
+      "note": "No factory part count or visual GPU certification"
+    },
+    {
+      "name": "POSE-FINITE-INPUT",
+      "status": "pass-with-mock",
+      "testedBoomDeg": [
+        -15,
+        0,
+        24,
+        58,
+        72
+      ],
+      "worldGrabRotationSumMaxAbs": 0,
+      "invalidInfinityRejected": true
+    },
+    {
+      "name": "CHROMIUM-DESKTOP-UI",
+      "status": "pass-with-stub",
+      "viewportPx": [
+        1250,
+        900
+      ],
+      "pageExceptions": 0,
+      "preset6": 58,
+      "preset9": 0,
+      "slider24": 24,
+      "reset": 0,
+      "canvases": 1,
+      "notes": "Fake Three / fake renderer; actual geometry not drawn"
+    },
+    {
+      "name": "CHROMIUM-MOBILE-UI",
+      "status": "pass-with-stub",
+      "viewportPx": [
+        390,
+        780
+      ],
+      "pageExceptions": 0,
+      "preset6": 58,
+      "preset9": 0,
+      "slider24": 24,
+      "reset": 0,
+      "canvases": 1,
+      "notes": "Fake Three / fake renderer; touch orbit and real mobile WebGL not certified"
+    },
+    {
+      "name": "SOURCE-ATTESTATION",
+      "status": "checked",
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf",
+      "figures": [
+        6,
+        9
+      ],
+      "notes": "Visual inspection of PDF pages 5 and 6 (printed pages 74 and 75) plus original page scans from Росатом library"
+    },
+    {
+      "name": "REMOTE-SOURCE-IMAGES",
+      "status": "URLs-opened-externally",
+      "urls": [
+        "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+        "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg"
+      ],
+      "notes": "Render depends on remote archive availability"
+    },
+    {
+      "name": "GITHUB-REPO",
+      "status": "file-created",
+      "notes": "Commit on default branch confirmed by GitHub connector"
+    },
+    {
+      "name": "PAGES-LIVE-RENDER",
+      "status": "not-verified",
+      "notes": "Public GitHub Pages not accessible to available browser/web client"
+    },
+    {
+      "name": "REAL-GPU-MODEL-RENDER",
+      "status": "not-verified",
+      "notes": "No real Three.js, screenshot or physical-device WebGL acceptance test; mock UI canvas is blank"
+    },
+    {
+      "name": "FACTORY-DIMENSIONS",
+      "status": "unavailable",
+      "notes": "No independent calibrated scale or dimensional drawing for the original robot"
+    }
+  ],
+  "evidenceConfidence": {
+    "typeOfMachine": "A (publication caption and technical author)",
+    "openTruss": "B (visible on two original photos)",
+    "hangingGrappleOrientation": "B (visible in two photographed arm poses)",
+    "exactArmLength": "C (unverified)",
+    "mechanismSuspension": "C (unverified)",
+    "gearRatios": "C",
+    "actualAngleLimits": "C",
+    "realPartCounts": "C",
+    "cameraMountDimensions": "C"
+  },
+  "limits": [
+    "58° is a deliberately illustrative model coordinate, NOT a measured 1986 boom angle",
+    "Model v2 does not change the unmeasured track count or add unverified fasteners",
+    "The two photos are perspective images with different camera viewpoints: no photogrammetric least-squares fit completed",
+    "No inferred real lengths, angles, motor motions, or structural loads"
+  ],
+  "publishDecision": "KEEP 1986 research-v2 separate; canonical latest remains 1987 v17 until historically backed geometry and real QA"
+}
