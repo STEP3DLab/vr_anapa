@@ -36,6 +36,6 @@ assert(latest.includes('mobot-engineering-v17.html')&&!latest.includes('mobot-en
 console.log(JSON.stringify({
  researchGate:'reproducible-static-layout-screening',
  variant1986:{loaderOppositeGrapple:true,sceneGrappleXRange:[Math.min(...grabXs),Math.max(...grabXs)],sceneLoaderXRange:[Math.min(...bucketXs),Math.max(...bucketXs)],historicalDimensionsValidated:false},
- variant1987:{candidate:'v18',nominalAdjacentCircleOverlaps:overlaps,rearEndCircleOverlap:rearOverlap,realWheelClearanceEstablished:false,eligibleForLatest:overlaps.length===0&&rearOverlap===0},
+ variant1987:{candidate:'v18',nominalAdjacentCircleOverlaps:overlaps,rearEndCircleOverlap:rearOverlap,realWheelClearanceEstablished:false,nominalCircleNonintersecting:overlaps.length===0&&rearOverlap===0,eligibleForLatest:false,additionalGatesMissing:['independent historical view','real WebGL/mobile verification','photogrammetric calibration']},
  latest:'v17',note:'Circle overlap is a scene-model warning, not a real-machine measurement.'
 },null,2));
