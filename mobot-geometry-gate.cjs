@@ -32,10 +32,11 @@ for(let i=0;i<wheels.length-1;i++){
  if(overlap>0)overlaps.push({indexPair:[i,i+1],sceneOverlap:Number(overlap.toFixed(6))});
 }
 const rearOverlap=Number(Math.max(0,.14+radii.at(-1)-Math.hypot(.72-wheels.at(-1),.47-.25)).toFixed(6));
-assert(latest.includes('mobot-engineering-v17.html')&&!latest.includes('mobot-engineering-v18.html'),'Stable latest unexpectedly changed');
+assert(latest.includes('mobot-engineering-v20.html')&&!latest.includes('mobot-engineering-v18.html'),'Research latest must point to v20, not rejected v18 candidate');
+assert(fs.existsSync(path.join(__dirname,'mobot-engineering-v17.html')),'Preserved historical v17 file missing');
 console.log(JSON.stringify({
  researchGate:'reproducible-static-layout-screening',
  variant1986:{loaderOppositeGrapple:true,sceneGrappleXRange:[Math.min(...grabXs),Math.max(...grabXs)],sceneLoaderXRange:[Math.min(...bucketXs),Math.max(...bucketXs)],historicalDimensionsValidated:false},
  variant1987:{candidate:'v18',nominalAdjacentCircleOverlaps:overlaps,rearEndCircleOverlap:rearOverlap,realWheelClearanceEstablished:false,nominalCircleNonintersecting:overlaps.length===0&&rearOverlap===0,eligibleForLatest:false,additionalGatesMissing:['independent historical view','real WebGL/mobile verification','photogrammetric calibration']},
- latest:'v17',note:'Circle overlap is a scene-model warning, not a real-machine measurement.'
+ latest:'v20 (research)',archivedStable:'v17',note:'v18 circle overlap is a scene-model warning; v20 is a research viewer, not factory-calibrated CAD.'
 },null,2));
