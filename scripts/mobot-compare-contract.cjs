@@ -10,7 +10,7 @@ const latest=read('mobot-latest.html');
 const release=JSON.parse(read('mobot-demo-release-2026-11-18.json'));
 const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 assert.equal(new Set(ids).size,ids.length,'duplicate compare element IDs');
-const required=['sync','syncStatus','zoomIn','zoomOut','reset','pose86','pose87','node86','node87','tool87','focus86','focus87','canvas86','canvas87','stage86','stage87','fallback86','fallback87','status86','status87','note86','note87'];
+const required=['sync','syncStatus','zoomIn','zoomOut','reset','pose86','pose87','node86','node87','tool87','focus86','focus87','isolate86','isolate87','canvas86','canvas87','stage86','stage87','fallback86','fallback87','status86','status87','note86','note87'];
 for(const id of required){
  assert(ids.includes(id),'required view control missing '+id);
  if(!id.startsWith('stage'))assert(app.includes("'"+id+"'")||app.includes("'"+id.replace(/(?:86|87)$/,'')+"'"),'unhandled control '+id);
@@ -26,6 +26,7 @@ assert(html.includes('Ч-ХВ-2')&&html.includes('Ч-ХВ'),'comparison is betwe
 assert(app.includes("makeMobot1986(T)")&&app.includes("makeMobot(T,"),'comparison must instantiate two distinct model implementations');
 assert(app.includes('new T.WebGLRenderer'),'actual WebGL comparison renderer required');
 assert(app.includes("getContext('webgl2'"),'explicit WebGL2 capability check required');
+assert(app.includes('function restoreIsolation')&&app.includes('function applyIsolation'),'reversible engineering isolation required');
 assert(app.includes("T.Raycaster()"),'clickable structural node support required');
 assert(app.includes("window.__mobotCompareQA"),'browser test surface required');
 assert(styles.includes('@media(max-width:720px)'), 'mobile breakpoint missing');
