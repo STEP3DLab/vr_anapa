@@ -121,31 +121,53 @@ export function makeMobot1986(T) {
   const turntable=group('Поворотная опора',root,'B appearance; yaw inferred from figs6,9');turntable.position.set(.29,.83,0);
   cyl(turntable,.28,.09,[0,0,0],materials.steel,'Поворотное основание','y');
   const mast=group('Высокая решётчатая стойка',turntable,'B');
-  for(const z of [-.21,.21]){
-    for(const x of [-.17,.17])beam(mast,[x,.06,z],[x,.99,z],.042,materials.structure,'Продольный элемент стойки');
-    for(let i=0;i<3;i++){
-      const y=.08+i*.30;
-      beam(mast,[-.17,y,z],[.17,y+.30,z],.027,materials.structure,'Диагональ стойки');
-      beam(mast,[-.17,y,z],[.17,y,z],.034,materials.steel,'Поперечина стойки');
-    }
-    beam(mast,[-.17,.98,z],[.17,.98,z],.045,materials.steel,'Верхняя площадка');
+  box(mast,[.55,.048,.50],[0,.061,0],materials.steel,'Плита пятки стойки');
+  // B: open heel and narrowing boom across both views. Subdivision, bracing and pins C.
+  const levels=[.081,.365,.660,.960];
+  function mastCorner(level,side,end){
+    const t=(level-levels[0])/(levels.at(-1)-levels[0]);
+    return [end*(.218-.060*t)+.026*t,level,side*(.201-.026*t)];
   }
-  for(const y of [.08,.98])for(const x of [-.17,.17])beam(mast,[x,y,-.21],[x,y,.21],.037,materials.structure,'Поперечная связь стойки');
-  const boom=group('Решётчатая стрела',turntable,'B topology');boom.position.set(-.12,.96,0);
-  // Two tapering truss cheeks, not a solid telescopic beam. Section sizes are C.
-  const top=[[0,.01],[-1.49,.26]],bottom=[[.09,-.59],[-1.49,.26]],zs=[-.22,.22];
-  const lerp=(p,t)=>[p[0][0]+t*(p[1][0]-p[0][0]),p[0][1]+t*(p[1][1]-p[0][1])];
-  for(const z of zs){
-    beam(boom,[...top[0],z],[...top[1],z],.039,materials.structure,'Верхний пояс фермы');
-    beam(boom,[...bottom[0],z],[...bottom[1],z],.039,materials.structure,'Нижний пояс фермы');
-    for(let i=0;i<4;i++){
-      const a=lerp(top,i/4),b=lerp(bottom,i/4),c=lerp(bottom,(i+1)/4);
-      beam(boom,[...a,z],[...b,z],.027,materials.structure,'Стойка фермы');
-      beam(boom,[...a,z],[...c,z],.025,materials.structure,'Диагональ фермы');
+  for(const side of [-1,1])for(const end of [-1,1]){
+    beam(mast,mastCorner(levels[0],side,end),mastCorner(levels.at(-1),side,end),.036,materials.structure,'Пояс стойки');
+  }
+  for(const [i,y] of levels.entries()){
+    for(const side of [-1,1]){
+      beam(mast,mastCorner(y,side,-1),mastCorner(y,side,1),.026,materials.steel,'Пояс поперечной рамы');
+      if(i+1<levels.length){
+        const d=i%2?1:-1;
+        beam(mast,mastCorner(y,side,d),mastCorner(levels[i+1],side,-d),.024,materials.structure,'Раскос боковой грани стойки');
+      }
+    }
+    for(const end of [-1,1]){
+      beam(mast,mastCorner(y,-1,end),mastCorner(y,1,end),.028,materials.steel,'Связь между боковинами стойки');
+      if(i+1<levels.length)beam(mast,mastCorner(y,-1,end),mastCorner(levels[i+1],1,end),.021,materials.structure,'Раскос торцевой грани');
     }
   }
-  for(const t of [0,.5,1]){const a=lerp(top,t);beam(boom,[...a,-.22],[...a,.22],.032,materials.steel,'Поперечная связь стрелы');}
-  cyl(boom,.075,.51,[0,0,0],materials.steel,'Условная ось наклона');
+  for(const z of [-.175,.175])cyl(mast,.061,.075,[-.132,.960,z],materials.dark,'Корпус опоры оси стрелы');
+  const boom=group('Решётчатая стрела',turntable,'B пространственные боковины / C раскосы и оси');
+  boom.position.set(-.132,.960,0);
+  const tipX=-1.49, tipY=.26;
+  function boomNode(i,upper,side){
+    const t=i/4, y0=upper?0:-.51, y1=upper?tipY+.043:tipY-.043;
+    return [tipX*t,y0+(y1-y0)*t,side*(.237-.133*t)];
+  }
+  for(const side of [-1,1]){
+    for(const upper of [false,true])beam(boom,boomNode(0,upper,side),boomNode(4,upper,side),.039,materials.structure,'Продольный пояс стрелы');
+    for(let i=0;i<=4;i++){
+      beam(boom,boomNode(i,true,side),boomNode(i,false,side),.028,materials.structure,'Стойка панели');
+      if(i<4)beam(boom,boomNode(i,i%2===0,side),boomNode(i+1,i%2!==0,side),.025,materials.structure,'Диагональ панели');
+    }
+    cyl(boom,.054,.036,[0,0,side*.237],materials.steel,'Проушина пяты');
+    cyl(boom,.063,.032,[tipX,tipY,side*.104],materials.steel,'Проушина оголовка');
+  }
+  for(let i=0;i<=4;i++)for(const upper of [true,false]){
+    // The root stays open around the support; an outboard frame closes each bay.
+    if(i>0||upper)beam(boom,boomNode(i,upper,-1),boomNode(i,upper,1),.030,materials.steel,'Поперечная связь панели');
+    if(i>0 && i<4 && upper)beam(boom,boomNode(i,true,-1),boomNode(i+1,true,1),.018,materials.steel,'Диагональ верхней плоскости');
+  }
+  cyl(boom,.038,.527,[0,0,0],materials.structure,'Палец наклона стрелы');
+
   const grab=group('Подвес и грейфер',boom,'A function / B outline / C mechanism');grab.position.set(-1.49,.26,0);
   cyl(grab,.068,.45,[0,0,0],materials.steel,'Поперечный шарнир');
   cyl(grab,.075,.24,[0,-.15,0],materials.structure,'Вертикальный промежуточный узел','y');
