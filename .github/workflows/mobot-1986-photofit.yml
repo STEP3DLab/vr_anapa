@@ -1,0 +1,41 @@
+name: Mobot 1986 archival figure registration
+on:
+  push:
+    branches:
+      - codex/mobot-1986-photofit-20261118
+      - main
+    paths:
+      - research/mobot/1986/photo-fit-qa.mjs
+      - mobot-qa/demo-2026-11-18/fig6-1986-landmarks-manual.json
+      - mobot-ch-hv-1986-research-v6-model.js
+      - .github/workflows/mobot-1986-photofit.yml
+  pull_request:
+    paths:
+      - research/mobot/1986/photo-fit-qa.mjs
+      - mobot-qa/demo-2026-11-18/fig6-1986-landmarks-manual.json
+      - .github/workflows/mobot-1986-photofit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-registration:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax
+        run: node --check research/mobot/1986/photo-fit-qa.mjs
+      - name: Verify source registration (pixels, not millimetres)
+        run: node research/mobot/1986/photo-fit-qa.mjs > mobot-1986-photo-fit-report.json
+      - name: Check previous geometry contracts
+        run: node research/mobot/1986/scene-qa.mjs
+      - name: Save diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobot-1986-photo-fit-evidence
+          path: mobot-1986-photo-fit-report.json
+          retention-days: 30
