@@ -1,0 +1,134 @@
+{
+  "schema": "mobot-engineering-evidence/1.1",
+  "version": "v17.0",
+  "date": "2026-11-17",
+  "object": "Мобот-Ч-ХВ-2, модернизированная машина 1987 года (не Ч-ХВ 1986 г.)",
+  "release": "mobot-engineering-v17.html",
+  "parent": [
+    "mobot-engineering-v16-passport.json",
+    "mobot-engineering-v15-passport.json"
+  ],
+  "threeDModel": "mobot-engineering-v16-model.js",
+  "geometryChange": "NONE. v17 is a mechanically consistent, evidence-correct UI/QA revision; photogrammetric data insufficient for new fabricated forms.",
+  "viewerScript": "mobot-assets/workbench-v17.js",
+  "atlas": "mobot-schematic-v17.html",
+  "interfaceKinematics": "mobot-kinematics-v17.js",
+  "nominalGeometryKinematics": "mobot-kinematics-v15.js",
+  "evidenceClasses": {
+    "A": "Функция/наличие подтверждены документальным первичным источником. Не подтверждает форму.",
+    "B": "Внешний признак виден на идентифицированной фотографии; размер и кинематика не измерены.",
+    "C": "Моделирование для демонстрации, отсутствуют исходные размерные чертежи и достоверные монтажные координаты."
+  },
+  "sources": [
+    {
+      "id": "SKTB-PRIMARY",
+      "url": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
+      "class": "A",
+      "claim": "Ч-ХВ-2 в 1987 г.; модернизация, сменные органы, фронтальный погрузчик, манипулятор"
+    },
+    {
+      "id": "SKTB-ALBUM",
+      "url": "https://sktbpr.ru/foto-alb/65",
+      "class": "B",
+      "claim": "Архивные виды ходовой, манипулятора и рабочих конфигураций; не являются обмерными чертежами"
+    },
+    {
+      "id": "ARSENAL-ARTICLE",
+      "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "published": "2026-09-29",
+      "class": "A/B",
+      "claim": "Подпись рис.7 идентифицирует отработку операции с оснасткой на имитаторе трубы; нельзя использовать как подтверждение формы обычного схвата"
+    },
+    {
+      "id": "ARSENAL-FIG7",
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image013.jpg",
+      "class": "B",
+      "claim": "Рабочая головка на стенде с отдельной оснасткой, не точные заводские размеры"
+    },
+    {
+      "id": "ARSENAL-FIG5",
+      "url": "https://storage.arsenal-otechestva.ru/images/articles/2026/04/chern/image009.jpg",
+      "class": "B",
+      "claim": "Общий вид на демонстрационном стенде"
+    }
+  ],
+  "verifiedChanges": [
+    {
+      "id": "ANGLE-DIRECTION",
+      "evidence": "code",
+      "class": "A for software behavior; C for historical mechanism",
+      "issue": "v16 viewer maps positive 'Подъём рамы' to negative model Z-rotation, while v15 standalone 2D interpreted same positive number as positive rotation.",
+      "change": "v17 canonical control converts positive liftUpDeg to negative Z rotation in the shared screen and atlas; geometric profiles kept from v15. Screens now compare identical model poses.",
+      "proof": "4 direct viewer/model clearances matched to 1e-7 scene units; independent 2D grid and sweep both count 1092 sampled UI poses."
+    },
+    {
+      "id": "LIVE-CLEARANCE",
+      "evidence": "programmatic",
+      "class": "C",
+      "change": "3D controller displays live 21-probe nominal clearance sign for current bucket and tip pose, using the same shared calculation as 2D atlas.",
+      "limitation": "No mesh collisions, actual ground, verified envelope or physical measurement."
+    },
+    {
+      "id": "SOURCE-RECLASSIFICATION",
+      "evidence": "ARSENAL-ARTICLE / FIG7",
+      "class": "B",
+      "change": "Archival fig.7 is labeled as a test of separate tubular work fixture, not definitive ordinary gripper geometry.",
+      "limitation": "The modeled workhead still inherits visual hypotheses from v16."
+    },
+    {
+      "id": "BROWSER-FALLBACK",
+      "evidence": "code",
+      "class": "A for logic only",
+      "change": "On WebGL setup failure the viewer allocates a NEW canvas for CPU rasterization; a prior WebGL-bound canvas cannot safely become a 2D canvas.",
+      "limitation": "The fallback error branch has not been tested in a physical browser during this run."
+    },
+    {
+      "id": "MOBILE-RESIZE",
+      "evidence": "code",
+      "class": "A for logic only",
+      "change": "Use window resize fallback if ResizeObserver is unavailable."
+    }
+  ],
+  "geometryConfidence": {
+    "tracks": "B/C",
+    "body": "B/C",
+    "manipulator": "B/C",
+    "gripper": "C",
+    "bucket": "B/C",
+    "loaderJointCoordinates": "C",
+    "breakerMounts": "C",
+    "actualScaleKnown": false,
+    "actualMechanicalLimitsKnown": false,
+    "photogrammetryCalibrated": false,
+    "dimensionsPresentedIn": "uncalibrated scene units, NEVER historical metres"
+  },
+  "currentScreening": {
+    "interfaceConvention": "Displayed bucket lift +° means 3D loader rotation -° around local Z.",
+    "displayedLiftRangeDeg": [
+      -12,
+      42
+    ],
+    "tipRangeDeg": [
+      -38,
+      38
+    ],
+    "stepDeg": 2,
+    "sampledPoses": 1092,
+    "nominalWarnings": 194,
+    "modelProbeCount": 21,
+    "note": "Earlier v15 screening covered a different convention and lift domain; warnings are NOT directly comparable."
+  },
+  "qa": "mobot-engineering-v17-qa.json",
+  "legacyVersionsUnchanged": [
+    "mobot-engineering-v16.html",
+    "mobot-engineering-v16-model.js",
+    "mobot-engineering-v15.html",
+    "mobot-schematic-v15.html"
+  ],
+  "openQuestions": [
+    "Форма сменных рабочих головок и монтажные интерфейсы: требуются дополнительные виды/чертежи.",
+    "Геометрия и реальное число зубьев/наличие сплошного ножа ковша не подтверждены.",
+    "Оси, ходовые ограничения и размеры погрузчика и манипулятора требуют измерений по независимым фотографиям.",
+    "Трёхмерная визуальная проверка и Canvas2D fallback в реальном браузере/на телефоне ещё не пройдены."
+  ]
+}
