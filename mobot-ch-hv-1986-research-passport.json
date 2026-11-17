@@ -2,8 +2,8 @@
   "schema": "mobot-engineering-evidence/1.1",
   "date": "2026-11-17",
   "object": "Мобот-Ч-ХВ, исходная машина 1986 года",
-  "status": "research-baseline-no-3d-release",
-  "threeDModel": null,
+  "status": "separate-uncalibrated-3d-research-revision",
+  "threeDModel": "mobot-ch-hv-1986-research-v1.html",
   "sourceOfTruth": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
   "notDerivedFrom": "mobot-engineering-v16-model.js",
   "actualScaleKnown": false,
@@ -94,14 +94,56 @@
       "id": "secondary-research",
       "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf",
       "claim": "вторичный материал, фотографии требуют сверки по подписям"
+    },
+    {
+      "id": "2019-JOURNAL-FIG9-1986",
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6",
+      "claim": "атрибуция исходного Мобота-Ч-ХВ 1986 г., качественная геометрия решётчатой стрелы"
     }
   ],
   "releaseGate": {
-    "historicalImageAttribution": "not-completed",
-    "sideAndFrontSilhouettes": "not-completed",
+    "historicalImageAttribution": "1986 image independently confirmed by 2019 journal Fig.9 (PDF page 6)",
+    "sideAndFrontSilhouettes": "not-completed, photo is perspective",
     "jointLocations": "not-completed",
     "realDimensions": "not-available",
-    "threeDGeometry": "not-created",
-    "decision": "Do not publish a 1986 3D model by relabeling the 1987 model."
-  }
+    "threeDGeometry": "research blockout created, no calibrated original geometry",
+    "realDeviceQA": "not-completed",
+    "decision": "Publish separate research 1986 page only; do not change mobot-latest.html v17."
+  },
+  "sourceGeometryEvidence": [
+    {
+      "source": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6",
+      "publication": "Овчинников В. В., Батанов А. Ф., Мингалеев С. Г., Роботы в Чернобыле, Технологии гражданской безопасности, 2019, т.16 №4, печ. с.75, рис.9",
+      "date": "2019",
+      "class": "B",
+      "claims": [
+        "Подпись изображения идентифицирует исходный Мобот-Ч-ХВ, 1986",
+        "Видна открытая решётчатая конструкция стрелы, отличимая от Ч-ХВ-2"
+      ],
+      "cannotEstablish": [
+        "реальные длины, монтажные координаты, точное число катков",
+        "пространственное сечение фермы, скрытые механизмы и диаметры",
+        "изображение не ортографическое, оси не калиброваны"
+      ]
+    },
+    {
+      "source": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "publication": "СКТБ ПР, фотоальбом Мобот-Ч-ХВ-2 (1987)",
+      "class": "B",
+      "claims": [
+        "Облик модернизированного варианта отличается от 1986 фото"
+      ],
+      "cannotEstablish": [
+        "метрическая шкала без масштабного эталона"
+      ]
+    }
+  ],
+  "geometryVersion": "research-v1",
+  "geometryPrinciples": [
+    "1986 truss boom modelled with diagonal bracing as qualitative B silhouette",
+    "1986 grapple not replaced by 1987 detachable two-jaw gripper; shape C",
+    "Undercarriage, loader and cameras present by primary textual description; mounts and shapes C",
+    "No hydraulics claimed; all drives documented as electromechanical",
+    "All points scene units, not metres, and joint ranges are UI-only hypotheses"
+  ]
 }
