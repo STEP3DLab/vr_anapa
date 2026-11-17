@@ -18,9 +18,11 @@
     "scope": "Независимая проверка вершины кожуха и видимой пропорции грейфера. Положение подвеса и силуэт стрелы всё ещё расходятся с фото."
   },
   "browser": {
-    "statusAtPreflight": "NOT RUN",
+    "statusAtPreflight": "PASS",
     "liveResults": "https://github.com/STEP3DLab/vr_anapa/actions/workflows/mobot-1986-v7-verify.yml",
-    "reportInArtifact": "v7-production-output/browser-results.json"
+    "reportInArtifact": "v7-production-output/browser-results.json",
+    "verifiedRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44183323442",
+    "scope": "Chromium, WebGL2, 7 узлов, 6 координат движения, касания, размеры 320–720 px и статический резерв."
   },
   "physicalMeasurements": "NOT RUN",
   "physicalPhone": "NOT RUN",

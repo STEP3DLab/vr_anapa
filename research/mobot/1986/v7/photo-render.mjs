@@ -17,6 +17,12 @@ const up=x.clone().multiplyScalar(Math.sin(r)).addScaledVector(y,Math.cos(r));
 const scale=cam.pxPerSceneUnit;
 const camera=new T.OrthographicCamera(-cam.cx/scale,(w-cam.cx)/scale,cam.cy/scale,(cam.cy-h)/scale,.01,40);
 camera.position.copy(z).multiplyScalar(9);camera.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(right,up,z));camera.updateMatrixWorld();
+// The optional file records projected reference positions for shape-only detail tiles.
+if(process.argv[6]){
+  const top=model.sections['Открытая рамка грейфера'];
+  const q=top.localToWorld(new T.Vector3(0,-.286,0)).project(camera);
+  fs.writeFileSync(process.argv[6],JSON.stringify({top:[(q.x+1)*w/2,(1-q.y)*h/2]}));
+}
 let rgba;
 const ctx={createImageData:(width,height)=>({data:new Uint8ClampedArray(width*height*4)}),putImageData:b=>{rgba=b.data;}};
 const raster=makeRasterRenderer({getContext:()=>ctx});raster.resize(w,h);raster.render(model.root,camera);

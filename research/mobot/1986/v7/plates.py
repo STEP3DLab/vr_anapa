@@ -19,7 +19,15 @@ def create_plate(tmp,detail):
     for row,key in enumerate(('fig6','fig9')):
         source=Image.open(ROOT/data[key]['image']).convert('RGB')
         for col,image in enumerate([source,Image.open(tmp/(key+'-v6.ppm')),Image.open(tmp/(key+'-v7.ppm'))]):
-            if detail:image=image.crop(data[key]['crop'])
+            if detail:
+                x0,y0,x1,y1=data[key]['crop']
+                if col:
+                    # Translate the crop only, keeping the chassis-derived pixel scale.
+                    anchor=json.loads((tmp/(key+'-'+headers[col]+'.json')).read_text())['top']
+                    tx,ty=data[key]['grapple']['top'][:2]
+                    dx,dy=round(anchor[0]-tx),round(anchor[1]-ty)
+                    x0+=dx;x1+=dx;y0+=dy;y1+=dy
+                image=image.crop((x0,y0,x1,y1))
             tile=ImageOps.contain(image,(tw-6,th),Image.Resampling.LANCZOS);left=8+col*tw;y=6+row*(th+38)
             draw.text((left,y),'Рис. '+key[3:]+'  /  '+headers[col],font=font,fill='#233c32')
             plate.paste(tile,(left+(tw-tile.width)//2,y+32+(th-tile.height)//2))
@@ -28,5 +36,5 @@ with tempfile.TemporaryDirectory() as temp:
     tmp=Path(temp)
     for key in ('fig6','fig9'):
         for v in ('v6','v7'):
-            subprocess.run(['node',str(HERE/'photo-render.mjs'),str(args.registration),key,v,str(tmp/(key+'-'+v+'.ppm'))],cwd=ROOT,check=True)
+            subprocess.run(['node',str(HERE/'photo-render.mjs'),str(args.registration),key,v,str(tmp/(key+'-'+v+'.ppm')),str(tmp/(key+'-'+v+'.json'))],cwd=ROOT,check=True)
     for detail in (True,False):create_plate(tmp,detail)
