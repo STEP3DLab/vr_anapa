@@ -1,0 +1,15 @@
+import * as T from '../../../mobot-assets/three.module.min.js';
+import {makeMobot} from '../../../mobot-engineering-v21-model.js';
+import assert from 'node:assert/strict';
+globalThis.document={createElement:()=>({getContext:()=>null})};
+const {parts,mechanisms:m}=makeMobot(T,'desktop');
+const housings=parts.cameras.children.filter(o=>o.isGroup);
+assert.equal(housings.length,2);assert.equal(parts.cameras.parent,parts.turret);
+const pos=o=>o.getWorldPosition(new T.Vector3());
+const before=housings.map(pos),cable=pos(parts.cable.children[0]);
+m.turntable.rotation.y=1.4;
+housings.forEach((o,i)=>assert(pos(o).distanceTo(before[i])>.1));
+assert(pos(parts.cable.children[0]).distanceTo(cable)<1e-10);
+assert.equal(parts.cable.children.length,2);
+assert(!parts.dock&&!parts.dose);
+console.log('PASS: both housings follow the turret, cable stays on chassis; undocumented internals excluded.');

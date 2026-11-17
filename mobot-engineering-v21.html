@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мобот-Ч-ХВ-2 · Инженерный атлас v21</title>
+  <meta name="description" content="Инженерная реконструкция модернизированной машины 1987 года. Подвижная 3D-сборка, четыре снимка СКТБ ПР и паспорт достоверности.">
+  <link rel="icon" href="data:,"><link rel="stylesheet" href="./research/mobot/1987/viewer.css">
+</head>
+<body>
+<header><a class="brand" href="./mobot-demo.html">МОБОТ <span>/</span> Инженерный архив</a><nav><a href="#archive">Фотосверка</a><a href="#evidence">Паспорт</a><a href="./mobot-engineering-v20.html">Версия v20 ↗</a></nav></header>
+<main>
+  <div class="intro"><div><p class="eyebrow">ЧЕРНОБЫЛЬСКАЯ АЭС · 1987</p><h1>Мобот-Ч-ХВ-2</h1></div><p>Модернизированная машина со сменным оснащением.<br>Исследовательская реконструкция по архиву СКТБ ПР.</p></div>
+  <section id="model" class="workbench" aria-label="Инженерный просмотр">
+    <div class="study"><div class="stage" id="stage">
+      <div id="surface"></div>
+      <img id="still" src="./research/mobot/1987/overview.webp" alt="Трёхчетвертной вид собранной модели v21">
+      <img id="overlayImage" alt="" hidden>
+      <div class="stage-head"><span class="stamp">МОДЕЛЬ / v21</span><div class="views" role="group" aria-label="Ракурс"><button data-view="three" aria-pressed="true">¾</button><button data-view="side">Сбоку</button><button data-view="front">Спереди</button><button data-view="top">Сверху</button></div></div>
+      <div class="stage-foot"><span id="renderer" role="status">Контрольный кадр v21</span><div class="views"><button id="out" aria-label="Уменьшить">−</button><button id="home" aria-label="Вписать сборку">⌂</button><button id="in" aria-label="Увеличить">+</button></div></div>
+    </div><div class="caption"><span id="poseLabel">Положение перед отправкой</span><button id="present" aria-pressed="false">На весь экран</button></div></div>
+    <aside id="panel"><fieldset id="liveControls" disabled><legend>Управление моделью</legend>
+      <div class="row"><label for="pose">Поза</label><select id="pose"></select></div>
+      <div class="row"><label for="tool">Оснащение</label><select id="tool"><option value="gripper">Двупалый схват</option><option value="breaker-arm">Молоток на стреле</option><option value="breaker-loader">Молоток на погрузчике · C</option></select></div>
+      <div class="row"><label for="part">Узел</label><select id="part"><option value="all">Вся машина</option><option value="tracks">Гусеничная ходовая</option><option value="body">Рама и кожух</option><option value="turret">Поворотная опора</option><option value="arm">Стрела</option><option value="gripper">Головка манипулятора</option><option value="bucket">Погрузчик</option><option value="cameras">Телекамеры</option><option value="cable">Вывод кабеля</option></select></div>
+      <p id="partInfo" class="note"></p>
+      <div id="modes" role="group" aria-label="Осмотр узла"><button data-mode="normal" aria-pressed="true">Сборка</button><button data-mode="isolate">Изоляция</button><button data-mode="ghost">Прозрачность</button></div>
+      <label class="slider small" for="explode">Разнести узлы <output id="spreadOut">0%</output><input id="explode" type="range" min="0" max="100" value="0"></label>
+      <label class="check"><input id="axes" type="checkbox"> Оси шарниров</label>
+      <details id="joints"><summary>Движения механизмов</summary><div id="sliders"></div></details>
+      <p class="notice" id="warning" role="status">Загрузка 3D-сцены…</p>
+      <button id="reset">Восстановить исходный вид</button>
+    </fieldset><noscript>JavaScript отключён. Доступны контрольный кадр, архив и паспорт.</noscript></aside>
+  </section>
+  <section id="archive"><div class="section-head"><div><p class="eyebrow">СКТБ ПРИКЛАДНОЙ РОБОТОТЕХНИКИ</p><h2>Архивная фотосверка</h2></div><a href="./mobot-photo-measure-v2.html">Разметка оригиналов ↗</a></div>
+    <div class="archives"><figure><a id="photoFile" href="./mobot-assets/archive/1987-before-dispatch.jpg"><img id="photo" src="./mobot-assets/archive/1987-before-dispatch.jpg" alt="Машина перед отправкой на ЧАЭС"></a></figure>
+    <div><div class="photos" id="photoChoices" aria-label="Фотографии архива"></div><h3 id="photoTitle">Перед отправкой на ЧАЭС</h3><p id="photoNote">На снимке №2 видны семь нижних дисков ходовой, очертание кожуха и взаимное положение стрелы, схвата и ковша.</p>
+    <div class="photo-actions"><button id="match" disabled>Показать позу в 3D</button><label class="check"><input type="checkbox" id="overlay" disabled> Наложить снимок</label></div>
+    <p class="note">Наложение служит для визуального сравнения. Перспектива и масштаб камеры не откалиброваны.</p><a id="original" href="http://sktbpr.ru/sites/default/files/foto_album/2.jpg">Первичный источник ↗</a></div></div>
+  </section>
+  <section id="evidence"><div class="section-head"><div><p class="eyebrow">ИССЛЕДОВАТЕЛЬСКАЯ ВЕРСИЯ 21</p><h2 id="passport">Паспорт достоверности</h2></div></div>
+  <div class="legend"><div><b>A</b><h3>Документ</h3><p>Сменный схват и два места установки молотка описаны разработчиком.</p></div><div><b>B</b><h3>Фотография</h3><p>Катки видимого борта, оболочка кожуха, наружные элементы стрелы и рабочие органы различимы на снимках.</p></div><div><b>C</b><h3>Гипотеза</h3><p>Размеры, скрытые крепления, углы и кинематика условны. Внутреннее устройство кабелеукладчика и место дозиметра остаются открытыми.</p></div></div>
+  <div class="links" id="backup"><a href="./mobot-engineering-v21-passport.json">Паспорт узлов ↗</a><a href="./mobot-engineering-v21-qa.json">Результаты испытаний ↗</a><a href="./research/mobot/1987/side.webp">Боковой контрольный кадр ↗</a><a href="./mobot-engineering-v20.html">Архив v20 ↗</a></div></section>
+</main>
+<script type="module" src="./research/mobot/1987/viewer.js"></script>
+</body></html>

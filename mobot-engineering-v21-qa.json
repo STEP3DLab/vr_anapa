@@ -1,0 +1,55 @@
+{
+  "revision": "v21",
+  "tests": {
+    "realGeometry": "PASS",
+    "finiteCoordinates": "PASS",
+    "worldMatrices": "PASS",
+    "jointAttachments": "PASS",
+    "threeTools": "PASS",
+    "obviousDetachedComponents": "PASS",
+    "fourReferenceRenders": "PASS",
+    "reversibleModes": "PASS",
+    "webgl2": "PASS",
+    "desktop1440x1000": "PASS",
+    "mobile390x844": "PASS",
+    "narrow360x800": "PASS",
+    "originalPhotos": "PASS",
+    "browserConsole": "PASS",
+    "networkRequests": "PASS",
+    "noWebGL": "PASS",
+    "v20Preserved": "PASS",
+    "publishedPages": "NOT RUN",
+    "physicalPhone": "NOT RUN",
+    "fullMeshCollisions": "NOT RUN"
+  },
+  "log": "research/mobot/1987/QA-LOG.md",
+  "baseline": "1b40bb9386448b074f30ef42dfe8908b8a20ef37",
+  "testedBranchSHA": "ed9f5af55865ef854ad68205165ba0432950d4cf",
+  "branchRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44169457763",
+  "branchBrowserReport": "research/mobot/1987/browser-local.json",
+  "renderer": "Chromium / ANGLE SwiftShader, WebGL 2.0; emulated mobile viewports",
+  "geometry": {
+    "poses": 81,
+    "warningCases": 50,
+    "presetsWithoutWarnings": 6,
+    "meshes": 291,
+    "boomPoseCount": 15,
+    "bucketPoseCount": 12,
+    "maxBoomEndpointError": 4.965068306494546e-16,
+    "maxLoaderEndpointOrBladeError": 2.220446049250313e-16,
+    "trackDiscGap": 0.027637341307449367,
+    "trackPadGap": 0.0002999653633142668,
+    "attachmentBoundingBoxTolerance": 0.003
+  },
+  "screenshots": [
+    "research/mobot/1987/webgl-1440x1000.webp",
+    "research/mobot/1987/webgl-390x844.webp",
+    "research/mobot/1987/webgl-360x800.webp"
+  ],
+  "referenceRenders": [
+    "research/mobot/1987/overview.webp",
+    "research/mobot/1987/side.webp",
+    "research/mobot/1987/breaker-arm.webp",
+    "research/mobot/1987/breaker-loader.webp"
+  ]
+}
