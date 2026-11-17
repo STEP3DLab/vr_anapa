@@ -3,7 +3,7 @@
   "date": "2026-11-17",
   "object": "Мобот-Ч-ХВ, исходная машина 1986 года",
   "status": "Separate research visualization for 1986; two historical photo poses; not dimensional CAD",
-  "threeDModel": "mobot-ch-hv-1986-research-v3.html",
+  "threeDModel": "mobot-ch-hv-1986-research-v4.html",
   "sourceOfTruth": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
   "notDerivedFrom": "mobot-engineering-v16-model.js",
   "actualScaleKnown": false,
@@ -106,9 +106,10 @@
     "sideAndFrontSilhouettes": "not-calibrated; photos have different perspective",
     "jointLocations": "not-completed",
     "realDimensions": "not-available",
-    "threeDGeometry": "research-v3: correction of schematic grapple jaw layout only; unmeasured hardware",
-    "realDeviceQA": "Desktop/mobile DOM mock only; WebGL GPU and public Pages not independently verified",
-    "decision": "Maintain separate 1986 prototype v3, preserve v1/v2 and existing 1987 stable latest."
+    "threeDGeometry": "research v4: loader flipped across chassis; all mount positions and shapes still hypothesis C",
+    "realDeviceQA": "desktop/mobile DOM mocked only; not actual WebGL/GPU",
+    "decision": "Keep 1986 v4 research separate and retain v1-v3; keep 1987 latest v17 unchanged.",
+    "relativeLoaderBoomEnds": "source photo confirms opposite ends for 1986; v4 corrected"
   },
   "sourceGeometryEvidence": [
     {
@@ -138,16 +139,17 @@
       ]
     }
   ],
-  "geometryVersion": "research-v3",
+  "geometryVersion": "research-v4",
   "geometryPrinciples": [
     "1986 truss boom modelled with diagonal bracing as qualitative B silhouette",
     "1986 grapple not replaced by 1987 detachable two-jaw gripper; shape C",
     "Undercarriage, loader and cameras present by primary textual description; mounts and shapes C",
     "No hydraulics claimed; all drives documented as electromechanical",
-    "All points scene units, not metres, and joint ranges are UI-only hypotheses"
+    "All points scene units, not metres, and joint ranges are UI-only hypotheses",
+    "First 1986 machine: Fig.6 verifies loader opposite to rearward truss/grapple (B); v4 corrects v3 single-end error without inventing dimensions."
   ],
-  "parent3DModel": "mobot-ch-hv-1986-research-v2.html",
-  "qa": "mobot-ch-hv-1986-research-v3-qa.json",
+  "parent3DModel": "mobot-ch-hv-1986-research-v3.html",
+  "qa": "mobot-ch-hv-1986-research-v4-qa.json",
   "photoPoseEvidence": [
     {
       "id": "FIG6",
@@ -185,6 +187,35 @@
       "claim": "v2 jaws separated across Z overlapped in the historical 1986 side view. v3 places jaw pair across X, rotates them in the side plane, preserving hanging orientation.",
       "source": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6",
       "limitation": "This improves a qualitative side silhouette; not a measurement of actual jaw geometry, pivot mechanism or travel."
+    },
+    {
+      "id": "FRONT-LOADER-OPPOSITE-TRUSS",
+      "class": "B: historical relative orientation; C: coordinates/hinge geometry",
+      "source": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+      "observation": "Original 1986 photograph Fig.6 shows the open truss and grapple extending one way, the front-loader scoop on the opposite end of the machine.",
+      "fix": "Move and mirror the v3 loader and bucket geometry to model positive-X while the grapple/truss extends negative-X. Actual 1986 mechanical joints/lengths stay unverified.",
+      "beforeV3": {
+        "grappleEndXScene": -0.65,
+        "scoopEndXScene": -1.39
+      },
+      "afterV4": {
+        "grappleEndXScene": -0.65,
+        "scoopEndXScene": 1.39
+      },
+      "note": "Values in MODEL SCENE units. No physical dimensional claim."
     }
-  ]
+  ],
+  "relativeArrangement": {
+    "original1986": {
+      "loader": "opposite end from truss/grapple",
+      "class": "B",
+      "source": "2019 journal Fig.6, page 74"
+    },
+    "modernized1987": {
+      "loader": "same visible side as manipulator in SKTB PR photo 2",
+      "class": "B preliminary",
+      "source": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg"
+    },
+    "limitations": "Single perspectives and uncalibrated optics prevent full 3D placement, joint or dimensional derivation."
+  }
 }
