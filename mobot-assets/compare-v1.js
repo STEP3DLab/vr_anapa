@@ -131,6 +131,7 @@ function setInfo(v){
  const key=$('node'+v.year).value,info=partNames[v.year][key];
  $('note'+v.year).textContent=info?info.note:'Показана конструкция в сборе. Выберите узел или коснитесь детали модели.';
  if(!v.model)return;
+ restoreIsolation(v); // Restore the complete mesh hierarchy before computing a new selection's bounds.
  if(v.outline){v.scene.remove(v.outline);v.outline.geometry.dispose();v.outline.material.dispose();v.outline=null;}
  if(info){
   const box=boundsFor(v);
