@@ -97,6 +97,59 @@
       "test": "DEPLOYMENT",
       "status": "not-confirmed",
       "notes": "GitHub write and file fetch passed; public Pages site cannot be checked by available web tool"
+    },
+    {
+      "test": "SCENE-WHEEL-PLANAR-NONINTERSECTION",
+      "status": "FAIL-nominal-2d-projection",
+      "lowerRollerNeighborOverlaps": [
+        {
+          "between": [
+            0,
+            1
+          ],
+          "penetrationNominalSceneUnits": 0.012
+        },
+        {
+          "between": [
+            1,
+            2
+          ],
+          "penetrationNominalSceneUnits": 0.012
+        },
+        {
+          "between": [
+            2,
+            3
+          ],
+          "penetrationNominalSceneUnits": 0.032
+        },
+        {
+          "between": [
+            3,
+            4
+          ],
+          "penetrationNominalSceneUnits": 0.012
+        },
+        {
+          "between": [
+            4,
+            5
+          ],
+          "penetrationNominalSceneUnits": 0.022
+        },
+        {
+          "between": [
+            5,
+            6
+          ],
+          "penetrationNominalSceneUnits": 0.002
+        }
+      ],
+      "adjacentOverlapCount": 6,
+      "maxOverlapSceneUnits": 0.032,
+      "endWheelRearOverlapSceneUnits": 0.01739,
+      "method": "Scene code nominal wheel circles: trackSide wheelXs, outer=0.099+(i%2==0?0.004:0), end wheel radius 0.14 at x=0.72 y=0.47, lower wheel y=0.25",
+      "notes": "This proves circle overlap in the model's projected track side. Wheel hubs and rims may occupy different axial planes, but real constructive offsets are NOT documented. Do not infer real-machine wheel collisions. The candidate should not be promoted until scene geometry and image fit are reconciled."
     }
   ],
   "releaseGate": {
@@ -111,12 +164,15 @@
     "promoteToLatest": false,
     "reason": "All new track coordinates are C-grade single-perspective approximations; no independent geometry/photo alignment and no real GPU acceptance.",
     "threeCompatibleModelMock": true,
-    "realThreeRenderer": false
+    "realThreeRenderer": false,
+    "nominalWheelDiscOverlapFree": false,
+    "nominalOverlappingWheelPairs": 7
   },
   "future": [
     "Find another high-resolution unoccluded 1987 side or opposite-side SKTB photo",
     "Register two perspectives with track silhouette and compare residuals",
     "Improve geometry of side rocker/sprocket only after multi-view confirmation",
-    "Render actual 3D model with real Three.js on desktop and mobile before latest promotion"
+    "Render actual 3D model with real Three.js on desktop and mobile before latest promotion",
+    "Resolve six lower-wheel neighbor overlaps (0.002–0.032 nominal scene units) plus rear end-wheel overlap (~0.01739) using independent visible silhouettes or a dimensioned assembly drawing; do NOT arbitrarily shrink all wheels."
   ]
 }
