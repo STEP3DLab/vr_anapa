@@ -8,8 +8,9 @@ import fs from 'node:fs';
 // Only decorative CanvasTexture generation is unavailable in Node. No THREE stub.
 globalThis.document={createElement:()=>({getContext:()=>null})};
 const models=[['1986-v5',makeMobot1986(T)],['1987-v20',makeMobot(T,'desktop')],['1987-v19',makeV19(T,'desktop')]];
-const report={engine:'real vendored THREE geometry under Node; no WebGL',canvasTextureGenerated:false,models:[],latestPreserved:fs.readFileSync(new URL('../mobot-latest.html',import.meta.url),'utf8').includes('mobot-engineering-v17.html')};
-assert(report.latestPreserved);
+const report={engine:'real vendored THREE geometry under Node; no WebGL',canvasTextureGenerated:false,models:[],latestResearchV20:fs.readFileSync(new URL('../mobot-latest.html',import.meta.url),'utf8').includes('mobot-engineering-v20.html'),archiveV17Preserved:fs.existsSync(new URL('../mobot-engineering-v17.html',import.meta.url))};
+assert(report.latestResearchV20,'Latest research viewer must be v20');
+assert(report.archiveV17Preserved,'Historical v17 archive must remain accessible');
 for(const [name,m] of models){
  m.root.updateMatrixWorld(true);let meshes=0,instances=0,vertices=0,invalid=0;
  m.root.traverse(o=>{if(!o.matrixWorld.elements.every(Number.isFinite))invalid++;if(o.isMesh){meshes++;instances+=o.isInstancedMesh?o.count:1;const p=o.geometry.attributes.position;vertices+=p.count;for(let i=0;i<p.array.length;i++)if(!Number.isFinite(p.array[i]))invalid++;}});
