@@ -1,0 +1,7 @@
+{
+  "coordinates": "Image pixels, origin top left. SKTB2 from full-frame manual landmarks; SKTB4 independently digitised on a 1000px wide copy, crop y offset 410 restored. Uncertainty is manual picking only. Pixel spans are visible horizontal tread segments, not calibrated dimensions.",
+  "views": [
+    {"id":"SKTB2","file":"before-dispatch","width":2786,"height":2106,"visibleSpan":[238,1980],"fit":["rear","front"],"centres":{"rear":[391,1707],"front":[1859,1707],"r1":[512,1925],"r2":[693,1937],"r3":[884,1940],"r4":[1053,1947],"r5":[1232,1944],"r6":[1408,1944],"r7":[1574,1942]},"uncertainty":8,"excluded":"None of the nine centres. Wheel geometry in v21 already uses this photo; this is an in-source residual."},
+    {"id":"SKTB4","file":"snow-side","width":1000,"height":716,"visibleSpan":[111,618],"fit":["r1","r7"],"centres":{"rear":[145,501],"r1":[187,566],"r2":[237,569],"r3":[288,570],"r4":[339,572],"r5":[391,572],"r6":[445,574],"r7":[502,574]},"uncertainty":4,"excluded":"Front terminal wheel behind loader; lower tread and lower arcs behind snow; inboard suspension not scored."}
+  ]
+}
