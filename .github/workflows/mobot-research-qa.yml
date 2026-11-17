@@ -3,10 +3,17 @@ on:
   push:
     branches: [main, codex/mobot-demo-20261118]
     paths:
+      - 'mobot-demo.html'
+      - 'mobot-latest.html'
+      - 'mobot-roof.html'
+      - 'mobot-demo-release-2026-11-18.json'
+      - 'mobot-demo-script-2026-11-18.md'
+      - 'mobot-geometry-changes-2026-11-18.md'
       - 'mobot-ch-hv-1986-research-v5*'
       - 'mobot-engineering-v20*'
       - 'mobot-assets/exhibition-v1.*'
       - 'scripts/mobot-browser-qa.cjs'
+      - 'scripts/mobot-pages-wait.cjs'
       - 'scripts/mobot-scene-qa.mjs'
       - 'mobot-photo-measure-v2.html'
       - 'mobot-assets/photo-measure-v2.js'
@@ -32,6 +39,8 @@ jobs:
           node --check mobot-ch-hv-1986-research-v5-model.js
           node --check mobot-engineering-v20-model.js
           node --check mobot-assets/exhibition-v1.js
+          node --check scripts/mobot-pages-wait.cjs
+          node --check scripts/mobot-browser-qa.cjs
           node mobot-geometry-gate.cjs
           node --check mobot-assets/photo-measure-v2.js
           node scripts/mobot-scene-qa.mjs
