@@ -169,22 +169,39 @@ export function makeMobot1986(T) {
   cyl(boom,.038,.527,[0,0,0],materials.structure,'Палец наклона стрелы');
 
   const grab=group('Подвес и грейфер',boom,'A function / B outline / C mechanism');grab.position.set(-1.49,.26,0);
-  cyl(grab,.068,.45,[0,0,0],materials.steel,'Поперечный шарнир');
-  cyl(grab,.075,.24,[0,-.15,0],materials.structure,'Вертикальный промежуточный узел','y');
-  const head=group('Открытая рамка грейфера',grab,'B');
-  for(const z of [-.17,.17]){
-    for(const s of [-1,1])beam(head,[s*.09,-.28,z*.75],[s*.23,-.60,z],.028,materials.dark,'Наклонная стойка подвеса');
-    beam(head,[-.09,-.28,z*.75],[.09,-.28,z*.75],.034,materials.dark,'Верх рамы');
-    beam(head,[-.23,-.60,z],[.23,-.60,z],.028,materials.dark,'Низ рамы');
+  cyl(grab,.035,.268,[0,0,0],materials.structure,'Палец подвеса');
+  for(const z of [-.062,.062]){
+    plate(grab,[[-.054,.028],[.054,.028],[.047,-.135],[-.047,-.135]],.019,z-.0095,materials.steel,'Щека серьги');
+  }
+  cyl(grab,.082,.128,[0,-.157,0],materials.structure,'Корпус подвеса','y');
+  cyl(grab,.055,.093,[0,-.251,0],materials.steel,'Шейка подвеса','y');
+  const head=group('Открытая рамка грейфера',grab,'B контур, C устройство осей');
+  box(head,[.193,.030,.246],[0,-.286,0],materials.dark,'Верхняя траверса');
+  const pivotX=.143, pivotY=-.575, halfWidth=.170;
+  for(const side of [-1,1]){
+    for(const end of [-1,1]){
+      beam(head,[end*.080,-.286,side*.109],[end*pivotX,pivotY,side*.187],.030,materials.dark,'Наклонная стойка рамки');
+      cyl(head,.044,.026,[end*pivotX,pivotY,side*.187],materials.steel,'Неподвижная проушина челюсти');
+    }
+    beam(head,[-pivotX,pivotY,side*.187],[pivotX,pivotY,side*.187],.032,materials.dark,'Балка между осями');
   }
   const jaws=[];
   for(const sign of [-1,1]){
-    const jaw=group('Ковшевая челюсть '+sign,grab,'B bucket-like outline / C hinges');jaw.position.set(sign*.13,-.56,0);
-    for(const z of [-.17,.153])plate(jaw,[[0,0],[sign*.14,-.10],[sign*.11,-.31],[-sign*.13,-.34],[-sign*.11,-.29],[sign*.08,-.26],[sign*.10,-.12]],.017,z,materials.dark,'Боковина челюсти');
-    box(jaw,[.24,.024,.34],[-sign*.01,-.32,0],materials.steel,'Днище челюсти');
-    box(jaw,[.025,.20,.34],[sign*.12,-.20,0],materials.dark,'Наружная стенка');
-    cyl(jaw,.034,.40,[0,0,0],materials.structure,'Условная ось створки');jaws.push({jaw,sign});
+    const jaw=group('Ковшевая челюсть '+sign,grab,'B ковшеобразная форма / C геометрия и шарнир');
+    jaw.position.set(sign*pivotX,pivotY,0);
+    // One folded outer skin carries both end plates. Opposed lips meet at closure.
+    const skin=[[.050,-.040],[.133,-.113],[.136,-.216],[.104,-.268],[.030,-.307],[-pivotX,-.329]];
+    const profile=[[0,.016],...skin].map(([x,y])=>[sign*x,y]);
+    for(const z of [-halfWidth,halfWidth-.012])plate(jaw,profile,.012,z,materials.dark,'Боковая щека челюсти');
+    for(let i=1;i<skin.length;i++){
+      const [a,b]=skin.slice(i-1,i+1), dx=sign*(b[0]-a[0]),dy=b[1]-a[1];
+      const s=box(jaw,[Math.hypot(dx,dy),.012,halfWidth*2],[sign*(a[0]+b[0])/2,(a[1]+b[1])/2,0],materials.steel,'Лист ковшеобразной челюсти');
+      s.rotation.z=Math.atan2(dy,dx);
+    }
+    cyl(jaw,.028,.413,[0,0,0],materials.structure,'Палец челюсти');
+    jaws.push({jaw,sign});
   }
+
   const loader=group('Фронтальный погрузчик',root,'A function / B side arms / C axes');loader.position.set(-.10,.54,0);
   for(const z of [-.765,.765]){
     beam(loader,[0,0,z],[1.40,-.08,z],.048,materials.steel,'Наружный подъёмный рычаг');
