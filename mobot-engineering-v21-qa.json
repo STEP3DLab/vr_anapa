@@ -20,7 +20,8 @@
     "v20Preserved": "PASS",
     "publishedPages": "PASS",
     "physicalPhone": "NOT RUN",
-    "fullMeshCollisions": "NOT RUN"
+    "fullMeshCollisions": "NOT RUN",
+    "permanentLinkOnPages": "PASS"
   },
   "log": "research/mobot/1987/QA-LOG.md",
   "baseline": "1b40bb9386448b074f30ef42dfe8908b8a20ef37",
@@ -55,5 +56,15 @@
   "publishedVersionCommit": "efad030a28397e6840c282e1f1eab646138a65ee",
   "productionRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170435474",
   "productionReport": "research/mobot/1987/browser-pages.json",
-  "publicURL": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v21.html"
+  "publicURL": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v21.html",
+  "permanentLink": {
+    "url": "https://step3dlab.github.io/vr_anapa/mobot-latest.html",
+    "target": "mobot-engineering-v21.html",
+    "publishedMerge": "4c8fb4dcae49997bac943892c9b06e8e158acf9d",
+    "branchCompatibilityRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44171047728",
+    "publishedCompatibilityRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44172358736",
+    "versionRunAfterPromotion": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44172358706",
+    "queryAndHashPreserved": true,
+    "byteVerification": "research/mobot/1987/published-bytes.json"
+  }
 }
