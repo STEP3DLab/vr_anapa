@@ -19,7 +19,7 @@
       "status": "PASS",
       "trackSamples": 5000,
       "wheelCountPerSide": 9,
-      "maxContactResidual": 8.908329827538725e-07,
+      "maxContactResidual": 8.908329827538725e-7,
       "units": "scene"
     },
     {
@@ -115,9 +115,19 @@
     }
   ],
   "publication": {
-    "status": "NOT RUN",
-    "scope": "На момент проверки ветки. Проверка опубликованных байтов и WebGL выполняется после слияния.",
-    "target": "https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v6.html"
+    "status": "PASS",
+    "target": "https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v6.html",
+    "releaseMerge": "0b2238f2ed7444d00a394f79efc6205424f73233",
+    "releasePullRequest": "https://github.com/STEP3DLab/vr_anapa/pull/4",
+    "deployment": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44172910466",
+    "codeAndLegacyBytes": "research/mobot/1986/publication/http-results.json",
+    "browserReport": "research/mobot/1986/publication/browser-results.json",
+    "verificationRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44174236746",
+    "checks": [
+      "HTTP 200 на публичном адресе без параметров, файл совпадает с Git",
+      "Девять файлов соответствовали коммиту выпуска по SHA-256, в том числе страница и модель v5",
+      "Семь групп проверок публичного WebGL 2 прошли в Chromium 141.0.7390.37; исключений страницы и ошибок HTTP нет"
+    ]
   },
   "geometryReport": "research/mobot/1986/scene-results.json",
   "browserReport": "research/mobot/1986/browser/browser-results.json",
@@ -134,6 +144,11 @@
       "research/mobot/1986/browser/desktop.jpg",
       "research/mobot/1986/browser/exploded.jpg",
       "research/mobot/1986/browser/mobile.jpg"
+    ],
+    "published": [
+      "research/mobot/1986/publication/desktop.jpg",
+      "research/mobot/1986/publication/mobile.jpg",
+      "research/mobot/1986/publication/exploded.jpg"
     ]
   },
   "history": [
@@ -151,6 +166,11 @@
       "status": "PASS",
       "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170664606",
       "finding": "Два касания после поворота вызывают ровно две активации. Пройдены все тесты предпросмотра и предыдущих версий."
+    },
+    {
+      "status": "PASS",
+      "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44174236746",
+      "finding": "Повтор на публичной версии, включая реальное WebGL-изображение, сенсорные события, четыре ширины и резерв без WebGL. Общие регрессии также прошли."
     }
   ],
   "referenceFigures": [

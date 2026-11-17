@@ -1,0 +1,61 @@
+{
+  "release": "0b2238f2ed7444d00a394f79efc6205424f73233",
+  "checked": "2026-11-17T20:53:51.722117+00:00",
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "tests": [
+    {
+      "file": "mobot-ch-hv-1986-research-v6.html",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "1fe6d657215dfb13f1f6df76e72c4cba784f4e7dfd7183993d5bca7d144f56e9"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v6-model.js",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "af16e30c6a8931bdcb4a83cc3f3ae87e9208479a91a561263745480e456426d0"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v6-passport.json",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "d6da4c6a7616c3865f6914e757c91e2ae04d20f448467977ff15b2e72c6f8051"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v6-qa.json",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "444dc1a127433bdb3cbb5ace8f85020a1c81b3669dbae4df5f647d93a319838d"
+    },
+    {
+      "file": "research/mobot/1986/viewer.js",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "1724ff4f5d612ecf9c744c457848aa8778015487dbf544437400f77348eb275c"
+    },
+    {
+      "file": "research/mobot/1986/viewer.css",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "033e7735ee40a8d5ef66e0e7d9059ab514322c8efa60f0239012c712392a1ac2"
+    },
+    {
+      "file": "research/mobot/1986/overview.jpg",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "11cdce0d9ab9e422195c3783fb05f3b601ec8524d55d8ef6e4cc588280096b98"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v5.html",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "8b0d598f5c897091919f9c24e763e037b7c54b020c6e5926b051c872bdbdb071"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v5-model.js",
+      "status": "PASS",
+      "http": 200,
+      "sha256": "79b17e7d09f26826fbc87117767837f5b8b68485b880d90ca7463f98a9d8690b"
+    }
+  ]
+}
