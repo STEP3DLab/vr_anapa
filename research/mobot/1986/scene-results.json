@@ -1,0 +1,35 @@
+{
+  "runtime": "Three.js r180 / Node v24.22.1",
+  "tests": [
+    {
+      "name": "Vertices, normals, transforms and instance matrices",
+      "status": "PASS",
+      "meshes": 280,
+      "drawnInstances": 604,
+      "vertices": 30503
+    },
+    {
+      "name": "Wheel centres, gaps, closed belt and continuous contact",
+      "status": "PASS",
+      "trackSamples": 5000,
+      "wheelCountPerSide": 9,
+      "maxContactResidual": 8.908329827538725e-7,
+      "units": "scene"
+    },
+    {
+      "name": "Six independent motions and return to neutral",
+      "status": "PASS",
+      "coordinates": 6,
+      "maxJawLipGap": 0.39214512036471083
+    },
+    {
+      "name": "Structural joints, linkage endpoints and selected collision envelopes",
+      "status": "PASS",
+      "poses": 2025,
+      "minBucketGroundClearance": 0.016534671560331934,
+      "minGrappleGroundClearance": 1.03381589939765,
+      "units": "scene",
+      "scope": "Samples; grapple against hood, scoop and deck; scoop and grapple against floor. Not all-pairs collision detection."
+    }
+  ]
+}
