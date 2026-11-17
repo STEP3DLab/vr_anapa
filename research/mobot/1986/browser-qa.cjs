@@ -91,6 +91,13 @@ async function range(id,num){
       }
     }
     await page.setViewportSize({width:390,height:844});await click('partsTab');await click('home');await capture('mobile.jpg');
+    await page.evaluate(()=>{
+      window.touchTrace=[];
+      for(const kind of ['pointerdown','pointerup','pointercancel','click','touchstart','touchend'])document.addEventListener(kind,e=>{
+        const p=e.changedTouches?.[0]||e;
+        window.touchTrace.push([kind,e.target.id||e.target.tagName,Math.round(p.clientX),Math.round(p.clientY),window.mobotV6.state.isolated]);
+      },{capture:true,passive:true});
+    });
     const loc=await page.locator('canvas').boundingBox(),x=Math.round(loc.x+loc.width*.55),y=Math.round(loc.y+loc.height*.55);
     const before=await page.evaluate(()=>window.mobotV6.camera.position.toArray());
     const cdp=await page.context().newCDPSession(page);
@@ -99,7 +106,12 @@ async function range(id,num){
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
     assert.notDeepEqual(await page.evaluate(()=>window.mobotV6.camera.position.toArray()),before);
     await page.selectOption('#part','tracks');await page.locator('#isolate').tap();
-    await page.waitForFunction(()=>window.mobotV6.state.isolated && document.getElementById('isolate').getAttribute('aria-pressed')==='true',undefined,{timeout:5000});
+    try{
+      await page.waitForFunction(()=>window.mobotV6.state.isolated && document.getElementById('isolate').getAttribute('aria-pressed')==='true',undefined,{timeout:5000});
+    }catch(error){
+      const diagnostic=await page.evaluate(()=>({events:window.touchTrace,state:window.mobotV6.state,button:document.getElementById('isolate').getBoundingClientRect().toJSON(),viewport:[innerWidth,innerHeight,scrollY,visualViewport.scale]}));
+      throw Error('Mobile tap: '+JSON.stringify(diagnostic),{cause:error});
+    }
     assert.equal(await page.locator('.stage-head h2').textContent(),'Гусеничная ходовая');
     return {widths:[320,360,390,720],touchOrbit:true};
   });
