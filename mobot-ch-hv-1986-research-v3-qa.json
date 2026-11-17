@@ -1,0 +1,101 @@
+{
+  "schema": "mobot-reconstruction-qa/1.2",
+  "date": "2026-11-17",
+  "variant": "Мобот-Ч-ХВ (1986)",
+  "revision": "research-v3",
+  "file": "mobot-ch-hv-1986-research-v3.html",
+  "parent": "mobot-ch-hv-1986-research-v2.html",
+  "change": {
+    "node": "original 1986 grapple",
+    "from": "Two schematic jaw bodies separated laterally across scene Z, overlapped in historical side-view",
+    "to": "Two schematic jaw bodies offset along scene X; mirrored Z-axis rotations to depict opening in side silhouette",
+    "photoSource": "Овчинников В.В., Батанов А.Ф., Мингалеев С.Г., 2019, p.75, fig.9",
+    "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6",
+    "confidence": "B for two separate jaw silhouettes visible in print, C for joint positions/shape/rotation"
+  },
+  "checks": [
+    {
+      "id": "NODE-PARSE",
+      "status": "pass",
+      "test": "node --check extracted ES module"
+    },
+    {
+      "id": "ASSEMBLY",
+      "status": "pass-in-three-compatible-mock",
+      "geometryObjects": 78,
+      "sections": 12
+    },
+    {
+      "id": "GRAPPLE-SIDE-PLANE",
+      "status": "pass-in-mock",
+      "jawOffsetsX": [
+        -0.12,
+        0.12
+      ],
+      "jawOffsetsZ": [
+        0,
+        0
+      ],
+      "checks": "jaws separated along visible X axis"
+    },
+    {
+      "id": "MOTION-POSE-MATRIX",
+      "status": "pass-in-mock",
+      "boomAnglesDeg": [
+        -15,
+        0,
+        24,
+        58,
+        72
+      ],
+      "grabAnglesDeg": [
+        0,
+        12,
+        24
+      ],
+      "tested": 15,
+      "verification": "global grab orientation zero and equal-and-opposite jaw local Z rotations"
+    },
+    {
+      "id": "DESKTOP-CHROMIUM-DOM",
+      "status": "pass-with-renderer-stub",
+      "viewport": [
+        1250,
+        900
+      ],
+      "exceptions": 0,
+      "poses": 2,
+      "canvas": 1,
+      "sourceImages": 2
+    },
+    {
+      "id": "MOBILE-CHROMIUM-DOM",
+      "status": "pass-with-renderer-stub",
+      "viewport": [
+        390,
+        780
+      ],
+      "exceptions": 0,
+      "poses": 2,
+      "canvas": 1,
+      "sourceImages": 2
+    },
+    {
+      "id": "REAL-WEBGL",
+      "status": "not-tested",
+      "notes": "Stub renderer does not draw GPU geometry"
+    },
+    {
+      "id": "PAGES",
+      "status": "pending-verification",
+      "notes": "Repository commit confirmed; live deployment not yet directly verified"
+    },
+    {
+      "id": "SCALE",
+      "status": "unmeasured",
+      "notes": "No calibrated dimensions or historic motor travel limits"
+    }
+  ],
+  "warning": "A 2D photographic silhouette is not proof of actual jaw pivot axes. Model 1986 v3 is research-only; no original CAD accuracy claimed.",
+  "latestPolicy": "Do not touch mobot-latest.html (1987 v17)."
+}
