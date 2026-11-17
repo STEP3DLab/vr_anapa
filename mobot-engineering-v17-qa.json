@@ -1,0 +1,153 @@
+{
+  "project": "Мобот-Ч-ХВ-2",
+  "revision": "v17.0",
+  "date": "2026-11-17",
+  "scope": "Non-destructive viewer/kinematic interface correction. V16 procedural model geometry is NOT changed.",
+  "status": "Programmatic checks passed; real browser WebGL/Canvas raster image NOT verified.",
+  "methods": [
+    "JavaScript parse test for 3D procedural model, shared angle wrapper, v17 viewer controller and 2D SVG module",
+    "Engine-compatible object graph mock with correct Three.js reparenting semantics, run in desktop and mobile profiles",
+    "Exclusive working tool activation in both profiles",
+    "Four model and canonical-control blade clearance parity tests in each profile",
+    "Document object ID presence and duplicate ID static audit",
+    "SVG 2D DOM runtime mock with change, reset, 1092 heatmap and canonical sweep parity",
+    "Source verification using official SKTB technical description and Sep 29 2026 historical article; original fig.7 opened"
+  ],
+  "tests": [
+    {
+      "id": "JS-PARSE",
+      "status": "pass",
+      "notes": "All four JS modules parse. v17 viewer 14,253 bytes; atlas 21,070 bytes; v17 angle module 2,193 bytes."
+    },
+    {
+      "id": "UI-SELECTORS",
+      "status": "pass",
+      "notes": "29 unique HTML element IDs; no missing literal $('...') calls. All entry path references present in repository."
+    },
+    {
+      "id": "DESKTOP-ASSEMBLY",
+      "status": "pass-in-three-compatible-mock",
+      "quality": "desktop",
+      "threeDObjects": 569,
+      "fastenerInstances": 266,
+      "modelVersion": "v16"
+    },
+    {
+      "id": "MOBILE-ASSEMBLY",
+      "status": "pass-in-three-compatible-mock",
+      "quality": "mobile",
+      "threeDObjects": 569,
+      "fastenerInstances": 266,
+      "modelVersion": "v16"
+    },
+    {
+      "id": "EQUIPMENT-MODES",
+      "status": "pass-in-mock",
+      "modes": [
+        "gripper",
+        "breaker-arm",
+        "breaker-loader"
+      ],
+      "visibleHeadPerMode": 1,
+      "totalHeadVariants": 3
+    },
+    {
+      "id": "TURNTABLE-ARM",
+      "status": "pass-in-mock",
+      "notes": "Yaw and boom rotations and linkage updater executed in both quality profiles without throwing. Historical joint axes unverified."
+    },
+    {
+      "id": "3D-2D-POSE-PARITY",
+      "status": "pass",
+      "posesDeg": [
+        [
+          0,
+          0
+        ],
+        [
+          42,
+          0
+        ],
+        [
+          -12,
+          38
+        ],
+        [
+          20,
+          -20
+        ]
+      ],
+      "maxClearanceDifferenceScene": 0,
+      "description": "Viewer bucket +° maps to negative model Z rotation. Both the model's auditBucketPose and v17 auditViewerPose return identical scene-unit clearances for all four samples, in desktop and mobile profiles."
+    },
+    {
+      "id": "SVG-HEATMAP",
+      "status": "pass-in-dom-mock",
+      "gridDimensions": [
+        28,
+        39
+      ],
+      "sampledPoses": 1092,
+      "warnings": 194,
+      "probeCount": 21,
+      "lowestScene": -0.6554403848967325,
+      "lowestAt": {
+        "liftDeg": -12,
+        "tipDeg": 38
+      },
+      "validatedPositiveLiftSample": {
+        "liftDeg": 42,
+        "tipDeg": 0,
+        "minClearanceScene": 1.414186566147325
+      },
+      "reset": "pass"
+    },
+    {
+      "id": "RENDERER-FALLBACK",
+      "status": "code-reviewed-not-browser-tested",
+      "notes": "If WebGL fails after context allocation, use fresh canvas for 2D, because context type cannot change on an existing canvas."
+    },
+    {
+      "id": "HISTORIC-FIG7",
+      "status": "source-checked",
+      "source": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "notes": "Fig. 7 is specifically an operation on a test fixture, not positive evidence of a standard open/closed two-finger jaw profile."
+    },
+    {
+      "id": "REAL-WEBGL-ON-DEVICE",
+      "status": "not-tested",
+      "notes": "No live GPU rendering screenshot or mobile touch test. This run's browser lacks access to the published site from the sandbox."
+    },
+    {
+      "id": "ORIGINAL-DIMENSIONAL-CAD",
+      "status": "not-available",
+      "notes": "No verified factory drawings or physical dimensions. Claims about actual travel limits remain prohibited."
+    }
+  ],
+  "limitations": [
+    "A Three-compatible JavaScript mock is not a real GPU rendering test.",
+    "The 2D heatmap tests projected point clearance to nominal crawler level, not triangle mesh collisions.",
+    "Only the positive displayed lift sign and UI slider domain were synchronized; this does not validate the real electromechanical transmission geometry.",
+    "Programmatic screen-warning changes from v15 to v17 must not be interpreted as real safety improvements: sweep range and sign convention both changed.",
+    "Some external primary-domain assets can intermittently timeout; source bibliography remains intact.",
+    "Actual WebGL and Canvas2D graphics, phone performance and photo alignment need further real-device acceptance."
+  ],
+  "releaseGate": {
+    "requiredBeforeLatest": [
+      "model/atlas parity",
+      "nonempty 3D model desktop/mobile mock",
+      "valid source photo captions",
+      "HTML paths and ID checks",
+      "successful GitHub Pages workflow"
+    ],
+    "passedAtQaCreation": [
+      "model/atlas parity",
+      "nonempty 3D model desktop/mobile mock",
+      "valid source photo captions",
+      "HTML paths and ID checks"
+    ],
+    "pagesRun": "PENDING_AT_QA_CREATION",
+    "liveRenderTestRequired": false,
+    "rationale": "Release resolves a demonstrated interface-coordinate defect and improves source fidelity without inventing parts; browser rendering unverified and disclosed."
+  }
+}
