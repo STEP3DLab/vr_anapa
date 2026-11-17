@@ -1,0 +1,26 @@
+{
+  "version": "1986-v6",
+  "sceneReport": "research/mobot/1986/scene-results.json",
+  "tests": [
+    {
+      "name": "Контроль геометрии и кинематики",
+      "status": "PASS",
+      "poses": 2025
+    },
+    {
+      "name": "Chromium / WebGL 2 в рабочей среде",
+      "status": "NOT RUN",
+      "reason": "Chromium завершился до создания страницы: socket() failed: Operation not permitted. Проверка перенесена на GitHub Actions."
+    },
+    {
+      "name": "Публикация",
+      "status": "NOT RUN"
+    }
+  ],
+  "controlImages": [
+    "research/mobot/1986/overview.jpg",
+    "research/mobot/1986/side.jpg",
+    "research/mobot/1986/grapple.jpg",
+    "research/mobot/1986/front.jpg"
+  ]
+}

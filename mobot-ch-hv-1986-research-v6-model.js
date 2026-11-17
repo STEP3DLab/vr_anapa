@@ -225,7 +225,8 @@ export function makeMobot1986(T) {
     s.rotation.z=Math.atan2(dy,dx);
   }
   box(scoop,[.061,.019,1.50],[.532,-.269,0],materials.structure,'Режущая кромка');
-  cyl(scoop,.039,1.59,[0,0,0],materials.steel,'Ось ковша');
+  // Two coaxial side pins leave the working volume of the bucket clear.
+  for(const sign of [-1,1])cyl(scoop,.039,.105,[0,0,sign*.752],materials.steel,'Боковой палец ковша');
   const tiltLinks=[];
   for(const sign of [-1,1]){
     const z=sign*armZ;
