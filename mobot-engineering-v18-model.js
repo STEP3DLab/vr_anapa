@@ -14,6 +14,7 @@ export function makeMobot(THREE, quality='auto') {
   let fastenerCounter=0;
   const driveModules=[];
   let sourceTrackProfile=null;
+  let researchRoadWheelXs=null; // v18: photo-based per-side projected axle layout
   const rotatingHubs=[];
   const suspensionSchemes=[];
   const fastenerPool=new Map(), groupKeys=new WeakMap(), materialKeys=new WeakMap();
@@ -198,6 +199,7 @@ export function makeMobot(THREE, quality='auto') {
     // mapped REVERSED along model X because model FRONT is -X while bucket is on the RIGHT in the photo.
     // Relative alignment only: manual landmark uncertainty ~10px; no physical scale.
     const wheelXs=[-.45,-.26,-.07,.10,.29,.47,.67];
+    if(!researchRoadWheelXs)researchRoadWheelXs=wheelXs.slice();
     // 7 lower wheel features: photo-visible class B for photographed 1987 machine; model coordinates remain C.
     // A later MRK-46M paper specifies SIX road wheels for the MRK-46M;
     // those data must not be retrofitted onto CH-HV-2 without primary evidence.
@@ -766,11 +768,11 @@ export function makeMobot(THREE, quality='auto') {
     };
   }
   const sourceProfile=()=>({
-    version:'v16',
+    version:'v18-research',
     units:'uncalibrated scene units',
     physicalScaleKnown:false,
     trackContour:sourceTrackProfile.map(p=>[...p]),
-    wheelXs:PROFILE_V15.wheelXs.slice(),
+    wheelXs:researchRoadWheelXs.slice(),
     wheelY:PROFILE_V15.wheelY,
     bucketLiftPivot:[bucket.position.x,bucket.position.y],
     bucketTiltPivotRelative:[bucketScoop.position.x,bucketScoop.position.y],
@@ -807,7 +809,7 @@ export function makeMobot(THREE, quality='auto') {
   root.userData.nominalTrackLengthNote='Estimated longest crawler X-span in uncalibrated MODEL coordinates, not the real length.';
   root.userData.fastenerInstances=fastenerInstanceCount;
   root.userData.fastenerLOD='v10 instancing: retain fastener geometry in desktop and mobile profiles';
-  root.userData.version='v16.0 · стрела и схват по стендовому снимку';
+  root.userData.version='v18-research · 1987 ходовая по фото СКТБ №2; остальные узлы v16';
   root.userData.workToolEvidence={
     interchangeableGripper:true,breakerAtArm:true,breakerOnLoader:true,
     reference:'https://sktbpr.ru/node/23',
@@ -819,13 +821,13 @@ export function makeMobot(THREE, quality='auto') {
     current:'continuous profile provisionally aligned with SKTB side photo',
     exactCrossSectionVerified:false
   };
-  root.userData.geometryBasis='External arm and gripper profile informed by stand photo, fig. 7; remaining assemblies inherited from v15; no metric calibration';
+  root.userData.geometryBasis='v18 research: seven road-wheel relative X landmarks and end wheel rim/position aligned approximately to SKTB photo #2; arm/manipulator/bucket inherited from v16; no metric calibration';
   root.userData.driveType='electromechanical; internal reducer dimensions are speculative';
   root.userData.loaderDegreesOfFreedom=2;
   root.userData.trackLoopMethod='closed Catmull-Rom profile, estimated from photo #2';
   root.userData.roadWheelsPerSide=7;
   root.userData.variantGuard='Never copy MRK-46M (later robot) specification: six road wheels and eight polyurethane elements into the 1987 Mobot CH-HV-2 model.';
-  root.userData.roadWheelConfidence='visual count only, no technical drawings';
+  root.userData.roadWheelConfidence='seven visible wheel features: photo B; positions, sizes and attachment coordinates still C (manual single-view scene fit)';
   root.userData.trackDriveAnimation='track pad loop and visible wheel hub motion for stand inspection; drive-speed and sprocket transmission not measured';
 
   root.userData.modelRailPivot='chassis local x=0.28 y=0.65; estimated from 1987 photo';
