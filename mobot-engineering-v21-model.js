@@ -400,14 +400,27 @@ export function makeMobot(THREE, quality='auto') {
   const fingerHead=new THREE.Group();
   fingerHead.name='Двупалый сменный схват';fingerHead.userData.part='gripper';
   gripper.add(fingerHead);
+  // The opposing broad plates read across the frontal image (#3).
+  // Roll about the hanging tool axis remains a single-view interpretation.
+  fingerHead.rotation.x=Math.PI/2;
+  for(const z of [-.09,.09]){
+    beam(fingerHead,[0,0,z],[-.08,.085,z],.020,m.frame,'gripper');
+    beam(fingerHead,[0,0,z],[-.08,-.085,z],.020,m.frame,'gripper');
+    beam(fingerHead,[-.39,-.085,z],[-.39,.085,z],.018,m.frame,'gripper');
+  }
+  beam(fingerHead,[-.39,0,-.12],[-.39,0,.12],.025,m.frame,'gripper');
+  beam(fingerHead,[-.085,0,-.09],[-.085,0,.09],.024,m.frame,'gripper');
+  for(const side of [-1,1])
+    beam(fingerHead,[-.085,0,side*.09],[-.085,.085,side*.09],.018,m.frame,'gripper');
+
   // Local -X is the hanging axis; viewer keeps it vertical at a neutral wrist.
   // B: open frame, central cylindrical member and wide plates. Internal drive C.
   cylinder(fingerHead,.068,.068,.27,[-.22,0,0],m.satin,'gripper','x',24);
   for(const z of [-.09,.09])for(const s of [-1,1]){
     beam(fingerHead,[-.07,s*.085,z],[-.39,s*.085,z],.015,m.frame,'gripper');
-    beam(fingerHead,[-.39,s*.085,z],[-.39,-s*.085,z],.018,m.frame,'gripper');
+
   }
-  cylinder(fingerHead,.043,.043,.34,[.12,-.16,.04],m.panel,'gripper','x',22);
+
   const fingerMechanisms=[];
   for(const side of [-1,1]){
     const finger=new THREE.Group();finger.name='Широкая губка '+side;
@@ -434,9 +447,13 @@ export function makeMobot(THREE, quality='auto') {
       cylinder(g,.055,.060,.46,[-.30,0,0],m.satin,id,'x',28);
       cylinder(g,.035,.035,.24,[-.62,0,0],m.bright,id,'x',22);
       beam(g,[-.74,0,0],[-.94,0,0],.018,m.frame,id);
-      box(g,[.09,.12,.14],[-.09,0,0],m.frame,id);
+      box(g,[.14,.11,.13],[-.065,0,0],m.frame,id);
+      cylinder(g,.044,.047,.055,[-.515,0,0],m.frame,id,'x',20);
+      tube(g,[[0,.04,0],[-.13,.095,0],[-.27,.085,0],[-.31,.047,0]],.008,m.cable,id,20);
     }else{
-      g.position.set(-.76,-.055,0);
+      // A possible substitution at the loader tilt pin. The adapter is class C.
+      g.position.set(0,0,0);
+      cylinder(g,.044,.044,1.39,[0,0,0],m.frame,id,'z',24);
       box(g,[.18,.35,.18],[0,-.10,0],m.frame,id);
       cylinder(g,.083,.088,.31,[0,-.26,0],m.olive,id,'y',28);
       cylinder(g,.05,.05,.12,[0,-.47,0],m.satin,id,'y',20);
@@ -504,7 +521,11 @@ export function makeMobot(THREE, quality='auto') {
   const loaderPivotLocal=new THREE.Vector3(1.31,.17,0);
   for(const child of bucket.children) child.position.sub(loaderPivotLocal);
   bucket.position.copy(originalLoaderBase).add(loaderPivotLocal);
-  const breakerLoader=buildBreaker(bucket,'bucket','loader');
+  const scoopShell=new THREE.Group();
+  scoopShell.name='Съёмный ковш';scoopShell.userData.part='bucket';
+  scoopShell.add(...bucketScoop.children.slice());
+  bucketScoop.add(scoopShell);
+  const breakerLoader=buildBreaker(bucketScoop,'bucket','loader');
   // Modes are EXCLUSIVE; historical text documents either working location,
   // not simultaneous installation of both breakers.
   function setWorkTool(mode){
@@ -512,6 +533,7 @@ export function makeMobot(THREE, quality='auto') {
     fingerHead.visible=next==='gripper';
     breakerArm.visible=next==='breaker-arm';
     breakerLoader.visible=next==='breaker-loader';
+    scoopShell.visible=next!=='breaker-loader';
     root.userData.activeWorkTool=next;
     return next;
   }
@@ -699,6 +721,7 @@ export function makeMobot(THREE, quality='auto') {
   const mechanisms={turntable,arm:armPivot,bucketLift:bucket,bucketTilt:bucketScoop,setWorkTool,updateLinkages,setTrackPhase,
     estimateBucketClearance,auditBucketPose,sweepBucketEnvelope,sourceProfile,
     distalPin,armFixed,armMoving,actuatorArmHousing,actuatorArmScrew,
+    fingerHead,breakerArm,breakerLoader,scoopShell,
     gripper,fingers:fingerMechanisms,cameras,cover};
   // Model's nominal dimensions are scene units only. This scale is not equal to verified metres.
   assembleFasteners();
