@@ -1,9 +1,10 @@
 name: 1987 v21 engineering viewer QA
 on:
   push:
-    branches: [codex/mobot-1987-v21-20261118, main]
+    branches: [codex/mobot-1987-v21-20261118, codex/mobot-1987-v21-release-20261118, main]
     paths:
       - 'mobot-engineering-v21*'
+      - 'mobot-latest.html'
       - 'research/mobot/1987/viewer.*'
       - 'research/mobot/1987/browser.cjs'
       - '.github/workflows/mobot-1987-v21-qa.yml'
@@ -30,6 +31,15 @@ jobs:
         run: |
           python3 -m http.server 4187 --bind 127.0.0.1 >/tmp/mobot21-http.log 2>&1 &
           MOBOT_REPORT_DIR=/tmp/mobot21/local node research/mobot/1987/browser.cjs
+      - name: Verify existing comparison and incoming latest links before promotion
+        if: github.ref == 'refs/heads/codex/mobot-1987-v21-release-20261118'
+        run: |
+          node mobot-geometry-gate.cjs
+          node scripts/mobot-compare-contract.cjs
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/mobot21-integration.log 2>&1 &
+          export CHROMIUM_PATH="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
+          node scripts/mobot-browser-qa.cjs
+          node scripts/mobot-compare-qa.cjs
       - name: Verify deployed viewer and repeat on GitHub Pages
         if: github.ref == 'refs/heads/main'
         run: |
