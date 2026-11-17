@@ -1,7 +1,9 @@
 // 1986 only. The measured inputs are image-space ratios; scene lengths and linkage are C.
 import {makeMobot1986 as makeV6} from './mobot-ch-hv-1986-research-v6-model.js';
 
-export function makeMobot1986(T){
+export const suspensionTrials=[.060,.075,.090,.105,.120,.135,.150,.165,.180];
+export function makeMobot1986(T,extension=.105){
+  if(!suspensionTrials.includes(extension))throw new RangeError('Неизвестный вариант подвеса');
   const model=makeV6(T),{root,sections,materials,mechanisms}=model;
   const m=materials,up=new T.Vector3(0,1,0);
   function mesh(parent,geometry,material,name){
@@ -19,7 +21,8 @@ export function makeMobot1986(T){
   function between(o,a,b){
     const v=new T.Vector3().subVectors(b,a);
     o.position.copy(a).lerp(b,.5);o.scale.y=v.length();
-    o.quaternion.setFromUnitVectors(up,v.normalize());
+    if(Math.abs(v.z)<1e-12)o.rotation.set(0,0,Math.atan2(-v.x,v.y));
+    else o.quaternion.setFromUnitVectors(up,v.normalize());
   }
   // Fig. 6 fixed-chassis registration places the v6 near crown high and forward.
   // Keep the skirt seated on the deck. The arc interpolation and displacements are C.
@@ -52,6 +55,19 @@ export function makeMobot1986(T){
   // the photograph is oblique and the visible rail is only a proxy for the axis.
   const jawDepthFactor=.68,frameHeight=.575-.286,lipDepth=.329*jawDepthFactor;
   const head=sections['Открытая рамка грейфера'],grab=mechanisms.grab;
+  // Both photos show greater vertical separation of the boom nose and grapple frame.
+  // Extend the existing suspension conservatively while retaining sampled hood clearance.
+  const carrier=new T.Group();
+  carrier.name='Посадка рамки на подвес';carrier.position.y=-extension;
+  const axialScale=new T.Matrix4().makeScale(1,1+extension/.286,1);
+  for(const part of [...grab.children]){
+    if(part===head||part.name.startsWith('Ковшевая челюсть'))carrier.add(part);
+    else if(part.isMesh&&part.name!=='Палец подвеса'){
+      part.updateMatrix();
+      part.geometry.applyMatrix4(part.matrix.clone().invert().multiply(axialScale).multiply(part.matrix));
+    }
+  }
+  grab.add(carrier);
   const linkages=[];
   for(const end of [-1,1]){
     const jaw=sections['Ковшевая челюсть '+end],skin=new T.Group();
@@ -90,6 +106,6 @@ export function makeMobot1986(T){
   const previous=model.setPose;
   model.setPose=(pose={})=>{const state=previous(pose);follow();return state;};
   root.name='Мобот-Ч-ХВ 1986 / v7';root.userData.version='1986-v7';
-  model.v7={jawDepthFactor,lipDepth,frameHeight,linkages,lengths,grab};
+  model.v7={extension,jawDepthFactor,lipDepth,frameHeight,linkages,lengths,grab};
   model.setPose(model.defaults);return model;
 }

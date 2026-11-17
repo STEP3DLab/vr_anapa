@@ -1,0 +1,43 @@
+{
+  "phase": "registration",
+  "status": "PASS",
+  "cameraRefitsPerView": 24,
+  "outlinePerturbationsPerView": 20000,
+  "views": {
+    "fig6": {
+      "nominalRatio": 0.631578947368421,
+      "ratioP10P50P90": [
+        0.526,
+        0.631,
+        0.749
+      ],
+      "fractionCloserToV7": 1.0,
+      "nominalV6": 1.13840830449827,
+      "nominalV7": 0.7741176470588237,
+      "hood": {
+        "v6Pixels": 38.79,
+        "v7Pixels": 8.22,
+        "role": "shape selection",
+        "readingUncertainty": 17
+      }
+    },
+    "fig9": {
+      "nominalRatio": 0.6299212598425197,
+      "ratioP10P50P90": [
+        0.495,
+        0.628,
+        0.781
+      ],
+      "fractionCloserToV7": 0.99995,
+      "nominalV6": 1.13840830449827,
+      "nominalV7": 0.7741176470588237,
+      "hood": {
+        "v6Pixels": 52.12,
+        "v7Pixels": 30.84,
+        "role": "separate view check",
+        "readingUncertainty": 18
+      }
+    }
+  },
+  "scope": "Чувствительность к ручному считыванию фотографии; коэффициенты не являются оценкой точности в миллиметрах."
+}

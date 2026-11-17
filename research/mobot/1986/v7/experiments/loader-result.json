@@ -1,0 +1,13 @@
+{
+  "phase": "loader",
+  "units": "условные единицы сцены",
+  "status": "PASS",
+  "poses": 7865,
+  "minimumGroundClearance": 0.016534672,
+  "worst": {
+    "lift": 0,
+    "tip": -5
+  },
+  "maxRodPinGap": 7.0216669e-16,
+  "scope": "Lowest transformed mesh vertex vs horizontal ground; linkage attachment endpoint at both pins."
+}

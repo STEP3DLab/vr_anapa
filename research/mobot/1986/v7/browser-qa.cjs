@@ -2,7 +2,7 @@
 const {chromium}=require(process.env.PLAYWRIGHT_PATH||'playwright');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const base=(process.env.MOBOT_BASE_URL||'http://127.0.0.1:4173/').replace(/\/?$/,'/');
-const url=base+'mobot-ch-hv-1986-research-v7.html?qa=1';
+const url=base+'mobot-ch-hv-1986-research-v7.html?qa=1'+(process.env.MOBOT_EXTENSION?'&suspension='+encodeURIComponent(process.env.MOBOT_EXTENSION):'');
 const out=process.env.MOBOT_QA_OUT||'v7-browser-output';fs.mkdirSync(out,{recursive:true});
 const report={base,url,commit:process.env.GITHUB_SHA||null,tests:[],screenshotFiles:[]};
 let page,browser;const errors=[],responses=[];
@@ -38,10 +38,10 @@ async function range(id,num){
       const {renderer,render,model}=window.mobotV7;render();const gl=renderer.getContext();
       const w=gl.drawingBufferWidth,h=gl.drawingBufferHeight,pixels=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
       let dark=0,bright=0;for(let i=0;i<pixels.length;i+=64){const l=pixels[i]*.3+pixels[i+1]*.6+pixels[i+2]*.1;if(l<140)dark++;if(l>160)bright++;}
-      return {isWebGL2:gl instanceof WebGL2RenderingContext,glError:gl.getError(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,version:model.root.userData.version,dark,bright};
+      return {isWebGL2:gl instanceof WebGL2RenderingContext,glError:gl.getError(),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,extension:model.v7.extension,version:model.root.userData.version,dark,bright};
     });
     assert(metrics.isWebGL2&&metrics.glError===0&&metrics.triangles>10000&&metrics.dark>100&&metrics.bright>1000);
-    assert.equal(metrics.version,'1986-v7');await capture('desktop.jpg');return metrics;
+    assert.equal(metrics.version,'1986-v7');assert.equal(metrics.extension,Number(process.env.MOBOT_EXTENSION||.105));await capture('desktop.jpg');return metrics;
   });
   const original=await signature();
   await test('Seven assemblies: highlights, isolation and exact restoration',async()=>{
@@ -74,7 +74,7 @@ async function range(id,num){
       await range(k,4);const value=Number(await page.inputValue('#p-'+k));assert.equal(await page.evaluate(k=>window.mobotV7.state.pose[k],k),value);
     }
     await click('reset');assert.deepEqual(await signature(),original);
-    for(const [preset,yaw] of [['rear',0],['front',168]]){
+    for(const [preset,yaw] of [['rear',34],['front',111]]){
       await page.locator('[data-archive='+preset+']').click();assert.equal(await page.inputValue('#preset'),preset);
       assert.equal(await page.evaluate(()=>window.mobotV7.state.pose.yaw),yaw);
     }

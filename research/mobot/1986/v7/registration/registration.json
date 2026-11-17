@@ -26,9 +26,10 @@
         "readingUncertainty": 17
       },
       "demoPose": {
-        "yaw": 45.704,
+        "yaw": 33.882,
         "boom": 0.0,
-        "frameTopResidualPx": 92.22
+        "openingIllustration": 4,
+        "noseResidualPx": 0.18
       },
       "points": [
         {
@@ -166,9 +167,10 @@
         "readingUncertainty": 18
       },
       "demoPose": {
-        "yaw": -164.822,
-        "boom": 12.258,
-        "frameTopResidualPx": 0.0
+        "yaw": 110.863,
+        "boom": 32.0,
+        "openingIllustration": 28,
+        "noseResidualPx": 11.33
       },
       "points": [
         {

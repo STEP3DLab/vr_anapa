@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import * as T from '../../../../mobot-assets/three.module.min.js';
 import {makeMobot1986} from '../../../../mobot-ch-hv-1986-research-v7-model.js';
-const model=makeMobot1986(T), {root,sections,mechanisms,defaults}=model;
+const model=makeMobot1986(T,process.env.MOBOT_EXTENSION ? Number(process.env.MOBOT_EXTENSION) : undefined), {root,sections,mechanisms,defaults}=model;
 const vec=(x=0,y=0,z=0)=>new T.Vector3(x,y,z);
 const world=(obj,x=0,y=0,z=0)=>obj.localToWorld(vec(x,y,z));
 const box=obj=>new T.Box3().setFromObject(obj,true);
@@ -73,7 +73,7 @@ check('Structural joints, linkage endpoints and selected collision envelopes',()
     close(world(boom,-1.49,.30),world(grab));
     close(world(loader,1.4,-.08),world(scoop));
     for(let i=0;i<rods.length;i++)close(world(rods[i],0,.5),world(pins[i]));
-    for(const sign of [-1,1])close(world(grab,sign*.143,-.575),world(sections['Ковшевая челюсть '+sign]));
+    for(const sign of [-1,1])close(world(sections['Открытая рамка грейфера'],sign*.143,-.575),world(sections['Ковшевая челюсть '+sign]));
     const vertical=world(grab,0,1).sub(world(grab));close(vertical,vec(0,1,0));
     const g=box(grab),s=box(scoop);
     assert(!g.intersectsBox(hood)&&!g.intersectsBox(s)&&!g.intersectsBox(platform),'grapple overlap at '+[yaw,lift,loaderAngle,tip,grip]);

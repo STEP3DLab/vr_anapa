@@ -7,7 +7,7 @@ import {makeMobot1986 as v7} from '../../../../mobot-ch-hv-1986-research-v7-mode
 const [file,view,version,out]=process.argv.slice(2);
 const registration=JSON.parse(fs.readFileSync(file)).views[view],cam=registration.camera;
 const {yaw,boom}=registration.demoPose,model=({v6,v7}[version])(T);
-model.setPose({yaw,boom});
+model.setPose({yaw,boom,grab:registration.demoPose.openingIllustration});
 const [w,h]=view==='fig6'?[1456,1140]:[864,1170];
 const [a,e,r]=[cam.azimuth,cam.elevation,cam.roll].map(T.MathUtils.degToRad);
 const x=new T.Vector3(Math.cos(a),0,-Math.sin(a));

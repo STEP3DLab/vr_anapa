@@ -1,0 +1,20 @@
+{
+  "phase": "tracks",
+  "units": "условные единицы сцены",
+  "status": "PASS",
+  "phases": 128,
+  "distances": 188928,
+  "deepestSignedClearance": -6.2106645e-08,
+  "largestNearestGap": 2.6759568e-06,
+  "worst": {
+    "phase": 81,
+    "shoe": 77,
+    "wheel": 7,
+    "side": "Борт -1"
+  },
+  "modelTolerances": {
+    "penetration": 0.001,
+    "gap": 0.002
+  },
+  "scope": "Actual rectangular shoes vs circular nominal wheel profiles, ignoring intended axial overlap."
+}

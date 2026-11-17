@@ -27,7 +27,7 @@
       "status": "PASS",
       "poses": 2025,
       "minBucketGroundClearance": 0.016534671560331934,
-      "minGrappleGroundClearance": 1.126464931636035,
+      "minGrappleGroundClearance": 1.021464931636035,
       "units": "scene",
       "scope": "Samples; grapple against hood, scoop and deck; scoop and grapple against floor. Not all-pairs collision detection."
     }

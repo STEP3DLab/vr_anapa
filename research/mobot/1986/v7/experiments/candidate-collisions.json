@@ -1,0 +1,39 @@
+{
+  "phase": "collisions",
+  "units": "условные единицы сцены",
+  "status": "PASS",
+  "poses": 6144,
+  "worst": {
+    "hood": {
+      "separation": 0.089061285,
+      "pose": {
+        "yaw": 20.126953125,
+        "boom": 0.09266880048773052,
+        "grab": 24.668160000000004,
+        "loader": 14.928065686916165,
+        "tip": -4.747968034970289
+      }
+    },
+    "scoop": {
+      "separation": 0.090138504,
+      "pose": {
+        "yaw": 158.5546875,
+        "boom": 0.8047553726566071,
+        "grab": 20.797440000000005,
+        "loader": 15.73344439816743,
+        "tip": 1.8294515401953424
+      }
+    },
+    "deck": {
+      "separation": 0.37328206,
+      "pose": {
+        "yaw": -33.0029296875,
+        "boom": 0.009754610577655845,
+        "grab": 31.961088,
+        "loader": 14.30832391265544,
+        "tip": 14.41260842838604
+      }
+    }
+  },
+  "scope": "Positive separation between world AABBs certifies separation; zero requires triangle-level review. Only these three pairs were checked."
+}

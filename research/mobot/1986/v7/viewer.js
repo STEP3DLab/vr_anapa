@@ -5,7 +5,7 @@ import {makeMobot1986} from '../../../../mobot-ch-hv-1986-research-v7-model.js';
 const $=id=>document.getElementById(id), viewport=$('viewport');
 const buttons=selector=>[...document.querySelectorAll(selector)];
 const pressed=(el,on)=>el.setAttribute('aria-pressed',String(on));
-const modes={neutral:{},rear:{yaw:0,boom:2},front:{yaw:168,boom:12,grab:8},lift:{yaw:46,boom:20,loader:16,tip:18,grab:18}};
+const modes={neutral:{},rear:{yaw:34,boom:0,grab:4},front:{yaw:111,boom:32,grab:28},lift:{yaw:46,boom:20,loader:16,tip:18,grab:18}};
 const labels={yaw:'Поворот стойки',boom:'Подъём стрелы',grab:'Раскрытие грейфера',loader:'Подъём погрузчика',tip:'Наклон ковша',track:'Прокрутка траков'};
 function showTab(pose){
   $('partsPanel').hidden=pose;$('posePanel').hidden=!pose;
@@ -45,7 +45,11 @@ function fallback(message){
 async function start(){
   const response=await fetch(new URL('../../../../mobot-ch-hv-1986-research-v7-passport.json',import.meta.url));
   if(!response.ok)throw Error('Паспорт недоступен');
-  const passport=await response.json(),model=makeMobot1986(T),s=model.sections;
+  const passport=await response.json();
+  const requested=Number(new URLSearchParams(location.search).get('suspension'));
+  const extension=[.060,.105].includes(requested)?requested:undefined;
+  const model=makeMobot1986(T,extension),s=model.sections;
+  if(extension!==undefined)document.querySelector('.revision strong').textContent='v7 · ночной вариант подвеса (C)';
   const renderer=new T.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power',preserveDrawingBuffer:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
   renderer.setClearColor(0xe8ece5);renderer.shadowMap.enabled=true;
@@ -87,7 +91,8 @@ async function start(){
     [roots.mast[0],0,.65,0],[roots.boom[0],-.36,.30,0],[roots.grab[0],-.27,-.40,0],
     [roots.loader[0],.61,.15,0],[roots.cameras[0],0,.30,.20],[roots.cameras[1],.16,.40,0]
   ].map(([node,x,y,z])=>({node,home:node.position.clone(),offset:new T.Vector3(x,y,z)}));
-  const directions={three:[2.15,1.52,4.9],side:[0,.015,5],front:[5,.32,.01],top:[.001,5,.001]};
+  const dirs=(a,e)=>{a=T.MathUtils.degToRad(a);e=T.MathUtils.degToRad(e);return [Math.sin(a)*Math.cos(e),Math.sin(e),Math.cos(a)*Math.cos(e)];};
+  const directions={fig6:dirs(12.446,6.3285),fig9:dirs(142.169,5.0511),three:[2.15,1.52,4.9],side:[0,.015,5],front:[5,.32,.01],top:[.001,5,.001]};
   let selected='all',isolated=false,exploded=false,view='three',pose={...model.defaults};
   const render=()=>renderer.render(scene,camera);
   controls.addEventListener('change',render);
@@ -175,7 +180,7 @@ async function start(){
   function preset(key){setPose({...model.defaults,...modes[key]},key);frame();}
   $('preset').onchange=e=>preset(e.target.value);$('reset').onclick=()=>preset('neutral');
   buttons('[data-archive]').forEach(el=>el.onclick=()=>{
-    isolated=false;selected='all';spread(false);preset(el.dataset.archive);showTab(true);aim(el.dataset.archive==='front'?'front':'three');
+    isolated=false;selected='all';spread(false);preset(el.dataset.archive);showTab(true);aim(el.dataset.archive==='front'?'fig9':'fig6');
     $('bench').scrollIntoView({block:'start'});
   });
   $('still').hidden=true;$('mode').textContent='WebGL 2';resize();styleParts();setPose(model.defaults,'neutral');

@@ -1,0 +1,28 @@
+{
+  "version": "1986-v7",
+  "geometry": {
+    "status": "PASS",
+    "poses": 2025,
+    "report": "research/mobot/1986/v7/scene-results.json"
+  },
+  "mechanical": {
+    "status": "PASS",
+    "report": "research/mobot/1986/v7/experiments/",
+    "linkagePoses": 3204,
+    "bucketPoses": 7865,
+    "sampledCollisionPoses": 6144
+  },
+  "photo": {
+    "status": "PASS",
+    "report": "research/mobot/1986/v7/registration/registration.json",
+    "scope": "Независимая проверка вершины кожуха и видимой пропорции грейфера. Положение подвеса и силуэт стрелы всё ещё расходятся с фото."
+  },
+  "browser": {
+    "statusAtPreflight": "NOT RUN",
+    "liveResults": "https://github.com/STEP3DLab/vr_anapa/actions/workflows/mobot-1986-v7-verify.yml",
+    "reportInArtifact": "v7-production-output/browser-results.json"
+  },
+  "physicalMeasurements": "NOT RUN",
+  "physicalPhone": "NOT RUN",
+  "allPairCollision": "NOT RUN"
+}

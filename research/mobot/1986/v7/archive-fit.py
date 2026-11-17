@@ -47,18 +47,20 @@ def fit(fig,xyz):
     init=np.array([25 if is_rear else 140,13,0,410,650,950])
     return least_squares(residual,init,bounds=bounds,loss='soft_l1',max_nfev=220).x
 def fit_pose(cam,data):
-    target=np.array(data['grapple']['top'][:2])
+    target=np.array(data['nose'][:2])
     def err(angles):
         yaw,lift=np.radians(angles)
         # Turntable, boom origin/tip and neutral frame-top landmarks from v6.
         x=-.132-1.49*np.cos(lift)+.30*np.sin(lift)
-        y=.83+.960+1.49*np.sin(lift)+.30*np.cos(lift)-.286
+        y=.83+.960+1.49*np.sin(lift)+.30*np.cos(lift)
         xyz=np.array([[.29+x*np.cos(yaw),y,-x*np.sin(yaw)]])
         return project(xyz,cam)[0]-target
     guesses=[-40,0,40] if data['side']==1 else [-170,-135,135,170]
     fits=[least_squares(err,[angle,8],bounds=([-180,0],[180,32])) for angle in guesses]
-    best=min(fits,key=lambda f:float(f.fun@f.fun))
-    return {'yaw':round(best.x[0],3),'boom':round(best.x[1],3),'frameTopResidualPx':round(float(np.linalg.norm(best.fun)),2)}
+    preferred=0 if data['side']==1 else -165
+    score=min(np.linalg.norm(f.fun) for f in fits)
+    best=min((f for f in fits if np.linalg.norm(f.fun)<score+1),key=lambda f:abs(f.x[0]-preferred))
+    return {'yaw':round(best.x[0],3),'boom':round(best.x[1],3),'openingIllustration':data['illustrativeOpening'],'noseResidualPx':round(float(np.linalg.norm(best.fun)),2)}
 def archive(out,repeats,seed):
     inputs=json.loads((HERE/'landmarks.json').read_text())
     shapes=json.loads(subprocess.check_output(['node',str(HERE/'anchors.mjs')],cwd=ROOT))
