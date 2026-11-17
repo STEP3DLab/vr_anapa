@@ -81,14 +81,29 @@
     "realCameraCalibration": false,
     "physicalClearanceTest": false,
     "realGPUWebGLTest": false,
-    "PagesSuccessfulDeploymentConfirmed": false
+    "PagesSuccessfulDeploymentConfirmed": false,
+    "nominalWheelNonintersection": false,
+    "sourcePhotoIndependentSecondView": false
   },
   "openRisks": [
     "Single oblique view does not fix chassis side lengths or true hub positions",
     "End wheel radius can be biased by perspective and shadows, requires independent photo",
     "New road-wheel positions do not validate actual rocker geometry, which remains a hypothesis",
     "Real Canvas/WebGL mobile and desktop screen test not performed this pass",
-    "Model's loader ground datum and clearance estimate are unrelated to tested wheel safety"
+    "Model's loader ground datum and clearance estimate are unrelated to tested wheel safety",
+    "NEW QA: V18 seven neighbor/end wheel circle overlap warnings on shared side projection; see v18 QA file; do not promote."
   ],
-  "latestPolicy": "Do not change mobot-latest.html from v17 until independent multi-view silhouette check and GPU/mobile QA pass."
+  "latestPolicy": "Keep mobot-latest.html -> v17. v18 track candidate blocked by single-photo calibration AND nominal wheel overlap; no source-grounded geometric fix yet.",
+  "geometryAudit": {
+    "status": "Blocked: candidate's planar wheel circles overlap",
+    "source": "mobot-engineering-v18-model.js nominal coordinates and radii; not a historical drawing",
+    "adjacentLowerWheelOverlaps": 6,
+    "adjacentModelOverlapRangeSceneUnits": [
+      0.002,
+      0.032
+    ],
+    "rearEndToLowerWheelOverlapSceneUnits": 0.01739,
+    "interpretation": "These are projected MODEL-CIRCLE overlaps. Do not infer original wheels intersected; missing axle offsets, hub geometry and perspective calibration prevent real mechanical conclusion.",
+    "repairRule": "Do not invent new radii or axle coordinates merely to make geometry nonintersecting. First obtain independent archival view or reliable original drawing; if making purely software compatibility adjustment, mark C and keep as separate research candidate."
+  }
 }
