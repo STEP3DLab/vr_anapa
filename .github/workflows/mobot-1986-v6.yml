@@ -34,19 +34,28 @@ jobs:
       - name: Test v6 in Chromium
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/mobot-v6-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" || true' EXIT
           node research/mobot/1986/browser-qa.cjs
-      - name: Existing browser regressions
-        run: |
-          node scripts/mobot-browser-qa.cjs
-          node scripts/mobot-compare-qa.cjs
       - name: Verify published bytes and production WebGL2
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || hashFiles('research/mobot/1986/publication/http-results.json') != ''
         env:
           MOBOT_BASE_URL: https://step3dlab.github.io/vr_anapa/
           MOBOT_QA_OUT: v6-production-output
         run: |
-          node research/mobot/1986/pages-qa.mjs
+          # On main all published files, including the QA journal, must match this checkout.
+          # A post-release evidence PR can also exercise the already published viewer.
+          if [ "$GITHUB_REF" = refs/heads/main ]; then node research/mobot/1986/pages-qa.mjs; fi
           node research/mobot/1986/browser-qa.cjs
+      - name: Existing browser regressions
+        env:
+          MOBOT_BASE_URL: http://127.0.0.1:4174/
+        run: |
+          python3 -m http.server 4174 --bind 127.0.0.1 >/tmp/mobot-v6-regression-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" || true' EXIT
+          timeout --kill-after=10s 4m node scripts/mobot-browser-qa.cjs
+          timeout --kill-after=10s 4m node scripts/mobot-compare-qa.cjs
       - name: Preserve reports and captures
         if: always()
         uses: actions/upload-artifact@v4
