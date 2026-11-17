@@ -607,7 +607,7 @@ export function makeMobot(THREE, quality='auto') {
   const info={
     tracks:{name:'Гусеничный движитель',status:'К фотографическому профилю добавлена отдельная условная схема балансиров: три пары и одиночная опора на каждом борту. Наличие балансиров подтверждают воспоминания о ремонте 1987 года, но эта компоновка и оси не доказаны архивными чертежами. Контур и число катков — гипотеза.',basis:'СКТБ ПР · архивный снимок; Батанов/Лосицкий «Чернобыльская крыша» · сведения о деформации балансиров'},
     body:{name:'Корпус и рама',status:'Обводы защитного кожуха, листовые панели и крепеж восстановлены визуально. Не все люки и толщины металла документированы.',basis:'СКТБ ПР · архивный профиль'},
-    turret:{name:'Поворотная опора',status:'Открытая опорная рама уточнена по снимкам; оси и фланцы условные. Внутренние подшипники и редукторы показаны условно.',basis:'Фото, функциональная реконструкция'},
+    turret:{name:'Поворотная опора',status:'Открытая опорная рама уточнена по снимкам; оси и фланцы условные. Внутреннее устройство опоры не установлено.',basis:'Фото, функциональная реконструкция'},
     arm:{name:'Манипулятор',status:'На стендовом снимке видны продольные тяги, наружные ребристые элементы и боковые пластины у головки. Их пропорции подобраны по фотографии.',basis:'А. Батанов, В. Лосицкий, «Чернобыльская крыша», рис. 7'},
     gripper:{name:'Двупалый захват',status:'Документально подтверждены сменный двупалый захват и вариант отбойного молотка вместо схвата. В модели можно переключать инструмент, но корпус, зубило и места крепления выполнены условно.',basis:'СКТБ ПР · описание модернизации Ч-ХВ-2'},
     bucket:{name:'Фронтальный погрузчик',status:'Удалены девять неподтверждённых зубьев ковша. Смоделирована непрерывная металлическая рабочая кромка и сменный отбойный молоток на погрузчике; точная форма и крепления остаются условными.',basis:'СКТБ ПР · демонстрационный снимок и описание сменного инструмента'},
@@ -749,7 +749,7 @@ export function makeMobot(THREE, quality='auto') {
     current:'continuous profile provisionally aligned with SKTB side photo',
     exactCrossSectionVerified:false
   };
-  root.userData.geometryBasis='v20: full-resolution SKTB photos2,3,4,9; return track below deck, rounded cover, open upright, revised boom silhouette, wide plate gripper, cylindrical camera housings and slender breaker. Topology B; dimensions/axes C.';
+  root.userData.geometryBasis='v21: full-frame wheel landmarks, tangent track and articulated exterior; SKTB photos 2,3,4,9; return track below deck, rounded cover, open upright, revised boom silhouette, wide plate gripper, cylindrical camera housings and slender breaker. Topology B; dimensions/axes C.';
   root.userData.driveType='electromechanical; internal reducer dimensions are speculative';
   root.userData.loaderDegreesOfFreedom=2;
   root.userData.trackLoopMethod='convex tangent envelope from full-resolution photo 2; nominal';

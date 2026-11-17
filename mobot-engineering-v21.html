@@ -10,7 +10,7 @@
 <header><a class="brand" href="./mobot-demo.html">МОБОТ <span>/</span> Инженерный архив</a><nav><a href="#archive">Фотосверка</a><a href="#evidence">Паспорт</a><a href="./mobot-engineering-v20.html">Версия v20 ↗</a></nav></header>
 <main>
   <div class="intro"><div><p class="eyebrow">ЧЕРНОБЫЛЬСКАЯ АЭС · 1987</p><h1>Мобот-Ч-ХВ-2</h1></div><p>Модернизированная машина со сменным оснащением.<br>Исследовательская реконструкция по архиву СКТБ ПР.</p></div>
-  <section class="workbench" aria-label="Инженерный просмотр">
+  <section id="model" class="workbench" aria-label="Инженерный просмотр">
     <div class="study"><div class="stage" id="stage">
       <div id="surface"></div>
       <img id="still" src="./research/mobot/1987/overview.webp" alt="Трёхчетвертной вид собранной модели v21">
@@ -37,9 +37,9 @@
     <div class="photo-actions"><button id="match" disabled>Показать позу в 3D</button><label class="check"><input type="checkbox" id="overlay" disabled> Наложить снимок</label></div>
     <p class="note">Наложение служит для визуального сравнения. Перспектива и масштаб камеры не откалиброваны.</p><a id="original" href="http://sktbpr.ru/sites/default/files/foto_album/2.jpg">Первичный источник ↗</a></div></div>
   </section>
-  <section id="evidence"><div class="section-head"><div><p class="eyebrow">ИССЛЕДОВАТЕЛЬСКАЯ ВЕРСИЯ 21</p><h2>Паспорт достоверности</h2></div></div>
+  <section id="evidence"><div class="section-head"><div><p class="eyebrow">ИССЛЕДОВАТЕЛЬСКАЯ ВЕРСИЯ 21</p><h2 id="passport">Паспорт достоверности</h2></div></div>
   <div class="legend"><div><b>A</b><h3>Документ</h3><p>Сменный схват и два места установки молотка описаны разработчиком.</p></div><div><b>B</b><h3>Фотография</h3><p>Катки видимого борта, оболочка кожуха, наружные элементы стрелы и рабочие органы различимы на снимках.</p></div><div><b>C</b><h3>Гипотеза</h3><p>Размеры, скрытые крепления, углы и кинематика условны. Внутреннее устройство кабелеукладчика и место дозиметра остаются открытыми.</p></div></div>
-  <div class="links"><a href="./mobot-engineering-v21-passport.json">Паспорт узлов ↗</a><a href="./mobot-engineering-v21-qa.json">Результаты испытаний ↗</a><a href="./research/mobot/1987/side.webp">Боковой контрольный кадр ↗</a><a href="./mobot-engineering-v20.html">Архив v20 ↗</a></div></section>
+  <div class="links" id="backup"><a href="./mobot-engineering-v21-passport.json">Паспорт узлов ↗</a><a href="./mobot-engineering-v21-qa.json">Результаты испытаний ↗</a><a href="./research/mobot/1987/side.webp">Боковой контрольный кадр ↗</a><a href="./mobot-engineering-v20.html">Архив v20 ↗</a></div></section>
 </main>
 <script type="module" src="./research/mobot/1987/viewer.js"></script>
 </body></html>
