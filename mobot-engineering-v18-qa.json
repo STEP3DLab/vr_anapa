@@ -1,0 +1,110 @@
+{
+  "schema": "mobot-engineering-qa/1.2",
+  "date": "2026-11-17",
+  "variant": "Мобот-Ч-ХВ-2 (1987)",
+  "revision": "v18-research",
+  "candidatePage": "mobot-engineering-v18.html",
+  "source": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+  "inspection": [
+    {
+      "test": "SOURCE-IDENTIFICATION",
+      "status": "source-confirmed",
+      "note": "SKTB image of 1987 CH-HV-2 from gallery; one oblique side photograph"
+    },
+    {
+      "test": "PHOTO-LANDMARKS",
+      "status": "manual-not-calibrated",
+      "samples": 7,
+      "estimatedImageWidthPx": 500,
+      "manualUncertaintyPx": 10,
+      "sourceData": "mobot-track-photo-landmarks-v18.json"
+    },
+    {
+      "test": "JS-MODEL-PARSE",
+      "status": "pass",
+      "method": "V8 JavaScript function syntax compilation after removing ES import/export syntax"
+    },
+    {
+      "test": "JS-VIEWER-PARSE",
+      "status": "pass",
+      "method": "V8 parser on unchanged v17 controller with updated v18 model import"
+    },
+    {
+      "test": "SOURCE-PROFILE-MATCHES-MESH",
+      "status": "pass-static",
+      "method": "Wheel X values are shared through researchRoadWheelXs between trackSide and sourceProfile; old v15 values no longer exported"
+    },
+    {
+      "test": "RESEARCH-ENDWHEEL-TRACK-X-BOUND",
+      "status": "pass-nominal",
+      "frontLeftmostScene": -0.84,
+      "minTrackSceneX": -0.91,
+      "rearRightmostScene": 0.86,
+      "maxTrackSceneX": 0.87,
+      "notes": "Bounding X only; not mesh collision, no clearance guarantee"
+    },
+    {
+      "test": "HTML-IDS",
+      "status": "pass-static",
+      "uniqueIdCount": 29,
+      "duplicateIds": 0,
+      "missingSelectorIds": 0
+    },
+    {
+      "test": "HTML-RELATIVE-LINKS",
+      "status": "pass-static-partial",
+      "modelPageAndScriptAndPassportCreated": true,
+      "notes": "External archive sources may be blocked; GitHub Pages not accessible to web client"
+    },
+    {
+      "test": "WHEEL-SINGLE-PHOTO-X-FIT",
+      "status": "pass-fitting-not-validation",
+      "oldFitRmsSceneUnits": 0.1777191557,
+      "newFitRmsSceneUnits": 0.0026956181,
+      "notes": "This is a tautological fit to the SAME seven manually selected pixel positions. It is NOT cross-view validation or proof that real machine dimensions are closer."
+    },
+    {
+      "test": "MODEL-THREE-RUNTIME",
+      "status": "not-run-this-pass",
+      "notes": "No actual 3D engine assembly/mesh test of new v18 candidate"
+    },
+    {
+      "test": "DESKTOP-GPU-RENDER",
+      "status": "not-run-this-pass",
+      "notes": "No browser WebGL screenshot from real v18 code"
+    },
+    {
+      "test": "MOBILE-GPU-TOUCH",
+      "status": "not-run-this-pass",
+      "notes": "No real mobile GPU/touch visual verification"
+    },
+    {
+      "test": "REAL-MECHANICS",
+      "status": "not-verified",
+      "notes": "Kinematics inherited unchanged from v17; new wheel centers do not verify rocker pivots or drive motors"
+    },
+    {
+      "test": "DEPLOYMENT",
+      "status": "not-confirmed",
+      "notes": "GitHub write and file fetch passed; public Pages site cannot be checked by available web tool"
+    }
+  ],
+  "releaseGate": {
+    "archivalAttribution": true,
+    "sourceLandmarkData": true,
+    "jsStaticSyntax": true,
+    "htmlStaticIds": true,
+    "independentSecondView": false,
+    "photogrammetricCalibration": false,
+    "actualThreeRenderer": false,
+    "physicalRealWorldDimensions": false,
+    "promoteToLatest": false,
+    "reason": "All new track coordinates are C-grade single-perspective approximations; no independent geometry/photo alignment and no real GPU acceptance."
+  },
+  "future": [
+    "Find another high-resolution unoccluded 1987 side or opposite-side SKTB photo",
+    "Register two perspectives with track silhouette and compare residuals",
+    "Improve geometry of side rocker/sprocket only after multi-view confirmation",
+    "Render actual 3D model with real Three.js on desktop and mobile before latest promotion"
+  ]
+}
