@@ -88,10 +88,11 @@
       "source-noted selectable structural groups",
       "research pose presets",
       "1987 interchangeable tooling",
-      "static WebGL fallback"
+      "static WebGL fallback",
+      "reversible engineering isolation of selected visible mesh group; research-only view"
     ],
     "qa": "scripts/mobot-compare-qa.cjs",
-    "browserValidation": "new comparison build: CI must be reviewed; prior production success below covers only earlier single-model demo",
+    "browserValidation": "Source syntax and static contracts checked; new desktop/mobile WebGL and published Pages run not independently confirmed",
     "historyPolicy": "previous pages and historical viewer v17 preserved",
     "scale": "independent framing, scene dimensions uncalibrated"
   }
