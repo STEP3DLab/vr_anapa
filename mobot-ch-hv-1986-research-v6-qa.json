@@ -19,7 +19,7 @@
       "status": "PASS",
       "trackSamples": 5000,
       "wheelCountPerSide": 9,
-      "maxContactResidual": 8.908329827538725e-7,
+      "maxContactResidual": 8.908329827538725e-07,
       "units": "scene"
     },
     {
@@ -151,6 +151,16 @@
       "status": "PASS",
       "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170664606",
       "finding": "Два касания после поворота вызывают ровно две активации. Пройдены все тесты предпросмотра и предыдущих версий."
+    }
+  ],
+  "referenceFigures": [
+    {
+      "figure": 6,
+      "printedPage": 74
+    },
+    {
+      "figure": 9,
+      "printedPage": 75
     }
   ]
 }
