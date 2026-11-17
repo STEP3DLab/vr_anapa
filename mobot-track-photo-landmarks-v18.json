@@ -1,0 +1,92 @@
+{
+  "schema": "mobot-photo-landmarks/1",
+  "date": "2026-11-17",
+  "machine": "Мобот-Ч-ХВ-2 (1987)",
+  "image": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+  "archivePage": "https://sktbpr.ru/foto-alb/65",
+  "imagePreviewPixels": [
+    500,
+    500
+  ],
+  "attribution": "СКТБ ПР: photograph labeled Мобот-Ч-ХВ-2 in archival gallery",
+  "confidence": {
+    "photoIdentification": "B",
+    "visibleWheelCount": "B: seven lower road-wheel circular features visible in this pictured machine",
+    "pixelLandmarks": "B/C: manually estimated screen-space center positions; ±10px or more",
+    "worldCoordinates": "C: only normalized projective fitting, NOT actual track positions"
+  },
+  "methodology": {
+    "photoApproxHorizontalTrackEnvelopePx": [
+      5,
+      430
+    ],
+    "photoVehicleFront": "image right (loader/bucket visible on right)",
+    "modelVehicleFront": "negative scene X",
+    "modelTrackXEnvelope": [
+      -0.91,
+      0.87
+    ],
+    "transform": "model_x = 0.87 - ((pixel_x - 5)/(430-5))*(0.87 - (-0.91))",
+    "notes": [
+      "One oblique historical photograph, no lens calibration, no rectification, image-matching projective transform, or factory scale",
+      "Coordinates were picked manually from 500px preview, not exported from a precision annotation session",
+      "These estimates only guide research variant; measurements in scene units must NEVER be called metres or millimetres"
+    ]
+  },
+  "lowerRoadWheelCentersPhotoPx": {
+    "fromLeftToRight": [
+      53,
+      100,
+      144,
+      188,
+      229,
+      275,
+      319
+    ],
+    "estimatedUncertaintyPx": 10
+  },
+  "mappedModelXFrontToRear": [
+    -0.445,
+    -0.261,
+    -0.068,
+    0.104,
+    0.288,
+    0.472,
+    0.669
+  ],
+  "sourceModelV16XFrontToRear": [
+    -0.56,
+    -0.395,
+    -0.23,
+    -0.065,
+    0.1,
+    0.265,
+    0.43
+  ],
+  "researchModelV18XFrontToRear": [
+    -0.45,
+    -0.26,
+    -0.07,
+    0.1,
+    0.29,
+    0.47,
+    0.67
+  ],
+  "endWheelCenterImagePx": {
+    "rearLeft": 25,
+    "frontRight": 380,
+    "estimatedUncertaintyPx": 15
+  },
+  "endWheelResearchModelX": {
+    "front": -0.7,
+    "rear": 0.72
+  },
+  "endWheelDiameters": "reduced in candidate from scene radius 0.19 to 0.14, only because visibly smaller in projected side image. Relative proportions approximate, not real sizes.",
+  "fitStatement": "New coordinates interpolate seven selected manual landmarks; any near-zero residual is tautological, NOT independent evidence of geometric accuracy.",
+  "blockers": [
+    "Second photo of same chassis roughly side-on for independent reprojection",
+    "Perspective rectification / measured track envelopes by archival image, preferably from original high-resolution scan",
+    "Confirmed axle centers and mounting/hub sizes from technical drawing or measurement",
+    "Real WebGL photoview overlay and mobile acceptance"
+  ]
+}
