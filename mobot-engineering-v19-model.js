@@ -14,7 +14,9 @@ export function makeMobot(THREE, quality='auto') {
   let fastenerCounter=0;
   const driveModules=[];
   let sourceTrackProfile=null;
-  let researchRoadWheelXs=null; // v18: photo-based per-side projected axle layout
+  let researchRoadWheelXs=null; // v19: approximate scene positions from one photograph
+  let researchRoadWheelRadii=null; // v19: face-radius estimate in scene units, not actual radii
+  const terminalWheelOuterRadius=.105; // scene-only projected end-wheel proxy
   const rotatingHubs=[];
   const suspensionSchemes=[];
   const fastenerPool=new Map(), groupKeys=new WeakMap(), materialKeys=new WeakMap();
@@ -199,7 +201,8 @@ export function makeMobot(THREE, quality='auto') {
     // mapped REVERSED along model X because model FRONT is -X while bucket is on the RIGHT in the photo.
     // Relative alignment only: manual landmark uncertainty ~10px; no physical scale.
     const wheelXs=[-.45,-.26,-.07,.10,.29,.47,.67];
-    if(!researchRoadWheelXs)researchRoadWheelXs=wheelXs.slice();
+    const wheelRadii=wheelXs.map((_,i)=>.070+(i%2===0?.003:0));
+    if(!researchRoadWheelXs){researchRoadWheelXs=wheelXs.slice();researchRoadWheelRadii=wheelRadii.slice();}
     // 7 lower wheel features: photo-visible class B for photographed 1987 machine; model coordinates remain C.
     // A later MRK-46M paper specifies SIX road wheels for the MRK-46M;
     // those data must not be retrofitted onto CH-HV-2 without primary evidence.
@@ -207,7 +210,7 @@ export function makeMobot(THREE, quality='auto') {
       // SKTB Photo2 preview (500 px): apparent outer wheel face about 14–18 px radius.
       // With nominal 425 px / 1.78 scene-width this is approximately 0.059–0.075 SCENE units.
       // The 0.070/0.073 proxy is class C, never a historical radius. ±5 px feature uncertainty.
-      const y=.25,outer=.070+(i%2===0?.003:0);
+      const y=.25,outer=wheelRadii[i];
       cylinder(g,outer,outer,.115,[x,y,sign*.020],m.shadow,id,'z',32);
       cylinder(g,outer-.011,outer-.011,.120,[x,y,sign*.055],m.satin,id,'z',32);
       cylinder(g,.037,.037,.131,[x,y,sign*.090],m.frame,id,'z',24);
@@ -262,7 +265,7 @@ export function makeMobot(THREE, quality='auto') {
     // Their photo silhouette is occluded; ±6 px uncertainty, actual radii unknown (C).
     // This is not calibrated photogrammetry, and not validation of 1987 wheel construction.
     for(const x of [-.70,.72]){
-      cylinder(g,.105,.105,.12,[x,cy,sign*.006],m.shadow,id,'z',34);
+      cylinder(g,terminalWheelOuterRadius,terminalWheelOuterRadius,.12,[x,cy,sign*.006],m.shadow,id,'z',34);
       cylinder(g,.086,.086,.124,[x,cy,sign*.06],m.joint,id,'z',32);
       cylinder(g,.051,.051,.139,[x,cy,sign*.076],m.satin,id,'z',24);
       ring(g,.091,.009,[x,cy,sign*.124],m.frame,id);
@@ -776,6 +779,9 @@ export function makeMobot(THREE, quality='auto') {
     physicalScaleKnown:false,
     trackContour:sourceTrackProfile.map(p=>[...p]),
     wheelXs:researchRoadWheelXs.slice(),
+    visibleWheelOuterRadiiScene:researchRoadWheelRadii.slice(),
+    terminalWheelOuterRadiusScene:terminalWheelOuterRadius,
+    wheelRadiometry:'manual single-photo apparent face scale; NOT factory wheel dimensions',
     wheelY:PROFILE_V15.wheelY,
     bucketLiftPivot:[bucket.position.x,bucket.position.y],
     bucketTiltPivotRelative:[bucketScoop.position.x,bucketScoop.position.y],
