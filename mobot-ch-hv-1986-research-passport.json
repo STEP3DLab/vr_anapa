@@ -3,7 +3,7 @@
   "date": "2026-11-17",
   "object": "Мобот-Ч-ХВ, исходная машина 1986 года",
   "status": "Separate research visualization for 1986; two historical photo poses; not dimensional CAD",
-  "threeDModel": "mobot-ch-hv-1986-research-v2.html",
+  "threeDModel": "mobot-ch-hv-1986-research-v3.html",
   "sourceOfTruth": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
   "notDerivedFrom": "mobot-engineering-v16-model.js",
   "actualScaleKnown": false,
@@ -106,9 +106,9 @@
     "sideAndFrontSilhouettes": "not-calibrated; photos have different perspective",
     "jointLocations": "not-completed",
     "realDimensions": "not-available",
-    "threeDGeometry": "v2 retains v1 uncalibrated shapes and corrects a visual kinematic mismatch",
-    "realDeviceQA": "real WebGL / phone GPU not-tested",
-    "decision": "Keep 1986 prototype separate; do not change 1987 mobot-latest.html"
+    "threeDGeometry": "research-v3: correction of schematic grapple jaw layout only; unmeasured hardware",
+    "realDeviceQA": "Desktop/mobile DOM mock only; WebGL GPU and public Pages not independently verified",
+    "decision": "Maintain separate 1986 prototype v3, preserve v1/v2 and existing 1987 stable latest."
   },
   "sourceGeometryEvidence": [
     {
@@ -138,7 +138,7 @@
       ]
     }
   ],
-  "geometryVersion": "research-v2",
+  "geometryVersion": "research-v3",
   "geometryPrinciples": [
     "1986 truss boom modelled with diagonal bracing as qualitative B silhouette",
     "1986 grapple not replaced by 1987 detachable two-jaw gripper; shape C",
@@ -146,8 +146,8 @@
     "No hydraulics claimed; all drives documented as electromechanical",
     "All points scene units, not metres, and joint ranges are UI-only hypotheses"
   ],
-  "parent3DModel": "mobot-ch-hv-1986-research-v1.html",
-  "qa": "mobot-ch-hv-1986-research-v2-qa.json",
+  "parent3DModel": "mobot-ch-hv-1986-research-v2.html",
+  "qa": "mobot-ch-hv-1986-research-v3-qa.json",
   "photoPoseEvidence": [
     {
       "id": "FIG6",
@@ -178,6 +178,13 @@
       "class": "B-visual C-mechanism",
       "claim": "Grapple is kept vertically aligned in the scene as the boom rotates",
       "limitation": "Photos support hanging posture but do not establish suspension mechanism or degrees of freedom"
+    },
+    {
+      "id": "GRAPPLE-JAW-PLANE",
+      "class": "B visible two halves / C mechanical coordinates",
+      "claim": "v2 jaws separated across Z overlapped in the historical 1986 side view. v3 places jaw pair across X, rotates them in the side plane, preserving hanging orientation.",
+      "source": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6",
+      "limitation": "This improves a qualitative side silhouette; not a measurement of actual jaw geometry, pivot mechanism or travel."
     }
   ]
 }
