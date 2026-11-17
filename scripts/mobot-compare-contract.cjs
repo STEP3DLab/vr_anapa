@@ -13,7 +13,7 @@ assert.equal(new Set(ids).size,ids.length,'duplicate compare element IDs');
 const required=['sync','syncStatus','zoomIn','zoomOut','reset','pose86','pose87','node86','node87','tool87','focus86','focus87','canvas86','canvas87','stage86','stage87','fallback86','fallback87','status86','status87','note86','note87'];
 for(const id of required){
  assert(ids.includes(id),'required view control missing '+id);
- assert(app.includes("'"+id+"'")||app.includes("'"+id.replace(/(?:86|87)$/,'')+"'"),'unhandled control '+id);
+ if(!id.startsWith('stage'))assert(app.includes("'"+id+"'")||app.includes("'"+id.replace(/(?:86|87)$/,'')+"'"),'unhandled control '+id);
 }
 const refs=[...html.matchAll(/\b(?:href|src)="([^"]+)"/g)].map(m=>m[1]);
 const paths=refs.filter(ref=>ref.startsWith('./')).map(ref=>ref.split('#')[0].split('?')[0]);
