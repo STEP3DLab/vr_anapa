@@ -2,7 +2,7 @@
   "schema": "mobot-demonstration-release/1",
   "prepared": "2026-11-17",
   "demonstrationDate": "2026-11-18",
-  "status": "published research demonstration; not final historical CAD",
+  "status": "published research demonstration; v20 selected as latest 1987 viewer, not final historical CAD",
   "demo": "https://step3dlab.github.io/vr_anapa/mobot-demo.html",
   "models": {
     "1986": "mobot-ch-hv-1986-research-v5.html",
@@ -52,13 +52,23 @@
     "sceneBoundsMayIncludeHiddenTools": true,
     "circleChecksDoNotValidateHistoricalSuspension": true
   },
-  "stableLatest": "mobot-engineering-v17.html",
+  "stableLatest": "mobot-engineering-v20.html",
   "previousFilesPreserved": true,
   "fallback": "mobot-backup.html",
   "spokenScript": "mobot-demo-script-2026-11-18.md",
   "geometryChanges": "mobot-geometry-changes-2026-11-18.md",
   "evidenceAudit": "mobot-archive-audit-2026-11-18.md",
-  "fileSHA256": {
+  "previousStable": "mobot-engineering-v17.html",
+  "latestEntryPoint": "https://step3dlab.github.io/vr_anapa/mobot-latest.html",
+  "latestPromotionDate": "2026-11-17",
+  "promotionNotes": [
+    "The previous v17 file is preserved and linked from both model pages.",
+    "v20 includes the most recent source-based revisions to tracks, housing, boom, grabber and camera silhouettes.",
+    "1986 v5 remains a distinct model on the two-robot demo page.",
+    "Geometries and machine dimensions remain research hypotheses, not certified manufacturing CAD.",
+    "Latest redirect and evidence deep links are explicitly covered by browser QA and Pages publication checks."
+  ],
+  "fileSHA256AtPrePromotionWebGLQA": {
     "mobot-demo.html": "cd9d61acc71a8234383a78ba992c5e718ed3364a393ab3fd4fca9f3790ac70b1",
     "mobot-ch-hv-1986-research-v5-model.js": "79b17e7d09f26826fbc87117767837f5b8b68485b880d90ca7463f98a9d8690b",
     "mobot-engineering-v20-model.js": "7b915377ca0e147976351ab45ac30f3957a632c6fb43707ebaa216ecf4f6516c",
