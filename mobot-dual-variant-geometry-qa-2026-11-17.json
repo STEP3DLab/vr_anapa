@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-17",
+  "scope": "Source-to-geometry evidence gate for both historic variants; static repository/source inspection only",
+  "status": "research baseline published, existing model not revised",
+  "repo": "STEP3DLab/vr_anapa",
+  "checks": [
+    {
+      "id": "LATEST-POINTER",
+      "status": "pass",
+      "observed": "mobot-latest.html points to mobot-engineering-v17.html"
+    },
+    {
+      "id": "V17-MODEL-ORIGIN",
+      "status": "pass",
+      "observed": "workbench-v17.js imports mobot-engineering-v16-model.js"
+    },
+    {
+      "id": "1986-SEPARATE-BASELINE",
+      "status": "pass",
+      "observed": "1986 research passport created separately; no 1986 CAD or page claimed"
+    },
+    {
+      "id": "DRIVE-TYPE",
+      "status": "documented",
+      "observed": "SKTB primary text says all original 1986 drives are electromechanical",
+      "warning": "Do not infer hydraulic actuation from appearances"
+    },
+    {
+      "id": "1986-GRAB-VS-1987-JAWS",
+      "status": "documented",
+      "observed": "1986 uses a grab/grapple attachment; 1987 explicitly receives replaceable two-finger gripper",
+      "warning": "No claim about exact geometry of either end effector"
+    },
+    {
+      "id": "V16-TRACK-ROLLERS",
+      "status": "needs-geometric-verification",
+      "observed": "mobot-engineering-v16-model.js defines seven nominal lower-wheel x-positions per side",
+      "warning": "This is an implementation choice, not a confirmed wheel count; MRK-46M data cannot be transferred"
+    },
+    {
+      "id": "V16-BUCKET-EDGE",
+      "status": "needs-geometric-verification",
+      "observed": "v16 code builds open bucket and added fastening/detail geometry",
+      "warning": "Original shape, edge reinforcement and teeth require independent archive identification"
+    },
+    {
+      "id": "V16-CAMERAS",
+      "status": "needs-geometric-verification",
+      "observed": "v16 code creates two camera bodies",
+      "warning": "Count of cameras documented, exact housings and mounts are not"
+    },
+    {
+      "id": "MOBILE-BROWSER",
+      "status": "not-run-this-pass",
+      "observed": "No physical-device or GPU browser test in this pass"
+    },
+    {
+      "id": "PAGES-DEPLOY",
+      "status": "not-run-this-pass",
+      "observed": "GitHub file commits succeeded; no new viewer deployed or claimed"
+    },
+    {
+      "id": "DIMENSIONS",
+      "status": "blocked",
+      "observed": "No verified factory dimensional drawings / photogrammetric calibration"
+    }
+  ],
+  "blockers": [
+    "1986 side/front photo securely attributed to the original machine, preferably primary SKTB figure 6",
+    "1987 multiple independent usable archival views with controlled crop and perspective analysis",
+    "Link geometry and kinematics to image features, confidence grades, measurements in pixels or dimensionless ratios",
+    "Visible guide for original grab mechanism and modernized two-finger replacement"
+  ],
+  "latestPolicy": "No actual geometry correction validated; do not update mobot-latest.html; preserve v17 and all old versions.",
+  "evidenceLinks": [
+    "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
+    "https://sktbpr.ru/node/23",
+    "https://sktbpr.ru/foto-alb/65"
+  ]
+}
