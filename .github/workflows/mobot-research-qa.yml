@@ -17,6 +17,7 @@ on:
       - 'mobot-assets/exhibition-v1.*'
       - 'scripts/mobot-browser-qa.cjs'
       - 'scripts/mobot-compare-qa.cjs'
+      - 'scripts/mobot-compare-contract.cjs'
       - 'scripts/mobot-pages-wait.cjs'
       - 'scripts/mobot-scene-qa.mjs'
       - 'mobot-assets/exhibition-v1.css'
@@ -46,6 +47,7 @@ jobs:
           node --check mobot-assets/exhibition-v1.js
           node --check mobot-assets/compare-v1.js
           node --check scripts/mobot-compare-qa.cjs
+          node scripts/mobot-compare-contract.cjs
           node --check scripts/mobot-pages-wait.cjs
           node --check scripts/mobot-browser-qa.cjs
           node mobot-geometry-gate.cjs
