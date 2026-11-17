@@ -1,0 +1,149 @@
+{
+  "source": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+  "imageSize": [
+    1600,
+    2450
+  ],
+  "figure": 6,
+  "printedPage": 74,
+  "machine": "Мобот-Ч-ХВ; 1986 configuration, identified by adjoining text",
+  "coordinateSystem": "Original full-page scan pixels, x right y down. Manual points ±10 px, occluded circles ±15 px. No rectification, scale or metric calibration.",
+  "lowerWheelCentersLeftToRight": [
+    [
+      1004,
+      2253
+    ],
+    [
+      1038,
+      2258
+    ],
+    [
+      1071,
+      2267
+    ],
+    [
+      1107,
+      2272
+    ],
+    [
+      1142,
+      2279
+    ],
+    [
+      1177,
+      2286
+    ],
+    [
+      1219,
+      2288
+    ]
+  ],
+  "endWheelCentersApprox": [
+    [
+      975,
+      2194
+    ],
+    [
+      1285,
+      2224
+    ]
+  ],
+  "trackEnvelopeApprox": [
+    [
+      950,
+      2180
+    ],
+    [
+      993,
+      2162
+    ],
+    [
+      1305,
+      2200
+    ],
+    [
+      1286,
+      2260
+    ],
+    [
+      1235,
+      2300
+    ],
+    [
+      1006,
+      2278
+    ],
+    [
+      960,
+      2227
+    ]
+  ],
+  "tallOpenSupportApprox": {
+    "baseCorners": [
+      [
+        1160,
+        2152
+      ],
+      [
+        1260,
+        2160
+      ]
+    ],
+    "upperCorners": [
+      [
+        1204,
+        1965
+      ],
+      [
+        1263,
+        1977
+      ]
+    ],
+    "note": "Visible open lattice support/heel, not a confirmed stationary pedestal or joint axis."
+  },
+  "boomVisibleChordApprox": {
+    "upper": [
+      [
+        972,
+        1921
+      ],
+      [
+        1206,
+        1977
+      ]
+    ],
+    "lower": [
+      [
+        972,
+        1951
+      ],
+      [
+        1192,
+        2080
+      ]
+    ]
+  },
+  "roundedCoverApprox": {
+    "box": [
+      970,
+      2105,
+      1180,
+      2170
+    ],
+    "note": "Approx image bounding rectangle only; visible arched cover, function and hidden depth not established."
+  },
+  "frontLoaderApprox": {
+    "lip": [
+      [
+        1334,
+        2303
+      ],
+      [
+        1505,
+        2335
+      ]
+    ],
+    "sideWalls": "triangular cheek profiles visible; two motions documented but axes unmeasured"
+  },
+  "confidence": "B visible forms; C pixel positions, dimensions, kinematics, hidden surfaces. No model validation or independent fit residual produced."
+}

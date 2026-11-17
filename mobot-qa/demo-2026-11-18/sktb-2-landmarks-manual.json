@@ -1,0 +1,144 @@
+{
+  "source": "http://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+  "imageSize": [
+    2786,
+    2106
+  ],
+  "caption": "«Мобот-Ч-ХВ-2» подготовленный к отправке на ЧАЭС",
+  "dateOfExposure": "unknown; caption implies before dispatch, not independently dated",
+  "method": "manual projected circles; no calibration/rectification; pixel coordinates from original. Approx outer dark road-wheel disc, not bright hub. Ellipticity/perspective ignored.",
+  "uncertaintyPx": {
+    "centers": 8,
+    "outerRadii": 12,
+    "endRadii": 15
+  },
+  "lowerWheelsLeftToRight": [
+    {
+      "center": [
+        512,
+        1925
+      ],
+      "outerDiscRadius": 70
+    },
+    {
+      "center": [
+        693,
+        1937
+      ],
+      "outerDiscRadius": 73
+    },
+    {
+      "center": [
+        884,
+        1940
+      ],
+      "outerDiscRadius": 73
+    },
+    {
+      "center": [
+        1053,
+        1947
+      ],
+      "outerDiscRadius": 69
+    },
+    {
+      "center": [
+        1232,
+        1944
+      ],
+      "outerDiscRadius": 68
+    },
+    {
+      "center": [
+        1408,
+        1944
+      ],
+      "outerDiscRadius": 69
+    },
+    {
+      "center": [
+        1574,
+        1942
+      ],
+      "outerDiscRadius": 69
+    }
+  ],
+  "endWheelsLeftToRight": [
+    {
+      "center": [
+        391,
+        1707
+      ],
+      "projectedRadiusApprox": 118
+    },
+    {
+      "center": [
+        1859,
+        1707
+      ],
+      "projectedRadiusApprox": 98
+    }
+  ],
+  "trackOuterOutlineApprox": {
+    "topNearEdge": [
+      [
+        319,
+        1584
+      ],
+      [
+        650,
+        1610
+      ],
+      [
+        1000,
+        1634
+      ],
+      [
+        1340,
+        1645
+      ]
+    ],
+    "bottomNearEdge": [
+      [
+        500,
+        2012
+      ],
+      [
+        880,
+        2020
+      ],
+      [
+        1250,
+        2022
+      ],
+      [
+        1570,
+        2009
+      ]
+    ],
+    "leftExtreme": [
+      238,
+      1723
+    ],
+    "rightExtreme": [
+      1980,
+      1708
+    ]
+  },
+  "deckVisibleNearSideLineApprox": [
+    [
+      385,
+      1542
+    ],
+    [
+      950,
+      1558
+    ],
+    [
+      1500,
+      1569
+    ]
+  ],
+  "classification": "B visible 7 lower discs and raised ends; C radii, metric geometry, mounting axes, 3D reconstruction",
+  "warning": "Top tread extends in depth behind near edge; chassis deck line above far tread is at a different depth. Do not equate y pixels across depth planes. No number here is millimetres."
+}
