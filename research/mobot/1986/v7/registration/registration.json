@@ -1,0 +1,276 @@
+{
+  "method": "Rigid chassis only; weak perspective; independent camera per photo; manual points; interval sensitivity is not a confidence interval. Angles and depth are hypotheses.",
+  "seed": 1986,
+  "views": {
+    "fig6": {
+      "cropToScan": {
+        "scanOffset": [
+          830,
+          1790
+        ],
+        "cropToScanScale": 0.5,
+        "normalizedCorrelation": 0.99996
+      },
+      "camera": {
+        "azimuth": 12.446,
+        "elevation": 6.3285,
+        "roll": -4.942,
+        "pxPerSceneUnit": 358.2804,
+        "cx": 647.0176,
+        "cy": 1013.3862
+      },
+      "hoodCrown": {
+        "v6Pixels": 38.79,
+        "v7Pixels": 8.22,
+        "role": "shape selection",
+        "readingUncertainty": 17
+      },
+      "demoPose": {
+        "yaw": 45.704,
+        "boom": 0.0,
+        "frameTopResidualPx": 92.22
+      },
+      "points": [
+        {
+          "point": "endRear",
+          "role": "fit",
+          "residualPixels": 7.27,
+          "readingUncertainty": 10,
+          "projected": [
+            299.09,
+            815.01
+          ]
+        },
+        {
+          "point": "endFront",
+          "role": "fit",
+          "residualPixels": 10.13,
+          "readingUncertainty": 14,
+          "projected": [
+            908.18,
+            877.98
+          ]
+        },
+        {
+          "point": "road0",
+          "role": "fit",
+          "residualPixels": 2.5,
+          "readingUncertainty": 10,
+          "projected": [
+            347.53,
+            919.6
+          ]
+        },
+        {
+          "point": "road2",
+          "role": "holdout",
+          "residualPixels": 6.85,
+          "readingUncertainty": 11,
+          "projected": [
+            479.09,
+            934.21
+          ]
+        },
+        {
+          "point": "road4",
+          "role": "fit",
+          "residualPixels": 23.34,
+          "readingUncertainty": 12,
+          "projected": [
+            618.5,
+            949.69
+          ]
+        },
+        {
+          "point": "road6",
+          "role": "holdout",
+          "residualPixels": 33.41,
+          "readingUncertainty": 15,
+          "projected": [
+            769.69,
+            966.48
+          ]
+        },
+        {
+          "point": "lampNear",
+          "role": "holdout",
+          "residualPixels": 17.96,
+          "readingUncertainty": 11,
+          "projected": [
+            975.93,
+            732.57
+          ]
+        },
+        {
+          "point": "lampFar",
+          "role": "fit",
+          "residualPixels": 1.25,
+          "readingUncertainty": 12,
+          "projected": [
+            1014.13,
+            717.45
+          ]
+        },
+        {
+          "point": "hood",
+          "role": "holdout",
+          "residualPixels": 38.79,
+          "readingUncertainty": 17,
+          "projected": [
+            468.79,
+            608.15
+          ]
+        }
+      ],
+      "holdoutMeanPixels": 24.25,
+      "jitterSamples": 16,
+      "jitterHoldoutMeanPixelP10P50P90": [
+        20.02,
+        23.22,
+        26.15
+      ],
+      "jitterAnglesP10P90": [
+        [
+          9.62,
+          5.37,
+          -5.58
+        ],
+        [
+          16.01,
+          8.34,
+          -3.87
+        ]
+      ]
+    },
+    "fig9": {
+      "cropToScan": {
+        "scanOffset": [
+          895,
+          126
+        ],
+        "cropToScanScale": 0.6666666666666666,
+        "normalizedCorrelation": 0.99961
+      },
+      "camera": {
+        "azimuth": 142.169,
+        "elevation": 5.0511,
+        "roll": -9.1701,
+        "pxPerSceneUnit": 284.2629,
+        "cx": 474.8576,
+        "cy": 953.2623
+      },
+      "hoodCrown": {
+        "v6Pixels": 52.12,
+        "v7Pixels": 30.84,
+        "role": "separate view check",
+        "readingUncertainty": 18
+      },
+      "demoPose": {
+        "yaw": -164.822,
+        "boom": 12.258,
+        "frameTopResidualPx": 0.0
+      },
+      "points": [
+        {
+          "point": "endRear",
+          "role": "fit",
+          "residualPixels": 8.63,
+          "readingUncertainty": 13,
+          "projected": [
+            812.46,
+            857.49
+          ]
+        },
+        {
+          "point": "endFront",
+          "role": "fit",
+          "residualPixels": 6.76,
+          "readingUncertainty": 15,
+          "projected": [
+            420.89,
+            817.76
+          ]
+        },
+        {
+          "point": "road0",
+          "role": "fit",
+          "residualPixels": 11.68,
+          "readingUncertainty": 14,
+          "projected": [
+            763.28,
+            931.55
+          ]
+        },
+        {
+          "point": "road1",
+          "role": "holdout",
+          "residualPixels": 28.94,
+          "readingUncertainty": 14,
+          "projected": [
+            720.27,
+            927.59
+          ]
+        },
+        {
+          "point": "road2",
+          "role": "holdout",
+          "residualPixels": 38.94,
+          "readingUncertainty": 14,
+          "projected": [
+            678.52,
+            923.74
+          ]
+        },
+        {
+          "point": "lampNear",
+          "role": "fit",
+          "residualPixels": 3.68,
+          "readingUncertainty": 9,
+          "projected": [
+            350.11,
+            690.32
+          ]
+        },
+        {
+          "point": "lampFar",
+          "role": "fit",
+          "residualPixels": 1.84,
+          "readingUncertainty": 10,
+          "projected": [
+            269.68,
+            667.81
+          ]
+        },
+        {
+          "point": "hood",
+          "role": "holdout",
+          "residualPixels": 52.12,
+          "readingUncertainty": 18,
+          "projected": [
+            709.1,
+            669.83
+          ]
+        }
+      ],
+      "holdoutMeanPixels": 40.0,
+      "jitterSamples": 16,
+      "jitterHoldoutMeanPixelP10P50P90": [
+        38.34,
+        43.35,
+        46.78
+      ],
+      "jitterAnglesP10P90": [
+        [
+          138.96,
+          2.65,
+          -9.62
+        ],
+        [
+          144.65,
+          6.31,
+          -8.32
+        ]
+      ]
+    }
+  }
+}

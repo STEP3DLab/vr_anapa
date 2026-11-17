@@ -21,6 +21,17 @@ export function makeMobot1986(T){
     o.position.copy(a).lerp(b,.5);o.scale.y=v.length();
     o.quaternion.setFromUnitVectors(up,v.normalize());
   }
+  // Fig. 6 fixed-chassis registration places the v6 near crown high and forward.
+  // Keep the skirt seated on the deck. The arc interpolation and displacements are C.
+  const hoodBase=.800,oldRise=1.119-hoodBase,hoodDx=-.062,hoodDy=-.062;
+  const kx=hoodDx/oldRise,ky=1+hoodDy/oldRise;
+  const archTransform=new T.Matrix4().set(1,kx,0,-kx*hoodBase,0,ky,0,(1-ky)*hoodBase,0,0,1,0,0,0,0,1);
+  for(const part of sections['Рама и округлый кожух'].children){
+    if(!['Арочный кожух','Торцевой лист кожуха','Наружная накладка, форма C','Скоба накладки'].includes(part.name))continue;
+    part.updateMatrix();
+    const local=part.matrix.clone().invert().multiply(archTransform).multiply(part.matrix);
+    part.geometry.applyMatrix4(local);
+  }
   const camera=sections['Верхний цилиндрический корпус камеры'];
   for(const old of [...camera.children]){
     camera.remove(old);const index=model.objects.indexOf(old);if(index>=0)model.objects.splice(index,1);
