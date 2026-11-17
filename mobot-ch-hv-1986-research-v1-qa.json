@@ -1,0 +1,148 @@
+{
+  "schema": "mobot-reconstruction-qa/1",
+  "date": "2026-11-17",
+  "variant": "Мобот-Ч-ХВ (1986)",
+  "candidate": "mobot-ch-hv-1986-research-v1.html",
+  "releaseType": "separate research geometry, not canonical",
+  "sources": [
+    {
+      "kind": "archival figure",
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6",
+      "citation": "2019, vol.16 no.4, p.75, Fig.9, attributed to Ч-ХВ original",
+      "geometryEvidence": "B for open truss appearance; no dimensional measurements"
+    },
+    {
+      "kind": "primary technical narrative",
+      "url": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
+      "geometryEvidence": "A for original 1986 grapple/loader/tracks/two cameras/electromechanical drives; C for exact exterior geometry"
+    }
+  ],
+  "implemented": {
+    "research3D": true,
+    "openTruss": true,
+    "originalGrappleNotModernizedTwoFinger": true,
+    "loaderTwoUserControls": true,
+    "crawlerBothSides": true,
+    "twoCameras": true,
+    "actualDimensionsClaimed": false,
+    "hydraulicActuatorsInvented": false,
+    "breachingToolInvented": false
+  },
+  "tests": [
+    {
+      "id": "JS-MODULE-PARSE",
+      "status": "pass",
+      "how": "node --check extracted inline ES module; node --check standalone original model code"
+    },
+    {
+      "id": "MODEL-GRAPH-ASSEMBLY",
+      "status": "pass-in-three-compatible-mock",
+      "objectCount": 78,
+      "sectionCount": 12,
+      "trussLongitudinalBeams": 4,
+      "trussDiagonals": 10,
+      "notes": "These are counts in the new synthetic mesh, NOT historic machine part counts."
+    },
+    {
+      "id": "MECHANISMS",
+      "status": "pass-in-mock",
+      "modelDofs": [
+        "boom",
+        "loader",
+        "tip",
+        "grab"
+      ],
+      "inputTestDegrees": {
+        "boom": 12,
+        "loader": -8,
+        "tip": 15,
+        "grab": 22
+      },
+      "notes": "Finite input checks, paired jaws counter-rotation and angle conversion; not validated historical physical ranges"
+    },
+    {
+      "id": "BROWSER-DESKTOP-DOM",
+      "status": "pass-with-renderer-stub",
+      "viewportPx": [
+        1250,
+        900
+      ],
+      "controls": [
+        "boom",
+        "loader",
+        "tip",
+        "grab",
+        "reset",
+        "sideView",
+        "threeView"
+      ],
+      "exceptions": 0
+    },
+    {
+      "id": "BROWSER-MOBILE-DOM",
+      "status": "pass-with-renderer-stub",
+      "viewportPx": [
+        390,
+        780
+      ],
+      "controls": [
+        "boom",
+        "loader",
+        "tip",
+        "grab",
+        "reset",
+        "sideView",
+        "threeView"
+      ],
+      "exceptions": 0
+    },
+    {
+      "id": "DEPENDENCY-PATHS",
+      "status": "pass-in-repo",
+      "files": [
+        "mobot-assets/three.module.min.js",
+        "mobot-assets/controls/OrbitControls.js"
+      ]
+    },
+    {
+      "id": "SOURCE-PAGE",
+      "status": "screen-inspected",
+      "method": "PDF page 6 visual screenshot, article page 75, Fig.9: open truss of original 1986 unit"
+    },
+    {
+      "id": "REAL-GPU-VIEWER",
+      "status": "not-tested",
+      "notes": "No GPU screenshot, orbit gesture acceptance test or 3D raster comparison using actual repository Three.js module"
+    },
+    {
+      "id": "LIVE-PAGES",
+      "status": "not-confirmed",
+      "notes": "GitHub commit and file existence confirmed; public Pages URL not retrievable through web client"
+    },
+    {
+      "id": "CALIBRATED-SILHOUETTE",
+      "status": "not-tested",
+      "notes": "Truss qualitative image classification B, but profile/mesh not photogrammetrically aligned to historical image"
+    },
+    {
+      "id": "ORIGINAL-CAD",
+      "status": "not-available",
+      "notes": "No factory dimensions, mount offsets, joints or certified volumes located"
+    }
+  ],
+  "limitations": [
+    "Camera locations, bogies, arm side-panel depth, grapple geometry, boom hinge axis and bucket outline are C reconstructions",
+    "Road wheel count intentionally not asserted for 1986",
+    "Research model does not include a visually confirmed 1986 cable egress",
+    "Prototype model is not evidence that depicted mechanical movements can be performed by historical machine",
+    "No inferred metres, mm, or physical load limits; all numbers are scene units and demonstration UI angle variables"
+  ],
+  "previousReleases": "Unchanged canonical mobot-latest.html => mobot-engineering-v17.html for 1987 CH-HV-2",
+  "decision": "Keep 1986 research page separate, mark as low confidence; do not change latest or certify geometry",
+  "next": [
+    "Obtain high-resolution Fig.9/СКТБ Fig.6 of 1986 machine",
+    "Separate manual perspective-aware image keypoints with per-point confidence",
+    "Acquire at least 2 independent angles of 1986 frame, tracks, grab and loader",
+    "Compare 1987 v16 model by contour and component count; publish calibrated corrections only with measurements"
+  ]
+}
