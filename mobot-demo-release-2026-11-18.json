@@ -74,5 +74,25 @@
     "mobot-engineering-v20-model.js": "7b915377ca0e147976351ab45ac30f3957a632c6fb43707ebaa216ecf4f6516c",
     "mobot-assets/exhibition-v1.js": "a0d1493f39ebb1426508fb1b324663748970eaff234ebd677ac9024d44df4d9c",
     "mobot-assets/exhibition-v1.css": "59dc1ecbc4812d8d941e1042e5f463d736f3a148fd6772afa15b252e5b311a72"
+  },
+  "comparison": {
+    "page": "https://step3dlab.github.io/vr_anapa/mobot-compare.html",
+    "models": [
+      "1986-v5",
+      "1987-v20"
+    ],
+    "capabilities": [
+      "two separate actual Three.js scenes",
+      "linked or independent orbit",
+      "mobile touch rotation",
+      "source-noted selectable structural groups",
+      "research pose presets",
+      "1987 interchangeable tooling",
+      "static WebGL fallback"
+    ],
+    "qa": "scripts/mobot-compare-qa.cjs",
+    "browserValidation": "new comparison build: CI must be reviewed; prior production success below covers only earlier single-model demo",
+    "historyPolicy": "previous pages and historical viewer v17 preserved",
+    "scale": "independent framing, scene dimensions uncalibrated"
   }
 }
