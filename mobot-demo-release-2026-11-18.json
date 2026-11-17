@@ -1,0 +1,68 @@
+{
+  "schema": "mobot-demonstration-release/1",
+  "prepared": "2026-11-17",
+  "demonstrationDate": "2026-11-18",
+  "status": "published research demonstration; not final historical CAD",
+  "demo": "https://step3dlab.github.io/vr_anapa/mobot-demo.html",
+  "models": {
+    "1986": "mobot-ch-hv-1986-research-v5.html",
+    "1987": "mobot-engineering-v20.html"
+  },
+  "geometryAndViewerCommit": "b5303b6d1ebeb9a02171449a72016f2cdd711928",
+  "productionWebGLRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44133988004",
+  "jobConclusion": "success",
+  "artifactId": 14349964959,
+  "productionTestBase": "https://step3dlab.github.io/vr_anapa/",
+  "engine": "real Chromium, software SwiftShader WebGL2; not mocked THREE",
+  "testedViewports": [
+    [
+      1440,
+      1000
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "browserReport": "mobot-qa/demo-2026-11-18/browser-report.json",
+  "publishedByteCheck": "mobot-qa/demo-2026-11-18/published-byte-check.json",
+  "httpDeliverablesAudit": "mobot-qa/demo-2026-11-18/publication-http.json",
+  "consoleErrors": 0,
+  "failedRequests": 0,
+  "tested": [
+    "All six presets and control ranges",
+    "All three 1987 work tools",
+    "Mouse and emulated touch orbit, keyboard orbit and zoom button",
+    "Presentation mode and archive tabs",
+    "Local original photographs decode",
+    "No horizontal overflow at mobile resolution",
+    "WebGL unavailable fallback, with disabled 3D actions",
+    "No-JavaScript backup page",
+    "Manual photo points, undo and image overlay controls"
+  ],
+  "notTested": [
+    "Physical phone, physical GPU, Safari, headset and WebXR controllers",
+    "Complete triangle-to-triangle collision testing, loads or stability",
+    "Factory dimensions, calibrated camera or independent reprojection error",
+    "Full old v19 controller audit and legacy roof scenarios"
+  ],
+  "knownGeometryLimits": {
+    "arbitraryPosesMayIntersect": true,
+    "allCoordinatesAreHypotheses": true,
+    "sceneBoundsMayIncludeHiddenTools": true,
+    "circleChecksDoNotValidateHistoricalSuspension": true
+  },
+  "stableLatest": "mobot-engineering-v17.html",
+  "previousFilesPreserved": true,
+  "fallback": "mobot-backup.html",
+  "spokenScript": "mobot-demo-script-2026-11-18.md",
+  "geometryChanges": "mobot-geometry-changes-2026-11-18.md",
+  "evidenceAudit": "mobot-archive-audit-2026-11-18.md",
+  "fileSHA256": {
+    "mobot-demo.html": "cd9d61acc71a8234383a78ba992c5e718ed3364a393ab3fd4fca9f3790ac70b1",
+    "mobot-ch-hv-1986-research-v5-model.js": "79b17e7d09f26826fbc87117767837f5b8b68485b880d90ca7463f98a9d8690b",
+    "mobot-engineering-v20-model.js": "7b915377ca0e147976351ab45ac30f3957a632c6fb43707ebaa216ecf4f6516c",
+    "mobot-assets/exhibition-v1.js": "a0d1493f39ebb1426508fb1b324663748970eaff234ebd677ac9024d44df4d9c",
+    "mobot-assets/exhibition-v1.css": "59dc1ecbc4812d8d941e1042e5f463d736f3a148fd6772afa15b252e5b311a72"
+  }
+}

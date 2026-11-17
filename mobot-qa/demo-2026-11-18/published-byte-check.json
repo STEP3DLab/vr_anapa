@@ -1,0 +1,55 @@
+{
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "commit": "b5303b6d1ebeb9a02171449a72016f2cdd711928",
+  "checked": "2026-11-17T17:11:55.525Z",
+  "checks": [
+    {
+      "file": "mobot-demo.html",
+      "status": 200,
+      "sha256": "cd9d61acc71a8234383a78ba992c5e718ed3364a393ab3fd4fca9f3790ac70b1",
+      "matches": true
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v5.html",
+      "status": 200,
+      "sha256": "f2e3fbdcb9804b313145208b979171f4ed25d5bad4043e9b36a9780b36dd56c2",
+      "matches": true
+    },
+    {
+      "file": "mobot-engineering-v20.html",
+      "status": 200,
+      "sha256": "fd9d28f1f81f8a4040fa5c115eceb421a02ae024a6e4b4f91a9dff4db0b9f742",
+      "matches": true
+    },
+    {
+      "file": "mobot-assets/exhibition-v1.js",
+      "status": 200,
+      "sha256": "a0d1493f39ebb1426508fb1b324663748970eaff234ebd677ac9024d44df4d9c",
+      "matches": true
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v5-model.js",
+      "status": 200,
+      "sha256": "79b17e7d09f26826fbc87117767837f5b8b68485b880d90ca7463f98a9d8690b",
+      "matches": true
+    },
+    {
+      "file": "mobot-engineering-v20-model.js",
+      "status": 200,
+      "sha256": "7b915377ca0e147976351ab45ac30f3957a632c6fb43707ebaa216ecf4f6516c",
+      "matches": true
+    },
+    {
+      "file": "mobot-backup.html",
+      "status": 200,
+      "sha256": "a4767b102b54af4395a2d4fd7b6d22bb3ab133c7033c463f6bf7efb300c821c1",
+      "matches": true
+    },
+    {
+      "file": "mobot-photo-measure-v2.html",
+      "status": 200,
+      "sha256": "8d95332257f9cc77b6ae178d2a718ddc057764180d82100793b531329261e3ce",
+      "matches": true
+    }
+  ]
+}

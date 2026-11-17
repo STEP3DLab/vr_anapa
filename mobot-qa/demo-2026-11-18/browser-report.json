@@ -9,8 +9,8 @@
       "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
     }
   ],
-  "started": "2026-11-17T17:03:30.922Z",
-  "base": "http://127.0.0.1:4173/",
+  "started": "2026-11-17T17:11:56.256Z",
+  "base": "https://step3dlab.github.io/vr_anapa/",
   "engine": "real Chromium with SwiftShader software WebGL2",
   "mockThree": false,
   "runs": [
@@ -1267,27 +1267,27 @@
   "webglUnavailableFallback": true,
   "staticBackupImages": [
     {
-      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1986-model.png",
+      "src": "https://step3dlab.github.io/vr_anapa/mobot-qa/demo-2026-11-18/1986-model.png",
       "loaded": true
     },
     {
-      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1986-side.png",
+      "src": "https://step3dlab.github.io/vr_anapa/mobot-qa/demo-2026-11-18/1986-side.png",
       "loaded": true
     },
     {
-      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1987-model.png",
+      "src": "https://step3dlab.github.io/vr_anapa/mobot-qa/demo-2026-11-18/1987-model.png",
       "loaded": true
     },
     {
-      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1987-side.png",
+      "src": "https://step3dlab.github.io/vr_anapa/mobot-qa/demo-2026-11-18/1987-side.png",
       "loaded": true
     },
     {
-      "src": "http://127.0.0.1:4173/mobot-assets/archive/1986-fig6.png",
+      "src": "https://step3dlab.github.io/vr_anapa/mobot-assets/archive/1986-fig6.png",
       "loaded": true
     },
     {
-      "src": "http://127.0.0.1:4173/mobot-assets/archive/1987-before-dispatch.jpg",
+      "src": "https://step3dlab.github.io/vr_anapa/mobot-assets/archive/1987-before-dispatch.jpg",
       "loaded": true
     }
   ],
@@ -1304,5 +1304,5 @@
     "overlayTransform": true,
     "mobileNoOverflow": true
   },
-  "finished": "2026-11-17T17:04:12.082Z"
+  "finished": "2026-11-17T17:12:49.658Z"
 }
