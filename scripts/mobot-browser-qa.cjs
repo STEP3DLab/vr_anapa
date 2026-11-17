@@ -65,11 +65,11 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
  // Check that links from the roof exhibition can open archive/passport panels after redirect.
  const entry=await browser.newPage({viewport:{width:390,height:844}});
  await entry.goto(new URL('mobot-latest.html?source=demo#passport',base).href,{waitUntil:'domcontentloaded'});
- await entry.waitForURL(/mobot-engineering-v20\\.html\\?source=demo#passport/,{timeout:30000});
+ await entry.waitForURL(/mobot-engineering-v20\.html\?source=demo#passport/,{timeout:30000});
  await ready(entry);
  assert(await entry.locator('#passport').isVisible(),'latest #passport panel must be visible');
  await entry.goto(new URL('mobot-latest.html#archive',base).href,{waitUntil:'domcontentloaded'});
- await entry.waitForURL(/mobot-engineering-v20\\.html#archive/,{timeout:30000});
+ await entry.waitForURL(/mobot-engineering-v20\.html#archive/,{timeout:30000});
  await ready(entry);
  assert(await entry.locator('#archive').isVisible(),'latest #archive panel must be visible');
  result.latestEntrypoint={target:'1987-v20',queryAndHashPreserved:true,passportDeepLink:true,archiveDeepLink:true};
