@@ -1,0 +1,139 @@
+{
+  "publicBase": "https://step3dlab.github.io/vr_anapa/",
+  "versionSHA": "efad030a28397e6840c282e1f1eab646138a65ee",
+  "redirectSHA": "45d47c0d0f48063adf99f3b8835fa0f3a721f72b",
+  "files": [
+    {
+      "path": "mobot-engineering-v21.html",
+      "status": 200,
+      "sha256": "0fffda08fcf53fd42a00d0292f0d9fd0aff10a8c02b8412436377e18046f4551",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v21-model.js",
+      "status": 200,
+      "sha256": "9f7516a177ccbc92f85c2796c51fc0e7cd2af33c0b0fc4a2a6405d1fe5c8732f",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v21-passport.json",
+      "status": 200,
+      "sha256": "9ee29911e1518e965dca1b74467ea31deff96cadc6f2df39f4d17edc208fca05",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/viewer.js",
+      "status": 200,
+      "sha256": "f91510e53928943cf4a047199d23b5ccb10c830bdbbcd1983a5d7810a5da410a",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/viewer.css",
+      "status": 200,
+      "sha256": "eea7d56c04f00a2b40c3cdc6a447e4d54204fab78c7f564ee2b218b5c31d2342",
+      "match": true
+    },
+    {
+      "path": "mobot-kinematics-v15.js",
+      "status": 200,
+      "sha256": "2fb8c22d23d9dcbbc3a4590e836a4b4f0cc79fdb22380b95314842f40fe0891e",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/three.module.min.js",
+      "status": 200,
+      "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/three.core.min.js",
+      "status": 200,
+      "sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/controls/OrbitControls.js",
+      "status": 200,
+      "sha256": "6bd72c6e5cea2235034298ccc556432fd78ffbb2c4bda736f1efa5b8baf4355a",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-snow-side.jpg",
+      "status": 200,
+      "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-front.jpg",
+      "status": 200,
+      "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "status": 200,
+      "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-breaker.jpg",
+      "status": 200,
+      "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/overview.webp",
+      "status": 200,
+      "sha256": "81abde836fb1fe87980571af84ffa5fd9812e1979013a4ef42dce615175abe15",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/side.webp",
+      "status": 200,
+      "sha256": "2289bfe4bb87a4dea35d4ea297cabd54f6d6fc45b187e30354ae085f40ffad2d",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/breaker-arm.webp",
+      "status": 200,
+      "sha256": "e84de525b6b740b062c0509e537676185fcf7e23140be3629d94b8d2a80c3c5b",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/breaker-loader.webp",
+      "status": 200,
+      "sha256": "bf68c81274768811beca795d318b12c36a97f3bb4f78349acf9acf8cfab3c68d",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v17.html",
+      "status": 200,
+      "sha256": "27a622df277253ebb54e51cc5cf4e19d4e9b42c3c39f82b5222802588910dcbb",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v18.html",
+      "status": 200,
+      "sha256": "01a2305a9df9b854cbb0ba2669af1d0bb176cb219c4d243d7a8f593de466d451",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v19.html",
+      "status": 200,
+      "sha256": "8273b4633278a6b28057f1e7a7be7bcb51cd17a732025f6f532b1ac75148b11f",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v20.html",
+      "status": 200,
+      "sha256": "741c06709e00c36a4c5fe6eed5939aa3a6c2100d4faf66b1190aded20cc73859",
+      "match": true
+    },
+    {
+      "path": "mobot-latest.html",
+      "sha256": "477657e3996125983c08f9a354bc8b461fddd5ca7a188ca73b9400ff92539e60",
+      "status": 200,
+      "match": true
+    }
+  ]
+}
