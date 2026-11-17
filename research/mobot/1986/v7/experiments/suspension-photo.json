@@ -1,0 +1,391 @@
+{
+  "fig6": {
+    "chassisControls": [
+      "road2",
+      "road6",
+      "lampNear"
+    ],
+    "patchXYRadiusPx": [
+      298,
+      315,
+      35
+    ],
+    "selectedDistance": "orthographic",
+    "cameras": [
+      {
+        "distance": "orthographic",
+        "chassisControlMeanPx": 19.41,
+        "original": {
+          "yawBoomDeg": [
+            33.88,
+            0.0
+          ],
+          "pinFitPx": 0.18,
+          "gapResidualPx": 68.28,
+          "predictedTop": [
+            259.07,
+            398.55
+          ],
+          "topErrorPx": 76.4
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            42.86,
+            0.0
+          ],
+          "pinFitPx": 44.38,
+          "gapResidualPx": 13.28,
+          "predictedTop": [
+            297.92,
+            410.96
+          ],
+          "topErrorPx": 56.25
+        }
+      },
+      {
+        "distance": 16,
+        "chassisControlMeanPx": 20.21,
+        "original": {
+          "yawBoomDeg": [
+            39.19,
+            0.0
+          ],
+          "pinFitPx": 10.08,
+          "gapResidualPx": 63.16,
+          "predictedTop": [
+            261.83,
+            393.85
+          ],
+          "topErrorPx": 79.51
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            46.98,
+            0.0
+          ],
+          "pinFitPx": 61.36,
+          "gapResidualPx": 6.31,
+          "predictedTop": [
+            294.37,
+            399.74
+          ],
+          "topErrorPx": 67.27
+        }
+      },
+      {
+        "distance": 10,
+        "chassisControlMeanPx": 20.97,
+        "original": {
+          "yawBoomDeg": [
+            5.23,
+            0.0
+          ],
+          "pinFitPx": 4.69,
+          "gapResidualPx": 74.56,
+          "predictedTop": [
+            262.78,
+            387.83
+          ],
+          "topErrorPx": 84.74
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -4.0,
+            0.0
+          ],
+          "pinFitPx": 54.5,
+          "gapResidualPx": 22.77,
+          "predictedTop": [
+            297.15,
+            390.33
+          ],
+          "topErrorPx": 76.78
+        }
+      },
+      {
+        "distance": 7,
+        "chassisControlMeanPx": 22.22,
+        "original": {
+          "yawBoomDeg": [
+            11.48,
+            0.62
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 75.8,
+          "predictedTop": [
+            262.07,
+            391.2
+          ],
+          "topErrorPx": 81.87
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            0.55,
+            0.0
+          ],
+          "pinFitPx": 38.19,
+          "gapResidualPx": 26.21,
+          "predictedTop": [
+            299.64,
+            403.99
+          ],
+          "topErrorPx": 63.36
+        }
+      },
+      {
+        "distance": 5,
+        "chassisControlMeanPx": 23.29,
+        "original": {
+          "yawBoomDeg": [
+            16.95,
+            1.01
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 76.46,
+          "predictedTop": [
+            262.57,
+            390.54
+          ],
+          "topErrorPx": 82.29
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            5.94,
+            0.0
+          ],
+          "pinFitPx": 29.82,
+          "gapResidualPx": 29.09,
+          "predictedTop": [
+            300.67,
+            410.04
+          ],
+          "topErrorPx": 57.47
+        }
+      },
+      {
+        "distance": 4,
+        "chassisControlMeanPx": 25.33,
+        "original": {
+          "yawBoomDeg": [
+            19.49,
+            1.22
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 77.0,
+          "predictedTop": [
+            263.45,
+            390.0
+          ],
+          "topErrorPx": 82.47
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            9.37,
+            0.0
+          ],
+          "pinFitPx": 26.0,
+          "gapResidualPx": 30.79,
+          "predictedTop": [
+            301.36,
+            412.38
+          ],
+          "topErrorPx": 55.26
+        }
+      }
+    ]
+  },
+  "fig9": {
+    "chassisControls": [
+      "road1",
+      "road2"
+    ],
+    "patchXYRadiusPx": [
+      263,
+      132,
+      35
+    ],
+    "selectedDistance": "orthographic",
+    "cameras": [
+      {
+        "distance": "orthographic",
+        "chassisControlMeanPx": 33.94,
+        "original": {
+          "yawBoomDeg": [
+            110.86,
+            32.0
+          ],
+          "pinFitPx": 11.33,
+          "gapResidualPx": 155.7,
+          "predictedTop": [
+            226.17,
+            200.63
+          ],
+          "topErrorPx": 145.35
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -178.99,
+            31.72
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 103.7,
+          "predictedTop": [
+            245.36,
+            241.3
+          ],
+          "topErrorPx": 103.73
+        }
+      },
+      {
+        "distance": 16,
+        "chassisControlMeanPx": 34.46,
+        "original": {
+          "yawBoomDeg": [
+            177.65,
+            32.0
+          ],
+          "pinFitPx": 15.16,
+          "gapResidualPx": 149.44,
+          "predictedTop": [
+            225.12,
+            210.69
+          ],
+          "topErrorPx": 135.5
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -170.07,
+            25.78
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 95.34,
+          "predictedTop": [
+            244.71,
+            249.66
+          ],
+          "topErrorPx": 95.36
+        }
+      },
+      {
+        "distance": 10,
+        "chassisControlMeanPx": 34.97,
+        "original": {
+          "yawBoomDeg": [
+            179.87,
+            31.63
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 146.32,
+          "predictedTop": [
+            225.67,
+            198.68
+          ],
+          "topErrorPx": 147.35
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -165.45,
+            21.71
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 89.54,
+          "predictedTop": [
+            243.91,
+            255.46
+          ],
+          "topErrorPx": 89.55
+        }
+      },
+      {
+        "distance": 7,
+        "chassisControlMeanPx": 35.44,
+        "original": {
+          "yawBoomDeg": [
+            -172.07,
+            26.36
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 138.88,
+          "predictedTop": [
+            224.09,
+            206.12
+          ],
+          "topErrorPx": 140.16
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -161.07,
+            16.96
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 80.66,
+          "predictedTop": [
+            242.11,
+            264.34
+          ],
+          "topErrorPx": 80.67
+        }
+      },
+      {
+        "distance": 5,
+        "chassisControlMeanPx": 35.89,
+        "original": {
+          "yawBoomDeg": [
+            -162.95,
+            18.07
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 121.93,
+          "predictedTop": [
+            220.53,
+            223.07
+          ],
+          "topErrorPx": 123.98
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -155.9,
+            10.36
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 62.73,
+          "predictedTop": [
+            238.35,
+            282.27
+          ],
+          "topErrorPx": 62.91
+        }
+      },
+      {
+        "distance": 4,
+        "chassisControlMeanPx": 36.67,
+        "original": {
+          "yawBoomDeg": [
+            -156.51,
+            10.45
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 99.42,
+          "predictedTop": [
+            215.93,
+            245.58
+          ],
+          "topErrorPx": 103.05
+        },
+        "hardwarePatch": {
+          "yawBoomDeg": [
+            -151.78,
+            4.32
+          ],
+          "pinFitPx": 0.0,
+          "gapResidualPx": 39.97,
+          "predictedTop": [
+            233.66,
+            305.03
+          ],
+          "topErrorPx": 41.05
+        }
+      }
+    ]
+  }
+}
