@@ -98,7 +98,9 @@ async function range(id,num){
     await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+44,y:y+12}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
     assert.notDeepEqual(await page.evaluate(()=>window.mobotV6.camera.position.toArray()),before);
-    await page.selectOption('#part','tracks');await page.locator('#isolate').tap();assert(await page.evaluate(()=>window.mobotV6.state.isolated));
+    await page.selectOption('#part','tracks');await page.locator('#isolate').tap();
+    await page.waitForFunction(()=>window.mobotV6.state.isolated && document.getElementById('isolate').getAttribute('aria-pressed')==='true',undefined,{timeout:5000});
+    assert.equal(await page.locator('.stage-head h2').textContent(),'Гусеничная ходовая');
     return {widths:[320,360,390,720],touchOrbit:true};
   });
   await test('Static fallback with WebGL disabled',async()=>{
