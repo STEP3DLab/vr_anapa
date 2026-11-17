@@ -101,6 +101,32 @@ function alignPartner(source){
  }
  inSync=false;queueRender();
 }
+function isDescendantOf(object,ancestor){
+ let current=object;
+ while(current){if(current===ancestor)return true;current=current.parent;}
+ return false;
+}
+function restoreIsolation(v){
+ if(!v.isolation)return;
+ for(const [mesh,previous] of v.isolation)mesh.visible=previous;
+ v.isolation=null;
+}
+function applyIsolation(v){
+ restoreIsolation(v);
+ const key=$('node'+v.year).value,btn=$('isolate'+v.year);
+ if(key==='all')v.isolateEnabled=false;
+ btn.disabled=key==='all';
+ btn.setAttribute('aria-pressed',String(!!v.isolateEnabled));
+ btn.textContent=v.isolateEnabled?'Показать все детали':'Изолировать узел';
+ if(!v.isolateEnabled)return;
+ const target=selectedObject(v,key),snapshot=new Map();
+ v.model.root.traverse(obj=>{
+  if(!obj.isMesh)return;
+  snapshot.set(obj,obj.visible);
+  if(!isDescendantOf(obj,target))obj.visible=false;
+ });
+ v.isolation=snapshot;
+}
 function setInfo(v){
  const key=$('node'+v.year).value,info=partNames[v.year][key];
  $('note'+v.year).textContent=info?info.note:'Показана конструкция в сборе. Выберите узел или коснитесь детали модели.';
@@ -114,10 +140,11 @@ function setInfo(v){
    v.scene.add(v.outline);
   }
  }
+ applyIsolation(v);
  queueRender();
 }
 function pose1987(){
- const v=viewers['87'];if(!v?.model)return;
+ const v=viewers['87'];if(!v?.model)return;restoreIsolation(v);
  const key=$('pose87').value, m=v.model.mechanisms;
  const p=key==='snow'?{yaw:180,arm:8,wrist:90,claw:8,bucket:0,tip:0}:
  key==='loader'?{yaw:0,arm:-8,wrist:90,claw:4,bucket:28,tip:-10}:
@@ -130,7 +157,7 @@ function pose1987(){
  v.model.root.updateMatrixWorld(true);setInfo(v);queueRender();
 }
 function pose1986(){
- const v=viewers['86'];if(!v?.model)return;
+ const v=viewers['86'];if(!v?.model)return;restoreIsolation(v);
  const key=$('pose86').value;
  const pose=key==='raised'?{yaw:180,boom:-30,loader:5,tip:0,grab:3,track:0}:
  key==='loader'?{yaw:0,boom:-18,loader:18,tip:-8,grab:8,track:0}:
@@ -164,14 +191,14 @@ function selectFromPick(v,e){
 function activateFallback(v,reason){
  $('fallback'+v.year).hidden=false;
  $('status'+v.year).textContent=reason+' · показан резервный рендер';
- ['pose'+v.year,'node'+v.year,'focus'+v.year].forEach(id=>$(id).disabled=true);
+ ['pose'+v.year,'node'+v.year,'focus'+v.year,'isolate'+v.year].forEach(id=>$(id).disabled=true);
  if(v.year==='87')$('tool87').disabled=true;
  if(v.renderer){v.renderer.dispose();v.renderer=null;}
  if(v.canvas){v.canvas.remove();v.canvas=null;}
  v.gl=null;
 }
 function initViewer(year){
- const v={year,host:$('canvas'+year),canvas:null,model:null,scene:null,camera:null,controls:null,renderer:null,gl:null,outline:null,draws:0};
+ const v={year,host:$('canvas'+year),canvas:null,model:null,scene:null,camera:null,controls:null,renderer:null,gl:null,outline:null,isolateEnabled:false,isolation:null,draws:0};
  viewers[year]=v;
  try{
   const canvas=document.createElement('canvas');
@@ -240,6 +267,7 @@ function zoomBoth(factor){
 function resetAll(){
  $('pose86').value='neutral';$('pose87').value='neutral';$('tool87').value='gripper';
  $('node86').value='all';$('node87').value='all';
+ for(const v of Object.values(viewers)){restoreIsolation(v);v.isolateEnabled=false;}
  pose1986();pose1987();setAngle('three');
 }
 function updateSyncStatus(){
@@ -256,6 +284,7 @@ $('tool87').addEventListener('change',pose1987);
 for(const year of ['86','87']){
  $('node'+year).addEventListener('change',()=>setInfo(viewers[year]));
  $('focus'+year).addEventListener('click',()=>focusNode(year));
+ $('isolate'+year).addEventListener('click',()=>{const v=viewers[year];if(!v?.model)return;v.isolateEnabled=!v.isolateEnabled;setInfo(v);});
 }
 initViewer('86');initViewer('87');resetAll();
 window.addEventListener('visibilitychange',()=>{if(!document.hidden)queueRender();});
@@ -267,6 +296,7 @@ window.__mobotCompareQA={
    mode:v.gl?'webgl2':'static',draws:v.draws,
    pose:$('pose'+v.year).value,node:$('node'+v.year).value,
    tool:v.year==='87'?$('tool87').value:null,
+   isolated:!!v.isolation,visibleMeshes:v.model?(()=>{let n=0;v.model.root.traverseVisible(o=>{if(o.isMesh)n++;});return n;})():0,
    camera:v.camera?.position.toArray()||null,zoom:v.camera?.zoom||null,
    direction:v.camera?v.camera.position.clone().sub(v.controls.target).normalize().toArray():null,
    triangles:v.renderer?.info.render.triangles||0
