@@ -1,0 +1,149 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#172026"><meta name="description" content="Мобот-Ч-ХВ 1986. Отдельная схематическая 3D-основа на основе архивного рисунка 9. Без калиброванных размеров."><title>МОБОТ Ч-ХВ, 1986 · исследовательская 3D-основа</title>
+<style>:root{color-scheme:dark;font-family:system-ui,-apple-system,Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:#101920;color:#e9f0ed}main,header,footer{max-width:1270px;margin:auto;padding:18px}h1{font-size:clamp(29px,3.8vw,49px);margin:6px 0}p{line-height:1.55;color:#bac9c9}a{color:#d0ddae}button,input{font:inherit}button{background:#28414a;border:1px solid #6f8790;color:#eaf2ed;border-radius:9px;padding:10px;cursor:pointer}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #f2d299;outline-offset:3px}.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:15px}.stage{position:relative;min-width:0;background:radial-gradient(circle at 50% 45%,#263c42,#0e1c24 74%);border:1px solid #41545c;border-radius:14px;overflow:hidden;min-height:520px}.stage canvas{display:block;width:100%;height:520px;touch-action:none}.stage .status{position:absolute;bottom:12px;left:14px;color:#c3d3cf;font-size:12px;pointer-events:none}.side{background:#1a2a33;border:1px solid #42535a;border-radius:14px;padding:17px}.side h2{margin:2px 0 8px;font-size:17px}.control{display:grid;gap:7px;margin:12px 0}.control label{display:flex;justify-content:space-between;gap:10px;font-size:13px}.control input{width:100%;accent-color:#d6c49a}.buttons{display:flex;flex-wrap:wrap;gap:7px}.notice{border-left:3px solid #d9b17a;padding:10px 12px;background:#302e27;margin:14px 0;font-size:13px;line-height:1.55}.sources{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:17px}.source{border:1px solid #455b62;background:#192933;border-radius:13px;padding:16px}.source p{font-size:13px}.source strong{font-size:14px}.meta{font-size:12px;color:#aabbbe}footer{font-size:12px;color:#aabbbe}@media(max-width:850px){.grid{grid-template-columns:1fr}.stage{min-height:380px}.stage canvas{height:380px}.sources{grid-template-columns:1fr}main,header,footer{padding:12px}}.photoposes{margin-top:20px;border:1px solid #455b62;border-radius:14px;background:#16262e;padding:16px}.photoposes h2{font-size:19px;margin:0 0 5px}.photos{display:grid;grid-template-columns:1fr 1fr;gap:15px}.photos figure{margin:0;min-width:0}.crop{height:255px;overflow:hidden;position:relative;background:#0e161d;border:1px solid #566a6d;border-radius:10px}.crop img{position:absolute;width:200%;height:auto;max-width:none;right:0;filter:grayscale(1)}.crop.fig6 img{bottom:-25px}.crop.fig9 img{top:-60px}.photos figcaption{font-size:12px;color:#bed0cd;margin-top:8px}@media(max-width:650px){.photos{grid-template-columns:1fr}.crop{height:230px}.crop.fig6 img{bottom:-25px}.crop.fig9 img{top:-47px}}</style></head><body>
+<header><div class="meta">ИСТОРИЧЕСКАЯ РЕКОНСТРУКЦИЯ · ОБРАЗЕЦ 1986 · ГЕОМЕТРИЯ 0.3 · ДВЕ ФОТОПОЗЫ</div><h1>Мобот-Ч-ХВ <span style="color:#dbbc89">1986</span></h1><p>Самостоятельная <b>исследовательская 3D-основа</b> первого комплекса. Состав узлов подтверждается СКТБ ПР, решётчатая стрела видна на историческом снимке в статье 2019 года (рис. 6 и 9, с. 74–75). Все размеры, монтажные координаты и показанные движения пока условные.</p></header>
+<main><div class="grid"><div class="stage" id="stage"><div class="status" id="status">Загрузка 3D…</div></div><aside class="side"><h2>Компоновка и механика</h2><p class="meta">Регуляторы отражают степени свободы исследовательской модели, а не заводские пределы.</p><div class="control"><label for="boom">Наклон решётчатой стрелы <output id="boomValue">0°</output></label><input id="boom" type="range" min="-15" max="72" value="0"></div><div class="control"><label for="loader">Подъём погрузчика <output id="loaderValue">0°</output></label><input id="loader" type="range" min="-15" max="25" value="0"></div><div class="control"><label for="tip">Наклон ковша <output id="tipValue">0°</output></label><input id="tip" type="range" min="-25" max="25" value="0"></div><div class="control"><label for="grab">Разведение створок грейфера <output id="grabValue">0°</output></label><input id="grab" type="range" min="0" max="24" value="0"></div><div class="buttons"><button id="pose9">Фото № 9 · стрела поднята</button><button id="pose6">Фото № 6 · стрела опущена</button><button id="reset">Сброс</button><button id="sideView">Вид сбоку</button><button id="threeView">Вид ¾</button></div><div class="notice"><b>Не сертифицированная CAD-модель.</b> Решётчатая стрела — наблюдаемый признак (B); взаимное расположение опор, число катков, точная форма грейфера и все оси — гипотезы (C). У грейфера две условные половины теперь разведены в плоскости бокового силуэта (как на рис. 9); точные шарниры и размеры не подтверждены. Грейфер в демонстрации сохраняет вертикальную ориентацию при повороте стрелы: это фото-согласованное допущение, <b>не схема реального подвеса</b>. Это не копия геометрии Ч-ХВ-2.</div><p class="meta"><a href="./mobot-ch-hv-1986-research-passport.json">Паспорт 1986</a> · <a href="./mobot-ch-hv-1986-research-v3-qa.json">QA модели</a> · <a href="./mobot-latest.html">Ч-ХВ-2, v17</a></p></aside></div>
+<section class="photoposes" aria-label="Два архивных ракурса исходной машины"><h2>Два положения одной конструкции</h2><p>Подлинные страницы опубликованной статьи (снимки визуально обрезаны только в интерфейсе, оригиналы доступны по ссылкам). Пресеты — приближённые позы сцены, не результат измерения физических углов.</p><div class="photos"><figure><div class="crop fig6"><img loading="lazy" src="https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg" alt="Историческая фотография первого Мобота, рисунок 6: стрела в низком положении"></div><figcaption><a href="https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg" target="_blank" rel="noopener">Рис. 6, с. 74</a> · низкое положение стрелы</figcaption></figure><figure><div class="crop fig9"><img loading="lazy" src="https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg" alt="Историческая фотография первого Мобота, рисунок 9: стрела поднята"></div><figcaption><a href="https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg" target="_blank" rel="noopener">Рис. 9, с. 75</a> · поднятая решётчатая стрела</figcaption></figure></div></section><div class="sources"><article class="source"><strong>Первый Мобот-Ч-ХВ, 1986</strong><p>В. В. Овчинников, А. Ф. Батанов, С. Г. Мингалеев. «Роботы в Чернобыле», 2019, с. 75, рис. 9. На снимке наблюдается решётчатая стрела. Атрибуция и описание даны авторами.</p><a href="https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6" target="_blank" rel="noopener">Открыть исходный документ и снимок</a></article><article class="source"><strong>Мобот-Ч-ХВ-2, 1987 — не смешивать</strong><p>У модернизированного комплекса СКТБ ПР описывает сменный двупалый схват, отбойный молоток, иные кабелеукладчик и точку выхода кабеля. Эти признаки не переносились в 3D-основу 1986 года.</p><a href="https://sktbpr.ru/content/mrk-mobot-ch-hv-2" target="_blank" rel="noopener">Открыть техническое описание СКТБ ПР</a></article></div></main>
+<footer>Ч-ХВ (1986) · исследовательская геометрия 0.3 · прежние версии Ч-ХВ-2 не затронуты · все координаты в условных единицах</footer>
+<script type="module">
+import * as T from './mobot-assets/three.module.min.js';
+import {OrbitControls} from './mobot-assets/controls/OrbitControls.js';
+// MOBOT-CH-HV ORIGINAL (1986) · uncalibrated research blockout, NOT a measured CAD model.
+// Attested: truss boom and grab are visible in Fig.9 (journal 2019 p.75, PDF p.6).
+// https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf#page=6
+// Attested functions: SKTB PR https://sktbpr.ru/content/mrk-mobot-ch-hv-2
+// Every coordinate is a SCENE UNIT chosen for illustrative geometry, never metres.
+// V3 changes only the side-view separation/opening plane of schematic grapple jaws (historical Fig.9).
+export function makeMobot1986(T) {
+  const root = new T.Group(); root.name = 'МОБОТ Ч-ХВ (1986) — исследовательская основа';
+  const sections = {}, objects = [];
+  const materials = {
+    structure:new T.MeshStandardMaterial({color:0xc1c7bd,metalness:.65,roughness:.5}),
+    steel:new T.MeshStandardMaterial({color:0x606d6a,metalness:.65,roughness:.55}),
+    underside:new T.MeshStandardMaterial({color:0x34403e,metalness:.45,roughness:.65}),
+    tracks:new T.MeshStandardMaterial({color:0x282e2d,metalness:.15,roughness:.9}),
+    guess:new T.MeshStandardMaterial({color:0x9a8b70,metalness:.5,roughness:.55})
+  };
+  function group(name,parent=root,confidence='C'){
+    const g=new T.Group();g.name=name;g.userData={confidence,source:'2019 article Fig.9 and SKTB PR; dimensions uncalibrated'};
+    parent.add(g);sections[name]=g;return g;
+  }
+  function mesh(parent,geometry,material,label,confidence='C'){
+    const m=new T.Mesh(geometry,material);m.name=label;m.userData={confidence};m.castShadow=true;m.receiveShadow=true;parent.add(m);objects.push(m);return m;
+  }
+  function box(p,size,at,mat,label,confidence='C'){
+    const m=mesh(p,new T.BoxGeometry(...size),mat,label,confidence);m.position.set(...at);return m;
+  }
+  function cyl(p,r,length,at,mat,label,confidence='C',segments=24){
+    const m=mesh(p,new T.CylinderGeometry(r,r,length,segments),mat,label,confidence);
+    m.position.set(...at);m.rotation.x=Math.PI/2;return m;
+  }
+  function beam(p,a,b,r,mat,label,confidence='C'){
+    const A=new T.Vector3(...a),B=new T.Vector3(...b),dir=B.clone().sub(A);
+    const m=mesh(p,new T.CylinderGeometry(r,r,dir.length(),10),mat,label,confidence);
+    m.position.copy(A).add(B).multiplyScalar(.5);
+    m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir.normalize());return m;
+  }
+  // Track outline is only a generic sketch; wheel count is intentionally NOT asserted.
+  const running=group('ходовая',root,'B/C');
+  const path=[[-.87,.60],[-.99,.48],[-.96,.30],[-.75,.14],[.73,.14],[.98,.30],[.98,.48],[.74,.74],[-.66,.74]];
+  for(const z of [-.58,.58]){
+    const side=group('борт '+(z>0?'правый':'левый'),running,'C');
+    for(let i=0;i<path.length;i++){
+      const a=path[i],b=path[(i+1)%path.length];beam(side,[a[0],a[1],z],[b[0],b[1],z],.073,materials.tracks,'схематическая линия траков','C');
+    }
+    for(const x of [-.75,.75])cyl(side,.18,.11,[x,.42,z],materials.underside,'условное крайнее колесо','C');
+    box(side,[1.45,.22,.06],[0,.41,z],materials.underside,'щит нижнего ряда: катки скрыты до проверки','C');
+  }
+  const body=group('несущая рама и оборудование');
+  box(body,[1.89,.16,1.37],[0,.86,0],materials.steel,'верхняя несущая площадка','B/C');
+  box(body,[.70,.33,.88],[.43,1.10,0],materials.structure,'блок оборудования, форма условная','C');
+  box(body,[.51,.22,.53],[-.53,1.05,0],materials.structure,'кожух, форма условная','C');
+  // The boom in the original 1986 photo is an OPEN TRUSS, unlike the v16 model for the 1987 machine.
+  const pedestal=group('опора манипулятора');
+  cyl(pedestal,.22,.42,[.22,1.12,0],materials.steel,'опора вращения','C');
+  const boom=group('решётчатая стрела',root,'B');boom.position.set(.22,1.21,0);
+  const upper0=[.10,.08], upper1=[-.89,1.75],lower0=[-.12,-.10],lower1=[-.73,1.65];
+  for(const z of [-.19,.19]){
+    beam(boom,[...upper0,z],[...upper1,z],.029,materials.structure,'верхняя продольная балка','B');
+    beam(boom,[...lower0,z],[...lower1,z],.027,materials.structure,'нижняя продольная балка','B');
+    for(let i=0;i<=5;i++){
+      let t=i/5,a=[upper0[0]+t*(upper1[0]-upper0[0]),upper0[1]+t*(upper1[1]-upper0[1]),z],b=[lower0[0]+t*(lower1[0]-lower0[0]),lower0[1]+t*(lower1[1]-lower0[1]),z];
+      beam(boom,a,b,.019,materials.steel,'поперечная связь фермы','B/C');
+      if(i<5){let t1=(i+1)/5,c=[lower0[0]+t1*(lower1[0]-lower0[0]),lower0[1]+t1*(lower1[1]-lower0[1]),z];beam(boom,a,c,.017,materials.steel,'диагональный раскос фермы','B/C');}
+    }
+  }
+  for(const t of [0,.5,1]){
+    const a=[lower0[0]+t*(lower1[0]-lower0[0]),lower0[1]+t*(lower1[1]-lower0[1])];
+    beam(boom,[a[0],a[1],-.19],[a[0],a[1],.19],.027,materials.steel,'поперечина фермы','C');
+  }
+  // Original 1986 grapple is not the 1987 two-finger replaceable gripper.
+  const grab=group('грейфер 1986 — кинематическая гипотеза',boom,'A function / C geometry');
+  grab.position.set(-.87,1.69,0);
+  // Fig. 6 and Fig. 9 show the grapple hanging downward in both photographed arm states.
+  // Visual stabilization, not an identification of the physical suspension/transmission.
+  grab.userData.historicalOrientation = "observed downward in two photos; physical mounting unresolved";
+  cyl(grab,.075,.44,[0,0,0],materials.structure,'неизмеренная головка захвата','C');
+  // Fig.9 (1986) depicts two bucket-like grapple halves separately across the
+  // longitudinal side silhouette. The former v2 jaws were separated across Z,
+  // overlapping in side view; v3 places the halves across X, within the drawn
+  // side-view plane. The joints, travel and shapes remain C hypotheses.
+  const jawA=group('ковшовая челюсть A',grab),jawB=group('ковшовая челюсть B',grab);
+  for(const [j,sign] of [[jawA,-1],[jawB,1]]){
+    j.position.set(sign*.12,-.06,0);
+    box(j,[.24,.23,.31],[sign*.06,-.19,0],materials.guess,'половина грейфера, профиль условный','C');
+    box(j,[.28,.048,.32],[sign*.10,-.32,0],materials.steel,'нижняя кромка створки, условная','C');
+    beam(j,[0,.02,0],[sign*.11,-.16,0],.032,materials.steel,'рычаг створки, схема условная','C');
+  }
+  const loader=group('фронтальный погрузчик',root,'A function / C geometry');loader.position.set(-.72,.83,0);
+  for(const z of [-.49,.49]){
+    beam(loader,[0,0,z],[-.65,-.38,z],.058,materials.steel,'подъёмный рычаг (оси условны)','C');
+    beam(loader,[-.21,-.12,z],[-.56,-.09,z],.022,materials.structure,'схематическая тяга','C');
+  }
+  const scoop=group('ковш погрузчика — условная форма',loader);scoop.position.set(-.67,-.35,0);
+  box(scoop,[.58,.055,1.23],[-.22,-.16,0],materials.structure,'днище','B/C');
+  box(scoop,[.07,.44,1.23],[.09,.09,0],materials.structure,'задняя стенка','B/C');
+  for(const z of [-.60,.60])box(scoop,[.51,.30,.045],[-.19,-.01,z],materials.steel,'боковина','C');
+  // Two camera heads documented; location and their housing dimensions remain hypothetical.
+  const cameras=group('две телекамеры — корпус условный',root,'A count / C mounts');
+  for(const [i,z] of [-.35,.35].entries()){
+    const x=.81,y=1.60;beam(cameras,[x,1.03,z],[x,y,z],.032,materials.steel,'опора камеры','C');
+    box(cameras,[.33,.24,.23],[x,y,z],materials.structure,'камера '+(i+1),'C');
+    cyl(cameras,.07,.07,[x-.185,y,z],materials.underside,'объектив камеры '+(i+1),'C');
+  }
+  const defaultPose={boom:0,loader:0,tip:0,grab:0};
+  function setPose(p={}){
+    const v={...defaultPose,...p};
+    for(const k of Object.keys(v))if(!Number.isFinite(v[k]))throw Error('Invalid model pose: '+k);
+    boom.rotation.z=v.boom*Math.PI/180;
+    grab.rotation.z=-boom.rotation.z; // Keep the pictured grapple hanging down, relative to gravity in viewer frame.
+    loader.rotation.z=v.loader*Math.PI/180;
+    scoop.rotation.z=v.tip*Math.PI/180;
+    // The illustrated open/close motion now occurs in the visible side plane.
+    jawA.rotation.z=-v.grab*Math.PI/180;
+    jawB.rotation.z= v.grab*Math.PI/180;
+    return v;
+  }
+  setPose();
+  return {root,sections,objects,materials,setPose,geometryStatus:'UNCALIBRATED; source-anchored truss topology only',variant:'CH-HV-1986'};
+}
+
+const $=s=>document.getElementById(s);
+const model=makeMobot1986(T),scene=new T.Scene();scene.add(model.root);
+scene.add(new T.HemisphereLight(0xffffff,0x62747a,2.1));const light=new T.DirectionalLight(0xfff6e8,3.4);light.position.set(-5,8,5);scene.add(light);
+const camera=new T.OrthographicCamera(-3.4,3.4,2.3,-2.3,.1,60);camera.position.set(-5,3.2,6);camera.lookAt(-.2,1.36,0);
+const canvas=document.createElement('canvas');canvas.setAttribute('aria-label','Исследовательская трёхмерная модель Мобота 1986 года');canvas.tabIndex=0;
+let renderer;try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.setClearColor(0x000000,0)}catch(error){$('status').textContent='WebGL недоступен. Откройте архивный снимок и паспорт ниже.';throw error;}
+$('stage').prepend(canvas);const controls=new OrbitControls(camera,canvas);controls.target.set(-.2,1.36,0);controls.enableDamping=true;controls.enablePan=false;controls.minZoom=.6;controls.maxZoom=4;
+let frame=0;function draw(){frame=requestAnimationFrame(draw);controls.update();renderer.render(scene,camera)}
+function resize(){const s=$('stage').getBoundingClientRect(),w=Math.max(1,s.width),h=innerWidth<850?380:520;renderer.setSize(w,h,false);const span=2.65;camera.left=-span*w/h;camera.right=span*w/h;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix()}
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe($('stage'));addEventListener('resize',resize);resize();draw();$('status').textContent='Условные единицы · вращайте модель мышью или пальцем';
+function pose(){const p={};for(const k of ['boom','loader','tip','grab']){p[k]=Number($(k).value);$(k+'Value').value=p[k]+'°'}model.setPose(p)}for(const k of ['boom','loader','tip','grab'])$(k).addEventListener('input',pose);
+$('reset').onclick=()=>{for(const k of ['boom','loader','tip','grab'])$(k).value=0;pose()};
+// These two scene poses are chosen to resemble the *qualitative* 1986 photographs;
+// 58° is a display variable, not a measured boom angle on the original machine.
+$('pose9').onclick=()=>{$('boom').value=0;pose();$('sideView').click()};
+$('pose6').onclick=()=>{$('boom').value=58;pose();$('sideView').click()};
+$('sideView').onclick=()=>{camera.position.set(-.2,1.36,8);controls.target.set(-.2,1.36,0);controls.update()};
+$('threeView').onclick=()=>{camera.position.set(-5,3.2,6);controls.target.set(-.2,1.36,0);controls.update()};
+</script></body></html>
