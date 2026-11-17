@@ -3,7 +3,7 @@
   "date": "2026-11-17",
   "demoDate": "2026-11-18",
   "status": "research model, not historically exact CAD",
-  "latestPolicy": "mobot-latest.html remains v17",
+  "latestPolicy": "mobot-demo.html presents 1986 v5 alongside 1987 v20; mobot-latest.html redirects to 1987 v20; v17 kept in archive",
   "units": "arbitrary scene coordinates, NOT millimetres or verified metres",
   "physicalScaleKnown": false,
   "evidenceClasses": {
