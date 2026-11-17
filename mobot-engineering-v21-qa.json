@@ -1,0 +1,26 @@
+{
+  "revision": "v21",
+  "tests": {
+    "realGeometry": "PASS",
+    "finiteCoordinates": "PASS",
+    "worldMatrices": "PASS",
+    "jointAttachments": "PASS",
+    "threeTools": "PASS",
+    "obviousDetachedComponents": "PASS",
+    "fourReferenceRenders": "PASS",
+    "reversibleModes": "NOT RUN",
+    "webgl2": "NOT RUN",
+    "desktop1440x1000": "NOT RUN",
+    "mobile390x844": "NOT RUN",
+    "narrow360x800": "NOT RUN",
+    "originalPhotos": "NOT RUN",
+    "browserConsole": "NOT RUN",
+    "networkRequests": "NOT RUN",
+    "noWebGL": "NOT RUN",
+    "v20Preserved": "NOT RUN",
+    "publishedPages": "NOT RUN",
+    "physicalPhone": "NOT RUN",
+    "fullMeshCollisions": "NOT RUN"
+  },
+  "log": "research/mobot/1987/QA-LOG.md"
+}
