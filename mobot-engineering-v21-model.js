@@ -282,23 +282,25 @@ export function makeMobot(THREE, quality='auto') {
   root.userData.activeSuspensionScheme='bare';
   // WELDED CHASSIS & POWER PACK.
   const body=section('body','Корпус и рама');
-  box(body,[1.61,.19,1.05],[0,.57,0],m.frame,'body');
-  box(body,[1.58,.045,.99],[0,.677,0],m.satin,'body');
-  box(body,[1.50,.06,.71],[.09,.714,0],m.shadow,'body');
-  for(const side of [-1,1]){
-    box(body,[1.53,.13,.055],[0,.620,side*.535],m.olive,'body');
-    beam(body,[-.78,.58,side*.54],[.78,.58,side*.54],.018,m.satin,'body');
-    for(let i=0;i<12;i++)bolt(body,[-.69+i*.123,.648,side*.568],'z',m.darkBolt,'body',.012);
-    for(let x of [-.58,-.26,.1,.4,.65]){
-      box(body,[.12,.11,.012],[x,.56,side*.579],m.frame,'body');
-      bolt(body,[x,.56,side*.589],'z',m.satin,'body',.014);
-    }
+  // Lower cross-members tie both inner carriers to the central frame below the upper run.
+  for(const x of [-.50,.43])box(body,[.075,.070,1.12],[x,.41,0],m.frame,'body');
+  box(body,[1.62,.22,.91],[0,.53,0],m.frame,'body');
+  box(body,[1.71,.047,1.35],[0,.663,0],m.satin,'body');
+  box(body,[1.62,.055,1.15],[0,.708,0],m.frame,'body');
+  // SKTB 2 and 4 show a low shell with rounded shoulders and a flatter crown.
+  // Sample a rounded shoulder on either side of its top flat; depths remain C.
+  const hoodPts=[[.10,.729],[.10,.75]];
+  for(let i=0;i<=12;i++){
+    const a=Math.PI-i*Math.PI/24;
+    hoodPts.push([.35+.25*Math.cos(a),.75+.21*Math.sin(a)]);
   }
-  // Rounded rear cover silhouette is visible in both SKTB photos2 and4.
-  // Its function, cross-section and all scene dimensions remain unmeasured.
-  const hoodPts=[[.06,.72],[.06,.75]];
-  for(let i=0;i<=24;i++){const a=Math.PI-i*Math.PI/24;hoodPts.push([.49+.43*Math.cos(a),.75+.24*Math.sin(a)]);}
-  hoodPts.push([.92,.72]);plate(body,hoodPts,.80,-.40,m.shadow,'body');
+  for(let i=0;i<=12;i++){
+    const a=Math.PI/2-i*Math.PI/24;
+    hoodPts.push([.68+.18*Math.cos(a),.75+.21*Math.sin(a)]);
+  }
+  hoodPts.push([.86,.729]);
+  const hood=plate(body,hoodPts,.81,-.405,m.shadow,'body');
+  hood.name='Кожух с плоской вершиной и скруглёнными плечами';
   // Low deck and service panels forward of the drive enclosure.
   box(body,[.50,.06,.77],[-.41,.76,0],m.panel,'body');
   box(body,[.47,.055,.50],[-.41,.796,0],m.olive,'body');
@@ -306,11 +308,6 @@ export function makeMobot(THREE, quality='auto') {
     for(const z of [-.21,.21])bolt(body,[x,.83,z],'y',m.darkBolt,'body',.014);
   }
   // Hidden torsion bars / repeated hood vents omitted: not resolved in source views.
-  // Rear cable exit and protected sheave.
-  cylinder(body,.072,.072,.14,[.92,.65,-.17],m.satin,'body','x',22);
-  ring(body,.082,.012,[.99,.65,-.17],m.frame,'body','x');
-  tube(body,[[.94,.65,-.17],[1.02,.62,-.2],[1.19,.57,-.22],[1.32,.52,-.27]],.021,m.cable,'body',32);
-
   // ROTARY PEDESTAL & VISIBLE TRANSMISSION
   const base=section('turret','Поворотная опора манипулятора');
   // Shift toward the front according to the approximate archival side-view silhouette.
@@ -615,19 +612,9 @@ export function makeMobot(THREE, quality='auto') {
   updateLinkages();
   // Secondary fasteners, junctions, mechanical guarding, service seams.
   const mechanics=section('mechanics','Крепления и узлы шасси');
-  for(const s of [-1,1]){
-    const z=s*.53;
-    beam(mechanics,[-.61,.67,z],[.54,.69,z],.016,m.satin,'mechanics');
-    for(const x of [-.64,-.30,.06,.42,.70]){
-      bolt(mechanics,[x,.695,z],'y',m.darkBolt,'mechanics',.012);
-      box(mechanics,[.045,.05,.045],[x,.66,z],m.panel,'mechanics');
-    }
-    tube(mechanics,[[.82,.71,s*.38],[.65,.68,s*.52],[.22,.67,s*.56],[-.35,.68,s*.55]],.010,m.cable,'mechanics',38);
-  }
-  for(const x of [-.7,-.5,-.3])for(const z of [-.37,.37]){
-    box(mechanics,[.06,.03,.09],[x,.737,z],m.frame,'mechanics');
-    bolt(mechanics,[x,.764,z],'y',m.satin,'mechanics',.011);
-  }
+  // Keep only deck edge rails supported continuously by the deck (C).
+  for(const side of [-1,1])
+    box(mechanics,[1.46,.026,.025],[0,.692,side*.639],m.olive,'mechanics');
   // Surface highlights: two subtly separate shades for rebuilt welded steel.
   const info={
     tracks:{name:'Гусеничный движитель',status:'К фотографическому профилю добавлена отдельная условная схема балансиров: три пары и одиночная опора на каждом борту. Наличие балансиров подтверждают воспоминания о ремонте 1987 года, но эта компоновка и оси не доказаны архивными чертежами. Контур и число катков — гипотеза.',basis:'СКТБ ПР · архивный снимок; Батанов/Лосицкий «Чернобыльская крыша» · сведения о деформации балансиров'},
