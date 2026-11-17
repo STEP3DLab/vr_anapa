@@ -1,4 +1,5 @@
 import * as T from './three.module.min.js';
+import {makeRasterRenderer} from './orthographic-raster.js';
 import {OrbitControls} from './controls/OrbitControls.js';
 import {makeMobot1986} from '../mobot-ch-hv-1986-research-v5-model.js';
 import {makeMobot} from '../mobot-engineering-v20-model.js';
@@ -23,9 +24,9 @@ $('passportLink').href='./'+c.module+'-passport.json';$('qaLink').href='./'+c.mo
 document.querySelector('[data-robot="'+year+'"]').setAttribute('aria-current','page');
 $('toolField').hidden=year!=='1987';
 const cameraDirs=year==='1986'?{three:[3.1,1.6,5.5],side:[0,.01,6],front:[6,.01,0],top:[.001,6,0]}:{three:[-3.1,1.6,-5.5],side:[0,.01,-6],front:[-6,.01,0],top:[.001,6,0]};
-function draw(){scheduled=false;if(!renderer||document.hidden)return;controls.update();renderer.render(scene,camera);renderCount++;$('loading').hidden=true;}
+function draw(){scheduled=false;if(!renderer||document.hidden)return;controls.update();renderer.render(mode==='canvas2d'?model.root:scene,camera);renderCount++;$('loading').hidden=true;}
 function invalidate(){if(!scheduled){scheduled=true;requestAnimationFrame(draw);}}
-function resize(){if(!renderer)return;const b=$('surface').getBoundingClientRect();if(!b.width||!b.height)return;renderer.setSize(b.width,b.height,false);fitProjection();invalidate();}
+function resize(){if(!renderer)return;const b=$('surface').getBoundingClientRect();if(!b.width||!b.height)return;if(mode==='canvas2d')renderer.resize(Math.round(b.width),Math.round(b.height));else renderer.setSize(b.width,b.height,false);fitProjection();invalidate();}
 function fitProjection(){const b=$('surface').getBoundingClientRect(),a=b.width/b.height;const s=frameBounds?.size||new T.Vector3(4,3,2);const span=Math.max(s.y*1.20,s.x/a*1.20,s.z/a*1.20,2.2);camera.left=-span*a/2;camera.right=span*a/2;camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix();}
 function setView(next='three',refit=true){if(!camera)return;view=next;model.root.updateMatrixWorld(true);const box=new T.Box3().setFromObject(model.root);frameBounds={center:box.getCenter(new T.Vector3()),size:box.getSize(new T.Vector3())};
   const part=$('assembly').value;if(part==='tracks'){frameBounds={center:new T.Vector3(0,.40,0),size:new T.Vector3(2.5,1.2,1.7)}}
@@ -45,14 +46,14 @@ function fallback(reason){mode='static';$('loading').hidden=false;$('loading').t
 function start(){if(new URL(location).searchParams.has('fallback')){fallback('Статический режим.');return;}
   model=year==='1986'?makeMobot1986(T):makeMobot(T,innerWidth<680?'mobile':'desktop');if(year==='1987')model.parts.dock.visible=false;
   scene=new T.Scene();scene.add(model.root);scene.add(new T.HemisphereLight(0xffffff,0x9da78c,2.7));for(const [at,power] of [[[2,7,4],3.2],[[-4,4,-3],2.3]]){const l=new T.DirectionalLight(0xffffff,power);l.position.set(...at);scene.add(l);}
-  canvas=document.createElement('canvas');const gl=canvas.getContext('webgl2',{antialias:true,alpha:true,preserveDrawingBuffer:true});if(!gl){fallback('WebGL 2 недоступен.');return;}
-  renderer=new T.WebGLRenderer({canvas,context:gl,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
+  canvas=document.createElement('canvas');const software=new URL(location).searchParams.has('software');const gl=software?null:canvas.getContext('webgl2',{antialias:true,alpha:true,preserveDrawingBuffer:true});if(!gl&&!software){fallback('WebGL 2 недоступен.');return;}
+  if(software){mode='canvas2d';renderer=makeRasterRenderer(canvas);}else{renderer=new T.WebGLRenderer({canvas,context:gl,antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor(0x000000,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;}
   canvas.tabIndex=0;canvas.setAttribute('aria-label','Интерактивная 3D-модель '+c.name);canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('Графический контекст потерян.');});$('surface').append(canvas);
   camera=new T.OrthographicCamera(-3,3,2,-2,.01,50);controls=new OrbitControls(camera,canvas);controls.enablePan=false;controls.enableDamping=false;controls.minZoom=.5;controls.maxZoom=4;controls.addEventListener('change',invalidate);controls.addEventListener('start',()=>document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed','false')));
   canvas.addEventListener('keydown',e=>{const turn={ArrowLeft:[-.13,0],ArrowRight:[.13,0],ArrowUp:[0,-.10],ArrowDown:[0,.10]}[e.key];if(turn){const s=new T.Spherical().setFromVector3(camera.position.clone().sub(controls.target));s.theta+=turn[0];s.phi+=turn[1];s.makeSafe();camera.position.setFromSpherical(s).add(controls.target);controls.update();}else if(['+','=','-'].includes(e.key))zoom(e.key==='-'?1/1.2:1.2);else return;e.preventDefault();invalidate()});
-  new ResizeObserver(resize).observe($('surface'));document.addEventListener('visibilitychange',invalidate);apply();renderControls();setView();resize();$('rendererState').textContent='WebGL 2 · реальные 3D-модели';
+  new ResizeObserver(resize).observe($('surface'));document.addEventListener('visibilitychange',invalidate);apply();renderControls();setView();resize();$('rendererState').textContent=mode==='canvas2d'?'Программный 3D-рендер · Canvas 2D, не WebGL':'WebGL 2 · реальные 3D-модели';
   // Reproducible QA surface. No hidden scene mutation is required by the test harness.
-  window.__mobotQA={getState:()=>({year,version:c.version,mode,renderCount,pose:{...state},tool,renderer:gl.getParameter(gl.RENDERER),webglVersion:gl.getParameter(gl.VERSION),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,clearance:+$('clearance').dataset.clearance,camera:camera.position.toArray(),zoom:camera.zoom}),getModel:()=>model,render:draw};
+  window.__mobotQA={getState:()=>({year,version:c.version,mode,renderCount,pose:{...state},tool,renderer:gl?.getParameter(gl.RENDERER)||'Canvas 2D',webglVersion:gl?.getParameter(gl.VERSION)||null,drawCalls:renderer.info?.render.calls||0,triangles:renderer.info?.render.triangles||0,clearance:+$('clearance').dataset.clearance,camera:camera.position.toArray(),zoom:camera.zoom}),getModel:()=>model,render:draw};
 }
 function zoom(f){if(!camera)return;camera.zoom=T.MathUtils.clamp(camera.zoom*f,.5,4);camera.updateProjectionMatrix();invalidate();}
 $('assembly').onchange=()=>{renderControls();setView()};$('pose').onchange=()=>preset(+$('pose').value);$('reset').onclick=()=>preset(0);$('tool').onchange=()=>{tool=$('tool').value;model?.mechanisms.setWorkTool(tool);if(tool==='breaker-loader'){state.bucket=36;state.tip=0;}apply();renderControls();setView()};
