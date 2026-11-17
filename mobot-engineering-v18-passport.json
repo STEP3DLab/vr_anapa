@@ -1,0 +1,94 @@
+{
+  "schema": "mobot-engineering-evidence/1.2",
+  "date": "2026-11-17",
+  "variant": "Мобот-Ч-ХВ-2 (1987)",
+  "revision": "v18-research",
+  "releaseState": "ISOLATED_CANDIDATE_NOT_LATEST",
+  "parentRelease": "mobot-engineering-v17.html",
+  "parentModel": "mobot-engineering-v16-model.js",
+  "page": "mobot-engineering-v18.html",
+  "model": "mobot-engineering-v18-model.js",
+  "controller": "mobot-assets/workbench-v18.js",
+  "landmarks": "mobot-track-photo-landmarks-v18.json",
+  "qa": "mobot-engineering-v18-qa.json",
+  "sourceAttribution": {
+    "id": "SKTB-PHOTO2",
+    "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+    "index": "https://sktbpr.ru/foto-alb/65",
+    "type": "archival original source photo",
+    "variantClass": "B",
+    "note": "Oblique single view; image not a scale drawing."
+  },
+  "evidenceClasses": {
+    "A": "Documentary confirmation of existence/function, NOT certified shape",
+    "B": "Visually identifiable feature from an attributed historical photograph, NOT real size",
+    "C": "Human chosen 3D model placement/size inferred from perspective image, without calibrated geometry"
+  },
+  "geometryDelta": [
+    {
+      "id": "ROAD-WHEELS-X",
+      "countPerSide": 7,
+      "oldSceneX": [
+        -0.56,
+        -0.395,
+        -0.23,
+        -0.065,
+        0.1,
+        0.265,
+        0.43
+      ],
+      "newSceneX": [
+        -0.45,
+        -0.26,
+        -0.07,
+        0.1,
+        0.29,
+        0.47,
+        0.67
+      ],
+      "evidence": "Visible seven lower circular wheel features from SKTB Photo2, photo X mirrored because model front=-X",
+      "featureConfidence": "B",
+      "coordinateConfidence": "C",
+      "notes": "Manual pixel landmarks ±10px; positions along X only; y and z remain inherited from v16."
+    },
+    {
+      "id": "END-WHEELS",
+      "oldSceneX": [
+        -0.63,
+        0.63
+      ],
+      "newSceneX": [
+        -0.7,
+        0.72
+      ],
+      "oldNominalRadius": 0.19,
+      "newNominalRadius": 0.14,
+      "confidence": "C",
+      "notes": "Comparison of projected end-wheel circles with seven smaller road wheels in one oblique image; relative proportions approximate, no actual diameters claimed."
+    }
+  ],
+  "unchanged": [
+    "Original v16 track belt outline and drive/hub animation logic",
+    "1987 manipulator, toolheads, loaders, body, cameras and all of their unresolved shapes",
+    "v17 coordinate-consistent controller kinematics, clearance proxy and UI layout"
+  ],
+  "checked": {
+    "jsModulesParse": true,
+    "staticIdsConsistent": true,
+    "sourceProfileMatchesRenderedWheelPositions": true,
+    "roadWheelFitToSameChosenPhotoPointsOnly": true,
+    "realFactorySizes": false,
+    "realCameraCalibration": false,
+    "physicalClearanceTest": false,
+    "realGPUWebGLTest": false,
+    "PagesSuccessfulDeploymentConfirmed": false
+  },
+  "openRisks": [
+    "Single oblique view does not fix chassis side lengths or true hub positions",
+    "End wheel radius can be biased by perspective and shadows, requires independent photo",
+    "New road-wheel positions do not validate actual rocker geometry, which remains a hypothesis",
+    "Real Canvas/WebGL mobile and desktop screen test not performed this pass",
+    "Model's loader ground datum and clearance estimate are unrelated to tested wheel safety"
+  ],
+  "latestPolicy": "Do not change mobot-latest.html from v17 until independent multi-view silhouette check and GPU/mobile QA pass."
+}
