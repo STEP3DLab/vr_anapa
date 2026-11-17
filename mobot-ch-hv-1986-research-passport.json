@@ -2,8 +2,8 @@
   "schema": "mobot-engineering-evidence/1.1",
   "date": "2026-11-17",
   "object": "Мобот-Ч-ХВ, исходная машина 1986 года",
-  "status": "separate-uncalibrated-3d-research-revision",
-  "threeDModel": "mobot-ch-hv-1986-research-v1.html",
+  "status": "Separate research visualization for 1986; two historical photo poses; not dimensional CAD",
+  "threeDModel": "mobot-ch-hv-1986-research-v2.html",
   "sourceOfTruth": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2",
   "notDerivedFrom": "mobot-engineering-v16-model.js",
   "actualScaleKnown": false,
@@ -102,13 +102,13 @@
     }
   ],
   "releaseGate": {
-    "historicalImageAttribution": "1986 image independently confirmed by 2019 journal Fig.9 (PDF page 6)",
-    "sideAndFrontSilhouettes": "not-completed, photo is perspective",
+    "historicalImageAttribution": "pass: Fig6 and Fig9 original 1986 robot",
+    "sideAndFrontSilhouettes": "not-calibrated; photos have different perspective",
     "jointLocations": "not-completed",
     "realDimensions": "not-available",
-    "threeDGeometry": "research blockout created, no calibrated original geometry",
-    "realDeviceQA": "not-completed",
-    "decision": "Publish separate research 1986 page only; do not change mobot-latest.html v17."
+    "threeDGeometry": "v2 retains v1 uncalibrated shapes and corrects a visual kinematic mismatch",
+    "realDeviceQA": "real WebGL / phone GPU not-tested",
+    "decision": "Keep 1986 prototype separate; do not change 1987 mobot-latest.html"
   },
   "sourceGeometryEvidence": [
     {
@@ -138,12 +138,46 @@
       ]
     }
   ],
-  "geometryVersion": "research-v1",
+  "geometryVersion": "research-v2",
   "geometryPrinciples": [
     "1986 truss boom modelled with diagonal bracing as qualitative B silhouette",
     "1986 grapple not replaced by 1987 detachable two-jaw gripper; shape C",
     "Undercarriage, loader and cameras present by primary textual description; mounts and shapes C",
     "No hydraulics claimed; all drives documented as electromechanical",
     "All points scene units, not metres, and joint ranges are UI-only hypotheses"
+  ],
+  "parent3DModel": "mobot-ch-hv-1986-research-v1.html",
+  "qa": "mobot-ch-hv-1986-research-v2-qa.json",
+  "photoPoseEvidence": [
+    {
+      "id": "FIG6",
+      "url": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+      "source": "Овчинников, Батанов, Мингалеев, 2019, p.74, fig.6",
+      "claim": "Identified 1986 robot with relatively lower open lattice boom and hanging grab",
+      "class": "B",
+      "limitation": "Non-orthographic image; real boom angle unmeasured"
+    },
+    {
+      "id": "FIG9",
+      "url": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg",
+      "source": "Овчинников, Батанов, Мингалеев, 2019, p.75, fig.9",
+      "claim": "Identified 1986 robot with raised open lattice boom and hanging grab",
+      "class": "B",
+      "limitation": "Non-orthographic image; real boom angle unmeasured"
+    }
+  ],
+  "verifiedSoftwareChanges": [
+    {
+      "id": "POSE-PRESETS",
+      "class": "A-software",
+      "claim": "0 and +58 scene degrees select two visually different boom states",
+      "limitation": "These are demonstration variables, not historic motor/boom angles"
+    },
+    {
+      "id": "GRAPPLE-ORIENTATION",
+      "class": "B-visual C-mechanism",
+      "claim": "Grapple is kept vertically aligned in the scene as the boom rotates",
+      "limitation": "Photos support hanging posture but do not establish suspension mechanism or degrees of freedom"
+    }
   ]
 }
