@@ -305,7 +305,7 @@ export function makeMobot(THREE, quality='auto') {
   box(body,[.50,.06,.77],[-.41,.76,0],m.panel,'body');
   box(body,[.47,.055,.50],[-.41,.796,0],m.olive,'body');
   for(const x of [-.58,-.25]){
-    for(const z of [-.21,.21])bolt(body,[x,.83,z],'y',m.darkBolt,'body',.014);
+    for(const z of [-.21,.21])bolt(body,[x,.823,z],'y',m.darkBolt,'body',.014);
   }
   // Hidden torsion bars / repeated hood vents omitted: not resolved in source views.
   // ROTARY PEDESTAL & VISIBLE TRANSMISSION
@@ -681,7 +681,42 @@ export function makeMobot(THREE, quality='auto') {
     canonicalModule:'mobot-kinematics-v15.js',
     trueArchivalDimensions:false
   });
-  const mechanisms={turntable,arm:armPivot,bucketLift:bucket,bucketTilt:bucketScoop,setWorkTool,updateLinkages,setTrackPhase,
+  const neutral={yaw:0,arm:0,wrist:90,claw:4,bucket:12,tip:0,track:0};
+  let current={...neutral};
+  function setPose(values={}){
+    current={...current,...values};
+    const r=THREE.MathUtils.degToRad;
+    turntable.rotation.y=r(current.yaw);
+    armPivot.rotation.z=r(current.arm);
+    gripper.rotation.z=r(current.wrist-current.arm);
+    for(const f of fingerMechanisms)f.group.rotation.z=-f.side*r(current.claw);
+    bucket.rotation.z=-r(current.bucket);
+    bucketScoop.rotation.z=r(current.tip);
+    if('track' in values)setTrackPhase(current.track*.015);
+    updateLinkages();
+    root.updateMatrixWorld(true);
+  }
+  function solidBounds(group){
+    const bounds=new THREE.Box3();
+    group.traverseVisible(o=>{if(o.isMesh)bounds.expandByObject(o,true)});
+    return bounds;
+  }
+  function inspectPose(){
+    // Evaluate assembled scene only. Bounds of active tools use transformed vertices.
+    const tool=root.userData.activeWorkTool;
+    const carried=tool==='gripper'?fingerHead:tool==='breaker-arm'?breakerArm:null;
+    const working=solidBounds(tool==='breaker-loader'?breakerLoader:scoopShell);
+    const handheld=carried?solidBounds(carried):null;
+    const clearance=Math.min(working.min.y,handheld?.min.y??Infinity)-groundReferenceY;
+    const alerts=[];
+    if(clearance<-.0001)alerts.push('Рабочий орган ниже плоскости опоры');
+    if(handheld && handheld.intersectsBox(working))
+      alerts.push('Возможное пересечение рабочего органа и ковша по габаритам');
+    if(handheld && handheld.intersectsBox(solidBounds(hood)))
+      alerts.push('Возможное пересечение рабочего органа и кожуха по габаритам');
+    return {clearance,alerts,datum:groundReferenceY,tool};
+  }
+  const mechanisms={setPose,inspectPose,turntable,arm:armPivot,bucketLift:bucket,bucketTilt:bucketScoop,setWorkTool,updateLinkages,setTrackPhase,
     estimateBucketClearance,auditBucketPose,sweepBucketEnvelope,sourceProfile,
     distalPin,armFixed,armMoving,actuatorArmHousing,actuatorArmScrew,
     framePins,liftPins,loaderHousings,loaderScrews,blade,
