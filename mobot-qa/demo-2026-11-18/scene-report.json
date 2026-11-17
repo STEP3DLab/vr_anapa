@@ -21,6 +21,7 @@
         ]
       },
       "wheelAdjacentCircleOverlaps": 0,
+      "endToLowerCircleOverlaps": 0,
       "poseSamples": 162,
       "negativeClearances": 72,
       "checks": [],
@@ -45,6 +46,7 @@
         ]
       },
       "wheelAdjacentCircleOverlaps": 0,
+      "endToLowerCircleOverlaps": 0,
       "poseSamples": 81,
       "negativeClearances": 27,
       "checks": [
@@ -73,6 +75,7 @@
         ]
       },
       "wheelAdjacentCircleOverlaps": 0,
+      "endToLowerCircleOverlaps": 0,
       "poseSamples": 81,
       "negativeClearances": 27,
       "checks": [],

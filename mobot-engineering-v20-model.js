@@ -1,6 +1,6 @@
 import { PROFILE_V15, auditBucketPose as sharedAudit, sweepBucketEnvelope as sharedSweep } from './mobot-kinematics-v15.js';
 // MOBOT-CH-HV-2 / TRACK V20: visible rim-size approximation / 2026-11-17
-// Derived non-destructively from V18. Research only: projected photo-visible wheel radii; NOT measured factory coordinates.
+// Derived non-destructively from V19. Research only: projected photo-visible wheel radii; NOT measured factory coordinates.
 // Source photo: https://sktbpr.ru/sites/default/files/foto_album/2.jpg
 // Primary photo: https://sktbpr.ru/sites/default/files/foto_album/2.jpg
 // Primary tech description: https://sktbpr.ru/content/mrk-mobot-ch-hv-2
@@ -15,7 +15,7 @@ export function makeMobot(THREE, quality='auto') {
   const driveModules=[];
   let sourceTrackProfile=null;
   let researchRoadWheelXs=null; // v20: approximate scene positions from one photograph
-  let researchRoadWheelRadii=null; // v20: face-radius estimate in scene units, not actual radii
+  let researchRoadWheelRadii=null; // inherited v19 face-radius estimate in scene units, not actual radii
   const terminalWheelOuterRadius=.105; // scene-only projected end-wheel proxy
   const rotatingHubs=[];
   const suspensionSchemes=[];

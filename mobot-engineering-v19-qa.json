@@ -1,0 +1,58 @@
+{
+  "schema": "mobot-qa/2",
+  "date": "2026-11-17",
+  "version": "1987-v19",
+  "testedGeometryCommit": "c5beff94db445eaf32584c7feee1c3e1f7f251f4",
+  "browserRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44130057804",
+  "browserEngine": "real Chromium with SwiftShader software WebGL2",
+  "mockThree": false,
+  "sceneReport": "mobot-qa/demo-2026-11-18/scene-report.json",
+  "browserReport": "mobot-qa/demo-2026-11-18/browser-report.json",
+  "syntaxAndImports": "Actual modules parsed and imported; current geometry instantiated by vendored THREE.",
+  "scene": {
+    "name": "1987-v19",
+    "meshes": 569,
+    "instances": 1243,
+    "vertices": 72577,
+    "finiteGeometry": true,
+    "box": {
+      "min": [
+        -2.3943812891166885,
+        -0.2550000002980233,
+        -0.823999998986721
+      ],
+      "max": [
+        1.3300217390060425,
+        2.36675774872303,
+        0.8250000040233135
+      ]
+    },
+    "wheelAdjacentCircleOverlaps": 0,
+    "endToLowerCircleOverlaps": 0,
+    "poseSamples": 81,
+    "negativeClearances": 27,
+    "checks": [],
+    "fullCollisionDetection": false
+  },
+  "realWebGL": true,
+  "physicalGPU": false,
+  "browserTests": [],
+  "stableV17Preserved": true,
+  "notVerified": [
+    "Физический Android/iPhone, Safari и аппаратный GPU.",
+    "VR-шлем, контроллеры WebXR и прежний сценарий на крыше.",
+    "Полная проверка пересечений mesh-to-mesh, динамика, нагрузки и устойчивость.",
+    "Реальная историческая кинематика и физические размеры.",
+    "Исторические значения количества траков, зубьев и крепежа."
+  ],
+  "knownLimits": {
+    "arbitraryPoseGroundPenetration": "27 из 81 выборок опускают проверяемые точки ниже условной плоскости. Это известное ограничение исследовательских регуляторов.",
+    "presets": "Шесть готовых поз новых моделей имеют неотрицательные контрольные зазоры; это не полная проверка столкновений.",
+    "cameraCalibration": false,
+    "fullCollisionDetection": false
+  },
+  "screenshots": [
+    "mobot-qa/demo-2026-11-18/1987-v19-before.png"
+  ],
+  "browserScope": "Only baseline load, real WebGL context and screenshot. Full old-interface control/mobile audit was not performed; 81 node geometry poses were sampled."
+}

@@ -1,0 +1,231 @@
+{
+  "schema": "mobot-engineering-evidence/2",
+  "date": "2026-11-17",
+  "demoDate": "2026-11-18",
+  "status": "research model, not historically exact CAD",
+  "latestPolicy": "mobot-latest.html remains v17",
+  "units": "arbitrary scene coordinates, NOT millimetres or verified metres",
+  "physicalScaleKnown": false,
+  "evidenceClasses": {
+    "A": "Существование/функция подтверждены первичным документом; это не подтверждение точной формы.",
+    "B": "Внешний признак различим на идентифицированном историческом изображении; не размерный чертёж.",
+    "C": "Исследовательская гипотеза. Все численные параметры сцены, невидимые стороны и кинематика без обмера."
+  },
+  "sources": {
+    "SKTB-TEXT": {
+      "url": "http://sktbpr.ru/node/23",
+      "type": "primary developer account",
+      "identity": "Исходный Ч-ХВ и модернизированный Ч-ХВ-2; существование и функции узлов"
+    },
+    "SKTB-GALLERY": {
+      "url": "http://sktbpr.ru/foto-alb/65",
+      "type": "primary developer gallery",
+      "identity": "Подписи и атрибуция полных фотографий"
+    },
+    "FIG6": {
+      "url": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+      "local": "mobot-assets/archive/1986-fig6.png",
+      "identity": "Овчинников, Батанов, Мингалеев. Роботы в Чернобыле. 2019. С.74, рис.6. Исходный Ч-ХВ; вырезка из страницы"
+    },
+    "FIG9": {
+      "url": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg",
+      "local": "mobot-assets/archive/1986-fig9.png",
+      "identity": "Та же публикация, с.75, рис.9. Исходный Ч-ХВ; другой ракурс и поза"
+    },
+    "SKTB2": {
+      "url": "http://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "local": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "identity": "Ч-ХВ-2 перед отправкой на ЧАЭС; дата съёмки не указана; оригинал 2786×2106"
+    },
+    "SKTB3": {
+      "url": "http://sktbpr.ru/sites/default/files/foto_album/3.jpg",
+      "local": "mobot-assets/archive/1987-front.jpg",
+      "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; фронтальный вид схвата"
+    },
+    "SKTB4": {
+      "url": "http://sktbpr.ru/sites/default/files/foto_album/4.jpg",
+      "local": "mobot-assets/archive/1987-snow-side.jpg",
+      "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; независимый боковой ракурс на снегу"
+    },
+    "SKTB9": {
+      "url": "http://sktbpr.ru/sites/default/files/foto_album/9.jpg",
+      "local": "mobot-assets/archive/1987-breaker.jpg",
+      "identity": "Ч-ХВ-2: отработка применения молотка на манипуляторе"
+    },
+    "BATANOV-2026": {
+      "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "type": "designer retrospective account",
+      "identity": "А.Ф. Батанов, В. Лосицкий. Чернобыльская крыша; упоминание балансиров не устанавливает их схему"
+    }
+  },
+  "limitations": [
+    "Не получены заводские сборочные чертежи и обмеры.",
+    "Нет калибровки камеры или независимой количественной ошибки репроекции.",
+    "Фотографии дают внешние признаки; все численные координаты и сечения C.",
+    "Демонстрационная кинематика не подтверждает реальные пределы или замкнутый механизм.",
+    "Полная проверка столкновений деталей не выполнена.",
+    "Нельзя считать отсутствие пересечений кругов подтверждением конструкции исторической подвески."
+  ],
+  "variant": "Мобот-Ч-ХВ-2 (1987)",
+  "revision": "v19",
+  "page": "mobot-engineering-v19.html",
+  "model": "mobot-engineering-v19-model.js",
+  "controller": "mobot-assets/workbench-v19.js",
+  "qa": "mobot-engineering-v19-qa.json",
+  "parent": "mobot-engineering-v18.html",
+  "recordNote": "Ретроспективно создан отсутствовавший паспорт существующей v19. Геометрия v19 не изменялась.",
+  "geometryDelta": [
+    {
+      "id": "wheel-radii",
+      "wheelXsScene": [
+        -0.45,
+        -0.26,
+        -0.07,
+        0.1,
+        0.29,
+        0.47,
+        0.67
+      ],
+      "visibleLowerWheelRadiiScene": [
+        0.073,
+        0.07,
+        0.073,
+        0.07,
+        0.073,
+        0.07,
+        0.073
+      ],
+      "terminalWheelRadiusScene": 0.105,
+      "existence": "B: seven lower circular features",
+      "dimensions": "C",
+      "basis": "Visual estimate inherited from 500px preview. Full original and independent views obtained later for v20. No measured diameters.",
+      "differenceFromV18": "Reduced nominal visible radii remove planar circle overlaps; this is a model consistency adjustment, not historical calibration."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "running-gear",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4",
+        "BATANOV-2026"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Радиусы унаследованы от C-оценки v19; не получены новой фотограмметрией. Схема балансиров, передачи и натяжители неизвестны."
+    },
+    {
+      "id": "body-hood",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB2",
+        "SKTB4"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Размеры, внутренняя компоновка и скрытая сторона."
+    },
+    {
+      "id": "turntable-and-support",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB2",
+        "SKTB4"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Оси, редуктор, размеры опор."
+    },
+    {
+      "id": "boom",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB2",
+        "SKTB4"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Длины звеньев, сечения и реальная кинематическая схема."
+    },
+    {
+      "id": "gripper",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB3"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Привод, скрытые оси, замыкание тяг и точные пределы раскрытия."
+    },
+    {
+      "id": "breaker-on-arm",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB9"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Размеры корпуса, зубила, креплений; не является заводской конструкцией."
+    },
+    {
+      "id": "breaker-on-loader",
+      "existenceOrFunction": "A",
+      "visibleExterior": "C",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB-TEXT"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Геометрия места монтажа на погрузчик не найдена."
+    },
+    {
+      "id": "loader",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B exterior only",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Унаследованные поверхности ковша и тяги ещё приблизительны; передачу не считаем восстановленной."
+    },
+    {
+      "id": "camera-housings",
+      "existenceOrFunction": "A",
+      "visibleExterior": "B",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB2",
+        "SKTB4"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Точные кронштейны, размеры, внутреннее устройство."
+    },
+    {
+      "id": "cable-and-docking",
+      "existenceOrFunction": "A",
+      "visibleExterior": "C",
+      "dimensionalGeometry": "C",
+      "sources": [
+        "SKTB-TEXT",
+        "BATANOV-2026"
+      ],
+      "change": "Унаследовано от исходной v19; уточнения v20 к этой версии не относятся.",
+      "unknown": "Модернизация кабелеукладчика и стыковка подтверждены текстом, точная форма не восстановлена."
+    }
+  ],
+  "supersededByResearch": "mobot-engineering-v20.html"
+}

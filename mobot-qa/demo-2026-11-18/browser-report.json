@@ -1,0 +1,1295 @@
+{
+  "baselines": [
+    {
+      "name": "1986-v4",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    },
+    {
+      "name": "1987-v19",
+      "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    }
+  ],
+  "started": "2026-11-17T16:49:58.161Z",
+  "base": "http://127.0.0.1:4173/",
+  "engine": "real Chromium with SwiftShader software WebGL2",
+  "mockThree": false,
+  "runs": [
+    {
+      "year": "1986",
+      "profile": "desktop",
+      "initial": {
+        "year": "1986",
+        "version": "v5",
+        "mode": "webgl2",
+        "renderCount": 2,
+        "pose": {
+          "yaw": 0,
+          "boom": 0,
+          "loader": 0,
+          "tip": 0,
+          "grab": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "renderer": "WebKit WebGL",
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "drawCalls": 146,
+        "triangles": 14040,
+        "clearance": 0.05700000000000005,
+        "camera": [
+          4.402448253283927,
+          3.3383153223361113,
+          7.600109803420294
+        ],
+        "zoom": 1
+      },
+      "presets": [
+        {
+          "year": "1986",
+          "version": "v5",
+          "mode": "webgl2",
+          "renderCount": 4,
+          "pose": {
+            "yaw": 0,
+            "boom": 0,
+            "loader": 0,
+            "tip": 0,
+            "grab": 0,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 146,
+          "triangles": 14040,
+          "clearance": 0.05700000000000005,
+          "camera": [
+            4.402448253283927,
+            3.3383153223361113,
+            7.600109803420294
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1986",
+          "version": "v5",
+          "mode": "webgl2",
+          "renderCount": 5,
+          "pose": {
+            "yaw": 180,
+            "boom": -30,
+            "loader": 5,
+            "tip": 0,
+            "grab": 3,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 146,
+          "triangles": 14040,
+          "clearance": 0.22310567838577033,
+          "camera": [
+            4.548380943556237,
+            3.6593980508663684,
+            7.600109803420294
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1986",
+          "version": "v5",
+          "mode": "webgl2",
+          "renderCount": 6,
+          "pose": {
+            "yaw": 0,
+            "boom": -18,
+            "loader": 18,
+            "tip": -8,
+            "grab": 8,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 146,
+          "triangles": 14040,
+          "clearance": 0.5829262837756551,
+          "camera": [
+            4.4547262568305825,
+            3.5281697563020953,
+            7.6001098034202945
+          ],
+          "zoom": 1
+        }
+      ],
+      "sliderSamples": [
+        {
+          "id": "control-boom",
+          "value": -40,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-boom",
+          "value": -14,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-boom",
+          "value": 12,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-grab",
+          "value": 0,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-grab",
+          "value": 10,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-grab",
+          "value": 20,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-loader",
+          "value": -8,
+          "clearance": -0.26116315114429106
+        },
+        {
+          "id": "control-loader",
+          "value": 7,
+          "clearance": 0.2197048117523731
+        },
+        {
+          "id": "control-loader",
+          "value": 22,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-yaw",
+          "value": -180,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-yaw",
+          "value": 0,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-yaw",
+          "value": 180,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-boom",
+          "value": -40,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-boom",
+          "value": -14,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-boom",
+          "value": 12,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-grab",
+          "value": 0,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-grab",
+          "value": 10,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-grab",
+          "value": 20,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-loader",
+          "value": -8,
+          "clearance": -0.26116315114429106
+        },
+        {
+          "id": "control-loader",
+          "value": 7,
+          "clearance": 0.2197048117523731
+        },
+        {
+          "id": "control-loader",
+          "value": 22,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-tip",
+          "value": -20,
+          "clearance": 0.6045476717547552
+        },
+        {
+          "id": "control-tip",
+          "value": 0,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-tip",
+          "value": 20,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-track",
+          "value": 0,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-track",
+          "value": 50,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-track",
+          "value": 100,
+          "clearance": 0.714529956872328
+        }
+      ],
+      "tools": [],
+      "mouseOrTouchOrbit": true,
+      "keyboardOrbit": true,
+      "zoomButton": true,
+      "finiteTransforms": true,
+      "archiveImages": [
+        "./mobot-assets/archive/1986-fig6.png",
+        "./mobot-assets/archive/1986-fig9.png"
+      ],
+      "horizontalOverflow": false,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "year": "1987",
+      "profile": "desktop",
+      "initial": {
+        "year": "1987",
+        "version": "v20",
+        "mode": "webgl2",
+        "renderCount": 2,
+        "pose": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 4,
+          "bucket": 0,
+          "tip": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "renderer": "WebKit WebGL",
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "drawCalls": 363,
+        "triangles": 70496,
+        "clearance": 0.125,
+        "camera": [
+          -4.429687383386024,
+          3.325248198523453,
+          -7.6001098034202945
+        ],
+        "zoom": 1
+      },
+      "presets": [
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 4,
+          "pose": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 12,
+            "tip": 0,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 0.5222080355466948,
+          "camera": [
+            -4.4492406197122225,
+            3.325248198523453,
+            -7.6001098034202945
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 5,
+          "pose": {
+            "yaw": 180,
+            "arm": 8,
+            "wrist": 90,
+            "claw": 8,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 0.125,
+          "camera": [
+            -4.4296873833860255,
+            3.2486959140755194,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 6,
+          "pose": {
+            "yaw": 0,
+            "arm": -8,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 28,
+            "tip": -10,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 1.1469155016617383,
+          "camera": [
+            -4.385933325176286,
+            3.395132108364109,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        }
+      ],
+      "sliderSamples": [
+        {
+          "id": "control-arm",
+          "value": -18,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-arm",
+          "value": 4,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-arm",
+          "value": 25,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-claw",
+          "value": 0,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-claw",
+          "value": 12,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-claw",
+          "value": 24,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-bucket",
+          "value": -8,
+          "clearance": 0.017609951344836783
+        },
+        {
+          "id": "control-bucket",
+          "value": 14,
+          "clearance": 0.7257885663785081
+        },
+        {
+          "id": "control-bucket",
+          "value": 36,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-yaw",
+          "value": -180,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-yaw",
+          "value": 0,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-yaw",
+          "value": 180,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-arm",
+          "value": -18,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-arm",
+          "value": 4,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-arm",
+          "value": 25,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-wrist",
+          "value": 55,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-wrist",
+          "value": 85,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-wrist",
+          "value": 115,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-claw",
+          "value": 0,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-claw",
+          "value": 12,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-claw",
+          "value": 24,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-bucket",
+          "value": -8,
+          "clearance": 0.017609951344836783
+        },
+        {
+          "id": "control-bucket",
+          "value": 14,
+          "clearance": 0.7257885663785081
+        },
+        {
+          "id": "control-bucket",
+          "value": 36,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-tip",
+          "value": -25,
+          "clearance": 1.5331735098526886
+        },
+        {
+          "id": "control-tip",
+          "value": 0,
+          "clearance": 1.2495903909576715
+        },
+        {
+          "id": "control-tip",
+          "value": 25,
+          "clearance": 0.9083019372221696
+        },
+        {
+          "id": "control-track",
+          "value": 0,
+          "clearance": 0.9083019372221696
+        },
+        {
+          "id": "control-track",
+          "value": 50,
+          "clearance": 0.9083019372221696
+        },
+        {
+          "id": "control-track",
+          "value": 100,
+          "clearance": 0.9083019372221696
+        }
+      ],
+      "tools": [
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 40,
+          "pose": {
+            "yaw": 180,
+            "arm": 25,
+            "wrist": 115,
+            "claw": 24,
+            "bucket": 36,
+            "tip": 25,
+            "track": 100
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 0.9083019372221696,
+          "camera": [
+            -4.283698252836893,
+            2.6109410337222667,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 41,
+          "pose": {
+            "yaw": 180,
+            "arm": 25,
+            "wrist": 115,
+            "claw": 24,
+            "bucket": 36,
+            "tip": 25,
+            "track": 100
+          },
+          "tool": "breaker-arm",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 340,
+          "triangles": 68920,
+          "clearance": 0.9083019372221696,
+          "camera": [
+            -4.283698252836893,
+            2.6109410337222667,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 42,
+          "pose": {
+            "yaw": 180,
+            "arm": 25,
+            "wrist": 115,
+            "claw": 24,
+            "bucket": 36,
+            "tip": 0,
+            "track": 100
+          },
+          "tool": "breaker-loader",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 344,
+          "triangles": 71224,
+          "clearance": 1.2495903909576715,
+          "camera": [
+            -4.283698252836893,
+            2.6109410337222667,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        }
+      ],
+      "mouseOrTouchOrbit": true,
+      "keyboardOrbit": true,
+      "zoomButton": true,
+      "finiteTransforms": true,
+      "archiveImages": [
+        "./mobot-assets/archive/1987-before-dispatch.jpg",
+        "./mobot-assets/archive/1987-snow-side.jpg",
+        "./mobot-assets/archive/1987-front.jpg",
+        "./mobot-assets/archive/1987-breaker.jpg",
+        "./mobot-assets/archive/pair.jpg"
+      ],
+      "horizontalOverflow": false,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "year": "1986",
+      "profile": "mobile",
+      "initial": {
+        "year": "1986",
+        "version": "v5",
+        "mode": "webgl2",
+        "renderCount": 2,
+        "pose": {
+          "yaw": 0,
+          "boom": 0,
+          "loader": 0,
+          "tip": 0,
+          "grab": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "renderer": "WebKit WebGL",
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "drawCalls": 146,
+        "triangles": 14040,
+        "clearance": 0.05700000000000005,
+        "camera": [
+          4.402448253283927,
+          3.3383153223361113,
+          7.600109803420294
+        ],
+        "zoom": 1
+      },
+      "presets": [
+        {
+          "year": "1986",
+          "version": "v5",
+          "mode": "webgl2",
+          "renderCount": 3,
+          "pose": {
+            "yaw": 0,
+            "boom": 0,
+            "loader": 0,
+            "tip": 0,
+            "grab": 0,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 146,
+          "triangles": 14040,
+          "clearance": 0.05700000000000005,
+          "camera": [
+            4.402448253283927,
+            3.3383153223361113,
+            7.600109803420294
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1986",
+          "version": "v5",
+          "mode": "webgl2",
+          "renderCount": 4,
+          "pose": {
+            "yaw": 180,
+            "boom": -30,
+            "loader": 5,
+            "tip": 0,
+            "grab": 3,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 146,
+          "triangles": 14040,
+          "clearance": 0.22310567838577033,
+          "camera": [
+            4.548380943556237,
+            3.6593980508663684,
+            7.600109803420294
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1986",
+          "version": "v5",
+          "mode": "webgl2",
+          "renderCount": 5,
+          "pose": {
+            "yaw": 0,
+            "boom": -18,
+            "loader": 18,
+            "tip": -8,
+            "grab": 8,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 146,
+          "triangles": 14040,
+          "clearance": 0.5829262837756551,
+          "camera": [
+            4.4547262568305825,
+            3.5281697563020953,
+            7.6001098034202945
+          ],
+          "zoom": 1
+        }
+      ],
+      "sliderSamples": [
+        {
+          "id": "control-boom",
+          "value": -40,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-boom",
+          "value": -14,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-boom",
+          "value": 12,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-grab",
+          "value": 0,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-grab",
+          "value": 10,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-grab",
+          "value": 20,
+          "clearance": 0.5829262837756551
+        },
+        {
+          "id": "control-loader",
+          "value": -8,
+          "clearance": -0.26116315114429106
+        },
+        {
+          "id": "control-loader",
+          "value": 7,
+          "clearance": 0.2197048117523731
+        },
+        {
+          "id": "control-loader",
+          "value": 22,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-yaw",
+          "value": -180,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-yaw",
+          "value": 0,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-yaw",
+          "value": 180,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-boom",
+          "value": -40,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-boom",
+          "value": -14,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-boom",
+          "value": 12,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-grab",
+          "value": 0,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-grab",
+          "value": 10,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-grab",
+          "value": 20,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-loader",
+          "value": -8,
+          "clearance": -0.26116315114429106
+        },
+        {
+          "id": "control-loader",
+          "value": 7,
+          "clearance": 0.2197048117523731
+        },
+        {
+          "id": "control-loader",
+          "value": 22,
+          "clearance": 0.7142225607246641
+        },
+        {
+          "id": "control-tip",
+          "value": -20,
+          "clearance": 0.6045476717547552
+        },
+        {
+          "id": "control-tip",
+          "value": 0,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-tip",
+          "value": 20,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-track",
+          "value": 0,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-track",
+          "value": 50,
+          "clearance": 0.714529956872328
+        },
+        {
+          "id": "control-track",
+          "value": 100,
+          "clearance": 0.714529956872328
+        }
+      ],
+      "tools": [],
+      "mouseOrTouchOrbit": true,
+      "keyboardOrbit": true,
+      "zoomButton": true,
+      "finiteTransforms": true,
+      "archiveImages": [
+        "./mobot-assets/archive/1986-fig6.png",
+        "./mobot-assets/archive/1986-fig9.png"
+      ],
+      "horizontalOverflow": false,
+      "errors": [],
+      "failed": []
+    },
+    {
+      "year": "1987",
+      "profile": "mobile",
+      "initial": {
+        "year": "1987",
+        "version": "v20",
+        "mode": "webgl2",
+        "renderCount": 2,
+        "pose": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 4,
+          "bucket": 0,
+          "tip": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "renderer": "WebKit WebGL",
+        "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "drawCalls": 363,
+        "triangles": 70496,
+        "clearance": 0.125,
+        "camera": [
+          -4.429687383386024,
+          3.325248198523453,
+          -7.6001098034202945
+        ],
+        "zoom": 1
+      },
+      "presets": [
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 3,
+          "pose": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 12,
+            "tip": 0,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 0.5222080355466948,
+          "camera": [
+            -4.4492406197122225,
+            3.325248198523453,
+            -7.6001098034202945
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 4,
+          "pose": {
+            "yaw": 180,
+            "arm": 8,
+            "wrist": 90,
+            "claw": 8,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 0.125,
+          "camera": [
+            -4.4296873833860255,
+            3.2486959140755194,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 5,
+          "pose": {
+            "yaw": 0,
+            "arm": -8,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 28,
+            "tip": -10,
+            "track": 0
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 1.1469155016617383,
+          "camera": [
+            -4.385933325176286,
+            3.395132108364109,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        }
+      ],
+      "sliderSamples": [
+        {
+          "id": "control-arm",
+          "value": -18,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-arm",
+          "value": 4,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-arm",
+          "value": 25,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-claw",
+          "value": 0,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-claw",
+          "value": 12,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-claw",
+          "value": 24,
+          "clearance": 1.1469155016617383
+        },
+        {
+          "id": "control-bucket",
+          "value": -8,
+          "clearance": 0.017609951344836783
+        },
+        {
+          "id": "control-bucket",
+          "value": 14,
+          "clearance": 0.7257885663785081
+        },
+        {
+          "id": "control-bucket",
+          "value": 36,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-yaw",
+          "value": -180,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-yaw",
+          "value": 0,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-yaw",
+          "value": 180,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-arm",
+          "value": -18,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-arm",
+          "value": 4,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-arm",
+          "value": 25,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-wrist",
+          "value": 55,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-wrist",
+          "value": 85,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-wrist",
+          "value": 115,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-claw",
+          "value": 0,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-claw",
+          "value": 12,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-claw",
+          "value": 24,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-bucket",
+          "value": -8,
+          "clearance": 0.017609951344836783
+        },
+        {
+          "id": "control-bucket",
+          "value": 14,
+          "clearance": 0.7257885663785081
+        },
+        {
+          "id": "control-bucket",
+          "value": 36,
+          "clearance": 1.3720996537733523
+        },
+        {
+          "id": "control-tip",
+          "value": -25,
+          "clearance": 1.5331735098526886
+        },
+        {
+          "id": "control-tip",
+          "value": 0,
+          "clearance": 1.2495903909576715
+        },
+        {
+          "id": "control-tip",
+          "value": 25,
+          "clearance": 0.9083019372221696
+        },
+        {
+          "id": "control-track",
+          "value": 0,
+          "clearance": 0.9083019372221696
+        },
+        {
+          "id": "control-track",
+          "value": 50,
+          "clearance": 0.9083019372221696
+        },
+        {
+          "id": "control-track",
+          "value": 100,
+          "clearance": 0.9083019372221696
+        }
+      ],
+      "tools": [
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 40,
+          "pose": {
+            "yaw": 180,
+            "arm": 25,
+            "wrist": 115,
+            "claw": 24,
+            "bucket": 36,
+            "tip": 25,
+            "track": 100
+          },
+          "tool": "gripper",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 363,
+          "triangles": 70496,
+          "clearance": 0.9083019372221696,
+          "camera": [
+            -4.283698252836893,
+            2.6109410337222667,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 41,
+          "pose": {
+            "yaw": 180,
+            "arm": 25,
+            "wrist": 115,
+            "claw": 24,
+            "bucket": 36,
+            "tip": 25,
+            "track": 100
+          },
+          "tool": "breaker-arm",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 340,
+          "triangles": 68920,
+          "clearance": 0.9083019372221696,
+          "camera": [
+            -4.283698252836893,
+            2.6109410337222667,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        },
+        {
+          "year": "1987",
+          "version": "v20",
+          "mode": "webgl2",
+          "renderCount": 42,
+          "pose": {
+            "yaw": 180,
+            "arm": 25,
+            "wrist": 115,
+            "claw": 24,
+            "bucket": 36,
+            "tip": 0,
+            "track": 100
+          },
+          "tool": "breaker-loader",
+          "renderer": "WebKit WebGL",
+          "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "drawCalls": 344,
+          "triangles": 71224,
+          "clearance": 1.2495903909576715,
+          "camera": [
+            -4.283698252836893,
+            2.6109410337222667,
+            -7.600109803420297
+          ],
+          "zoom": 1
+        }
+      ],
+      "mouseOrTouchOrbit": true,
+      "keyboardOrbit": true,
+      "zoomButton": true,
+      "finiteTransforms": true,
+      "archiveImages": [
+        "./mobot-assets/archive/1987-before-dispatch.jpg",
+        "./mobot-assets/archive/1987-snow-side.jpg",
+        "./mobot-assets/archive/1987-front.jpg",
+        "./mobot-assets/archive/1987-breaker.jpg",
+        "./mobot-assets/archive/pair.jpg"
+      ],
+      "horizontalOverflow": false,
+      "errors": [],
+      "failed": []
+    }
+  ],
+  "limits": [
+    "No physical phone GPU or headset tested",
+    "No factory-dimensional verification",
+    "No complete mesh-to-mesh collision solver"
+  ],
+  "webglUnavailableFallback": true,
+  "staticBackupImages": [
+    {
+      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1986-model.png",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1986-side.png",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1987-model.png",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/mobot-qa/demo-2026-11-18/1987-side.png",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/mobot-assets/archive/1986-fig6.png",
+      "loaded": true
+    },
+    {
+      "src": "http://127.0.0.1:4173/mobot-assets/archive/1987-before-dispatch.jpg",
+      "loaded": true
+    }
+  ],
+  "finished": "2026-11-17T16:50:36.462Z"
+}

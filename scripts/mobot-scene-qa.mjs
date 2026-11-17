@@ -17,6 +17,8 @@ for(const [name,m] of models){
  const b=new T.Box3().setFromObject(m.root);assert(!b.isEmpty());const profile=name==='1986-v5'?m.sourceProfile():m.mechanisms.sourceProfile();
  const xs=profile.wheelXs,rs=profile.visibleWheelOuterRadiiScene||xs.map(()=>profile.wheelRadius);const overlaps=[];
  for(let i=0;i<xs.length-1;i++)if(rs[i]+rs[i+1]>xs[i+1]-xs[i]+1e-8)overlaps.push(i);assert.equal(overlaps.length,0);
+ const ends=name==='1986-v5'?[[-.84,.52,.145],[.81,.51,.13]]:[[-.70,.47,profile.terminalWheelOuterRadiusScene],[.72,.47,profile.terminalWheelOuterRadiusScene]];
+ const endOverlaps=[];for(const [ex,ey,er] of ends)for(let i=0;i<xs.length;i++)if(Math.hypot(ex-xs[i],ey-profile.wheelY)<er+rs[i]-1e-8)endOverlaps.push({endX:ex,wheel:i});assert.equal(endOverlaps.length,0);
  let poses=0,negativeClearances=0;const neutralModelRange=[];
  if(name==='1986-v5'){
   for(const yaw of [-180,0,180])for(const boom of [-40,-15,12])for(const loader of [-8,0,22])for(const tip of [-20,0,20])for(const grab of [0,20]){
@@ -34,6 +36,6 @@ for(const [name,m] of models){
    neutralModelRange.push({distalPinGap:pin.distanceTo(head)});
   }
  }
- report.models.push({name,meshes,instances,vertices,finiteGeometry:true,box:{min:b.min.toArray(),max:b.max.toArray()},wheelAdjacentCircleOverlaps:overlaps.length,poseSamples:poses,negativeClearances,checks:neutralModelRange,fullCollisionDetection:false});
+ report.models.push({name,meshes,instances,vertices,finiteGeometry:true,box:{min:b.min.toArray(),max:b.max.toArray()},wheelAdjacentCircleOverlaps:overlaps.length,endToLowerCircleOverlaps:endOverlaps.length,poseSamples:poses,negativeClearances,checks:neutralModelRange,fullCollisionDetection:false});
 }
 fs.writeFileSync(new URL('../mobot-qa/demo-2026-11-18/scene-report.json',import.meta.url),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));

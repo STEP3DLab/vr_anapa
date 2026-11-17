@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-17",
+  "generatedImageryUsed": false,
+  "items": [
+    {
+      "id": "FIG6",
+      "sourceUrl": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+      "localFile": "mobot-assets/archive/1986-fig6.png",
+      "sha256": "b6261760cc748a1f419ff56d491e921a86177937169b50249553135003bb0396",
+      "pixels": [
+        1456,
+        1140
+      ],
+      "processing": "crop from original page; no retouching",
+      "identity": "Овчинников, Батанов, Мингалеев. Роботы в Чернобыле. 2019. С.74, рис.6. Исходный Ч-ХВ; вырезка из страницы"
+    },
+    {
+      "id": "FIG9",
+      "sourceUrl": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg",
+      "localFile": "mobot-assets/archive/1986-fig9.png",
+      "sha256": "4e999c594c71045eaf007c0b78e4b98fea7c38fd62fea849a1a7ba4cdcf23458",
+      "pixels": [
+        864,
+        1170
+      ],
+      "processing": "crop from original page; no retouching",
+      "identity": "Та же публикация, с.75, рис.9. Исходный Ч-ХВ; другой ракурс и поза"
+    },
+    {
+      "id": "SKTB2",
+      "sourceUrl": "http://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "localFile": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
+      "pixels": [
+        2786,
+        2106
+      ],
+      "processing": "original downloaded bytes",
+      "identity": "Ч-ХВ-2 перед отправкой на ЧАЭС; дата съёмки не указана; оригинал 2786×2106"
+    },
+    {
+      "id": "SKTB3",
+      "sourceUrl": "http://sktbpr.ru/sites/default/files/foto_album/3.jpg",
+      "localFile": "mobot-assets/archive/1987-front.jpg",
+      "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
+      "pixels": [
+        2721,
+        2014
+      ],
+      "processing": "original downloaded bytes",
+      "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; фронтальный вид схвата"
+    },
+    {
+      "id": "SKTB4",
+      "sourceUrl": "http://sktbpr.ru/sites/default/files/foto_album/4.jpg",
+      "localFile": "mobot-assets/archive/1987-snow-side.jpg",
+      "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
+      "pixels": [
+        2782,
+        1993
+      ],
+      "processing": "original downloaded bytes",
+      "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; независимый боковой ракурс на снегу"
+    },
+    {
+      "id": "SKTB9",
+      "sourceUrl": "http://sktbpr.ru/sites/default/files/foto_album/9.jpg",
+      "localFile": "mobot-assets/archive/1987-breaker.jpg",
+      "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
+      "pixels": [
+        2056,
+        1346
+      ],
+      "processing": "original downloaded bytes",
+      "identity": "Ч-ХВ-2: отработка применения молотка на манипуляторе"
+    }
+  ],
+  "sourceCaptions": "See mobot-archive-audit-2026-11-18.md",
+  "primarySourceCredit": "СКТБ прикладной робототехники, http://sktbpr.ru/"
+}

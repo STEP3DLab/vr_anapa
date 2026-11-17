@@ -1,0 +1,130 @@
+{
+  "schema": "mobot-qa/2",
+  "date": "2026-11-17",
+  "version": "1987-v20",
+  "testedGeometryCommit": "c5beff94db445eaf32584c7feee1c3e1f7f251f4",
+  "browserRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44130057804",
+  "browserEngine": "real Chromium with SwiftShader software WebGL2",
+  "mockThree": false,
+  "sceneReport": "mobot-qa/demo-2026-11-18/scene-report.json",
+  "browserReport": "mobot-qa/demo-2026-11-18/browser-report.json",
+  "syntaxAndImports": "Actual modules parsed and imported; current geometry instantiated by vendored THREE.",
+  "scene": {
+    "name": "1987-v20",
+    "meshes": 490,
+    "instances": 1139,
+    "vertices": 65011,
+    "finiteGeometry": true,
+    "box": {
+      "min": [
+        -2.13218748081206,
+        -0.2550000002980233,
+        -0.823999998986721
+      ],
+      "max": [
+        1.3300217390060425,
+        2.0947247337577197,
+        0.8250000040233135
+      ]
+    },
+    "wheelAdjacentCircleOverlaps": 0,
+    "endToLowerCircleOverlaps": 0,
+    "poseSamples": 81,
+    "negativeClearances": 27,
+    "checks": [
+      {
+        "distalPinGap": 2.220446049250313e-16
+      }
+    ],
+    "fullCollisionDetection": false
+  },
+  "realWebGL": true,
+  "physicalGPU": false,
+  "browserTests": [
+    {
+      "profile": "desktop",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "triangles": 70496,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "presetClearancesScene": [
+        0.5222080355466948,
+        0.125,
+        1.1469155016617383
+      ],
+      "sliderSamples": 30,
+      "toolsChecked": [
+        "gripper",
+        "breaker-arm",
+        "breaker-loader"
+      ],
+      "mouseOrEmulatedTouchOrbit": true,
+      "localArchiveImagesLoaded": [
+        "./mobot-assets/archive/1987-before-dispatch.jpg",
+        "./mobot-assets/archive/1987-snow-side.jpg",
+        "./mobot-assets/archive/1987-front.jpg",
+        "./mobot-assets/archive/1987-breaker.jpg",
+        "./mobot-assets/archive/pair.jpg"
+      ],
+      "horizontalOverflow": false
+    },
+    {
+      "profile": "mobile",
+      "viewport": [
+        390,
+        844
+      ],
+      "triangles": 70496,
+      "consoleErrors": [],
+      "failedRequests": [],
+      "presetClearancesScene": [
+        0.5222080355466948,
+        0.125,
+        1.1469155016617383
+      ],
+      "sliderSamples": 30,
+      "toolsChecked": [
+        "gripper",
+        "breaker-arm",
+        "breaker-loader"
+      ],
+      "mouseOrEmulatedTouchOrbit": true,
+      "localArchiveImagesLoaded": [
+        "./mobot-assets/archive/1987-before-dispatch.jpg",
+        "./mobot-assets/archive/1987-snow-side.jpg",
+        "./mobot-assets/archive/1987-front.jpg",
+        "./mobot-assets/archive/1987-breaker.jpg",
+        "./mobot-assets/archive/pair.jpg"
+      ],
+      "horizontalOverflow": false
+    }
+  ],
+  "stableV17Preserved": true,
+  "notVerified": [
+    "Физический Android/iPhone, Safari и аппаратный GPU.",
+    "VR-шлем, контроллеры WebXR и прежний сценарий на крыше.",
+    "Полная проверка пересечений mesh-to-mesh, динамика, нагрузки и устойчивость.",
+    "Реальная историческая кинематика и физические размеры.",
+    "Исторические значения количества траков, зубьев и крепежа."
+  ],
+  "knownLimits": {
+    "arbitraryPoseGroundPenetration": "27 из 81 выборок опускают проверяемые точки ниже условной плоскости. Это известное ограничение исследовательских регуляторов.",
+    "presets": "Шесть готовых поз новых моделей имеют неотрицательные контрольные зазоры; это не полная проверка столкновений.",
+    "cameraCalibration": false,
+    "fullCollisionDetection": false
+  },
+  "screenshots": [
+    "mobot-qa/demo-2026-11-18/1987-desktop.png",
+    "mobot-qa/demo-2026-11-18/1987-mobile.png",
+    "mobot-qa/demo-2026-11-18/1987-model.png",
+    "mobot-qa/demo-2026-11-18/1987-side.png"
+  ],
+  "fallback": {
+    "webglUnavailable": true,
+    "javascriptDisabled": true,
+    "page": "mobot-backup.html"
+  }
+}
