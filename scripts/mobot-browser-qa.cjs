@@ -13,8 +13,8 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
  for(const year of ['1986','1987']){
   const page=await browser.newPage({viewport:{width:1440,height:1000}});
   await page.goto(new URL(year==='1986'?'mobot-ch-hv-1986-research-v5.html':'mobot-engineering-v20.html',base).href,{waitUntil:'networkidle'});
-  await ready(page);await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-model.png')});
-  await page.locator('[data-view="side"]').click();await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-side.png')});await page.close();
+  await ready(page);await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-model.png'),style:'.stage-top,.stage-bottom,.load{visibility:hidden!important}'});
+  await page.locator('[data-view="side"]').click();await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-side.png'),style:'.stage-top,.stage-bottom,.load{visibility:hidden!important}'});await page.close();
  }
  for(const mobile of [false,true])for(const year of ['1986','1987']){
   const context=await browser.newContext(mobile?{viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true}:{viewport:{width:1440,height:1000},deviceScaleFactor:1});
@@ -25,7 +25,7 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
   const initial=await page.evaluate(()=>window.__mobotQA.getState());assert(initial.webglVersion.includes('WebGL 2'));assert(initial.triangles>0);
   const suffix=mobile?'mobile':'desktop';
   await page.screenshot({path:path.join(out,year+'-'+suffix+'.png')});
-  if(!mobile){await page.locator('#stage').screenshot({path:path.join(out,year+'-model.png')});await page.locator('[data-view="side"]').click();await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-side.png')});}
+  if(!mobile){await page.locator('#stage').screenshot({path:path.join(out,year+'-model.png'),style:'.stage-top,.stage-bottom,.load{visibility:hidden!important}'});await page.locator('[data-view="side"]').click();await settle(page);await page.locator('#stage').screenshot({path:path.join(out,year+'-side.png'),style:'.stage-top,.stage-bottom,.load{visibility:hidden!important}'});}
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert(!overflow,'horizontal overflow');
   const presets=[];for(const i of [0,1,2]){await page.selectOption('#pose',String(i));await settle(page);const s=await page.evaluate(()=>window.__mobotQA.getState());assert(Number.isFinite(s.clearance));assert(s.clearance>=0,'preset below support plane');presets.push(s);}
   const sliders=[];
@@ -55,7 +55,7 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
  }
  // Actual absence of WebGL must take the tested static fallback path.
  const blocked=await browser.newContext({viewport:{width:390,height:844}});await blocked.addInitScript(()=>{const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(kind,...args){if(kind==='webgl2'||kind==='webgl')return null;return get.call(this,kind,...args)}});
- const bp=await blocked.newPage();await bp.goto(new URL('mobot-demo.html',base).href,{waitUntil:'networkidle'});assert(await bp.locator('#fallback').isVisible());await bp.locator('#fallback').evaluate(img=>img.decode());await bp.screenshot({path:path.join(out,'fallback-mobile.png')});result.webglUnavailableFallback=true;await blocked.close();
+ const bp=await blocked.newPage();await bp.goto(new URL('mobot-demo.html',base).href,{waitUntil:'networkidle'});assert(await bp.locator('#fallback').isVisible());assert(await bp.locator('#photoPose').isDisabled());assert(!(await bp.locator('.stage-top').isVisible()));await bp.locator('#fallback').evaluate(img=>img.decode());await bp.screenshot({path:path.join(out,'fallback-mobile.png')});result.webglUnavailableFallback=true;await blocked.close();
  const noJS=await browser.newContext({javaScriptEnabled:false});const np=await noJS.newPage();await np.goto(new URL('mobot-backup.html',base).href,{waitUntil:'networkidle'});result.staticBackupImages=await np.locator('img').evaluateAll(es=>es.map(e=>({src:e.src,loaded:e.complete&&e.naturalWidth>0})));assert(result.staticBackupImages.every(i=>i.loaded));await noJS.close();
  // The new archive tool has identified 1986 sources and local full originals.
  const photo=await browser.newPage({viewport:{width:1440,height:1000}});await photo.goto(new URL('mobot-photo-measure-v2.html',base).href,{waitUntil:'networkidle'});
