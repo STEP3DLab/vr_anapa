@@ -431,8 +431,12 @@ export function makeMobot(THREE, quality='auto') {
       beam(finger,[-.07,-side*.025,z],[-.25,side*.14,z],.016,m.satin,'gripper');
     }
     // Broad side surface; no invented count of edge serrations.
-    for(const z of [-.155,.133])plate(finger,[[-.18,side*.18],[-.41,side*.18],[-.43,side*.025],[-.23,side*.025]],.022,z,m.panel,'gripper');
-    box(finger,[.20,.024,.31],[-.33,side*.025,0],m.panel,'gripper');
+    // Photo 2: the outer edge turns inward below the lower fastener.
+    // Both inner/far cheeks mirror this visible outline (C).
+    const cheek=[[-.18,side*.18],[-.304,side*.18],[-.367,side*.164],
+      [-.405,side*.025],[-.23,side*.025]];
+    for(const z of [-.155,.133])plate(finger,cheek,.022,z,m.panel,'gripper');
+    box(finger,[.175,.024,.31],[-.3175,side*.025,0],m.panel,'gripper');
     cylinder(finger,.026,.026,.28,[0,0,0],m.frame,'gripper','z',20);
     fingerMechanisms.push({side,group:finger});
   }
