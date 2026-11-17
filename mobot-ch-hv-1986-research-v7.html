@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f6f1"><meta name="description" content="Интерактивная реконструкция Мобот-Ч-ХВ 1986 года по архивным фотографиям и описанию разработчиков.">
+<title>Мобот-Ч-ХВ · Инженерный архив · 1986</title><link rel="icon" href="data:,">
+<link rel="stylesheet" href="./research/mobot/1986/viewer.css">
+</head>
+<body>
+<header class="topline"><div class="wrap bar"><a class="brand" href="./mobot-demo.html"><b class="emblem" aria-hidden="true">М</b> Инженерный архив</a>
+<nav aria-label="Разделы"><a href="#bench">Модель</a><a href="#archive">Архив</a><a href="#passport">Паспорт</a></nav></div></header>
+<main class="wrap">
+<div class="intro"><div><div class="kicker"><span class="rule"></span>Чернобыльская АЭС · 1986</div>
+<h1>Мобот-Ч-ХВ</h1><p>Мобильный робот с решётчатой стрелой, грейфером и фронтальным погрузчиком.</p></div>
+<div class="revision">Исследовательская реконструкция <strong>v7</strong></div></div>
+<section class="bench" id="bench" aria-label="Рабочее поле">
+<div class="study"><div class="stage-head"><h2>Модель в сборе</h2><span id="mode" role="status">Загрузка 3D</span></div>
+<div id="viewport"><img id="still" src="./research/mobot/1986/v7/overview.jpg" alt="Общий вид реконструкции Мобот-Ч-ХВ в три четверти">
+<div class="viewbar" role="group" aria-label="Ракурс камеры"><button data-view="three" aria-pressed="true">¾</button><button data-view="side" aria-pressed="false">Сбоку</button><button data-view="front" aria-pressed="false">Спереди</button><button data-view="top" aria-pressed="false">Сверху</button></div>
+<div class="zoombar"><button id="out" aria-label="Уменьшить">−</button><button id="home" aria-label="Вписать в поле">⛶</button><button id="in" aria-label="Увеличить">+</button></div></div>
+<div class="caption"><span id="hint">Вращение мышью или пальцем · масштаб колесом или щипком</span><span>Масштаб условный</span></div></div>
+<aside class="panel"><div class="tabs" role="group" aria-label="Инструменты просмотра"><button id="partsTab" aria-pressed="true">Устройство</button><button id="poseTab" aria-pressed="false">Механизмы</button></div>
+<div id="partsPanel" class="pane"><label for="part">Выбор узла</label><select id="part"><option value="all">Вся машина</option></select>
+<div class="part-actions"><button id="isolate" aria-pressed="false" disabled>Изолировать</button><button id="explode" aria-pressed="false">Разнести сборку</button></div>
+<h3 id="partTitle">Компоновка машины</h3><p id="partText">Гусеничная платформа несёт поворотную стрелу с грейфером. Погрузчик закреплён на шасси.</p>
+<p id="partUnknown" class="muted">Выберите узел в списке или нажмите на деталь модели.</p><a id="partSource" href="#archive">Архивные ракурсы ↓</a></div>
+<div id="posePanel" class="pane" hidden><label for="preset">Положение машины</label>
+<select id="preset"><option value="neutral">Исходное</option><option value="rear">Грейфер над кожухом · рис. 6</option><option value="front">Грейфер со стороны ковша · рис. 9</option><option value="lift">Подъём ковша</option><option value="custom" disabled>Ручная настройка</option></select><div id="sliders"></div><button id="reset">Сбросить движения</button>
+<p class="muted small">Углы и перемещение траков заданы для демонстрации.</p></div>
+<noscript><p>Доступен статический вид. Для управления моделью включите JavaScript.</p></noscript></aside></section>
+<section id="archive" class="section"><div class="sectitle"><div><div class="kicker"><span class="rule"></span>Источники реконструкции</div><h2>Архивные ракурсы</h2></div><a href="https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf">Статья 2019 года ↗</a></div>
+<div class="figures">
+<figure id="fig6"><a class="photo" href="./mobot-assets/archive/1986-page74.jpg"><img src="./mobot-assets/archive/1986-fig6.png" alt="Исходный робот сбоку, грейфер над округлым кожухом, ковш справа"></a><figcaption><span class="folio">Рис. 6 · с. 74</span><h3>Грейфер над кожухом</h3><p>Видны нижний ряд колёс, открытая стрела и боковой рычаг погрузчика.</p><div class="figlinks"><button data-archive="rear">Показать положение в 3D ↑</button><a href="https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg">Полная страница ↗</a></div></figcaption></figure>
+<figure id="fig9"><a class="photo" href="./mobot-assets/archive/1986-page75.jpg"><img src="./mobot-assets/archive/1986-fig9.png" alt="Мобот-Ч-ХВ со стороны фронтального ковша, стрела повёрнута к нему"></a><figcaption><span class="folio">Рис. 9 · с. 75</span><h3>Разворот к погрузчику</h3><p>Ракурс раскрывает ширину фермы и форму рамки над челюстями.</p><div class="figlinks"><button data-archive="front">Показать положение в 3D ↑</button><a href="https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0075.jpg">Полная страница ↗</a></div></figcaption></figure></div>
+<p class="credit">В. В. Овчинников, А. Ф. Батанов, С. Г. Мингалеев. «Роботы в Чернобыле». <i>Технологии гражданской безопасности</i>, 2019, № 4 (62). Положение модели подобрано по фотографии приблизительно.</p></section>
+<section id="passport" class="section"><div class="sectitle"><div><div class="kicker"><span class="rule"></span>Паспорт модели</div><h2>Степень достоверности</h2></div></div>
+<div class="evidence"><article><b>A</b><div><h3>Техническое описание</h3><p>Полиуретановые траки, грейфер, две степени подвижности погрузчика и две телекамеры.</p></div></article><article><b>B</b><div><h3>Архивный снимок</h3><p>Очертания кожуха, решётчатые боковины стрелы, нижний ряд дисков и форма ковша.</p></div></article><article><b>C</b><div><h3>Гипотеза</h3><p>Размеры, скрытые связи, оси и диапазоны движений. Заводские чертежи и обмеры отсутствуют.</p></div></article></div>
+<div class="footlinks"><a href="./research/mobot/1986/v7/comparison.jpg">Грейфер: архив / v6 / v7 ↗</a><a href="./mobot-ch-hv-1986-research-v7-passport.json">Паспорт узлов ↗</a><a href="./mobot-ch-hv-1986-research-v7-qa.json">Журнал проверок ↗</a><a href="./mobot-ch-hv-1986-research-v6.html">Предыдущая версия v6 ↗</a></div></section>
+</main><footer><div class="wrap bar"><span>Мобот-Ч-ХВ · 1986</span><a href="https://github.com/STEP3DLab/vr_anapa">Исходные материалы ↗</a></div></footer>
+<script type="module" src="./research/mobot/1986/v7/viewer.js"></script></body></html>
