@@ -529,56 +529,27 @@ export function makeMobot(THREE, quality='auto') {
   // Position of pivot in robot local coords ~= [0.28,0.65,0].
   // Source only confirms two DOFs, not these exact joint coordinates.
   // Two distinct television cameras (front drive & manipulator observation).
-  const cameras=section('cameras','Цилиндрические корпуса телекамер: положение C');
-  function cameraHousing(parent,at,ang){
-    const g=new THREE.Group();g.position.set(...at);g.rotation.z=ang;parent.add(g);
-    cylinder(g,.11,.13,.38,[0,0,0],m.panel,'cameras','x',32);
-    cylinder(g,.095,.095,.018,[-.20,0,0],m.shadow,'cameras','x',32);
-    box(g,[.16,.08,.13],[.10,-.14,0],m.frame,'cameras');
-    return g;
+  const cameras=section('cameras','Наружные корпуса телекамер',base);
+  function cameraHousing(at,ang,anchor){
+    const housing=new THREE.Group();housing.position.set(...at);housing.rotation.z=ang;cameras.add(housing);
+    const shell=cylinder(housing,.079,.088,.26,[0,0,0],m.panel,'cameras','x',32);
+    cylinder(housing,.065,.065,.015,[-.133,0,0],m.shadow,'cameras','x',24);
+    cylinder(housing,.039,.039,.009,[-.143,0,0],m.lens,'cameras','x',20);
+    const saddle=cylinder(housing,.093,.093,.038,[.05,0,0],m.frame,'cameras','x',24);
+    saddle.updateWorldMatrix(true,false);
+    // Use the actual outer clamp as endpoint of the assumed bracket.
+    const end=cameras.worldToLocal(saddle.getWorldPosition(new THREE.Vector3()));
+    beam(cameras,anchor,end.toArray(),.026,m.frame,'cameras');
+    return shell;
   }
-  const upperCamera=cameraHousing(base,[-.03,1.35,.36],-.27);
-  const rearCamera=cameraHousing(base,[.12,1.55,-.27],.6);
-  // Both belong to the turntable. No pair of identical chassis-mounted boxes.
-  // Cable management with service hatch: the winding drum is an internal reconstruction.
-  const cabling=section('cable','Внутренний кабелеукладчик');
-  cylinder(cabling,.22,.22,.43,[.48,.71,0],m.shadow,'cable','z',36);
-  for(const s of [-1,1]){
-    cylinder(cabling,.24,.24,.029,[.48,.71,s*.225],m.satin,'cable','z',36);
-    for(let i=0;i<6;i++){
-      const a=2*Math.PI*i/6;
-      bolt(cabling,[.48+.17*Math.cos(a),.71+.17*Math.sin(a),s*.251],'z',m.darkBolt,'cable',.013);
-    }
-  }
-  for(let i=0;i<14;i++)ring(cabling,.198,.012,[.48,.71,-.18+i*.027],m.cable,'cable','z');
-  cylinder(cabling,.05,.05,.75,[.48,.71,0],m.satin,'cable','z',20);
-  tube(cabling,[[.74,.66,-.18],[.94,.63,-.21],[1.15,.59,-.23],[1.30,.50,-.30]],.022,m.cable,'cable');
-  // Exposed maintenance aperture/cover adjacent to the spool, shown only in service mode.
-  const cover=box(cabling,[.51,.030,.48],[.49,1.015,0],m.olive,'cable');
-  for(const x of [.27,.72])for(const z of [-.19,.19])bolt(cabling,[x,1.035,z],'y',m.darkBolt,'cable',.012);
-  cabling.userData.cover=cover;
-
-  // Coupling: approximate geometry, visibly marked unconfirmed in the interface.
-  const dock=section('dock','Полуавтоматический стыковочный узел');
-  const liftPosition=[.48,1.13,.01];
-  cylinder(dock,.145,.145,.075,liftPosition,m.frame,'dock','y',28);
-  for(const s of [-1,1]){
-    beam(dock,[.26,.88,s*.22],[.49,1.22,s*.08],.034,m.satin,'dock');
-    bolt(dock,[.49,1.20,s*.14],'z',m.darkBolt,'dock',.013);
-  }
-  cylinder(dock,.08,.08,.17,[.48,1.27,.01],m.satin,'dock','y',28);
-  ring(dock,.126,.032,[.48,1.40,.01],m.bright,'dock','y');
-  beam(dock,[.355,1.40,.01],[.605,1.40,.01],.024,m.frame,'dock',12);
-
-  // Dosimeter housing and the associated inspection probe are indicative, not a scanned instrument.
-  const dose=section('dose','Блок дозиметрии ИМД-21Б');
-  box(dose,[.23,.13,.19],[.36,1.05,-.38],m.panel,'dose');
-  box(dose,[.18,.025,.14],[.36,1.123,-.38],m.shadow,'dose');
-  cylinder(dose,.042,.042,.06,[.36,1.148,-.38],m.satin,'dose','y',22);
-  beam(dose,[.34,1.03,-.38],[-.30,1.30,-.35],.017,m.frame,'dose',12);
-  cylinder(dose,.039,.039,.19,[-.34,1.30,-.35],m.olive,'dose','x',18);
-  tube(dose,[[.38,1.07,-.44],[.15,1.18,-.48],[-.23,1.32,-.42],[-.34,1.30,-.35]],.010,m.cable,'dose',32);
-
+  cameraHousing([-.11,1.32,.34],-.72,[-.13,1.28,.235]);
+  cameraHousing([.19,1.37,-.34],.78,[.24,1.30,-.235]);
+  // Exterior cable only. The archive describes a change of routing, but offers
+  // no section of the stower or verified mounting geometry for the dosimeter.
+  const cabling=section('cable','Наружный вывод кабеля');
+  cylinder(cabling,.047,.047,.09,[.853,.76,-.28],m.frame,'cable','x',24);
+  tube(cabling,[[.87,.76,-.28],[.92,.75,-.29],[1.01,.60,-.31],
+    [1.15,.34,-.33],[1.32,.16,-.36],[1.43,.15,-.39]],.011,m.cable,'cable',30);
   // Visible mechanical linkages follow lifting motion instead of being static decoration.
   // These are topologically plausible ELECTROMECHANICAL screw actuator proxies,
   // not a measured reconstruction of factory jack mounting points.
@@ -641,9 +612,9 @@ export function makeMobot(THREE, quality='auto') {
     gripper:{name:'Двупалый захват',status:'Документально подтверждены сменный двупалый захват и вариант отбойного молотка вместо схвата. В модели можно переключать инструмент, но корпус, зубило и места крепления выполнены условно.',basis:'СКТБ ПР · описание модернизации Ч-ХВ-2'},
     bucket:{name:'Фронтальный погрузчик',status:'Удалены девять неподтверждённых зубьев ковша. Смоделирована непрерывная металлическая рабочая кромка и сменный отбойный молоток на погрузчике; точная форма и крепления остаются условными.',basis:'СКТБ ПР · демонстрационный снимок и описание сменного инструмента'},
     cameras:{name:'Телевизионная система',status:'Наличие двух телекамер подтверждено. Их форма и координаты ориентировочные; необходимы дополнительные фотографии.',basis:'СКТБ ПР · два телевизионных канала'},
-    cable:{name:'Кабелеукладчик',status:'Полуавтоматическая внутренняя укладка кабеля подтверждена. Барабан и укладка в данном виде визуализированы схематично.',basis:'СКТБ ПР · 200 м кабеля, вставка до 400 м'},
+    cable:{name:'Наружный вывод кабеля',status:'Виден наружный кабель. Изменение точки вывода описано разработчиком. Трасса и ввод в этой сцене условны.',basis:'СКТБ ПР, №2 и №4'},
     dock:{name:'Стыковочное устройство',status:'Функция известна, а верхний узел геометрически условен. Нельзя утверждать точное расположение точки подъёма.',basis:'СКТБ ПР · устройство Ч-ХВ-2'},
-    dose:{name:'Дозиметрический блок',status:'Дозиметрия входила в рабочий цикл. Геометрия крепления и положение датчика требуют архивной сверки.',basis:'Первичные материалы проекта и СКТБ'},
+    dose:{name:'Дозиметрическое оборудование',status:'Дозиметрия входила в рабочий цикл. Геометрия крепления и положение датчика требуют архивной сверки.',basis:'Первичные материалы проекта и СКТБ'},
     mechanics:{name:'Крепёж и коммуникации',status:'Служебная детализация добавлена по инженерным аналогам. Болтовые группы и магистрали требуют подтверждения.',basis:'Реконструкция, не паспортные сборочные чертежи'}
   };
 
@@ -715,7 +686,7 @@ export function makeMobot(THREE, quality='auto') {
     distalPin,armFixed,armMoving,actuatorArmHousing,actuatorArmScrew,
     framePins,liftPins,loaderHousings,loaderScrews,blade,
     fingerHead,breakerArm,breakerLoader,scoopShell,
-    gripper,fingers:fingerMechanisms,cameras,cover};
+    gripper,fingers:fingerMechanisms,cameras};
   // Model's nominal dimensions are scene units only. This scale is not equal to verified metres.
   assembleFasteners();
   root.userData.nominalOnly=true;
