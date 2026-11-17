@@ -352,7 +352,20 @@ export function makeMobot(THREE, quality='auto') {
     cylinder(boom,.078,.078,.068,[0,0,side*.16],m.satin,'arm','z',24);
     for(const x of [-1.44,-1.15]) bolt(boom,[x,.008,z+side*.027],'z',m.darkBolt,'arm',.012);
   }
-  cylinder(boom,.048,.048,.29,[-1.46,.01,0],m.frame,'arm','z',24);
+  // Two longitudinal side planes with open bays in photos 2 and 4. The hidden
+  // cross-ties, their stations and the exact triangular subdivisions are C.
+  for(const z of [-.118,.118]){
+    beam(boom,[.03,-.18,z],[.03,.025,z],.020,m.frame,'arm');
+    beam(boom,[-.61,-.132,z],[-.61,0,z],.014,m.panel,'arm');
+    beam(boom,[-.61,-.132,z],[-.97,0,z],.013,m.panel,'arm');
+    beam(boom,[-1.17,-.089,z],[-1.46,.01,z],.018,m.satin,'arm');
+  }
+  for(const x of [-.14,-.61,-1.08])
+    beam(boom,[x,0,-.118],[x,0,.118],.020,m.frame,'arm');
+  for(const x of [-.13,.24])
+    beam(base,[x,1.50,-.235],[x,1.50,.235],.023,m.frame,'turret');
+  const distalPin=cylinder(boom,.048,.048,.29,[-1.46,.01,0],m.frame,'arm','z',24);
+  distalPin.name='Концевая ось стрелы';
   function spring(parent,a,b,rad,turns,coil,id) {
     const A=V(a),B=V(b),dir=B.clone().sub(A),len=dir.length();
     const up=dir.clone().normalize();const ref=new THREE.Vector3(0,0,1);
@@ -573,6 +586,8 @@ export function makeMobot(THREE, quality='auto') {
   turntable.name='Поворот манипулятора';turntable.position.x=-.14;root.add(turntable);
   const rotatingFrame=new THREE.Group();rotatingFrame.position.x=.14;turntable.add(rotatingFrame);
   rotatingFrame.add(base,armPivot);
+  const armFixed=cylinder(base,.034,.034,.10,[.22,.99,-.235],m.joint,'turret','z');
+  const armMoving=cylinder(boom,.030,.030,.10,[-.61,-.132,-.118],m.joint,'arm','z');
   const actuatorArmHousing=adjustableSegment(m.frame,'arm',.047);
   const actuatorArmScrew=adjustableSegment(m.bright,'arm',.027);
   rotatingFrame.add(actuatorArmHousing,actuatorArmScrew);
@@ -589,12 +604,8 @@ export function makeMobot(THREE, quality='auto') {
   }
   function interpolate(a,b,t){return a.clone().addScaledVector(b.clone().sub(a),t);}
   function updateLinkages(){
-    const theta=armPivot.rotation.z;
-    const ca=Math.cos(theta),sa=Math.sin(theta);
-    const armMountA=new THREE.Vector3(.10,1.04,-.24);
-    const x=-.45,y=.20; // attachment on the revised lower boom member; C
-    const armMountB=new THREE.Vector3(armPivot.position.x +x*ca-y*sa,
-      armPivot.position.y +x*sa+y*ca,-.17);
+    const armMountA=rotatingFrame.worldToLocal(armFixed.getWorldPosition(new THREE.Vector3()));
+    const armMountB=rotatingFrame.worldToLocal(armMoving.getWorldPosition(new THREE.Vector3()));
     setSegment(actuatorArmHousing,armMountA,interpolate(armMountA,armMountB,.68),.048);
     setSegment(actuatorArmScrew,interpolate(armMountA,armMountB,.46),armMountB,.027);
 
@@ -687,6 +698,7 @@ export function makeMobot(THREE, quality='auto') {
   });
   const mechanisms={turntable,arm:armPivot,bucketLift:bucket,bucketTilt:bucketScoop,setWorkTool,updateLinkages,setTrackPhase,
     estimateBucketClearance,auditBucketPose,sweepBucketEnvelope,sourceProfile,
+    distalPin,armFixed,armMoving,actuatorArmHousing,actuatorArmScrew,
     gripper,fingers:fingerMechanisms,cameras,cover};
   // Model's nominal dimensions are scene units only. This scale is not equal to verified metres.
   assembleFasteners();
