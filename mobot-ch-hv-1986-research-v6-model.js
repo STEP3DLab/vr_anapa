@@ -202,18 +202,53 @@ export function makeMobot1986(T) {
     jaws.push({jaw,sign});
   }
 
-  const loader=group('Фронтальный погрузчик',root,'A function / B side arms / C axes');loader.position.set(-.10,.54,0);
-  for(const z of [-.765,.765]){
-    beam(loader,[0,0,z],[1.40,-.08,z],.048,materials.steel,'Наружный подъёмный рычаг');
-    beam(loader,[.12,.15,z],[1.39,.02,z],.023,materials.structure,'Продольная тяга: C');
-    cyl(loader,.068,.10,[0,0,z],materials.steel,'Опора погрузчика');
+  const loader=group('Фронтальный погрузчик',root,'A две степени подвижности / B внешний рычаг / C связи');
+  loader.position.set(-.105,.543,0);
+  const armZ=.765, bucketPin=[1.40,-.08];
+  for(const sign of [-1,1]){
+    const z=sign*armZ;
+    cyl(body,.071,.323,[loader.position.x,loader.position.y,sign*.625],materials.dark,'Бортовая опора подъёма');
+    cyl(loader,.046,.082,[0,0,z],materials.structure,'Палец рычага подъёма');
+    const outline=[[-.060,.045],[.055,.067],[.39,-.005],[1.12,-.080],[1.394,-.038],[1.443,-.063],[1.435,-.119],[1.10,-.141],[.35,-.067],[-.044,-.050]];
+    plate(loader,outline,.046,z-.023,materials.dark,'Наружный подъёмный рычаг');
+    plate(loader,[[.15,.008],[.25,.105],[.35,.104],[.41,-.019]],.025,z-.0125,materials.steel,'Верхняя проушина тяги');
   }
-  const scoop=group('Открытый ковш',loader,'B exterior / C sheet shape');scoop.position.set(1.40,-.08,0);
-  box(scoop,[.59,.025,1.36],[.21,-.26,0],materials.steel,'Днище ковша');
-  const back=box(scoop,[.032,.48,1.36],[-.08,-.02,0],materials.dark,'Наклонная задняя стенка');back.rotation.z=-.15;
-  for(const z of [-.69,.67])plate(scoop,[[-.12,-.27],[.52,-.27],[.28,.06],[-.10,.24]],.02,z,materials.dark,'Трапециевидная боковина ковша');
-  box(scoop,[.075,.025,1.43],[.49,-.27,0],materials.structure,'Сплошная кромка без вымышленных зубьев');
-  cyl(scoop,.045,1.58,[0,0,0],materials.steel,'Ось ковша');
+  const scoop=group('Открытый ковш',loader,'B открытый листовой ковш / C оси и лист');
+  scoop.position.set(...bucketPin,0);
+  const cheek=[[-.091,.228],[.117,.206],[.364,.055],[.535,-.230],[.553,-.267],[-.060,-.267],[-.117,-.206]];
+  for(const z of [-.745,.726])plate(scoop,cheek,.019,z,materials.dark,'Боковина ковша');
+  // Cross section through the back and bottom; adjacent sheets share the bend line.
+  const folded=[[-.091,.228],[-.117,-.206],[-.060,-.267],[.553,-.267]];
+  for(let i=1;i<folded.length;i++){
+    const [a,b]=folded.slice(i-1,i+1),dx=b[0]-a[0],dy=b[1]-a[1];
+    const s=box(scoop,[Math.hypot(dx,dy),.018,1.49],[(a[0]+b[0])/2,(a[1]+b[1])/2,0],materials.steel,'Гнутый лист ковша');
+    s.rotation.z=Math.atan2(dy,dx);
+  }
+  box(scoop,[.061,.019,1.50],[.532,-.269,0],materials.structure,'Режущая кромка');
+  cyl(scoop,.039,1.59,[0,0,0],materials.steel,'Ось ковша');
+  const tiltLinks=[];
+  for(const sign of [-1,1]){
+    const z=sign*armZ;
+    plate(scoop,[[-.063,-.012],[.040,-.028],[.061,.153],[.025,.197],[-.036,.159]],.026,z-.013,materials.dark,'Плечо наклона ковша');
+    const anchor=new T.Vector3(.300,.080,z),eye=new T.Vector3(.026,.155,z);
+    cyl(loader,.029,.065,anchor.toArray(),materials.structure,'Палец начала тяги');
+    cyl(scoop,.029,.065,eye.toArray(),materials.structure,'Палец наклона');
+    const rod=mesh(loader,new T.CylinderGeometry(.013,.013,1,12),materials.structure,'Тяга наклона, схема C');
+    const sleeve=mesh(loader,new T.CylinderGeometry(.024,.024,.31,16),materials.steel,'Наружная часть тяги, схема C');
+    tiltLinks.push({anchor,eye,rod,sleeve});
+  }
+  const up=new T.Vector3(0,1,0);
+  function updateTiltLinks(){
+    scoop.updateMatrix();
+    for(const {anchor,eye,rod,sleeve} of tiltLinks){
+      const end=eye.clone().applyMatrix4(scoop.matrix),delta=end.clone().sub(anchor);
+      const span=delta.length(),axis=delta.normalize();
+      rod.position.copy(anchor).lerp(end,.5);rod.scale.y=span;
+      rod.quaternion.setFromUnitVectors(up,axis);
+      sleeve.position.copy(anchor).addScaledVector(axis,.155);sleeve.quaternion.copy(rod.quaternion);
+    }
+  }
+
   // Cylindrical camera-like housings visible. The two bright front discs may be lamps.
   const upper=group('Верхний цилиндрический корпус камеры',turntable,'B housing / A two cameras overall');upper.position.set(.12,1.17,0);upper.rotation.z=-.35;
   cyl(upper,.125,.40,[0,0,0],materials.structure,'Цилиндрический корпус','x');
@@ -237,7 +272,7 @@ export function makeMobot1986(T) {
   function setPose(p={}){
     state={...state,...p};for(const [k,v] of Object.entries(state))if(!Number.isFinite(v))throw Error('Nonfinite pose '+k);
     const rad=T.MathUtils.degToRad;turntable.rotation.y=rad(state.yaw);boom.rotation.z=rad(state.boom);grab.rotation.z=-boom.rotation.z;
-    loader.rotation.z=rad(state.loader);scoop.rotation.z=rad(state.tip);
+    loader.rotation.z=rad(state.loader);scoop.rotation.z=rad(state.tip);updateTiltLinks();
     for(const {jaw,sign} of jaws)jaw.rotation.z=sign*rad(state.grab);
     setTrackPhase(state.track*.015);root.updateMatrixWorld(true);return {...state};
   }
