@@ -445,11 +445,12 @@ export function makeMobot(THREE, quality='auto') {
     if(pose==='arm'){
       // SKTB album9 documents a narrow cylindrical attachment and extended chisel.
       // The adapter/axis is approximate; this is not a manufacturing reconstruction.
-      cylinder(g,.055,.060,.46,[-.30,0,0],m.satin,id,'x',28);
+      cylinder(g,.050,.052,.46,[-.30,0,0],m.satin,id,'x',28);
       cylinder(g,.035,.035,.24,[-.62,0,0],m.bright,id,'x',22);
-      beam(g,[-.74,0,0],[-.94,0,0],.018,m.frame,id);
+      // In photo 9 the exposed working tip narrows toward the contact point.
+      cylinder(g,.006,.026,.20,[-.84,0,0],m.frame,id,'x',24);
       box(g,[.14,.11,.13],[-.065,0,0],m.frame,id);
-      cylinder(g,.044,.047,.055,[-.515,0,0],m.frame,id,'x',20);
+      cylinder(g,.067,.066,.086,[-.497,0,0],m.frame,id,'x',20);
       tube(g,[[0,.04,0],[-.13,.095,0],[-.27,.085,0],[-.31,.047,0]],.008,m.cable,id,20);
     }else{
       // A possible substitution at the loader tilt pin. The adapter is class C.
