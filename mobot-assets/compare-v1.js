@@ -175,7 +175,7 @@ function initViewer(year){
  viewers[year]=v;
  try{
   const canvas=document.createElement('canvas');
-  canvas.tabIndex=0;canvas.setAttribute('role','img');
+  canvas.tabIndex=0;canvas.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight ArrowUp ArrowDown');
   canvas.setAttribute('aria-label','Вращаемая 3D-модель '+names[year]+'. Клавиши со стрелками изменяют ракурс.');
   const gl=canvas.getContext('webgl2',{antialias:true,alpha:true});
   if(!gl){activateFallback(v,'WebGL 2 недоступен');return;}
