@@ -18,7 +18,7 @@
     "networkRequests": "PASS",
     "noWebGL": "PASS",
     "v20Preserved": "PASS",
-    "publishedPages": "NOT RUN",
+    "publishedPages": "PASS",
     "physicalPhone": "NOT RUN",
     "fullMeshCollisions": "NOT RUN"
   },
@@ -51,5 +51,9 @@
     "research/mobot/1987/side.webp",
     "research/mobot/1987/breaker-arm.webp",
     "research/mobot/1987/breaker-loader.webp"
-  ]
+  ],
+  "publishedVersionCommit": "efad030a28397e6840c282e1f1eab646138a65ee",
+  "productionRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44170435474",
+  "productionReport": "research/mobot/1987/browser-pages.json",
+  "publicURL": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v21.html"
 }
