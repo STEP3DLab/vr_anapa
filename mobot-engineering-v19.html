@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f3eb">
+<meta name="description" content="Исследовательский вариант v19: семь видимых катков и согласованный модельный масштаб окружностей; без заводских размеров.">
+<meta property="og:title" content="Мобот-Ч-ХВ-2 · Интерактивная реконструкция">
+<meta property="og:image" content="https://step3dlab.github.io/vr_anapa/mobot-assets/archive/demonstration.jpg">
+<link rel="stylesheet" href="./mobot-assets/workbench-v16.css">
+<style>
+.screening{font-size:12px;line-height:1.45;border-left:3px solid #668677;background:#e8ece3;padding:10px 12px;margin:8px 0 17px;color:#34483c}
+.screening.warn{border-left-color:#ad5127;background:#f6e9da;color:#6a341b}
+.research-note{font-size:12px;color:#5c635a;line-height:1.5;margin-top:3px}
+</style>
+<title>Мобот-Ч-ХВ-2 · Исследовательская фотосверка ходовой v19</title>
+</head>
+<body>
+<header class="mast"><div class="brand"><span class="glyph" aria-hidden="true"><i></i><i></i><i></i></span>Архив робототехники</div><nav aria-label="Разделы"><a href="#model" aria-current="page">Модель</a><a href="./mobot-roof.html">Стенд и VR</a><a href="#archive">Фотосверка</a><a href="#passport">Паспорт</a></nav></header>
+<main>
+<div class="intro"><div><div class="eyebrow"><i></i> ЧЕРНОБЫЛЬСКАЯ АЭС <span>/</span> 1987 <span>/</span> ИССЛЕДОВАТЕЛЬСКАЯ v19</div><h1>Мобот-Ч-ХВ-2</h1></div><p>Исследовательское уточнение видимых окружностей ходовой по фотографии СКТБ. Масштаб условный, реальные радиусы и крепления не измерены.</p></div>
+<section class="bench" aria-label="Рабочее поле">
+  <div class="study">
+    <div class="stage" id="stage">
+      <div class="stagehead"><span class="stagelabel"><i></i> 3D-МОДЕЛЬ</span><div class="views" aria-label="Ракурс"><button data-view="three" aria-pressed="true" title="Общий вид в три четверти">¾</button><button data-view="side" aria-pressed="false">Сбоку</button><button data-view="top" aria-pressed="false">Сверху</button></div></div>
+      <div id="contact" aria-hidden="true"></div><div class="surface" id="surface"></div>
+      <div id="load" class="loading" role="status">Подготовка модели…</div>
+      <span id="partLabel" class="partlabel" hidden></span>
+      <div class="stagefoot"><span class="drag-hint">Вращайте модель мышью или пальцем</span><div class="zoom"><button id="zoomOut" aria-label="Уменьшить">−</button><button id="home" aria-label="Вернуть общий вид" title="Вернуть общий вид">⌂</button><button id="zoomIn" aria-label="Увеличить">+</button></div></div>
+    </div>
+    <section id="comparison" hidden aria-label="Архивный снимок для сравнения">
+      <div class="photowrap"><img id="photo" src="./mobot-assets/archive/stand.jpg" alt="Стрела и схват на наземном стенде"><a id="fullPhoto" href="./mobot-assets/archive/stand.jpg" target="_blank" rel="noopener" title="Открыть фотографию в полном размере" aria-label="Открыть фотографию в полном размере">↗</a></div>
+      <div class="photocaption"><span id="figure">Рис. 7</span><p id="observation"></p>
+      <a id="sourceLink" href="https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha" target="_blank" rel="noopener">Первичный фотоисточник и описание кадра</a></div>
+    </section>
+    <div class="stage-meta"><span id="currentView">Общий вид</span><span>Условный масштаб</span></div>
+  </div>
+  <aside id="modelPanel" class="panel">
+    <h2>Конструкция</h2><label class="fieldlabel" for="assembly">Узел модели</label>
+    <select id="assembly"><option value="all">Робот в сборе</option><option value="arm">Стрела и рабочая головка</option><option value="bucket">Фронтальный погрузчик</option><option value="tracks">Гусеничная ходовая</option><option value="body">Корпус и оборудование</option></select>
+    <div id="overview"><p class="desc">Гусеничное шасси несёт манипулятор со сменным инструментом и фронтальный погрузчик. Выберите узел, чтобы рассмотреть его крупнее.</p></div>
+    <div id="detail" hidden><p class="desc" id="detailText"></p></div>
+    <div id="toolControl"><label class="fieldlabel" for="tool">Рабочее оснащение</label><select id="tool"><option value="gripper">Двупалый схват</option><option value="breaker-arm">Молоток на стреле</option><option value="breaker-loader">Молоток на погрузчике</option></select></div>
+    <label class="option" id="dockControl" hidden><input id="dock" type="checkbox"> Показать предполагаемое крепление стыковочного узла</label>
+    <div class="motions" id="motions"></div>
+    <div id="clearanceState" class="screening" role="status" aria-live="polite">Проверка расчётного положения ковша…</div>
+    <p class="research-note">В v19 сохранены семь положений катков v18 и уменьшены условные радиусы их видимых поверхностей и крайних колёс. Основание — ручная оценка одного архивного изображения. Это не подтверждает размеры реального робота. Углы и 21 расчётная точка просвета условные.</p>
+    <a class="compare-link" href="#archive"><span aria-hidden="true">▧</span> Сопоставить с фотографией <span class="arrow">↗</span></a>
+  </aside>
+  <aside id="archivePanel" class="panel" hidden><h2>Фотосверка</h2><p class="desc">Выберите снимок. Модель примет приблизительный ракурс для сравнения.</p>
+    <div id="archives" class="archives"></div><p class="sourcecredit">Источники: <a href="https://sktbpr.ru/foto-alb/65" target="_blank" rel="noopener">Архив СКТБ ПР ↗</a><br>А. Ф. Батанов, В. Лосицкий<br><a href="https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha" target="_blank" rel="noopener">«Чернобыльская крыша» ↗</a></p>
+    <a href="#model" class="backlink">← К управлению моделью</a>
+  </aside>
+  <aside id="passportPanel" class="panel" hidden><h2>Паспорт модели</h2><dl class="facts"><dt>Объект</dt><dd>Мобот-Ч-ХВ-2, модернизированная машина 1987 года.</dd><dt>Основание реконструкции</dt><dd>Фотографии машины на демонстрации, на стенде и в Чернобыле. Техническое описание СКТБ ПР.</dd><dt>Изменения v19</dt><dd>Положения семи катков унаследованы от исследовательской v18. Радиусы видимых окружностей снижены до приблизительных пропорций снимка СКТБ ПР; устранены обнаруженные расчётные пересечения одноуровневых окружностей модели. Реальные размеры, монтажные координаты и механика по-прежнему неизвестны.</dd><dt>Неизвестные параметры</dt><dd>Размеры звеньев, сечение стрелы и внутреннее устройство привода. Углы на регуляторах относятся к модели.</dd></dl>
+  <a href="./mobot-engineering-v19-passport.json" class="backlink">Открыть паспорт JSON ↗</a><a href="./mobot-engineering-v19-qa.json" class="backlink">QA кандидата ↗</a><a href="#model" class="backlink">← К управлению моделью</a></aside>
+</section>
+<footer><span>Исследовательский кандидат <b>/</b> v19 · видимые окружности ходовой по одному фото, остальное v16</span><div><a href="./mobot-engineering-v19-passport.json">Паспорт ↗</a><a href="./mobot-engineering-v19-qa.json">QA ↗</a><a href="./mobot-engineering-v17.html">Проверенная v17 ↗</a></div></footer>
+<noscript><p>Для вращения модели включите JavaScript. <a href="./mobot-assets/archive/stand.jpg">Открыть архивный снимок</a></p></noscript>
+</main><script type="module" src="./mobot-assets/workbench-v19.js"></script>
+</body></html>
