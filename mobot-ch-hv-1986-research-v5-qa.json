@@ -2,8 +2,8 @@
   "schema": "mobot-qa/2",
   "date": "2026-11-17",
   "version": "1986-v5",
-  "testedGeometryCommit": "c5beff94db445eaf32584c7feee1c3e1f7f251f4",
-  "browserRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44130057804",
+  "testedGeometryCommit": "abcf1739d5e0ecaac44605e043a48b07ba4cd88c",
+  "browserRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44132463563",
   "browserEngine": "real Chromium with SwiftShader software WebGL2",
   "mockThree": false,
   "sceneReport": "mobot-qa/demo-2026-11-18/scene-report.json",
@@ -108,5 +108,19 @@
     "webglUnavailable": true,
     "javascriptDisabled": true,
     "page": "mobot-backup.html"
+  },
+  "browserArtifactId": 14350661726,
+  "photoMeasureV2": {
+    "sourcesLoaded": [
+      "fig6",
+      "fig9",
+      "sktb2",
+      "sktb3",
+      "sktb4",
+      "sktb9"
+    ],
+    "pointAddUndo": true,
+    "overlayTransform": true,
+    "mobileNoOverflow": true
   }
 }

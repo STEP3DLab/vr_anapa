@@ -40,6 +40,13 @@ jobs:
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/mobot-http.log 2>&1 &
           export CHROMIUM_PATH="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
           node scripts/mobot-browser-qa.cjs
+      - name: Verify published Pages bytes and real production WebGL2
+        if: github.ref == 'refs/heads/main'
+        run: |
+          node scripts/mobot-pages-wait.cjs
+          export CHROMIUM_PATH="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
+          export MOBOT_BASE_URL="https://step3dlab.github.io/vr_anapa/"
+          node scripts/mobot-browser-qa.cjs
       - name: Archive actual screenshots and report
         if: always()
         uses: actions/upload-artifact@v4

@@ -9,7 +9,7 @@
       "webglVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
     }
   ],
-  "started": "2026-11-17T16:49:58.161Z",
+  "started": "2026-11-17T17:03:30.922Z",
   "base": "http://127.0.0.1:4173/",
   "engine": "real Chromium with SwiftShader software WebGL2",
   "mockThree": false,
@@ -1165,7 +1165,7 @@
           "year": "1987",
           "version": "v20",
           "mode": "webgl2",
-          "renderCount": 40,
+          "renderCount": 39,
           "pose": {
             "yaw": 180,
             "arm": 25,
@@ -1192,7 +1192,7 @@
           "year": "1987",
           "version": "v20",
           "mode": "webgl2",
-          "renderCount": 41,
+          "renderCount": 40,
           "pose": {
             "yaw": 180,
             "arm": 25,
@@ -1219,7 +1219,7 @@
           "year": "1987",
           "version": "v20",
           "mode": "webgl2",
-          "renderCount": 42,
+          "renderCount": 41,
           "pose": {
             "yaw": 180,
             "arm": 25,
@@ -1291,5 +1291,18 @@
       "loaded": true
     }
   ],
-  "finished": "2026-11-17T16:50:36.462Z"
+  "photoMeasureV2": {
+    "sourcesLoaded": [
+      "fig6",
+      "fig9",
+      "sktb2",
+      "sktb3",
+      "sktb4",
+      "sktb9"
+    ],
+    "pointAddUndo": true,
+    "overlayTransform": true,
+    "mobileNoOverflow": true
+  },
+  "finished": "2026-11-17T17:04:12.082Z"
 }

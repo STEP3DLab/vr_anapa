@@ -2,8 +2,8 @@
   "schema": "mobot-qa/2",
   "date": "2026-11-17",
   "version": "1987-v19",
-  "testedGeometryCommit": "c5beff94db445eaf32584c7feee1c3e1f7f251f4",
-  "browserRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44130057804",
+  "testedGeometryCommit": "abcf1739d5e0ecaac44605e043a48b07ba4cd88c",
+  "browserRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44132463563",
   "browserEngine": "real Chromium with SwiftShader software WebGL2",
   "mockThree": false,
   "sceneReport": "mobot-qa/demo-2026-11-18/scene-report.json",
@@ -54,5 +54,6 @@
   "screenshots": [
     "mobot-qa/demo-2026-11-18/1987-v19-before.png"
   ],
-  "browserScope": "Only baseline load, real WebGL context and screenshot. Full old-interface control/mobile audit was not performed; 81 node geometry poses were sampled."
+  "browserScope": "Only baseline load, real WebGL context and screenshot. Full old-interface control/mobile audit was not performed; 81 node geometry poses were sampled.",
+  "browserArtifactId": 14350661726
 }

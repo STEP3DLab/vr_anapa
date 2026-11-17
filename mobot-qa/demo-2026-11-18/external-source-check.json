@@ -1,0 +1,28 @@
+{
+  "checkedDate": "2026-11-17",
+  "method": "curl GET with redirects, 20 second timeout; status availability only",
+  "checks": [
+    {
+      "url": "https://sktbpr.ru/node/23",
+      "httpStatus": 503,
+      "note": "HTTPS unavailable during check; local original files retained"
+    },
+    {
+      "url": "http://sktbpr.ru/node/23",
+      "httpStatus": 200
+    },
+    {
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf",
+      "httpStatus": 200,
+      "finalUrl": "https://cyberleninka.ru/article/n/roboty-v-chernobyle/pdf"
+    },
+    {
+      "url": "https://elib.biblioatom.ru/data/ovchinnikov_roboty-v-chernobyle_2019/jpg/0074.jpg",
+      "httpStatus": 200
+    },
+    {
+      "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "httpStatus": 200
+    }
+  ]
+}
