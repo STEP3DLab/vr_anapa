@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-17",
+  "file": "mobot-photo-measure-v1.html",
+  "sha": "a060a3008047dea0c0dfd2bac5da00715b0cb955",
+  "verified": {
+    "repositoryFilePresent": true,
+    "htmlSizeChars": 5476,
+    "uniqueIds": 11,
+    "duplicateIds": [],
+    "referencedDomIdsMissing": [],
+    "archiveLinks": [
+      "mobot-assets/archive/demonstration.jpg",
+      "mobot-assets/archive/stand.jpg",
+      "mobot-assets/archive/pair.jpg"
+    ],
+    "pairArchivePresent": true,
+    "latestStillV17": true
+  },
+  "limitations": [
+    "Static HTML audit only; no real browser JS execution or touch event test",
+    "GitHub Pages public live URL could not be loaded from the available web client; deployment not independently verified",
+    "Coordinate landmarks are manual normalized image measurements only and cannot establish true real-world dimensions",
+    "First variant 1986 has no securely attributed photo in this new measurement page; no 1986 geometry created"
+  ],
+  "releaseDecision": "Do not promote model. Keep mobot-latest.html pointing to v17. The photo workbench is a separate research tool."
+}
