@@ -422,23 +422,33 @@ export function makeMobot(THREE, quality='auto') {
 
   }
 
+  // The two visible cheeks stay close to parallel in photos 2 and 3.
+  // A four-bar approximation reproduces this motion; internal transmission is C.
   const fingerMechanisms=[];
+  const linkSpacing=.11;
+  for(const z of [-.12,.12]){
+    beam(fingerHead,[-.40,0,z],[-.40-linkSpacing,0,z],.019,m.frame,'gripper');
+  }
   for(const side of [-1,1]){
-    const finger=new THREE.Group();finger.name='Широкая губка '+side;
-    finger.position.set(-.40,side*.035,0);fingerHead.add(finger);
-    for(const z of [-.12,.12]){
-      beam(finger,[0,0,z],[-.19,side*.18,z],.020,m.frame,'gripper');
-      beam(finger,[-.07,-side*.025,z],[-.25,side*.14,z],.016,m.satin,'gripper');
+    const jaw=new THREE.Group();jaw.name='Широкая губка '+side;
+    fingerHead.add(jaw);
+    const links=[],fixedPins=[],jawPins=[];
+    const end=new THREE.Vector3(-.205,side*.16,0);
+    for(const offset of [0,-linkSpacing]){
+      const link=new THREE.Group();link.name='Рычаг губки '+side;
+      link.position.set(-.40+offset,side*.035,0);fingerHead.add(link);
+      for(const z of [-.12,.12]){
+        beam(link,[0,0,z],[end.x,end.y,z],.017,m.frame,'gripper');
+      }
+      fixedPins.push(cylinder(fingerHead,.021,.021,.28,link.position.toArray(),m.frame,'gripper','z',20));
+      jawPins.push(cylinder(jaw,.018,.018,.33,[end.x+offset,end.y,0],m.satin,'gripper','z',20));
+      links.push(link);
     }
-    // Broad side surface; no invented count of edge serrations.
-    // Photo 2: the outer edge turns inward below the lower fastener.
-    // Both inner/far cheeks mirror this visible outline (C).
     const cheek=[[-.18,side*.18],[-.304,side*.18],[-.367,side*.164],
       [-.405,side*.025],[-.23,side*.025]];
-    for(const z of [-.155,.133])plate(finger,cheek,.022,z,m.panel,'gripper');
-    box(finger,[.175,.024,.31],[-.3175,side*.025,0],m.panel,'gripper');
-    cylinder(finger,.026,.026,.28,[0,0,0],m.frame,'gripper','z',20);
-    fingerMechanisms.push({side,group:finger});
+    for(const z of [-.155,.133])plate(jaw,cheek,.022,z,m.panel,'gripper');
+    box(jaw,[.175,.024,.31],[-.3175,side*.025,0],m.panel,'gripper');
+    fingerMechanisms.push({side,group:jaw,links,end,fixedPins,jawPins});
   }
   tube(fingerHead,[[.03,.08,-.09],[.10,.17,-.09],[-.20,.17,-.09],[-.34,.09,-.09]],.009,m.cable,'gripper');
   // Removable electrically driven percussion-tool PROXY. Functional interchangeability
@@ -695,7 +705,12 @@ export function makeMobot(THREE, quality='auto') {
     turntable.rotation.y=r(current.yaw);
     armPivot.rotation.z=r(current.arm);
     gripper.rotation.z=r(current.wrist-current.arm);
-    for(const f of fingerMechanisms)f.group.rotation.z=-f.side*r(current.claw);
+    for(const {side,group,links,end} of fingerMechanisms){
+      const angle=-side*r(current.claw);
+      for(const link of links)link.rotation.z=angle;
+      group.position.copy(end).applyQuaternion(links[0].quaternion)
+        .add(links[0].position).sub(end);
+    }
     bucket.rotation.z=-r(current.bucket);
     bucketScoop.rotation.z=r(current.tip);
     if('track' in values)setTrackPhase(current.track*.015);
