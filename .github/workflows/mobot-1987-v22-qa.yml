@@ -22,7 +22,7 @@ jobs:
           node-version: 22
       - name: Reproduce geometry and source measurements
         run: |
-          for test in contact-sweep hood-project jaw-profile breaker-photo jaw-opening jaw-linkage boom-pose boom-cheek mount-axes; do node "$SUITE/$test.mjs"; done
+          for test in contact-sweep hood-project jaw-profile breaker-photo jaw-opening jaw-linkage boom-pose boom-cheek mount-axes bucket-cheek bucket-pose; do node "$SUITE/$test.mjs"; done
           python3 "$SUITE/boom-pick-sensitivity.py"
           git diff --exit-code -- "$SUITE/*.json"
       - name: Install Chromium
