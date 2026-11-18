@@ -1,0 +1,18 @@
+{
+  "SKTB2": {
+    "pairedTrials": 2000,
+    "coordinatePerturbationPx": 3,
+    "lowerRmsCount": 1999,
+    "minGainPx": -0.07852112677104373,
+    "medianGainPx": 6.912018620515312,
+    "maxGainPx": 10.60026961403241
+  },
+  "SKTB3": {
+    "pairedTrials": 2000,
+    "coordinatePerturbationPx": 5,
+    "lowerRmsCount": 2000,
+    "minGainPx": 57.43033959489582,
+    "medianGainPx": 87.21718228877967,
+    "maxGainPx": 105.4834504447909
+  }
+}
