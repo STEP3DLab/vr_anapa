@@ -18,7 +18,8 @@ const pos=cheek.geometry.attributes.position;
 const faceZ=Math.min(...Array.from({length:pos.count},(_,i)=>pos.getZ(i)));
 for(const [id,p] of Object.entries(picks)){
  const camera=deckCamera(views[id]);
- m.setPose({...initial,...poses[p.pose][2]});
+ // Freeze the release poses for paired shape-only measurements.
+ m.setPose({...initial,...poses[p.pose][2],bucket:id==='SKTB2'?8:0,tip:0});
  function project(x,y){
    const q=cheek.localToWorld(new T.Vector3(x,y,faceZ)).project(camera);
    return new T.Vector2(500*(1+q.x),views[id].imageHeight*(1-q.y)/2);

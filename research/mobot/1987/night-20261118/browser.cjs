@@ -94,13 +94,23 @@ async function run(){
     await page.click('#reset');
     await page.locator('#joints').evaluate(o=>o.open=true);
     const set=async(key,value)=>page.locator('#joint-'+key).fill(String(value));
-    await set('claw',8);await set('bucket',36);await set('arm',-18);
+    await set('tip',0);await set('claw',8);await set('bucket',36);await set('arm',-18);
     assert(await page.locator('#warning').evaluate(o=>o.classList.contains('warn')));
     assert(await page.evaluate(()=>window.mobot22.status().audit.detail.envelopes.some(e=>e.hits.length)));
     await set('arm',25);
     assert.match(await page.locator('#warning').innerText(),/подтверждает зазор/);
     assert(!await page.locator('#warning').evaluate(o=>o.classList.contains('warn')));
+    const bucketAudit=()=>page.evaluate(()=>window.mobot22.status().audit.detail.envelopes.find(e=>e.group==='bucket'));
+    const clear=await bucketAudit();
+    assert.equal(clear.hits.length,0);assert.equal(clear.unresolved.length,0);
+    assert(clear.separated.length && clear.separated.every(e=>e.gap>0));
+    await set('tip',3);
+    const contact=await bucketAudit();
+    assert(contact.hits.length && contact.hits.every(h=>h.point.length===3 && h.point.every(Number.isFinite)));
+    assert.match(await page.locator('#warning').innerText(),/Подтверждён контакт/);
+    assert(await page.locator('#warning').evaluate(o=>o.classList.contains('warn')));
     await page.click('#reset');
+    return {tip0GapPairs:clear.separated.length,tip3TriangleHits:contact.hits};
    });
    await testAt('archive-and-overlay',async()=>{
     const sizes=[];

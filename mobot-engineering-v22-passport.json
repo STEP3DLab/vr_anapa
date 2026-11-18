@@ -287,6 +287,13 @@
       "data": "research/mobot/1987/night-20261118/bucket-cheek.json",
       "image": "research/mobot/1987/night-20261118/SKTB4-bucket.jpg",
       "role": "Форма по №2, проверка по №4 с регистрацией по двум углам. Нижний контур закрыт снегом."
+    },
+    {
+      "photo": 4,
+      "part": "Нижняя граница наружной боковины ковша",
+      "data": "research/mobot/1987/night-20261118/bucket-heel.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-bucket-heel.jpg",
+      "role": "Форма по №2, независимая сверка открытого заднего участка по №4. Рабочая кромка в снегу исключена."
     }
   ]
 }

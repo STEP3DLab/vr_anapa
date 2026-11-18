@@ -16,7 +16,7 @@ const attr=cheek.geometry.attributes.position;
 const z=Math.min(...Array.from({length:attr.count},(_,i)=>attr.getZ(i)));
 const records={};
 for(const [id,v] of Object.entries(marks)){
-  const camera=deckCamera(views[id]),preset={...initial,...poses[v.pose][2]};
+  const camera=deckCamera(views[id]),preset={...initial,...poses[v.pose][2],bucket:id==='SKTB2'?8:0,tip:0};
   m.setPose(preset);
   const p=[new T.Vector3(.075,.23,z),new T.Vector3(-.60,-.21,z),new T.Vector3(0,0,z)];
   function inspect(){
