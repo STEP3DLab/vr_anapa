@@ -16,6 +16,7 @@
   "photo": {
     "status": "PASS",
     "report": "research/mobot/1986/v7/registration/registration.json",
+    "lowerWheelFaces": "research/mobot/1986/v7/experiments/roadwheel-faces.json",
     "scope": "Независимая проверка вершины кожуха и видимой пропорции грейфера. Положение подвеса и силуэт стрелы всё ещё расходятся с фото."
   },
   "browser": {

@@ -40,6 +40,35 @@ check('Wheel centres, gaps, closed belt and continuous contact',()=>{
   assert(gaps.every(g=>Math.abs(g)<.00002));close(vec(...p.onBelt(0)),vec(...p.onBelt(p.length)));
   return {trackSamples:5000,wheelCountPerSide:wheels.length,maxContactResidual:Math.max(...gaps.map(Math.abs)),units:'scene'};
 });
+check('Lower wheel rims follow the discs on both tracks',()=>{
+  const pairs=[];
+  for(const side of [-1,1]){
+    const wheels=sections['Борт '+side].children.filter(o=>o.getObjectByName('Нижний круговой элемент'));
+    assert.equal(wheels.length,7);
+    for(const wheel of wheels){
+      const rim=wheel.getObjectByName('Светлая закраина нижнего катка');
+      const face=wheel.getObjectByName('Лицевой диск');
+      assert(rim && rim.material===model.materials.structure);
+      const vertex=vec().fromBufferAttribute(rim.geometry.attributes.position,1);
+      const initial=rim.localToWorld(vertex.clone());
+      const datum=face.worldToLocal(initial.clone());
+      assert(Math.abs(Math.hypot(datum.x,datum.z)-face.geometry.parameters.radiusTop)<1e-7);
+      assert(side*datum.y>face.geometry.parameters.height/2,'lip must face outward');
+      pairs.push({rim,face,vertex,datum,initial});
+    }
+  }
+  let maxSlip=0;
+  for(let i=0;i<128;i++){
+    model.setPose({track:-100+i*200/127});
+    for(const {rim,face,vertex,datum,initial} of pairs){
+      const point=rim.localToWorld(vertex.clone());
+      if(i===0)assert(point.distanceTo(initial)>.01);
+      maxSlip=Math.max(maxSlip,point.distanceTo(face.localToWorld(datum.clone())));
+    }
+  }
+  assert(maxSlip<1e-8);
+  return {rims:pairs.length,phases:128,maxSlipSceneUnits:maxSlip};
+});
 check('Six independent motions and return to neutral',()=>{
   const {turntable,boom,grab,loader,scoop}=mechanisms;
   const belt=model.objects.find(o=>o.isInstancedMesh);

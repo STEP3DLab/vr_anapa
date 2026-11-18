@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 const base='https://step3dlab.github.io/vr_anapa/',prefix='mobot-ch-hv-1986-research-v7';
 const files=[prefix+'.html',prefix+'-model.js',prefix+'-passport.json',prefix+'-qa.json',
-  ...['viewer.js','archive-camera.mjs','overview.jpg','comparison.jpg','whole-machine.jpg','registration/registration.json','experiments/track-photo.jpg','experiments/control-views.jpg'].map(n=>'research/mobot/1986/v7/'+n)];
+  ...['viewer.js','archive-camera.mjs','overview.jpg','comparison.jpg','whole-machine.jpg','registration/registration.json','experiments/track-photo.jpg','experiments/roadwheel-faces.jpg','experiments/roadwheel-faces.json','experiments/control-views.jpg'].map(n=>'research/mobot/1986/v7/'+n)];
 const sha=b=>createHash('sha256').update(b).digest('hex');
 let results=[];
 for(let attempt=1;attempt<=20;attempt++){

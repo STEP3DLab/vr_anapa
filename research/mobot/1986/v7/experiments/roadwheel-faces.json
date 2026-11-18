@@ -1,0 +1,194 @@
+{
+  "baselineModelGitBlob": "eae23a53082c009c8fb15de551ddc3dc46e7a855",
+  "units": "dimensionless (rim - inner face) / (rim + inner face)",
+  "innerSamplingFraction": 0.68,
+  "modelRadiusFraction": 0.79,
+  "scope": "Upper exposed arcs only; manual 3x3 px samples. No absolute reflectance or wheel diameter.",
+  "views": {
+    "fig6": {
+      "archiveLandmarks": [
+        [
+          1,
+          [
+            417,
+            932
+          ],
+          [
+            [
+              408,
+              901
+            ],
+            [
+              415,
+              900
+            ],
+            [
+              422,
+              901
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            477,
+            941
+          ],
+          [
+            [
+              469,
+              907
+            ],
+            [
+              475,
+              907
+            ],
+            [
+              481,
+              909
+            ]
+          ]
+        ],
+        [
+          3,
+          [
+            552,
+            954
+          ],
+          [
+            [
+              543,
+              923
+            ],
+            [
+              550,
+              922
+            ],
+            [
+              557,
+              923
+            ]
+          ]
+        ]
+      ],
+      "contrastByWheelArchiveBeforeAfter": [
+        [
+          0.3206,
+          0.5491,
+          0.5454
+        ],
+        [
+          0.0,
+          0.0001,
+          0.0
+        ],
+        [
+          0.309,
+          0.3084,
+          0.3115
+        ]
+      ],
+      "meanAbsoluteErrorBeforeAfter": [
+        0.4717,
+        0.1621
+      ],
+      "errorReductionRangeArchiveShift2px": [
+        0.2168,
+        0.3096
+      ]
+    },
+    "fig9": {
+      "archiveLandmarks": [
+        [
+          0,
+          [
+            777,
+            950
+          ],
+          [
+            [
+              773,
+              933
+            ],
+            [
+              778,
+              932
+            ],
+            [
+              782,
+              933
+            ]
+          ]
+        ],
+        [
+          1,
+          [
+            744,
+            961
+          ],
+          [
+            [
+              740,
+              940
+            ],
+            [
+              745,
+              938
+            ],
+            [
+              750,
+              938
+            ]
+          ]
+        ],
+        [
+          2,
+          [
+            698,
+            961
+          ],
+          [
+            [
+              695,
+              932
+            ],
+            [
+              701,
+              930
+            ],
+            [
+              706,
+              930
+            ]
+          ]
+        ]
+      ],
+      "contrastByWheelArchiveBeforeAfter": [
+        [
+          0.7353,
+          0.5914,
+          0.7587
+        ],
+        [
+          0.0339,
+          0.0378,
+          0.0342
+        ],
+        [
+          0.3172,
+          0.317,
+          0.3102
+        ]
+      ],
+      "meanAbsoluteErrorBeforeAfter": [
+        0.6598,
+        0.3803
+      ],
+      "errorReductionRangeArchiveShift2px": [
+        0.2795,
+        0.2795
+      ]
+    }
+  },
+  "status": "PASS"
+}
