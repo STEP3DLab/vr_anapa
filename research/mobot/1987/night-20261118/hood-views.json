@@ -1,0 +1,11 @@
+{
+  "basis": "1000 px wide source copies; axes inferred from track-wheel span, near deck slope and transverse track/deck span. Origin = visible rear near deck corner (uncertain ~8 px). No hood point enters registration. Camera is weak perspective. Photo 2 scores near cheek upper edge; photo 4 scores upper silhouette, excluding pedestal overlap, snow glare and cable. Heights are vertical image errors at fixed columns.",
+  "SKTB2": {
+    "source":"before-dispatch","imageHeight":756,"deckOrigin":[88,544],"longitudinal":[-350.8,-5.6],"transverse":[38,-75],
+    "registration":"Raised wheel centres x=140,667 over 1.50 scene units; deck near edge y=544..552 over ~500 px; upper tread apparent depth vector about (11,-22) over 0.298 scene units, class C.",
+    "part":"near","span":625,"tolerance":5,"samples":[[148,495],[180,483],[213,482],[260,484],[306,486],[331,493],[351,505],[371,526]]},
+  "SKTB4": {
+    "source":"snow-side","imageHeight":716,"deckOrigin":[120,444],"longitudinal":[-290.4,-2.5],"transverse":[18,-29],
+    "registration":"Lower wheel centres 1 and 7 x=187..502; near deck upper edge approximately (120,444) to (630,448); apparent right edge of deck (630,448) to (654,409) over 1.35 scene units. Partial occlusion at corners; class C.",
+    "part":"silhouette","span":507,"tolerance":6,"samples":[[142,406],[185,391],[225,378],[254,368],[289,367],[330,367],[360,369]]}
+}

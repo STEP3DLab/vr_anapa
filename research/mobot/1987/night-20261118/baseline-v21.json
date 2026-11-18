@@ -1,0 +1,790 @@
+{
+  "revision": "v21",
+  "modelGitBlob": "907645f254fe29fcd4acb47bb9527de18d4f0ce2",
+  "fixedAngles": {
+    "wrist": 90,
+    "claw": 8,
+    "tip": 0
+  },
+  "counts": {
+    "gripper": {
+      "poses": 27,
+      "flagged": 16,
+      "byReason": {
+        "Рабочий орган ниже плоскости опоры": 9,
+        "Возможное пересечение рабочего органа и кожуха по габаритам": 3,
+        "Возможное пересечение рабочего органа и ковша по габаритам": 6
+      }
+    },
+    "breaker-arm": {
+      "poses": 27,
+      "flagged": 16,
+      "byReason": {
+        "Рабочий орган ниже плоскости опоры": 9,
+        "Возможное пересечение рабочего органа и кожуха по габаритам": 3,
+        "Возможное пересечение рабочего органа и ковша по габаритам": 6
+      }
+    },
+    "breaker-loader": {
+      "poses": 27,
+      "flagged": 18,
+      "byReason": {
+        "Рабочий орган ниже плоскости опоры": 18
+      }
+    }
+  },
+  "samples": [
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 1.0828531119338036,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.8886894806914193,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры",
+        "Возможное пересечение рабочего органа и кожуха по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": 0.3798174003562922,
+      "alerts": [
+        "Возможное пересечение рабочего органа и кожуха по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.3798174003562922,
+      "alerts": [
+        "Возможное пересечение рабочего органа и кожуха по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 1.0828531119338036,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.8886894806914193,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры",
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": 0.3798174003562922,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.3798174003562922,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 1.0828531119338036,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.8886894806914193,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": 0.3798174003562922,
+      "alerts": []
+    },
+    {
+      "tool": "gripper",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.3798174003562922,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 1.0768131409463124,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры",
+        "Возможное пересечение рабочего органа и кожуха по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": [
+        "Возможное пересечение рабочего органа и кожуха по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.785205681759909,
+      "alerts": [
+        "Возможное пересечение рабочего органа и кожуха по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": 0.2763336014247819,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.2763336014247819,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 1.0768131409463124,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.785205681759909,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры",
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": 0.2763336014247819,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.2763336014247819,
+      "alerts": [
+        "Возможное пересечение рабочего органа и ковша по габаритам"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 1.0768131409463124,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": 0.5065312822210996,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.785205681759909,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.1359408695070017,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": 0.2763336014247819,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-arm",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.2763336014247819,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": -180,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 0,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": -18,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": 0,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": -8,
+      "clearance": -0.6647527096188856,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": 12,
+      "clearance": -0.20483225787407594,
+      "alerts": [
+        "Рабочий орган ниже плоскости опоры"
+      ]
+    },
+    {
+      "tool": "breaker-loader",
+      "yaw": 90,
+      "arm": 25,
+      "bucket": 36,
+      "clearance": 0.45518089586936217,
+      "alerts": []
+    }
+  ]
+}

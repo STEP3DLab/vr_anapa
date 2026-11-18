@@ -1,0 +1,52 @@
+name: 1987 v22 viewer acceptance
+on:
+  push:
+    branches: [codex/mobot-1987-v22-night-20261118, main]
+    paths:
+      - 'mobot-engineering-v22*'
+      - 'research/mobot/1987/night-20261118/**'
+      - '.github/workflows/mobot-1987-v22-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  viewer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SUITE: research/mobot/1987/night-20261118
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Reproduce geometry and source measurements
+        run: |
+          for test in contact-sweep hood-project jaw-profile breaker-photo; do node "$SUITE/$test.mjs"; done
+          git diff --exit-code -- "$SUITE/*.json"
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify three viewports, archive, diagnostics and static mode
+        run: |
+          python3 -m http.server 4187 --bind 127.0.0.1 > /tmp/v22-http.log 2>&1 &
+          MOBOT_REPORT_DIR=/tmp/v22/local node "$SUITE/browser.cjs"
+      - name: Check deployed version and exercise Pages
+        if: github.ref == 'refs/heads/main'
+        run: |
+          base=https://step3dlab.github.io/vr_anapa/
+          for file in mobot-engineering-v22.html mobot-engineering-v22-model.js "$SUITE/viewer.js" "$SUITE/contact.js"; do
+            for attempt in {1..30}; do
+              if curl -fsSL "$base$file?sha=$GITHUB_SHA" -o /tmp/v22-bytes && cmp -s "$file" /tmp/v22-bytes; then break; fi
+              sleep 5
+            done
+            cmp "$file" /tmp/v22-bytes
+          done
+          MOBOT_REPORT_DIR=/tmp/v22/pages MOBOT_BASE_URL="$base" node "$SUITE/browser.cjs"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v22-browser-acceptance
+          path: /tmp/v22
+          retention-days: 30
