@@ -38,7 +38,17 @@ for(const [id,checks] of Object.entries(marks)){
   const poly=lower(view,'poly');
   row[name]={poly,...residual(poly,checks),rawRms:residual(lower(view,'raw'),checks).rms};
  }
- output[id]=row;
+ // Move only the two registration anchors. Re-use exactly the same shifts for both profiles.
+ const steps=id==='SKTB4'?[-6,0,6]:[-3,0,3], gains=[];
+ for(const dx of [-3,0,3])for(const dy of [-3,0,3])for(const tx of steps)for(const ty of steps){
+  const a=new T.Vector2(...row.root),b=new T.Vector2(...row.tip).sub(a);
+  const offset=new T.Vector2(dx,dy),newSpan=b.clone().add(new T.Vector2(tx,ty)).sub(offset);
+  const register=p=>new T.Vector2(...p).sub(a).rotateAround(new T.Vector2(),newSpan.angle()-b.angle())
+    .multiplyScalar(newSpan.length()/b.length()).add(a).add(offset).toArray();
+  gains.push(residual(row.before.poly.map(register),checks).rms-residual(row.after.poly.map(register),checks).rms);
+ }
+ row.anchorSensitivity={pairs:gains.length,improved:gains.filter(v=>v>0).length,worstGain:Math.min(...gains)};
+ assert(row.after.rms<row.before.rms);output[id]=row;
 }
 fs.writeFileSync(file('bucket-heel.json'),JSON.stringify(output,null,2)+'\n');
 console.log(Object.entries(output).map(([k,v])=>[k,v.before.rms,v.after.rms,v.observedToProjected]));
