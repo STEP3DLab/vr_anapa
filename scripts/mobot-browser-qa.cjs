@@ -61,18 +61,18 @@ async function settle(page){await page.evaluate(()=>new Promise(r=>requestAnimat
  const photo=await browser.newPage({viewport:{width:1440,height:1000}});await photo.goto(new URL('mobot-photo-measure-v2.html',base).href,{waitUntil:'networkidle'});
  const photoSources=[];for(const id of ['fig6','fig9','sktb2','sktb3','sktb4','sktb9']){await photo.selectOption('#src',id);await photo.locator('#photo').evaluate(im=>im.decode());await photo.locator('#reference').evaluate(im=>im.decode());photoSources.push(id);}
  await photo.selectOption('#src','fig6');await photo.locator('#photo').evaluate(im=>im.decode());await photo.locator('#marks').click({position:{x:100,y:100}});assert.equal(await photo.locator('#marks circle').count(),1);assert(JSON.parse(await photo.locator('#result').textContent()).points.length===1);await photo.locator('#overlay').check();assert(await photo.locator('#ghost').isVisible());await photo.locator('#scale').evaluate(e=>{e.value='110';e.dispatchEvent(new Event('input',{bubbles:true}))});assert((await photo.locator('#ghost').getAttribute('style')).includes('1.1'));await photo.screenshot({path:path.join(out,'photo-measure-desktop.png')});await photo.locator('#overlay').uncheck();await photo.locator('#undo').click();assert.equal(await photo.locator('#marks circle').count(),0);await photo.setViewportSize({width:390,height:844});assert(await photo.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));result.photoMeasureV2={sourcesLoaded:photoSources,pointAddUndo:true,overlayTransform:true,mobileNoOverflow:true};await photo.close();
- // Verify the permanent latest entrypoint now promotes research v21, not the preserved v17.
+ // Verify the permanent latest entrypoint now promotes research v22, not the preserved v17.
  // Check that links from the roof exhibition can open archive/passport panels after redirect.
  const entry=await browser.newPage({viewport:{width:390,height:844}});
  await entry.goto(new URL('mobot-latest.html?source=demo#passport',base).href,{waitUntil:'domcontentloaded'});
- await entry.waitForURL(/mobot-engineering-v21\.html\?source=demo#passport/,{timeout:30000});
- await entry.waitForFunction(()=>window.mobot21?.status().frames>0);
+ await entry.waitForURL(/mobot-engineering-v22\.html\?source=demo#passport/,{timeout:30000});
+ await entry.waitForFunction(()=>window.mobot22?.status().frames>0);
  assert(await entry.locator('#passport').isVisible(),'latest #passport panel must be visible');
  await entry.goto(new URL('mobot-latest.html#archive',base).href,{waitUntil:'domcontentloaded'});
- await entry.waitForURL(/mobot-engineering-v21\.html#archive/,{timeout:30000});
- await entry.waitForFunction(()=>window.mobot21?.status().frames>0);
+ await entry.waitForURL(/mobot-engineering-v22\.html#archive/,{timeout:30000});
+ await entry.waitForFunction(()=>window.mobot22?.status().frames>0);
  assert(await entry.locator('#archive').isVisible(),'latest #archive panel must be visible');
- result.latestEntrypoint={target:'1987-v21',queryAndHashPreserved:true,passportDeepLink:true,archiveDeepLink:true};
+ result.latestEntrypoint={target:'1987-v22',queryAndHashPreserved:true,passportDeepLink:true,archiveDeepLink:true};
  await entry.close();
  result.finished=new Date().toISOString();fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(result,null,2));await browser.close();
  console.log(JSON.stringify({runs:result.runs.map(r=>({year:r.year,profile:r.profile,triangles:r.initial.triangles,errors:r.errors,failed:r.failed,presets:r.presets.map(p=>p.clearance)})),webglUnavailableFallback:result.webglUnavailableFallback,report:path.join(out,'browser-report.json')},null,2));

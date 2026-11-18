@@ -1,7 +1,7 @@
 name: Mobot research WebGL QA
 on:
   push:
-    branches: [main, codex/mobot-demo-20261118]
+    branches: [main, codex/mobot-demo-20261118, codex/mobot-1987-v22-promote-20261118]
     paths:
       - 'mobot-demo.html'
       - 'mobot-compare.html'
