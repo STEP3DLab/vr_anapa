@@ -10,7 +10,8 @@
     "report": "research/mobot/1986/v7/experiments/",
     "linkagePoses": 3204,
     "bucketPoses": 7865,
-    "sampledCollisionPoses": 6144
+    "sampledCollisionPoses": 6144,
+    "hangerSurfaceReview": "research/mobot/1986/v7/experiments/acceptance-clearance.json"
   },
   "photo": {
     "status": "PASS",
@@ -21,7 +22,7 @@
     "statusAtPreflight": "PASS",
     "liveResults": "https://github.com/STEP3DLab/vr_anapa/actions/workflows/mobot-1986-v7-verify.yml",
     "reportInArtifact": "v7-production-output/browser-results.json",
-    "verifiedRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44183323442",
+    "verifiedRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44229200163",
     "scope": "Chromium, WebGL2, 7 узлов, 6 координат движения, касания, размеры 320–720 px и статический резерв."
   },
   "physicalMeasurements": "NOT RUN",
