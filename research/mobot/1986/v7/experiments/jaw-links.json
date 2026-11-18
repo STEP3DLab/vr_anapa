@@ -1,0 +1,10 @@
+{
+  "phase": "links",
+  "units": "условные единицы сцены",
+  "status": "PASS",
+  "poses": 3204,
+  "linksPerPose": 4,
+  "maxAttachmentGap": 9.15934e-16,
+  "maxRodLengthError": 6.9388939e-16,
+  "minimumOpeningIncrement": 0.00031244172
+}
