@@ -71,6 +71,33 @@
       "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
       "type": "designer retrospective account",
       "identity": "А.Ф. Батанов, В. Лосицкий. Чернобыльская крыша; упоминание балансиров не устанавливает их схему"
+    },
+    "BATANOV-P015": {
+      "type": "Архивная техническая карточка из переданной подборки, стр. 15",
+      "printedTitle": "Мобильный робототехнический комплекс «Мобот-Ч-2»",
+      "developerLine": "ОКТБ СР НИИСМ МГТУ имени Н. Э. Баумана",
+      "developmentYear": 1986,
+      "implementationYear": 1987,
+      "sha256": "9e3865183ceb35a1203daa6d2cd71f2342c16b212a4e7035424102e1956bd8e5",
+      "documented": {
+        "envelope_m": [
+          2.2,
+          1.1,
+          1.4
+        ],
+        "mass_kg": 570,
+        "totalDrivePower_kW": 1.8,
+        "travelSpeed_km_h": 0.25,
+        "drawbarPullAsphalt_N": 5000,
+        "bucketBladeCapacity_N": 1200,
+        "manipulatorVerticalGrip_N": 1000,
+        "manipulatorOtherGrip_N": 800,
+        "manipulatorDOF": 5,
+        "maxGripOpening_m": 0.3,
+        "cableNominal_m": 200,
+        "cableWithExtension_m": 400
+      },
+      "scope": "A для значений и обозначения на карточке. Связь с исследуемой машиной поддерживают год, назначение и состав оборудования. Порядок осей, поза при обмере, комплектация и точки обмера габарита на листе не указаны. Масштаб мешей не калиброван."
     }
   },
   "nodes": [
