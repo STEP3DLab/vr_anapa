@@ -6,6 +6,9 @@ const read=p=>fs.readFileSync(path.join(__dirname,p),'utf8');
 const first=read('mobot-ch-hv-1986-research-v4.html');
 const second=read('mobot-engineering-v18-model.js');
 const latest=read('mobot-latest.html');
+// In addition to the intentionally preserved v18 rejection test, require the
+// released v22 photo-ledger contract. The result is a *scene* check, not metrology.
+const current1987TrackSource=require('./scripts/mobot-v22-track-contract.cjs');
 function requireOne(source,pattern,description){
  const m=source.match(pattern);assert(m,description);return m;
 }
@@ -38,5 +41,6 @@ console.log(JSON.stringify({
  researchGate:'reproducible-static-layout-screening',
  variant1986:{loaderOppositeGrapple:true,sceneGrappleXRange:[Math.min(...grabXs),Math.max(...grabXs)],sceneLoaderXRange:[Math.min(...bucketXs),Math.max(...bucketXs)],historicalDimensionsValidated:false},
  variant1987:{candidate:'v18',nominalAdjacentCircleOverlaps:overlaps,rearEndCircleOverlap:rearOverlap,realWheelClearanceEstablished:false,nominalCircleNonintersecting:overlaps.length===0&&rearOverlap===0,eligibleForLatest:false,additionalGatesMissing:['independent historical view','real WebGL/mobile verification','photogrammetric calibration']},
+ current1987TrackSource,
  latest:'v22 (research)',archivedStable:'v17',note:'v18 circle overlap is a scene-model warning; v22 is a research viewer, not factory-calibrated CAD.'
 },null,2));
