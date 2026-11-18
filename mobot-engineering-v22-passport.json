@@ -273,6 +273,13 @@
       "data": "research/mobot/1987/night-20261118/boom-cheek.json",
       "image": "research/mobot/1987/night-20261118/SKTB4-boom-cheek.jpg",
       "role": "independent; local end-plate fit on SKTB2"
+    },
+    {
+      "photo": 4,
+      "part": "Ребристый элемент и верхний пояс стрелы",
+      "data": "research/mobot/1987/night-20261118/boom-pose.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-boom-pose.jpg",
+      "role": "Shape fitted on SKTB2. SKTB4 checks shape with its previously fitted pose held fixed."
     }
   ]
 }

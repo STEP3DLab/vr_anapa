@@ -21,7 +21,7 @@ for(const [id,pick] of Object.entries(picks)){
   }
   const target=new T.Vector2(...pick.pin);
   const railDir=new T.Vector2(...pick.rail[1]).sub(new T.Vector2(...pick.rail[0])).normalize();
-  const rail=boom.children.find(o=>o.geometry?.type==='BoxGeometry'&&o.geometry.parameters.width===1.16);
+  const rail=boom.children.find(o=>o.name==='Верхний продольный элемент стрелы');
   const axleRadius=m.distalPin.geometry.parameters.height/2;
   function inspect(arm,withHead=false){
     m.setPose({...base,arm});
@@ -35,10 +35,11 @@ for(const [id,pick] of Object.entries(picks)){
     const dir=b.clone().sub(a).normalize();
     const carriers=boom.children.filter(o=>o.geometry?.type==='CylinderGeometry' &&
       Math.abs(o.geometry.parameters.radiusTop-.023)<1e-8 &&
-      Math.abs(o.geometry.parameters.height-1.04)<1e-6);
+      Math.abs(o.geometry.parameters.height-1.04)<.01);
     assert.equal(carriers.length,2);
     const carrier=carriers.sort((x,y)=>center(x).distanceToSquared(camera.position)-center(y).distanceToSquared(camera.position))[0];
-    const spring=[-.52,.52].map(y=>project(carrier.localToWorld(new T.Vector3(0,y,0))));
+    const half=carrier.geometry.parameters.height/2;
+    const spring=[-half,half].map(y=>project(carrier.localToWorld(new T.Vector3(0,y,0))));
     const span=spring[1].clone().sub(spring[0]),unit=span.clone().normalize();
     const normals=pick.rail.map(xy=>new T.Vector2(...xy).sub(spring[0]).cross(unit));
     const stations=pick.rail.map(xy=>new T.Vector2(...xy).sub(spring[0]).dot(span)/span.lengthSq());
@@ -69,9 +70,14 @@ for(const [id,pick] of Object.entries(picks)){
   const originalArm=id==='SKTB2'?0:-8;
   const ceiling=inspect(originalArm).springLineRms;
   const acceptable=integers.filter(p=>p.springLineRms<=ceiling+1e-7);
-  const selected=acceptable.reduce((a,b)=>a.tipError<b.tipError?a:b);
-  assert.equal(base.arm,selected.arm,'preset minimizes tip error with no spring-line regression');
-  results[id]={...pick,referenceWidth:1000,original:inspect(originalArm,true),preset:inspect(base.arm,true),tipFit,slopeFit:fitted,
+  const constrainedFit=acceptable.reduce((a,b)=>a.tipError<b.tipError?a:b);
+  const previous=JSON.parse(fs.readFileSync(file('boom-pose-pre-chord.json')))[id].preset;
+  const current=inspect(base.arm,true);
+  assert.equal(previous.arm,current.arm);
+  assert(Math.abs(previous.tipError-current.tipError)<1e-6);
+  assert(current.springLineRms<previous.springLineRms);
+  assert(Math.abs(current.railAngleError)<Math.abs(previous.railAngleError));
+  results[id]={...pick,referenceWidth:1000,original:inspect(originalArm,true),preset:current,tipFit,constrainedFit,slopeFit:fitted,
     note:'Near face of distal pin tested separately. Scale, roll and depth from deck camera; platform yaw fixed. No physical length estimated.'};
 }
 fs.writeFileSync(file('boom-pose.json'),JSON.stringify(results,null,2)+'\n');
