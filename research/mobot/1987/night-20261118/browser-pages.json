@@ -1,0 +1,362 @@
+{
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "tests": {
+    "1440x1000/WebGL2": {
+      "status": "PASS",
+      "detail": {
+        "mode": "webgl2",
+        "frames": 2,
+        "draws": 276,
+        "triangles": 52796,
+        "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "values": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 4,
+          "bucket": 8,
+          "tip": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "view": "three",
+        "zoom": 1,
+        "audit": {
+          "clearance": 0.3978486926537256,
+          "alerts": [],
+          "datum": 0.14,
+          "tool": "gripper"
+        }
+      }
+    },
+    "1440x1000/viewport": {
+      "status": "PASS",
+      "detail": {
+        "page": 1440,
+        "viewport": 1440,
+        "width": 955,
+        "height": 560
+      }
+    },
+    "1440x1000/poses-and-tools": {
+      "status": "PASS",
+      "detail": [
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.3978486926537256
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "breaker-arm",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "breaker-loader",
+          "alerts": [],
+          "clearance": 0.45518089586936217
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.9087609841410492
+        }
+      ]
+    },
+    "1440x1000/reversible-inspection": {
+      "status": "PASS",
+      "detail": "8 assemblies; transforms, materials and visibility restore exactly"
+    },
+    "1440x1000/mechanisms-and-input": {
+      "status": "PASS",
+      "detail": true
+    },
+    "1440x1000/surface-witnesses": {
+      "status": "PASS",
+      "detail": true
+    },
+    "1440x1000/archive-and-overlay": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "1440x1000/console-and-network": {
+      "status": "PASS",
+      "detail": {
+        "errors": [],
+        "failures": []
+      }
+    },
+    "390x844/WebGL2": {
+      "status": "PASS",
+      "detail": {
+        "mode": "webgl2",
+        "frames": 2,
+        "draws": 276,
+        "triangles": 52796,
+        "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "values": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 4,
+          "bucket": 8,
+          "tip": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "view": "three",
+        "zoom": 1,
+        "audit": {
+          "clearance": 0.3978486926537256,
+          "alerts": [],
+          "datum": 0.14,
+          "tool": "gripper"
+        }
+      }
+    },
+    "390x844/viewport": {
+      "status": "PASS",
+      "detail": {
+        "page": 390,
+        "viewport": 390,
+        "width": 357,
+        "height": 371
+      }
+    },
+    "390x844/poses-and-tools": {
+      "status": "PASS",
+      "detail": [
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.3978486926537256
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "breaker-arm",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "breaker-loader",
+          "alerts": [],
+          "clearance": 0.45518089586936217
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.9087609841410492
+        }
+      ]
+    },
+    "390x844/reversible-inspection": {
+      "status": "PASS",
+      "detail": "8 assemblies; transforms, materials and visibility restore exactly"
+    },
+    "390x844/mechanisms-and-input": {
+      "status": "PASS",
+      "detail": true
+    },
+    "390x844/surface-witnesses": {
+      "status": "PASS",
+      "detail": true
+    },
+    "390x844/archive-and-overlay": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "390x844/console-and-network": {
+      "status": "PASS",
+      "detail": {
+        "errors": [],
+        "failures": []
+      }
+    },
+    "360x800/WebGL2": {
+      "status": "PASS",
+      "detail": {
+        "mode": "webgl2",
+        "frames": 2,
+        "draws": 276,
+        "triangles": 52796,
+        "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "values": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 4,
+          "bucket": 8,
+          "tip": 0,
+          "track": 0
+        },
+        "tool": "gripper",
+        "view": "three",
+        "zoom": 1,
+        "audit": {
+          "clearance": 0.3978486926537256,
+          "alerts": [],
+          "datum": 0.14,
+          "tool": "gripper"
+        }
+      }
+    },
+    "360x800/viewport": {
+      "status": "PASS",
+      "detail": {
+        "page": 360,
+        "viewport": 360,
+        "width": 329,
+        "height": 352
+      }
+    },
+    "360x800/poses-and-tools": {
+      "status": "PASS",
+      "detail": [
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.3978486926537256
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "breaker-arm",
+          "alerts": [],
+          "clearance": 0.1290731708334713
+        },
+        {
+          "tool": "breaker-loader",
+          "alerts": [],
+          "clearance": 0.45518089586936217
+        },
+        {
+          "tool": "gripper",
+          "alerts": [],
+          "clearance": 0.9087609841410492
+        }
+      ]
+    },
+    "360x800/reversible-inspection": {
+      "status": "PASS",
+      "detail": "8 assemblies; transforms, materials and visibility restore exactly"
+    },
+    "360x800/mechanisms-and-input": {
+      "status": "PASS",
+      "detail": true
+    },
+    "360x800/surface-witnesses": {
+      "status": "PASS",
+      "detail": true
+    },
+    "360x800/archive-and-overlay": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "360x800/console-and-network": {
+      "status": "PASS",
+      "detail": {
+        "errors": [],
+        "failures": []
+      }
+    },
+    "no-webgl": {
+      "status": "PASS",
+      "detail": true
+    },
+    "without-javascript": {
+      "status": "PASS",
+      "detail": true
+    },
+    "candidate-resources": {
+      "status": "PASS",
+      "detail": 10
+    }
+  },
+  "screens": [
+    "webgl-1440x1000.webp",
+    "webgl-390x844.webp",
+    "webgl-360x800.webp"
+  ],
+  "errors": [],
+  "deployment": "5fa6933ed3b6c36013b9a367325b0202ea818c07",
+  "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44208406487",
+  "artifactDigest": "sha256:e2e4f5bdf9a1a766dd1cbb4d2b2bf4e5a6ae2e3b1d3da0c31ccca7dc0b7281e3"
+}

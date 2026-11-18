@@ -1,0 +1,126 @@
+{
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "deployment": "5fa6933ed3b6c36013b9a367325b0202ea818c07",
+  "checks": [
+    {
+      "path": "mobot-engineering-v22.html",
+      "status": 200,
+      "sha256": "4eb56d3e289b35e1327b2e87d264e441eff93e531c568b3b37c04242bd8d523f",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v22-passport.json",
+      "status": 200,
+      "sha256": "e1c318d0c6eccf132fc0a6cc6c7dd06f3182d5b0a9b102c5a4f40d23cf021c93",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v22-model.js",
+      "status": 200,
+      "sha256": "9a4902af143cca25969d078ccea524b81b33a2eef483ed3be6c1027d7cc81346",
+      "match": true
+    },
+    {
+      "path": "mobot-latest.html",
+      "status": 200,
+      "sha256": "477657e3996125983c08f9a354bc8b461fddd5ca7a188ca73b9400ff92539e60",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/viewer.css",
+      "status": 200,
+      "sha256": "eea7d56c04f00a2b40c3cdc6a447e4d54204fab78c7f564ee2b218b5c31d2342",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/viewer.js",
+      "status": 200,
+      "sha256": "90e3d15e5b19b159f506de2cc88ea7272cb16ef9d2fccedcb02f3bf26e8c7fbf",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/contact.js",
+      "status": 200,
+      "sha256": "39437b8de0273a357d292517727df2520af3af755b2e2e8f72b6eb729066edae",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/contact-sweep.json",
+      "status": 200,
+      "sha256": "f58abe3730a0655bef75f94d702c5733286b6e13e1add320a3210db919e34254",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/overview.webp",
+      "status": 200,
+      "sha256": "26556bb0c14b7859c113093bcb7b0082fb8bae0067f871fff1b7fa11cb85e2c4",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/side.webp",
+      "status": 200,
+      "sha256": "2236b48250d1843988fc2e47ecb6f11cf6d825d8772a410111b372437a61058b",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/breaker-arm.webp",
+      "status": 200,
+      "sha256": "96aa88e1826a5424062662a061b0bacf55e863346bfa69b1961ebe553fbad5e0",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/breaker-loader.webp",
+      "status": 200,
+      "sha256": "918b498db129679587c80e2bc6a80184699ae1772c0467ad114e8ebb824087ed",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-hood.jpg",
+      "status": 200,
+      "sha256": "d6a598b99bd44f0f536d256ddf9d6f5dc6e1d75ea2ea43daef15e2d266a9ed1b",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB3-jaw.jpg",
+      "status": 200,
+      "sha256": "3913232b587e4812627d3a3bc5a95f02e3e73cbebe8ae9ad09f82fcdb641de2d",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-hood.jpg",
+      "status": 200,
+      "sha256": "aca596f219c843b07c41e16e0d75fd9c91b04788655654dbc97e115784dfa065",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB9-breaker.jpg",
+      "status": 200,
+      "sha256": "39b3151682b407372907f645b9301698f9fa0f0bf9d184eca508b38a66b03597",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-snow-side.jpg",
+      "status": 200,
+      "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-front.jpg",
+      "status": 200,
+      "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "status": 200,
+      "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-breaker.jpg",
+      "status": 200,
+      "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
+      "match": true
+    }
+  ]
+}
