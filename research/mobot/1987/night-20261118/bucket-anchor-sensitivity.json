@@ -1,0 +1,34 @@
+{
+  "SKTB2": {
+    "cases": 81,
+    "rootDxDyPx": [
+      -3,
+      0,
+      3
+    ],
+    "tipDxDyPx": [
+      -3,
+      0,
+      3
+    ],
+    "improved": 81,
+    "worstGainPx": 3.744329768030878,
+    "bestGainPx": 9.634424290051864
+  },
+  "SKTB4": {
+    "cases": 81,
+    "rootDxDyPx": [
+      -3,
+      0,
+      3
+    ],
+    "tipDxDyPx": [
+      -6,
+      0,
+      6
+    ],
+    "improved": 64,
+    "worstGainPx": -1.6928293270902568,
+    "bestGainPx": 7.171403220966015
+  }
+}
