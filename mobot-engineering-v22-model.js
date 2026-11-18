@@ -340,14 +340,24 @@ export function makeMobot(THREE, quality='auto') {
   boom.rotation.z=-Math.atan2(.68,1.06);
   boom.scale.set(.86,.86,1); // provisional silhouette fit to full-resolution SKTB photo2
   armPivot.add(boom);
+  // Offset of the upper chord relative to the fixed pivot-to-wrist line.
+  // Two stations were fitted on photo 2 in the deck camera; the opposite view is held out.
+  const upperSlope=.092;
+  const upperRise=x=>.067+upperSlope*x;
   for(const side of [-1,1]){
     const z=side*.118;
-    box(boom,[1.16,.067,.051],[-.53,0,z],m.satin,'arm');
-    box(boom,[.42,.058,.045],[-1.31,0,z],m.panel,'arm');
-    plate(boom,[[-1.55,.044],[-1.46,.079],[-1.08,.039],[-1.12,-.115],[-1.48,-.032]],
+    const upper=box(boom,[Math.hypot(1.16,1.16*upperSlope),.067,.051],[-.53,upperRise(-.53),z],m.satin,'arm',Math.atan(upperSlope));
+    upper.name='Верхний продольный элемент стрелы';
+    box(boom,[.355,.032,.026],[-1.268,0,z],m.panel,'arm');
+    // B: flared root, taper and small shoulder adjacent to the rounded end (SKTB 2/4).
+    // The far cheek is mirrored (C). The wrist axis remains the same.
+    const endCheek=plate(boom,[[-1.080,.039],[-1.112,.000],[-1.340,.010],
+      [-1.450,.039],[-1.468,.043],[-1.477,.036],[-1.490,.004],
+      [-1.485,-.009],[-1.474,-.016],[-1.395,-.039],[-1.381,-.031],[-1.094,-.108]],
       .035,z-.0175,m.panel,'arm');
+    endCheek.name='Наружная концевая пластина стрелы';
     beam(boom,[.03,-.18,z],[-1.17,-.089,z],.019,m.satin,'arm',12);
-    beam(boom,[-.25,-.18,z],[-.57,-.03,z],.014,m.frame,'arm',10);
+    beam(boom,[-.25,-.18,z],[-.57,upperRise(-.57)-.03,z],.014,m.frame,'arm',10);
     plate(boom,[[-.22,.048],[.05,.10],[.13,.015],[.09,-.12],[-.1,-.16]],
       .034,z-.017,m.frame,'arm');
     cylinder(boom,.078,.078,.068,[0,0,side*.16],m.satin,'arm','z',24);
@@ -356,16 +366,16 @@ export function makeMobot(THREE, quality='auto') {
   // Two longitudinal side planes with open bays in photos 2 and 4. The hidden
   // cross-ties, their stations and the exact triangular subdivisions are C.
   for(const z of [-.118,.118]){
-    beam(boom,[.03,-.18,z],[.03,.025,z],.020,m.frame,'arm');
-    beam(boom,[-.61,-.132,z],[-.61,0,z],.014,m.panel,'arm');
-    beam(boom,[-.61,-.132,z],[-.97,0,z],.013,m.panel,'arm');
+    beam(boom,[.03,-.18,z],[.03,upperRise(.03)+.025,z],.020,m.frame,'arm');
+    beam(boom,[-.61,-.132,z],[-.61,upperRise(-.61),z],.014,m.panel,'arm');
+    beam(boom,[-.61,-.132,z],[-.97,upperRise(-.97),z],.013,m.panel,'arm');
     beam(boom,[-1.17,-.089,z],[-1.46,.01,z],.018,m.satin,'arm');
   }
   for(const x of [-.14,-.61,-1.08])
-    beam(boom,[x,0,-.118],[x,0,.118],.020,m.frame,'arm');
+    beam(boom,[x,upperRise(x),-.118],[x,upperRise(x),.118],.020,m.frame,'arm');
   for(const x of [-.13,.24])
     beam(base,[x,1.50,-.235],[x,1.50,.235],.023,m.frame,'turret');
-  const distalPin=cylinder(boom,.048,.048,.29,[-1.46,.01,0],m.frame,'arm','z',24);
+  const distalPin=cylinder(boom,.019,.019,.29,[-1.46,.01,0],m.frame,'arm','z',24);
   distalPin.name='Концевая ось стрелы';
   function spring(parent,a,b,rad,turns,coil,id) {
     const A=V(a),B=V(b),dir=B.clone().sub(A),len=dir.length();
@@ -382,9 +392,9 @@ export function makeMobot(THREE, quality='auto') {
   }
   for(const side of [-1,1]){
     const z=side*.12;
-    spring(boom,[-.04,.098,z],[-1.08,.098,z],.03,32,.0075,'arm');
-    beam(boom,[-.04,.098,z],[-.015,.022,z],.025,m.frame,'arm');
-    beam(boom,[-1.08,.098,z],[-1.13,.005,z],.022,m.olive,'arm');
+    spring(boom,[-.04,.098+upperRise(-.04),z],[-1.08,.098+upperRise(-1.08),z],.03,32,.0075,'arm');
+    beam(boom,[-.04,.098+upperRise(-.04),z],[-.015,.022+upperRise(-.015),z],.025,m.frame,'arm');
+    beam(boom,[-1.08,.098+upperRise(-1.08),z],[-1.13,.005,z],.022,m.olive,'arm');
   }
   tube(boom,[[.14,-.025,.12],[.12,.11,.15],[-.36,.068,.16],
     [-.91,.065,.15],[-1.33,.073,.12],[-1.49,.10,.10]],.010,m.cable,'arm',40);
@@ -395,8 +405,8 @@ export function makeMobot(THREE, quality='auto') {
   gripper.position.copy(new THREE.Vector3(-1.46,.01,0).multiply(boom.scale).applyAxisAngle(new THREE.Vector3(0,0,1),boom.rotation.z)); // Share the actual distal pin; no detached head.
   cylinder(gripper,.083,.083,.275,[0,0,0],m.frame,'gripper','z',28);
   for(const side of [-1,1]){
-    cylinder(gripper,.062,.062,.022,[0,0,side*.144],m.satin,'gripper','z',28);
-    bolt(gripper,[0,0,side*.161],'z',m.darkBolt,'gripper',.019);
+    cylinder(gripper,.016,.016,.012,[0,0,side*.150],m.satin,'gripper','z',28);
+    bolt(gripper,[0,0,side*.161],'z',m.darkBolt,'gripper',.008);
   }
   const fingerHead=new THREE.Group();
   fingerHead.name='Двупалый сменный схват';fingerHead.userData.part='gripper';
