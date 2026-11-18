@@ -1,0 +1,32 @@
+name: Mobot laboratory checks
+on:
+  push:
+    paths:
+      - 'mobot-lab/**'
+      - '.github/workflows/mobot-lab.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  laboratory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check archive registration, moving assemblies and XR interactions
+        run: node --test mobot-lab/tests/lab.test.mjs
+      - name: Install Chromium for WebGL2 and browser tests
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Exercise desktop, mobile and offline exhibition
+        run: |
+          python3 -m http.server 4200 --bind 127.0.0.1 > /tmp/mobot-lab-http.log 2>&1 &
+          for i in {1..15}; do
+            if curl --silent --fail http://127.0.0.1:4200/mobot-lab/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node mobot-lab/tests/browser.cjs

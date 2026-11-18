@@ -6,12 +6,17 @@ import {createXR} from './xr.js';
 export function createViewer(surface, callbacks) {
   const scene=new T.Scene(),camera=new T.OrthographicCamera(-2,2,2,-2,.01,80);
   let canvas=document.createElement('canvas'),gl=null,raster=null;
-  try{gl=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'})}
-  catch{canvas=document.createElement('canvas');raster=makeRasterRenderer(canvas)}
-  canvas.setAttribute('aria-label','Вращаемая трёхмерная модель');canvas.tabIndex=0;surface.append(canvas);
+  const graphics={alpha:true,antialias:true,depth:true,powerPreference:'high-performance'};
+  try {
+    const context=canvas.getContext('webgl2',graphics);
+    if(context) gl=new T.WebGLRenderer({canvas,context,...graphics});
+  } catch { /* Use the same articulated geometry through the software renderer. */ }
+  if(!gl){canvas=document.createElement('canvas');raster=makeRasterRenderer(canvas)}
+  canvas.setAttribute('aria-label','Вращаемая трёхмерная модель');canvas.tabIndex=0;
+  surface.append(canvas);
   const controls=new OrbitControls(camera,canvas);
   controls.enablePan=false;controls.minZoom=.4;controls.maxZoom=5;
-  controls.maxPolarAngle=Math.PI*.496;controls.rotateSpeed=.75;
+  controls.maxPolarAngle=Math.PI/2;controls.rotateSpeed=.75;
   const deck=new T.Group();scene.add(deck);
   if(gl){
     gl.setPixelRatio(Math.min(devicePixelRatio,1.65));gl.setClearColor(0x172019,0);
@@ -37,89 +42,167 @@ export function createViewer(surface, callbacks) {
     shadow.rotation.x=-Math.PI/2;shadow.position.y=.005;deck.add(shadow);
   }
   surface.classList.toggle('software',!!raster);
-  let current,definition,selectedView='iso',frameId=0,resizing=false;
-  const xr=gl?createXR(gl,{...callbacks,ended(){gl.xr.enabled=false;requestAnimationFrame(()=>{resize();callbacks.ended()})}}):null;
-  function draw(){
-    if(frameId||xr?.active||!current)return;
-    frameId=requestAnimationFrame(()=>{
-      frameId=0;if(xr?.active||!current)return;
-      if(gl)gl.render(scene,camera);else raster.render(current.root,camera);
+  let current, definition, selectedView = 'iso', targetNode = null, frameId = 0;
+  let contextLost = false, switchedInXR = false;
+  if (gl) {
+    canvas.addEventListener('webglcontextlost', event => {
+      event.preventDefault(); contextLost=true; callbacks.contextLost();
+    });
+    canvas.addEventListener('webglcontextrestored', () => {
+      contextLost=false; resize(); draw();
+    });
+  }
+  const xr = gl ? createXR(gl, {...callbacks, ended() {
+    gl.xr.enabled = false;
+    requestAnimationFrame(() => { resize(); if(switchedInXR) frame('iso'); switchedInXR=false; callbacks.ended(); });
+  }}) : null;
+  function draw() {
+    if (frameId || contextLost || xr?.active || !current) return;
+    frameId = requestAnimationFrame(() => {
+      frameId = 0;
+      if (contextLost || xr?.active || !current) return;
+      if (gl) gl.render(scene, camera);
+      else raster.render(current.root, camera);
       callbacks.drawn();
     });
   }
-  controls.addEventListener('change',draw);
-  controls.addEventListener('start',()=>{selectedView=null;callbacks.viewChanged(null)});
-  const v=new T.Vector3();
-  function eachCorner(fn){
-    current.root.updateWorldMatrix(true,true);
-    current.root.traverseVisible(o=>{
-      if(!o.isMesh)return;
-      if(o.isInstancedMesh&&!o.boundingBox)o.computeBoundingBox();
-      if(!o.geometry.boundingBox)o.geometry.computeBoundingBox();
-      const bounds=o.isInstancedMesh?o.boundingBox:o.geometry.boundingBox;
-      if(!bounds||bounds.isEmpty())return;
-      for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y])for(const z of [bounds.min.z,bounds.max.z]){
-        v.set(x,y,z).applyMatrix4(o.matrixWorld);fn(v);
-      }
+  controls.addEventListener('change', draw);
+  // OrbitControls also emits "start" for an ordinary tap. Keep the named
+  // view until the direction actually changes.
+  let orbitStart;
+  controls.addEventListener('start', () => { orbitStart = camera.position.clone().sub(controls.target).normalize(); });
+  controls.addEventListener('end', () => {
+    const direction = camera.position.clone().sub(controls.target).normalize();
+    if (orbitStart && direction.distanceToSquared(orbitStart) > 0.000001) {
+      selectedView = null;
+      callbacks.viewChanged(null);
+    }
+  });
+  const corner = new T.Vector3();
+  function eachCorner(root, fn) {
+    root.updateWorldMatrix(true, true);
+    root.traverseVisible(o => {
+      if (!o.isMesh) return;
+      if (o.isInstancedMesh && !o.boundingBox) o.computeBoundingBox();
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+      const bounds = o.isInstancedMesh ? o.boundingBox : o.geometry.boundingBox;
+      if (!bounds || bounds.isEmpty()) return;
+      for (const x of [bounds.min.x, bounds.max.x])
+        for (const y of [bounds.min.y, bounds.max.y])
+          for (const z of [bounds.min.z, bounds.max.z])
+            fn(corner.set(x, y, z).applyMatrix4(o.matrixWorld));
     });
   }
-  function frame(view='iso'){
-    if(!current||xr?.active)return;
-    const s=definition.side,angle=view||selectedView;
-    const directions={iso:[.54*s,.44,1*s],side:[0,.01,s],front:[s,.045,0],top:[.0001,1,.0002*s]};
-    const d=angle?new T.Vector3(...directions[angle]).normalize():camera.position.clone().sub(controls.target).normalize();
-    const box=new T.Box3();eachCorner(p=>box.expandByPoint(p));
-    const center=box.getCenter(new T.Vector3());
-    const w=surface.clientWidth,h=surface.clientHeight;if(!w||!h)return;
-    const aspect=w/h;
-    camera.position.copy(center).addScaledVector(d,9);camera.up.set(0,1,0);camera.lookAt(center);camera.updateMatrixWorld();
-    // Measure the transformed corners of each mesh in the chosen view.
-    const ext=new T.Box3();eachCorner(p=>ext.expandByPoint(p.applyMatrix4(camera.matrixWorldInverse)));
-    const width=ext.max.x-ext.min.x,height=ext.max.y-ext.min.y;
-    const half=Math.max(height/(aspect<1.15?1.18:1.43),width/(aspect*1.75),.3);
-    const focus=new T.Vector3();
-    // Convert the camera-plane offset without normalizing its magnitude.
-    focus.set((ext.min.x+ext.max.x)/2,(ext.min.y+ext.max.y)/2+half*.045,0).applyQuaternion(camera.quaternion);
-    center.add(focus);controls.target.copy(center);camera.position.copy(center).addScaledVector(d,9);
-    camera.left=-half*aspect;camera.right=half*aspect;camera.top=half;camera.bottom=-half;camera.zoom=1;camera.updateProjectionMatrix();
-    controls.update();selectedView=angle;callbacks.viewChanged(angle);draw();
+  function capture() {
+    return {
+      view: selectedView, zoom: camera.zoom, detail: !!targetNode,
+      direction: camera.position.clone().sub(controls.target).normalize().toArray(),
+      up: camera.up.toArray()
+    };
   }
-  function resize(){
-    if(!current||xr?.active||resizing)return;resizing=true;
-    const w=surface.clientWidth,h=surface.clientHeight;
-    if(w&&h){
-      if(gl)gl.setSize(w,h,false);
-      else{const scale=Math.min(1.35,880/w,720/h);raster.resize(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale)))}
-      frame(selectedView);
+  function frame(view = 'iso', options = {}) {
+    if (!current || xr?.active || !surface.clientHeight || !surface.clientWidth) return;
+    const side = definition.side;
+    const directions = {iso:[.54*side,.44,side], side:[0,.007,side], front:[side,.025,0], top:[.0001,1,.0002*side]};
+    const direction = new T.Vector3(...(options.direction || directions[view] || directions.iso)).normalize();
+    targetNode = options.node || null;
+    const root = targetNode || current.root;
+    const bounds = new T.Box3();
+    eachCorner(root, p => bounds.expandByPoint(p));
+    if (bounds.isEmpty()) return;
+    const center = bounds.getCenter(new T.Vector3());
+    camera.up.fromArray(options.up || [0,1,0]).normalize();
+    camera.position.copy(center).addScaledVector(direction, 9);
+    camera.lookAt(center); camera.updateMatrixWorld();
+    const projected = new T.Box3();
+    eachCorner(root, p => projected.expandByPoint(p.applyMatrix4(camera.matrixWorldInverse)));
+    const aspect = surface.clientWidth / surface.clientHeight;
+    const width = projected.max.x - projected.min.x;
+    const height = projected.max.y - projected.min.y;
+    // A marker may identify a single pin. Keep enough of its assembly in view.
+    const narrow = matchMedia('(max-width:760px)').matches;
+    const half = Math.max(height / (narrow ? 1.78 : 1.43), width / (aspect * 1.78), targetNode ? .36 : .48);
+    const offset = new T.Vector3((projected.min.x + projected.max.x)/2, (projected.min.y + projected.max.y)/2 + half*.04, 0);
+    center.add(offset.applyQuaternion(camera.quaternion));
+    controls.target.copy(center); camera.position.copy(center).addScaledVector(direction, 9);
+    Object.assign(camera, {left:-half*aspect, right:half*aspect, top:half, bottom:-half, zoom:T.MathUtils.clamp(options.zoom ?? 1,.4,5)});
+    camera.updateProjectionMatrix(); controls.update();
+    selectedView = view || null;
+    callbacks.viewChanged(selectedView); draw();
+  }
+  function resize() {
+    if (!current || xr?.active) return;
+    const width = surface.clientWidth, height = surface.clientHeight;
+    if (!width || !height) return;
+    if (gl) gl.setSize(width, height, false);
+    else {
+      const scale = Math.min(1.35, 880/width, 720/height);
+      raster.resize(Math.max(1, Math.round(width*scale)), Math.max(1, Math.round(height*scale)));
     }
-    resizing=false;
+    const state = capture();
+    frame(selectedView, {...state, node:targetNode});
   }
   new ResizeObserver(resize).observe(surface);
-  const picker=new T.Raycaster();let start=null;
-  canvas.addEventListener('pointerdown',e=>{start=[e.clientX,e.clientY]});
-  canvas.addEventListener('pointerup',e=>{
-    if(!start||Math.hypot(e.clientX-start[0],e.clientY-start[1])>5||!current)return;
-    start=null;
-    const b=canvas.getBoundingClientRect();
-    picker.setFromCamera(new T.Vector2((e.clientX-b.left)/b.width*2-1,1-(e.clientY-b.top)/b.height*2),camera);
-    const meshes=[];current.root.traverseVisible(o=>{if(o.isMesh)meshes.push(o)});
-    const hit=picker.intersectObjects(meshes,false)[0];
-    if(!hit)return;
-    const groups=definition.groups(current);
-    for(let n=hit.object;n;n=n.parent){const group=Object.entries(groups).find(([,node])=>node===n);if(group){callbacks.picked(group[0]);return}}
+  const picker = new T.Raycaster();
+  const visibleMeshes = [];
+  let down = null, activePointers = new Set();
+  canvas.addEventListener('pointerdown', e => {
+    activePointers.add(e.pointerId);
+    down = activePointers.size === 1 && e.button === 0 ? {id:e.pointerId,x:e.clientX,y:e.clientY} : null;
   });
-  function zoom(factor){camera.zoom=T.MathUtils.clamp(camera.zoom*factor,.4,5);camera.updateProjectionMatrix();draw()}
-  canvas.addEventListener('keydown',e=>{
-    if(e.key==='+'||e.key==='=')zoom(1.2);else if(e.key==='-')zoom(1/1.2);else if(e.key==='Home')frame('iso');else if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
-      const offset=camera.position.clone().sub(controls.target),spherical=new T.Spherical().setFromVector3(offset);
-      if(e.key==='ArrowLeft')spherical.theta-=.12;if(e.key==='ArrowRight')spherical.theta+=.12;
-      if(e.key==='ArrowUp')spherical.phi-=.1;if(e.key==='ArrowDown')spherical.phi+=.1;
-      spherical.phi=T.MathUtils.clamp(spherical.phi,.015,controls.maxPolarAngle);
-      camera.position.copy(controls.target).add(offset.setFromSpherical(spherical));controls.update();selectedView=null;callbacks.viewChanged(null);
-    }else return;e.preventDefault();
+  canvas.addEventListener('pointercancel', e => { activePointers.delete(e.pointerId); down = null; });
+  canvas.addEventListener('pointerup', e => {
+    const start = down;
+    activePointers.delete(e.pointerId); down = null;
+    if (!start || start.id !== e.pointerId || Math.hypot(e.clientX-start.x, e.clientY-start.y)>6 || !current) return;
+    const rect = canvas.getBoundingClientRect();
+    picker.setFromCamera(new T.Vector2((e.clientX-rect.left)/rect.width*2-1, 1-(e.clientY-rect.top)/rect.height*2), camera);
+    visibleMeshes.length = 0;
+    current.root.traverseVisible(o => { if (o.isMesh) visibleMeshes.push(o); });
+    const hit = picker.intersectObjects(visibleMeshes, false)[0];
+    if (!hit) return;
+    const groups = Object.entries(definition.groups(current));
+    for (let n = hit.object; n; n = n.parent) {
+      const match = groups.find(([,node]) => node === n);
+      if (match) { callbacks.picked(match[0]); return; }
+    }
   });
-  return {xr,mode:gl?'gpu':'cpu',select(model,def){
-    if(current)scene.remove(current.root);current=model;definition=def;scene.add(model.root);deck.position.y=def.ground-.009;selectedView='iso';
-    if(xr?.active)xr.modelChanged();else resize();
-  },draw(){if(xr?.active)xr.poseChanged();else draw()},frame,zoom};
+  function zoom(factor) {
+    camera.zoom = T.MathUtils.clamp(camera.zoom * factor,.4,5);
+    camera.updateProjectionMatrix(); draw();
+  }
+  canvas.addEventListener('keydown', e => {
+    if (e.key === '+' || e.key === '=') zoom(1.2);
+    else if (e.key === '-') zoom(1/1.2);
+    else if (e.key === 'Home') frame('iso');
+    else if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) {
+      const offset = camera.position.clone().sub(controls.target);
+      const spherical = new T.Spherical().setFromVector3(offset);
+      spherical.theta += ({ArrowLeft:-.12, ArrowRight:.12}[e.key] || 0);
+      spherical.phi = T.MathUtils.clamp(spherical.phi + ({ArrowUp:-.1,ArrowDown:.1}[e.key] || 0),.015,controls.maxPolarAngle);
+      camera.position.copy(controls.target).add(offset.setFromSpherical(spherical));
+      controls.update(); selectedView = null; callbacks.viewChanged(null);
+    } else return;
+    e.preventDefault();
+  });
+  const markerBox = new T.Box3(), markerPoint = new T.Vector3();
+  function project(node) {
+    if (!node) return null;
+    markerBox.setFromObject(node);
+    if (markerBox.isEmpty()) return null;
+    markerBox.getCenter(markerPoint).project(camera);
+    if (Math.abs(markerPoint.x)>1 || Math.abs(markerPoint.y)>1 || Math.abs(markerPoint.z)>1) return null;
+    return [(markerPoint.x+1)*50,(1-markerPoint.y)*50];
+  }
+  return {xr, mode:gl?'gpu':'cpu', capture, project, frame, zoom,
+    select(model, def) {
+      if (current) scene.remove(current.root);
+      current = model; definition = def; targetNode = null;
+      scene.add(model.root); deck.position.y = (model.groundY ?? def.ground)-.009;
+      selectedView = 'iso';
+      if (xr?.active) { switchedInXR=true; xr.modelChanged(); }
+      else { resize(); frame('iso'); }
+    },
+    draw() { if (xr?.active) xr.poseChanged(); else draw(); }
+  };
 }

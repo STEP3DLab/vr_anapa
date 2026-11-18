@@ -58,69 +58,123 @@ export function createXR(renderer,callbacks) {
   const pedestal=new T.Mesh(new T.CylinderGeometry(1.04,.92,.11,64),new T.MeshStandardMaterial({color:0x455546,roughness:.82}));
   pedestal.position.set(.18,.73,-1.9);room.add(pedestal);
   const holder=new T.Group();holder.position.set(.18,.785,-1.9);room.add(holder);
-  const board=document.createElement('canvas');board.width=680;board.height=862;
-  const ctx=board.getContext('2d'), texture=new T.CanvasTexture(board);texture.colorSpace=T.SRGBColorSpace;
-  const plane=new T.Mesh(new T.PlaneGeometry(.46,.583),new T.MeshBasicMaterial({map:texture,toneMapped:false}));
-  plane.position.set(-.64,1.28,-1.03);plane.rotation.y=.36;room.add(plane);
-  const ray=new T.Raycaster(),direction=new T.Vector3(),origin=new T.Vector3();
-  const pick=controller=>{
-    controller.getWorldPosition(origin);controller.getWorldDirection(direction).negate();
-    ray.set(origin,direction);return ray.intersectObject(plane,false)[0];
-  };
-  let buttons=[],exhibit=null,activeSession=null,refresh=()=>{};
-  function paint(){
-    const s=callbacks.get(), accent='#d4f778';
-    ctx.fillStyle='#edf2e7';ctx.fillRect(0,0,680,862);
-    ctx.fillStyle='#354932';ctx.font='24px sans-serif';ctx.fillText('ЛАБОРАТОРИЯ МОБОТ',38,52);
-    ctx.font='bold 45px sans-serif';ctx.fillStyle='#202823';ctx.fillText(s.name,38,115);
+  const board=document.createElement('canvas');board.width=680;board.height=1030;
+  const ctx=board.getContext('2d'),texture=new T.CanvasTexture(board);
+  texture.colorSpace=T.SRGBColorSpace;
+  const panel=new T.Mesh(new T.PlaneGeometry(.49,.742),new T.MeshBasicMaterial({map:texture,toneMapped:false}));
+  panel.position.set(-.65,1.25,-1.12);panel.rotation.y=.37;room.add(panel);
+  const controllers=[], ray=new T.Raycaster(),pointer=new T.Vector3(),origin=new T.Vector3();
+  const scales=[.40,.57,.76],scaleNames=['малый','средний','крупный'];
+  let scale=1,hover=-1,drag=null,buttons=[],exhibit=null,session=null;
+  function setScale(i){scale=i;holder.scale.setScalar(scales[i])}
+  function resetView(){holder.rotation.y=callbacks.get().year===1986?-.55:2.6;setScale(1)}
+  function paint() {
+    const s=callbacks.get();
+    if(!s.root)return;
+    ctx.fillStyle='#edf2e7';ctx.fillRect(0,0,board.width,board.height);
+    ctx.fillStyle='#354932';ctx.font='24px sans-serif';ctx.fillText('ЛАБОРАТОРИЯ МОБОТ',34,46);
+    ctx.font='bold 44px sans-serif';ctx.fillStyle='#202823';ctx.fillText(s.name,34,100);
+    ctx.font='26px sans-serif';ctx.fillText(s.jointName+'   '+s.value,34,140);
     const actions=[
-      ['Сменить робот  ·  '+(s.year===1986?'1987':'1986'),callbacks.switchModel],
-      ['Механизм  ·  '+s.jointName,callbacks.nextJoint],
+      ['Сменить машину  ·  '+(s.year===1986?'1987':'1986'),callbacks.switchModel],
+      ['Выбрать механизм  ·  '+s.jointName,callbacks.nextJoint],
       ['−     '+s.jointName,()=>callbacks.change(-1)],
       ['+     '+s.jointName,()=>callbacks.change(1)],
-      [s.year===1987?'Оснастка  ·  '+s.toolName:'Исходное положение',s.year===1987?callbacks.nextTool:callbacks.reset],
+      ...(s.year===1987?[['Оснастка  ·  '+s.toolName,callbacks.nextTool]]:[]),
+      ['Масштаб  ·  '+scaleNames[scale],()=>setScale((scale+1)%scales.length)],
       ['Повернуть модель на 30°',()=>{holder.rotation.y+=Math.PI/6}],
-      ['Закрыть VR',()=>activeSession?.end()]
+      ['Исходное положение',()=>{callbacks.reset();resetView()}],
+      ['Выйти из VR',()=>session?.end().catch(()=>{})]
     ];
+    const step=82;
     buttons=actions.map(([label,run],i)=>{
-      const y=146+i*88;ctx.fillStyle=i===0?accent:'#d9e2d2';ctx.fillRect(30,y,620,72);
-      ctx.font='bold 29px sans-serif';ctx.fillStyle='#223021';ctx.fillText(label,48,y+46,586);
-      return {x:30,y,w:620,h:72,run};
+      const y=170+i*step;
+      ctx.fillStyle=i===hover?'#b6d876':i===0?'#d4f778':'#d8e2d2';ctx.fillRect(28,y,624,67);
+      ctx.fillStyle='#223021';ctx.font='bold 27px sans-serif';ctx.fillText(label,44,y+43,592);
+      return {x:28,y,w:624,h:67,run};
     });
-    ctx.fillStyle='#344632';ctx.font='25px sans-serif';ctx.fillText(s.jointName+'  '+s.value,38,820);
+    ctx.fillStyle='#344632';ctx.font='24px sans-serif';
+    ctx.fillText('Курок выбирает действие.',33,965);
+    ctx.fillText('Для поворота зажмите боковую кнопку и ведите руку.',33,1001,615);
     texture.needsUpdate=true;
   }
-  const controllers=[];
+  function panelHit(controller){
+    controller.getWorldPosition(origin);controller.getWorldDirection(pointer).negate();
+    ray.set(origin,pointer);
+    return ray.intersectObject(panel,false)[0];
+  }
+  function buttonAt(hit){
+    if(!hit)return -1;
+    const x=hit.uv.x*board.width,y=(1-hit.uv.y)*board.height;
+    return buttons.findIndex(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h);
+  }
+  const handPosition=new T.Vector3();
+  function handX(controller){return room.worldToLocal(controller.getWorldPosition(handPosition)).x}
   for(let i=0;i<2;i++){
-    const c=renderer.xr.getController(i);scene.add(c);controllers.push(c);
-    const beam=new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3(0,0,-1)]),new T.LineBasicMaterial({color:0xd4f778,transparent:true,opacity:.72}));
-    beam.name='pointer';c.add(beam);
-    c.addEventListener('select',()=>{
-      const hit=pick(c);if(!hit)return;
-      const x=hit.uv.x*board.width,y=(1-hit.uv.y)*board.height;
-      buttons.find(b=>x>=b.x&&x<=b.x+b.w&&y>=b.y&&y<=b.y+b.h)?.run();paint();
+    const controller=renderer.xr.getController(i);scene.add(controller);controllers.push(controller);
+    const beam=new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(),new T.Vector3(0,0,-1)]),new T.LineBasicMaterial({color:0xd4f778,transparent:true,opacity:.75}));
+    beam.name='pointer';controller.add(beam);
+    controller.addEventListener('select',()=>{
+      if(!session||drag)return;
+      const button=buttons[buttonAt(panelHit(controller))];
+      if(button){button.run();if(session)paint()}
     });
+    controller.addEventListener('squeezestart',()=>{
+      if(session&&!drag)drag={controller,start:handX(controller),angle:holder.rotation.y};
+    });
+    const release=()=>{if(drag?.controller===controller)drag=null};
+    controller.addEventListener('squeezeend',release);controller.addEventListener('disconnected',release);
+  }
+  function clearExhibit(){
+    if(!exhibit)return;
+    holder.remove(exhibit.root);exhibit.dispose();exhibit=null;
   }
   function showModel(){
-    if(exhibit){holder.remove(exhibit.root);exhibit.dispose()}
-    const s=callbacks.get();exhibit=createExhibit(s.root);
-    exhibit.root.position.y=-s.ground;holder.scale.setScalar(.57);
-    holder.rotation.y=s.year===1986?-.55:2.6;holder.add(exhibit.root);paint();
+    clearExhibit();drag=null;
+    const s=callbacks.get();exhibit=createExhibit(s.root);exhibit.root.position.y=-s.ground;
+    holder.add(exhibit.root);resetView();paint();
   }
   return {
-    get active(){return !!activeSession},
-    modelChanged(){if(activeSession)showModel()},
-    poseChanged(){if(activeSession){exhibit?.sync();paint()}},
-    async start(session){
-      activeSession=session;
-      session.addEventListener('end',()=>{activeSession=null;renderer.setAnimationLoop(null);if(exhibit){holder.remove(exhibit.root);exhibit.dispose();exhibit=null}callbacks.ended()},{once:true});
+    get active(){return !!session},
+    modelChanged(){if(session)showModel()},
+    poseChanged(){if(session){exhibit?.sync();paint()}},
+    async start(nextSession){
+      session=nextSession;
+      session.addEventListener('end',()=>{
+        session=null;drag=null;hover=-1;renderer.setAnimationLoop(null);clearExhibit();callbacks.ended();
+      },{once:true});
       let space='local-floor';
-      try{await session.requestReferenceSpace(space)}catch{space='local'}
-      room.position.y=space==='local'?-1.6:0;
+      try{await nextSession.requestReferenceSpace(space)}catch{space='local'}
+      if(session!==nextSession)return;
       renderer.xr.enabled=true;renderer.xr.setReferenceSpaceType(space);
-      showModel();await renderer.xr.setSession(session);
-      refresh=()=>{for(const c of controllers){if(!c.visible)continue;const hit=pick(c);c.getObjectByName('pointer').scale.z=hit?.distance??1.5}renderer.render(scene,camera)};
-      renderer.setAnimationLoop(refresh);
+      showModel();await renderer.xr.setSession(nextSession);
+      if(session!==nextSession)return;
+      let placed=false;
+      const forward=new T.Vector3(),orientation=new T.Quaternion();
+      renderer.setAnimationLoop((_time,frame)=>{
+        if(!placed&&frame){
+          const reference=renderer.xr.getReferenceSpace();
+          const pose=reference&&frame.getViewerPose(reference);
+          if(pose){
+            const p=pose.transform.position,q=pose.transform.orientation;
+            forward.set(0,0,-1).applyQuaternion(orientation.set(q.x,q.y,q.z,q.w));
+            room.rotation.y=Math.atan2(-forward.x,-forward.z);
+            room.position.set(p.x,space==='local'?p.y-1.6:Math.min(0,p.y-1.45),p.z);
+            room.updateMatrixWorld(true);placed=true;
+          }
+        }
+        if(drag)holder.rotation.y=drag.angle+(handX(drag.controller)-drag.start)*3.2;
+        let over=-1;
+        for(const c of controllers){
+          if(!c.visible)continue;
+          const hit=panelHit(c),id=buttonAt(hit),beam=c.getObjectByName('pointer');
+          beam.scale.z=hit?.distance??1.5;
+          beam.material.color.setHex(id>=0?0xffffff:0xd4f778);
+          if(id>=0)over=id;
+        }
+        if(over!==hover){hover=over;paint()}
+        renderer.render(scene,camera);
+      });
     }
   };
 }
