@@ -1,0 +1,388 @@
+{
+  "checkedAt": "2026-11-18T10:14:44+03:00",
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "main": "2819cab0913f563ccd5ba1f7f56eeb292fd70beb",
+  "candidate": "7caa7e30d1eb50a7dcf15ef601dbb90b4faede0f",
+  "deployment": 44257047472,
+  "comparison": "HTTP 200 body equals the deployed main Git blob. Candidate SHA-256 listed separately. The main-only latest promotion is retained.",
+  "checks": [
+    {
+      "path": "mobot-engineering-v22.html",
+      "http": 200,
+      "bytes": 9401,
+      "sha256": "21e1e0ca64c4fef6b0cc34eed4b224a38ba6dbd913623596d590e786b54100fe",
+      "candidateSha256": "21e1e0ca64c4fef6b0cc34eed4b224a38ba6dbd913623596d590e786b54100fe"
+    },
+    {
+      "path": "mobot-engineering-v22-passport.json",
+      "http": 200,
+      "bytes": 15402,
+      "sha256": "04d0faf5b054ace69258ab2a7d703e6c946d1224ba2a77f73f7beff110671967",
+      "candidateSha256": "04d0faf5b054ace69258ab2a7d703e6c946d1224ba2a77f73f7beff110671967"
+    },
+    {
+      "path": "mobot-engineering-v22-model.js",
+      "http": 200,
+      "bytes": 48591,
+      "sha256": "ae422633f8b4bd58e86c921b09ac40fdae01333a7fd294331d750a6ee44c0a4d",
+      "candidateSha256": "ae422633f8b4bd58e86c921b09ac40fdae01333a7fd294331d750a6ee44c0a4d"
+    },
+    {
+      "path": "mobot-latest.html",
+      "http": 200,
+      "bytes": 1607,
+      "sha256": "0c2ea6b5035947faf86d73449bf96b2206b26836b2aa31c27dff16007bae0e57",
+      "candidateSha256": "477657e3996125983c08f9a354bc8b461fddd5ca7a188ca73b9400ff92539e60"
+    },
+    {
+      "path": "research/mobot/1987/viewer.css",
+      "http": 200,
+      "bytes": 5505,
+      "sha256": "eea7d56c04f00a2b40c3cdc6a447e4d54204fab78c7f564ee2b218b5c31d2342",
+      "candidateSha256": "eea7d56c04f00a2b40c3cdc6a447e4d54204fab78c7f564ee2b218b5c31d2342"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/viewer.js",
+      "http": 200,
+      "bytes": 16927,
+      "sha256": "d543bd06fbb761332b15e7366d7495b0d307f6292ed99f4fdd733310ff2b2bb7",
+      "candidateSha256": "d543bd06fbb761332b15e7366d7495b0d307f6292ed99f4fdd733310ff2b2bb7"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/contact.js",
+      "http": 200,
+      "bytes": 5190,
+      "sha256": "39437b8de0273a357d292517727df2520af3af755b2e2e8f72b6eb729066edae",
+      "candidateSha256": "39437b8de0273a357d292517727df2520af3af755b2e2e8f72b6eb729066edae"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/contact-sweep.json",
+      "http": 200,
+      "bytes": 67395,
+      "sha256": "f885f1e38b6857ac50e4e61ce46c77339a5615301be458a907e63c85940745c8",
+      "candidateSha256": "f885f1e38b6857ac50e4e61ce46c77339a5615301be458a907e63c85940745c8"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/overview.webp",
+      "http": 200,
+      "bytes": 47620,
+      "sha256": "f832023ba24fa92fdfcbd53167f211a6532dd88b2f6dd3ba488961d8589b8565",
+      "candidateSha256": "f832023ba24fa92fdfcbd53167f211a6532dd88b2f6dd3ba488961d8589b8565"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/side.webp",
+      "http": 200,
+      "bytes": 38040,
+      "sha256": "4dc0294179932f997da716061ad8b58a5b0abbfb9e22babe644375f89574d2a0",
+      "candidateSha256": "4dc0294179932f997da716061ad8b58a5b0abbfb9e22babe644375f89574d2a0"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/breaker-arm.webp",
+      "http": 200,
+      "bytes": 37610,
+      "sha256": "59071c7e40860a68dea1eb94f90f8c376741855226452a33d8be22a285adffba",
+      "candidateSha256": "59071c7e40860a68dea1eb94f90f8c376741855226452a33d8be22a285adffba"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/breaker-loader.webp",
+      "http": 200,
+      "bytes": 50544,
+      "sha256": "26195bbed7278a13afd862c44dc1b54591e1687c72391a75c2914404e2055fca",
+      "candidateSha256": "26195bbed7278a13afd862c44dc1b54591e1687c72391a75c2914404e2055fca"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-hood.jpg",
+      "http": 200,
+      "bytes": 44992,
+      "sha256": "d6a598b99bd44f0f536d256ddf9d6f5dc6e1d75ea2ea43daef15e2d266a9ed1b",
+      "candidateSha256": "d6a598b99bd44f0f536d256ddf9d6f5dc6e1d75ea2ea43daef15e2d266a9ed1b"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB3-jaw.jpg",
+      "http": 200,
+      "bytes": 61702,
+      "sha256": "3913232b587e4812627d3a3bc5a95f02e3e73cbebe8ae9ad09f82fcdb641de2d",
+      "candidateSha256": "3913232b587e4812627d3a3bc5a95f02e3e73cbebe8ae9ad09f82fcdb641de2d"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-hood.jpg",
+      "http": 200,
+      "bytes": 48139,
+      "sha256": "aca596f219c843b07c41e16e0d75fd9c91b04788655654dbc97e115784dfa065",
+      "candidateSha256": "aca596f219c843b07c41e16e0d75fd9c91b04788655654dbc97e115784dfa065"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB9-breaker.jpg",
+      "http": 200,
+      "bytes": 43480,
+      "sha256": "39b3151682b407372907f645b9301698f9fa0f0bf9d184eca508b38a66b03597",
+      "candidateSha256": "39b3151682b407372907f645b9301698f9fa0f0bf9d184eca508b38a66b03597"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/poses.js",
+      "http": 200,
+      "bytes": 810,
+      "sha256": "f3d4c1e8817583ff0aad031e8064514c2386c4007074eccc97b6d334445c0731",
+      "candidateSha256": "f3d4c1e8817583ff0aad031e8064514c2386c4007074eccc97b6d334445c0731"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-opening.jpg",
+      "http": 200,
+      "bytes": 60195,
+      "sha256": "786167c8b7e767f81161bc7741ef2cd001ca58f80559bbc5161b041ee504e83b",
+      "candidateSha256": "786167c8b7e767f81161bc7741ef2cd001ca58f80559bbc5161b041ee504e83b"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB3-opening.jpg",
+      "http": 200,
+      "bytes": 140519,
+      "sha256": "f5db4feaab2b7a38663ca68acbc7975cccccca57b24266570178e2b183a06c9c",
+      "candidateSha256": "f5db4feaab2b7a38663ca68acbc7975cccccca57b24266570178e2b183a06c9c"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-boom-cheek.jpg",
+      "http": 200,
+      "bytes": 90250,
+      "sha256": "3fc7a0b4781a57a9087a3b6642bbd20e5f814e50b6a117ae96ce8c33893d3e6d",
+      "candidateSha256": "3fc7a0b4781a57a9087a3b6642bbd20e5f814e50b6a117ae96ce8c33893d3e6d"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-boom-cheek.jpg",
+      "http": 200,
+      "bytes": 66528,
+      "sha256": "ac3968509aa0c8caec18e5b2ee2024acd7f2c6b6e244cd0810647fadeec866bf",
+      "candidateSha256": "ac3968509aa0c8caec18e5b2ee2024acd7f2c6b6e244cd0810647fadeec866bf"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-boom-pose.jpg",
+      "http": 200,
+      "bytes": 189951,
+      "sha256": "4efe334a859f0099f65d180397ec905c70b0675e03e9312b939df097b4adbc93",
+      "candidateSha256": "4efe334a859f0099f65d180397ec905c70b0675e03e9312b939df097b4adbc93"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-boom-pose.jpg",
+      "http": 200,
+      "bytes": 156935,
+      "sha256": "28216c9bdfd5c6d09d89a835c3af165c589acb923de595ac2df60ca92fc5a47d",
+      "candidateSha256": "28216c9bdfd5c6d09d89a835c3af165c589acb923de595ac2df60ca92fc5a47d"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/boom-pose.json",
+      "http": 200,
+      "bytes": 9292,
+      "sha256": "5d999e697d91abbd1e564972c563ceb85efe813a6fe81671a0663fea32100a00",
+      "candidateSha256": "5d999e697d91abbd1e564972c563ceb85efe813a6fe81671a0663fea32100a00"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/boom-cheek.json",
+      "http": 200,
+      "bytes": 5320,
+      "sha256": "7a007642de8274597e862119f2dbf1d8d7735645f282d55736e59774d030ad06",
+      "candidateSha256": "7a007642de8274597e862119f2dbf1d8d7735645f282d55736e59774d030ad06"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/mount-axes.json",
+      "http": 200,
+      "bytes": 858,
+      "sha256": "2f26e409b6ae0528caca1c5202c9fbe78e1e56ad06dd336e7cf1ca1fb812406c",
+      "candidateSha256": "2f26e409b6ae0528caca1c5202c9fbe78e1e56ad06dd336e7cf1ca1fb812406c"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/deck-camera.js",
+      "http": 200,
+      "bytes": 1251,
+      "sha256": "745515e518e680f7a295dc5bc592574841dbc0450dc5d17fdf0df50a000a94d1",
+      "candidateSha256": "745515e518e680f7a295dc5bc592574841dbc0450dc5d17fdf0df50a000a94d1"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/front-gripper.webp",
+      "http": 200,
+      "bytes": 41096,
+      "sha256": "78261253638c1b831cf120c1be8135817a5116e960e58bc4377b200dbb7c7a80",
+      "candidateSha256": "78261253638c1b831cf120c1be8135817a5116e960e58bc4377b200dbb7c7a80"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/raised-bucket.webp",
+      "http": 200,
+      "bytes": 44246,
+      "sha256": "245b81fad4840bfb6932346bf408505726d6a6bcd244e3076cebea1b7a3f367f",
+      "candidateSha256": "245b81fad4840bfb6932346bf408505726d6a6bcd244e3076cebea1b7a3f367f"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/snow-boom.webp",
+      "http": 200,
+      "bytes": 46710,
+      "sha256": "fb8879a92e920c311b2fd4fc5daf4fd73e002abd05469f18311b53d615d3dca7",
+      "candidateSha256": "fb8879a92e920c311b2fd4fc5daf4fd73e002abd05469f18311b53d615d3dca7"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-bucket.jpg",
+      "http": 200,
+      "bytes": 73141,
+      "sha256": "4dd80a89aa12d2a5cfcd3c8adb94efb599bf658dd573324dc7f901116bdd0e8a",
+      "candidateSha256": "4dd80a89aa12d2a5cfcd3c8adb94efb599bf658dd573324dc7f901116bdd0e8a"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-bucket.jpg",
+      "http": 200,
+      "bytes": 62516,
+      "sha256": "6d3a9c05f2f25db32ee23cf9604c33b00fe5c77e737afd3343ff6570a2c989ed",
+      "candidateSha256": "6d3a9c05f2f25db32ee23cf9604c33b00fe5c77e737afd3343ff6570a2c989ed"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-cheek.json",
+      "http": 200,
+      "bytes": 7025,
+      "sha256": "483dbb92d07b63ebec0b9bb05a1638333f54f40a0a310350a6c58d992b62b85d",
+      "candidateSha256": "483dbb92d07b63ebec0b9bb05a1638333f54f40a0a310350a6c58d992b62b85d"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-cheek-before.json",
+      "http": 200,
+      "bytes": 4754,
+      "sha256": "99d5d317f16367b1ccae3daac0e440b9434db9ba96b83cacb9fb3b49ae5a64f8",
+      "candidateSha256": "99d5d317f16367b1ccae3daac0e440b9434db9ba96b83cacb9fb3b49ae5a64f8"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-pose.json",
+      "http": 200,
+      "bytes": 1117,
+      "sha256": "4dd823e6987d68fabc064b8704bac734321c10ef7690bb5df034e048d2ac601f",
+      "candidateSha256": "4dd823e6987d68fabc064b8704bac734321c10ef7690bb5df034e048d2ac601f"
+    },
+    {
+      "path": "mobot-engineering-v21.html",
+      "http": 200,
+      "bytes": 7448,
+      "sha256": "0fffda08fcf53fd42a00d0292f0d9fd0aff10a8c02b8412436377e18046f4551",
+      "candidateSha256": "0fffda08fcf53fd42a00d0292f0d9fd0aff10a8c02b8412436377e18046f4551"
+    },
+    {
+      "path": "mobot-engineering-v21-model.js",
+      "http": 200,
+      "bytes": 46186,
+      "sha256": "9f7516a177ccbc92f85c2796c51fc0e7cd2af33c0b0fc4a2a6405d1fe5c8732f",
+      "candidateSha256": "9f7516a177ccbc92f85c2796c51fc0e7cd2af33c0b0fc4a2a6405d1fe5c8732f"
+    },
+    {
+      "path": "research/mobot/1987/viewer.js",
+      "http": 200,
+      "bytes": 16068,
+      "sha256": "f91510e53928943cf4a047199d23b5ccb10c830bdbbcd1983a5d7810a5da410a",
+      "candidateSha256": "f91510e53928943cf4a047199d23b5ccb10c830bdbbcd1983a5d7810a5da410a"
+    },
+    {
+      "path": "research/mobot/1987/overview.webp",
+      "http": 200,
+      "bytes": 48884,
+      "sha256": "81abde836fb1fe87980571af84ffa5fd9812e1979013a4ef42dce615175abe15",
+      "candidateSha256": "81abde836fb1fe87980571af84ffa5fd9812e1979013a4ef42dce615175abe15"
+    },
+    {
+      "path": "research/mobot/1987/side.webp",
+      "http": 200,
+      "bytes": 36932,
+      "sha256": "2289bfe4bb87a4dea35d4ea297cabd54f6d6fc45b187e30354ae085f40ffad2d",
+      "candidateSha256": "2289bfe4bb87a4dea35d4ea297cabd54f6d6fc45b187e30354ae085f40ffad2d"
+    },
+    {
+      "path": "mobot-assets/three.module.min.js",
+      "http": 200,
+      "bytes": 338908,
+      "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6",
+      "candidateSha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6"
+    },
+    {
+      "path": "mobot-assets/archive/1987-snow-side.jpg",
+      "http": 200,
+      "bytes": 688270,
+      "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
+      "candidateSha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8"
+    },
+    {
+      "path": "mobot-assets/archive/1987-front.jpg",
+      "http": 200,
+      "bytes": 680430,
+      "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
+      "candidateSha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994"
+    },
+    {
+      "path": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "http": 200,
+      "bytes": 832945,
+      "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
+      "candidateSha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f"
+    },
+    {
+      "path": "mobot-assets/archive/1987-breaker.jpg",
+      "http": 200,
+      "bytes": 340339,
+      "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
+      "candidateSha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33"
+    },
+    {
+      "path": "mobot-assets/controls/OrbitControls.js",
+      "http": 200,
+      "bytes": 38720,
+      "sha256": "6bd72c6e5cea2235034298ccc556432fd78ffbb2c4bda736f1efa5b8baf4355a",
+      "candidateSha256": "6bd72c6e5cea2235034298ccc556432fd78ffbb2c4bda736f1efa5b8baf4355a"
+    },
+    {
+      "path": "mobot-kinematics-v15.js",
+      "http": 200,
+      "bytes": 4287,
+      "sha256": "2fb8c22d23d9dcbbc3a4590e836a4b4f0cc79fdb22380b95314842f40fe0891e",
+      "candidateSha256": "2fb8c22d23d9dcbbc3a4590e836a4b4f0cc79fdb22380b95314842f40fe0891e"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-bucket-heel.jpg",
+      "http": 200,
+      "bytes": 116708,
+      "sha256": "e765be09b68f4828dc71cfc12af1dd4329ced05b9cfaef60f907f76faad6a771",
+      "candidateSha256": "e765be09b68f4828dc71cfc12af1dd4329ced05b9cfaef60f907f76faad6a771"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-bucket-heel.jpg",
+      "http": 200,
+      "bytes": 105424,
+      "sha256": "23e0909f146aedbe191f8ea518d0875854e1fbfa512077b471d535df66cb6612",
+      "candidateSha256": "23e0909f146aedbe191f8ea518d0875854e1fbfa512077b471d535df66cb6612"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-loader-pose.jpg",
+      "http": 200,
+      "bytes": 57936,
+      "sha256": "d0bb1b7c00937ddcc6007f6dfc7944a70b094bb1f3feb81bd71748be8102eb3c",
+      "candidateSha256": "d0bb1b7c00937ddcc6007f6dfc7944a70b094bb1f3feb81bd71748be8102eb3c"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-loader-pose.jpg",
+      "http": 200,
+      "bytes": 40204,
+      "sha256": "8835eea1f54183a195993520991667272de0e0e40371233fbd1f54ca6c624020",
+      "candidateSha256": "8835eea1f54183a195993520991667272de0e0e40371233fbd1f54ca6c624020"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-heel.json",
+      "http": 200,
+      "bytes": 4826,
+      "sha256": "0f755dee974cfb51ff014ecf7844522352d8a9f3d80934ad7e2244ab7f7487d1",
+      "candidateSha256": "0f755dee974cfb51ff014ecf7844522352d8a9f3d80934ad7e2244ab7f7487d1"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/loader-witnesses.json",
+      "http": 200,
+      "bytes": 8524,
+      "sha256": "84db79b0c9e69becf0ece22c7b2ef147d3740459479911a3e15946fe60223ec6",
+      "candidateSha256": "84db79b0c9e69becf0ece22c7b2ef147d3740459479911a3e15946fe60223ec6"
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-cheek-pre-heel.json",
+      "http": 200,
+      "bytes": 5520,
+      "sha256": "fcbbdda4895dec11ad2fc63cc722142d54cd9adfd23987233461c1747ef7b764",
+      "candidateSha256": "fcbbdda4895dec11ad2fc63cc722142d54cd9adfd23987233461c1747ef7b764"
+    }
+  ]
+}

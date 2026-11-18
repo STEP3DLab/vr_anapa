@@ -1,0 +1,914 @@
+{
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "tests": {
+    "1440x1000/WebGL2": {
+      "status": "PASS",
+      "detail": {
+        "mode": "webgl2",
+        "frames": 2,
+        "draws": 284,
+        "triangles": 53580,
+        "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "values": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 7,
+          "bucket": 12,
+          "tip": 3,
+          "track": 0
+        },
+        "tool": "gripper",
+        "view": "three",
+        "zoom": 1,
+        "audit": {
+          "clearance": 0.34821502556805306,
+          "alerts": [],
+          "datum": 0.14,
+          "tool": "gripper"
+        }
+      }
+    },
+    "1440x1000/viewport": {
+      "status": "PASS",
+      "detail": {
+        "page": 1440,
+        "viewport": 1440,
+        "width": 955,
+        "height": 560
+      }
+    },
+    "1440x1000/poses-and-tools": {
+      "status": "PASS",
+      "detail": [
+        {
+          "label": "Перед отправкой · №2",
+          "tool": "gripper",
+          "values": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 7,
+            "bucket": 12,
+            "tip": 3,
+            "track": 0
+          },
+          "anglesDegrees": [
+            0,
+            0,
+            90,
+            -12,
+            3
+          ],
+          "clearance": 0.34821502556805306
+        },
+        {
+          "label": "Стрела над кожухом · №4",
+          "tool": "gripper",
+          "values": {
+            "yaw": 180,
+            "arm": -1,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            180,
+            -1,
+            91,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Фронтальный вид схвата · №3",
+          "tool": "gripper",
+          "values": {
+            "yaw": 90,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 14,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            90,
+            0,
+            90,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Молоток на стреле · №9",
+          "tool": "breaker-arm",
+          "values": {
+            "yaw": -65,
+            "arm": 22,
+            "wrist": 60,
+            "claw": 4,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            -65,
+            21.999999999999996,
+            38,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Молоток на погрузчике · гипотеза",
+          "tool": "breaker-loader",
+          "values": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 36,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            0,
+            0,
+            90,
+            -36,
+            0
+          ],
+          "clearance": 0.45518089586936217
+        },
+        {
+          "label": "Подъём ковша",
+          "tool": "gripper",
+          "values": {
+            "yaw": 90,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 32,
+            "tip": -10,
+            "track": 0
+          },
+          "anglesDegrees": [
+            90,
+            0,
+            90,
+            -32,
+            -10
+          ],
+          "clearance": 0.854378817706053
+        }
+      ]
+    },
+    "1440x1000/reversible-inspection": {
+      "status": "PASS",
+      "detail": "8 assemblies; transforms, materials and visibility restore exactly"
+    },
+    "1440x1000/mechanisms-and-input": {
+      "status": "PASS",
+      "detail": true
+    },
+    "1440x1000/surface-witnesses": {
+      "status": "PASS",
+      "detail": {
+        "tip0GapPairs": 8,
+        "tip3TriangleHits": [
+          {
+            "parts": [
+              "Двупалый сменный схват/3/CylinderGeometry",
+              "Съёмный ковш/1/BoxGeometry"
+            ],
+            "faces": [
+              0,
+              6
+            ],
+            "point": [
+              -1.294340009642226,
+              1.349255037473535,
+              0.06529111708745722
+            ]
+          },
+          {
+            "parts": [
+              "Двупалый сменный схват/4/CylinderGeometry",
+              "Съёмный ковш/1/BoxGeometry"
+            ],
+            "faces": [
+              0,
+              6
+            ],
+            "point": [
+              -1.2832748199492332,
+              1.3439762307002343,
+              0.04785516810857682
+            ]
+          }
+        ]
+      }
+    },
+    "1440x1000/archive-and-overlay": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "1440x1000/context-loss": {
+      "status": "PASS",
+      "detail": [
+        {
+          "pose": 1,
+          "label": "Стрела над кожухом · №4",
+          "url": "https://step3dlab.github.io/vr_anapa/research/mobot/1987/night-20261118/snow-boom.webp",
+          "width": 1120,
+          "height": 690
+        },
+        {
+          "pose": 5,
+          "label": "Подъём ковша",
+          "url": "https://step3dlab.github.io/vr_anapa/research/mobot/1987/night-20261118/raised-bucket.webp",
+          "width": 1120,
+          "height": 690
+        }
+      ]
+    },
+    "1440x1000/latest-to-v21": {
+      "status": "PASS",
+      "detail": {
+        "start": "mobot-latest.html?demo=v22#model",
+        "candidate": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v22.html",
+        "backup": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v21.html",
+        "draws": 276
+      }
+    },
+    "1440x1000/console-and-network": {
+      "status": "PASS",
+      "detail": {
+        "errors": [],
+        "failures": []
+      }
+    },
+    "390x844/WebGL2": {
+      "status": "PASS",
+      "detail": {
+        "mode": "webgl2",
+        "frames": 2,
+        "draws": 284,
+        "triangles": 53580,
+        "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "values": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 7,
+          "bucket": 12,
+          "tip": 3,
+          "track": 0
+        },
+        "tool": "gripper",
+        "view": "three",
+        "zoom": 1,
+        "audit": {
+          "clearance": 0.34821502556805306,
+          "alerts": [],
+          "datum": 0.14,
+          "tool": "gripper"
+        }
+      }
+    },
+    "390x844/viewport": {
+      "status": "PASS",
+      "detail": {
+        "page": 390,
+        "viewport": 390,
+        "width": 357,
+        "height": 371
+      }
+    },
+    "390x844/poses-and-tools": {
+      "status": "PASS",
+      "detail": [
+        {
+          "label": "Перед отправкой · №2",
+          "tool": "gripper",
+          "values": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 7,
+            "bucket": 12,
+            "tip": 3,
+            "track": 0
+          },
+          "anglesDegrees": [
+            0,
+            0,
+            90,
+            -12,
+            3
+          ],
+          "clearance": 0.34821502556805306
+        },
+        {
+          "label": "Стрела над кожухом · №4",
+          "tool": "gripper",
+          "values": {
+            "yaw": 180,
+            "arm": -1,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            180,
+            -1,
+            91,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Фронтальный вид схвата · №3",
+          "tool": "gripper",
+          "values": {
+            "yaw": 90,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 14,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            90,
+            0,
+            90,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Молоток на стреле · №9",
+          "tool": "breaker-arm",
+          "values": {
+            "yaw": -65,
+            "arm": 22,
+            "wrist": 60,
+            "claw": 4,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            -65,
+            21.999999999999996,
+            38,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Молоток на погрузчике · гипотеза",
+          "tool": "breaker-loader",
+          "values": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 36,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            0,
+            0,
+            90,
+            -36,
+            0
+          ],
+          "clearance": 0.45518089586936217
+        },
+        {
+          "label": "Подъём ковша",
+          "tool": "gripper",
+          "values": {
+            "yaw": 90,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 32,
+            "tip": -10,
+            "track": 0
+          },
+          "anglesDegrees": [
+            90,
+            0,
+            90,
+            -32,
+            -10
+          ],
+          "clearance": 0.854378817706053
+        }
+      ]
+    },
+    "390x844/reversible-inspection": {
+      "status": "PASS",
+      "detail": "8 assemblies; transforms, materials and visibility restore exactly"
+    },
+    "390x844/mechanisms-and-input": {
+      "status": "PASS",
+      "detail": true
+    },
+    "390x844/surface-witnesses": {
+      "status": "PASS",
+      "detail": {
+        "tip0GapPairs": 8,
+        "tip3TriangleHits": [
+          {
+            "parts": [
+              "Двупалый сменный схват/3/CylinderGeometry",
+              "Съёмный ковш/1/BoxGeometry"
+            ],
+            "faces": [
+              0,
+              6
+            ],
+            "point": [
+              -1.294340009642226,
+              1.349255037473535,
+              0.06529111708745722
+            ]
+          },
+          {
+            "parts": [
+              "Двупалый сменный схват/4/CylinderGeometry",
+              "Съёмный ковш/1/BoxGeometry"
+            ],
+            "faces": [
+              0,
+              6
+            ],
+            "point": [
+              -1.2832748199492332,
+              1.3439762307002343,
+              0.04785516810857682
+            ]
+          }
+        ]
+      }
+    },
+    "390x844/archive-and-overlay": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "390x844/context-loss": {
+      "status": "PASS",
+      "detail": [
+        {
+          "pose": 2,
+          "label": "Фронтальный вид схвата · №3",
+          "url": "https://step3dlab.github.io/vr_anapa/research/mobot/1987/night-20261118/front-gripper.webp",
+          "width": 1120,
+          "height": 690
+        },
+        {
+          "pose": 3,
+          "label": "Молоток на стреле · №9",
+          "url": "https://step3dlab.github.io/vr_anapa/research/mobot/1987/night-20261118/breaker-arm.webp",
+          "width": 1120,
+          "height": 690
+        }
+      ]
+    },
+    "390x844/latest-to-v21": {
+      "status": "PASS",
+      "detail": {
+        "start": "mobot-latest.html?demo=v22#model",
+        "candidate": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v22.html",
+        "backup": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v21.html",
+        "draws": 276
+      }
+    },
+    "390x844/console-and-network": {
+      "status": "PASS",
+      "detail": {
+        "errors": [],
+        "failures": []
+      }
+    },
+    "360x800/WebGL2": {
+      "status": "PASS",
+      "detail": {
+        "mode": "webgl2",
+        "frames": 2,
+        "draws": 284,
+        "triangles": 53580,
+        "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "values": {
+          "yaw": 0,
+          "arm": 0,
+          "wrist": 90,
+          "claw": 7,
+          "bucket": 12,
+          "tip": 3,
+          "track": 0
+        },
+        "tool": "gripper",
+        "view": "three",
+        "zoom": 1,
+        "audit": {
+          "clearance": 0.34821502556805306,
+          "alerts": [],
+          "datum": 0.14,
+          "tool": "gripper"
+        }
+      }
+    },
+    "360x800/viewport": {
+      "status": "PASS",
+      "detail": {
+        "page": 360,
+        "viewport": 360,
+        "width": 329,
+        "height": 352
+      }
+    },
+    "360x800/poses-and-tools": {
+      "status": "PASS",
+      "detail": [
+        {
+          "label": "Перед отправкой · №2",
+          "tool": "gripper",
+          "values": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 7,
+            "bucket": 12,
+            "tip": 3,
+            "track": 0
+          },
+          "anglesDegrees": [
+            0,
+            0,
+            90,
+            -12,
+            3
+          ],
+          "clearance": 0.34821502556805306
+        },
+        {
+          "label": "Стрела над кожухом · №4",
+          "tool": "gripper",
+          "values": {
+            "yaw": 180,
+            "arm": -1,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            180,
+            -1,
+            91,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Фронтальный вид схвата · №3",
+          "tool": "gripper",
+          "values": {
+            "yaw": 90,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 14,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            90,
+            0,
+            90,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Молоток на стреле · №9",
+          "tool": "breaker-arm",
+          "values": {
+            "yaw": -65,
+            "arm": 22,
+            "wrist": 60,
+            "claw": 4,
+            "bucket": 0,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            -65,
+            21.999999999999996,
+            38,
+            0,
+            0
+          ],
+          "clearance": 0.06599999547004698
+        },
+        {
+          "label": "Молоток на погрузчике · гипотеза",
+          "tool": "breaker-loader",
+          "values": {
+            "yaw": 0,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 36,
+            "tip": 0,
+            "track": 0
+          },
+          "anglesDegrees": [
+            0,
+            0,
+            90,
+            -36,
+            0
+          ],
+          "clearance": 0.45518089586936217
+        },
+        {
+          "label": "Подъём ковша",
+          "tool": "gripper",
+          "values": {
+            "yaw": 90,
+            "arm": 0,
+            "wrist": 90,
+            "claw": 4,
+            "bucket": 32,
+            "tip": -10,
+            "track": 0
+          },
+          "anglesDegrees": [
+            90,
+            0,
+            90,
+            -32,
+            -10
+          ],
+          "clearance": 0.854378817706053
+        }
+      ]
+    },
+    "360x800/reversible-inspection": {
+      "status": "PASS",
+      "detail": "8 assemblies; transforms, materials and visibility restore exactly"
+    },
+    "360x800/mechanisms-and-input": {
+      "status": "PASS",
+      "detail": true
+    },
+    "360x800/surface-witnesses": {
+      "status": "PASS",
+      "detail": {
+        "tip0GapPairs": 8,
+        "tip3TriangleHits": [
+          {
+            "parts": [
+              "Двупалый сменный схват/3/CylinderGeometry",
+              "Съёмный ковш/1/BoxGeometry"
+            ],
+            "faces": [
+              0,
+              6
+            ],
+            "point": [
+              -1.294340009642226,
+              1.349255037473535,
+              0.06529111708745722
+            ]
+          },
+          {
+            "parts": [
+              "Двупалый сменный схват/4/CylinderGeometry",
+              "Съёмный ковш/1/BoxGeometry"
+            ],
+            "faces": [
+              0,
+              6
+            ],
+            "point": [
+              -1.2832748199492332,
+              1.3439762307002343,
+              0.04785516810857682
+            ]
+          }
+        ]
+      }
+    },
+    "360x800/archive-and-overlay": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "360x800/context-loss": {
+      "status": "PASS",
+      "detail": [
+        {
+          "pose": 0,
+          "label": "Перед отправкой · №2",
+          "url": "https://step3dlab.github.io/vr_anapa/research/mobot/1987/night-20261118/overview.webp",
+          "width": 1120,
+          "height": 690
+        },
+        {
+          "pose": 4,
+          "label": "Молоток на погрузчике · гипотеза",
+          "url": "https://step3dlab.github.io/vr_anapa/research/mobot/1987/night-20261118/breaker-loader.webp",
+          "width": 1120,
+          "height": 690
+        }
+      ]
+    },
+    "360x800/latest-to-v21": {
+      "status": "PASS",
+      "detail": {
+        "start": "mobot-latest.html?demo=v22#model",
+        "candidate": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v22.html",
+        "backup": "https://step3dlab.github.io/vr_anapa/mobot-engineering-v21.html",
+        "draws": 276
+      }
+    },
+    "360x800/console-and-network": {
+      "status": "PASS",
+      "detail": {
+        "errors": [],
+        "failures": []
+      }
+    },
+    "no-webgl": {
+      "status": "PASS",
+      "detail": true
+    },
+    "without-javascript": {
+      "status": "PASS",
+      "detail": [
+        [
+          2786,
+          2106
+        ],
+        [
+          2721,
+          2014
+        ],
+        [
+          2782,
+          1993
+        ],
+        [
+          2056,
+          1346
+        ]
+      ]
+    },
+    "candidate-resources": {
+      "status": "PASS",
+      "detail": 15
+    }
+  },
+  "screens": [
+    "webgl-1440x1000.png",
+    "webgl-390x844.png",
+    "webgl-360x800.png"
+  ],
+  "errors": [],
+  "mainArtifact": {
+    "id": 14407196572,
+    "digest": "sha256:d57203eb881f8e28d11d0913abb32c4ed9c49c8374501c778c2abfc08e663ce6",
+    "run": 44257048114,
+    "head": "2819cab0913f563ccd5ba1f7f56eeb292fd70beb"
+  },
+  "candidateArtifact": {
+    "id": 14405814499,
+    "digest": "sha256:4a0a4bfa32c6947504ecb1e448b1d65d108401eb9c7f0dbbd6ad099cce4ede56",
+    "run": 44255656467,
+    "head": "7caa7e30d1eb50a7dcf15ef601dbb90b4faede0f"
+  },
+  "assertionsPassed": {
+    "pages": 33,
+    "mainLocal": 30,
+    "candidateLocal": 30
+  },
+  "frameSha256": {
+    "pose-0.png": {
+      "pages": "953f668497d2ecd3c97ccc3d5d16abbcc38e29640f11aaf2da3c30be41cc3975",
+      "mainLocal": "953f668497d2ecd3c97ccc3d5d16abbcc38e29640f11aaf2da3c30be41cc3975",
+      "branchLocal": "953f668497d2ecd3c97ccc3d5d16abbcc38e29640f11aaf2da3c30be41cc3975"
+    },
+    "pose-1.png": {
+      "pages": "d39425e932a05b0a973eab22b124145882428851002e63b94a02679e136c915f",
+      "mainLocal": "d39425e932a05b0a973eab22b124145882428851002e63b94a02679e136c915f",
+      "branchLocal": "d39425e932a05b0a973eab22b124145882428851002e63b94a02679e136c915f"
+    },
+    "pose-2.png": {
+      "pages": "f6facea11a37449d5fa15b2496ad1b173820d88770a2e437374a57c13b06ee55",
+      "mainLocal": "f6facea11a37449d5fa15b2496ad1b173820d88770a2e437374a57c13b06ee55",
+      "branchLocal": "f6facea11a37449d5fa15b2496ad1b173820d88770a2e437374a57c13b06ee55"
+    },
+    "pose-3.png": {
+      "pages": "5cd4844ebd168767a9e019f90da05b6c17ac96b28cc27ab0f65350f56755fc7c",
+      "mainLocal": "5cd4844ebd168767a9e019f90da05b6c17ac96b28cc27ab0f65350f56755fc7c",
+      "branchLocal": "5cd4844ebd168767a9e019f90da05b6c17ac96b28cc27ab0f65350f56755fc7c"
+    },
+    "pose-4.png": {
+      "pages": "943d8306b5d4b70755d2b3197e8993d13e4e8d5c435bee9cc5e03e42165a2b68",
+      "mainLocal": "943d8306b5d4b70755d2b3197e8993d13e4e8d5c435bee9cc5e03e42165a2b68",
+      "branchLocal": "943d8306b5d4b70755d2b3197e8993d13e4e8d5c435bee9cc5e03e42165a2b68"
+    },
+    "pose-5.png": {
+      "pages": "f5d2115c00a54318b4d4239cb14e2e6fabdb8ef08c81c132668e8b419098456c",
+      "mainLocal": "f5d2115c00a54318b4d4239cb14e2e6fabdb8ef08c81c132668e8b419098456c",
+      "branchLocal": "f5d2115c00a54318b4d4239cb14e2e6fabdb8ef08c81c132668e8b419098456c"
+    },
+    "webgl-1440x1000.png": {
+      "pages": "f4d6e0cab4af30436bbc35f92fb132afc0d5466929f44166825088f6f71db9f1",
+      "mainLocal": "f4d6e0cab4af30436bbc35f92fb132afc0d5466929f44166825088f6f71db9f1",
+      "branchLocal": "f4d6e0cab4af30436bbc35f92fb132afc0d5466929f44166825088f6f71db9f1"
+    },
+    "webgl-390x844.png": {
+      "pages": "e0acbcc9e2f830d58b6905b794063ebba6ca51558ef4e5ca6a50efa84ad83596",
+      "mainLocal": "e0acbcc9e2f830d58b6905b794063ebba6ca51558ef4e5ca6a50efa84ad83596",
+      "branchLocal": "e0acbcc9e2f830d58b6905b794063ebba6ca51558ef4e5ca6a50efa84ad83596"
+    },
+    "webgl-360x800.png": {
+      "pages": "6ced266c56079606677fa714e697bf88b63769d54ff1d85a3528da542f0e01eb",
+      "mainLocal": "6ced266c56079606677fa714e697bf88b63769d54ff1d85a3528da542f0e01eb",
+      "branchLocal": "6ced266c56079606677fa714e697bf88b63769d54ff1d85a3528da542f0e01eb"
+    }
+  }
+}
