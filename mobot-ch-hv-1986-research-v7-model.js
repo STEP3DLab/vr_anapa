@@ -24,6 +24,19 @@ export function makeMobot1986(T,extension=.105){
     const o=new T.Mesh(geometry,material);o.name=name;o.userData.geometry='C';
     parent.add(o);model.objects.push(o);return o;
   }
+  // The exposed upper arc of a lower wheel is lighter than the face on both sides.
+  // Use the existing disc radius. The section and material of the lip are schematic.
+  const roadRadius=model.sourceProfile().wheelRadius;
+  const lipSection=[[.83,-.0015],[.83,.0015],[.75,.0015],[.75,-.0015]];
+  const lipGeometry=new T.LatheGeometry(lipSection.map(([r,z])=>new T.Vector2(r*roadRadius,z)),32);
+  for(const side of [-1,1]){
+    for(const rotor of sections['Борт '+side].children){
+      if(!rotor.getObjectByName('Нижний круговой элемент'))continue;
+      const lip=mesh(rotor,lipGeometry,m.structure,'Светлая закраина нижнего катка');
+      lip.position.z=side*.0815;
+      lip.rotation.x=side*Math.PI/2;
+    }
+  }
   function pin(parent,x,y,z,r,width,name){
     const o=mesh(parent,new T.CylinderGeometry(r,r,width,24),m.steel,name);
     o.position.set(x,y,z);o.rotation.x=Math.PI/2;return o;

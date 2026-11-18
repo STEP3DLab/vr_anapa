@@ -1,12 +1,12 @@
 {
-  "runtime": "Three.js r180 / Node v24.22.1",
+  "runtime": "Three.js r180 / Node v24.22.3",
   "tests": [
     {
       "name": "Vertices, normals, transforms and instance matrices",
       "status": "PASS",
-      "meshes": 306,
-      "drawnInstances": 630,
-      "vertices": 33057
+      "meshes": 320,
+      "drawnInstances": 644,
+      "vertices": 34905
     },
     {
       "name": "Wheel centres, gaps, closed belt and continuous contact",
@@ -15,6 +15,13 @@
       "wheelCountPerSide": 9,
       "maxContactResidual": 8.908329827538725e-7,
       "units": "scene"
+    },
+    {
+      "name": "Lower wheel rims follow the discs on both tracks",
+      "status": "PASS",
+      "rims": 14,
+      "phases": 128,
+      "maxSlipSceneUnits": 1.6653345369377348e-16
     },
     {
       "name": "Six independent motions and return to neutral",

@@ -43,18 +43,21 @@ async function range(id,num){
     assert(metrics.isWebGL2&&metrics.glError===0&&metrics.triangles>10000&&metrics.dark>100&&metrics.bright>1000);
     assert.equal(metrics.version,'1986-v7');assert.equal(metrics.extension,Number(process.env.MOBOT_EXTENSION||.105));await capture('desktop.jpg');return metrics;
   });
-  await test('Rear covers in the live Three.js model',async()=>{
+  await test('Rear covers and lower wheel rims in the live Three.js model',async()=>{
     const covers=await page.evaluate(()=>{
       const {model,materials}=window.mobotV7;
       return [-1,1].map(side=>{
         const rear=model.sections['Борт '+side].children.find(o=>
           o.position.x===model.sourceProfile().endWheels[0][0] && o.getObjectByName('Ступица'));
         const face=rear.getObjectByName('Лицевой диск');
+        const wheels=model.sections['Борт '+side].children.filter(o=>o.getObjectByName('Нижний круговой элемент'));
+        const rims=wheels.map(o=>o.getObjectByName('Светлая закраина нижнего катка'));
         return {lightFace:materials.get(face)===model.materials.structure,
-          hubScale:rear.getObjectByName('Ступица').scale.x};
+          hubScale:rear.getObjectByName('Ступица').scale.x,
+          lowerRims:rims.filter(o=>o && o.visible && materials.get(o)===model.materials.structure).length};
       });
     });
-    assert(covers.every(c=>c.lightFace&&Math.abs(c.hubScale-1/3)<1e-9));
+    assert(covers.every(c=>c.lightFace&&Math.abs(c.hubScale-1/3)<1e-9&&c.lowerRims===7));
     return {covers};
   });
   const original=await signature();
