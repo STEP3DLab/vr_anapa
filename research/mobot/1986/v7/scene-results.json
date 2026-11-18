@@ -4,9 +4,9 @@
     {
       "name": "Vertices, normals, transforms and instance matrices",
       "status": "PASS",
-      "meshes": 320,
-      "drawnInstances": 644,
-      "vertices": 34905
+      "meshes": 325,
+      "drawnInstances": 649,
+      "vertices": 35329
     },
     {
       "name": "Wheel centres, gaps, closed belt and continuous contact",

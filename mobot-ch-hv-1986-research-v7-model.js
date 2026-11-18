@@ -95,6 +95,25 @@ export function makeMobot1986(T,extension=.105){
     }
   }
   grab.add(carrier);
+  // Two distinct views and the outdoor series show slender outer members from
+  // the upper collar to the traverse. Their number behind the body is schematic.
+  const traverse=head.getObjectByName('Верхняя траверса');
+  const traverseTop=carrier.position.y+traverse.position.y+traverse.geometry.parameters.height/2;
+  const collarBottom=traverseTop*.58,collarThickness=.023;
+  const collar=mesh(grab,new T.BoxGeometry(.178,collarThickness,.216),m.steel,'Верхний пояс подвеса');
+  collar.position.y=collarBottom+collarThickness/2;
+  function suspensionCylinder(part,radius,top,bottom){
+    part.geometry.dispose();
+    part.geometry=new T.CylinderGeometry(radius,radius,top-bottom,32);
+    part.position.y=(top+bottom)/2;
+  }
+  suspensionCylinder(grab.getObjectByName('Корпус подвеса'),.076,-.093*(1+extension/.286),collarBottom+.009);
+  suspensionCylinder(grab.getObjectByName('Шейка подвеса'),.035,collarBottom+.005,traverseTop-.005);
+  for(const x of [-.071,.071])for(const z of [-.085,.085]){
+    const height=collarBottom-traverseTop+.008;
+    const rod=mesh(grab,new T.CylinderGeometry(.007,.007,height,16),m.steel,'Наружный стержень подвеса');
+    rod.position.set(x,(collarBottom+traverseTop)/2,z);
+  }
   const linkages=[];
   for(const end of [-1,1]){
     const jaw=sections['Ковшевая челюсть '+end],skin=new T.Group();

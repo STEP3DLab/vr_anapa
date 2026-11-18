@@ -29,6 +29,7 @@ jobs:
         run: |
           node research/mobot/1986/v7/suspension-clearance.mjs > v7-engineering-output/acceptance-clearance.json
           node research/mobot/1986/v7/scene-qa.mjs
+          node research/mobot/1986/v7/hanger-cage.mjs > v7-engineering-output/hanger-cage.json
           node scripts/mobot-compare-contract.cjs
           node mobot-geometry-gate.cjs
       - name: Prepare Chromium
