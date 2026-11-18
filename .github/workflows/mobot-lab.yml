@@ -7,6 +7,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: mobot-lab-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   laboratory:
     runs-on: ubuntu-24.04
@@ -18,11 +21,11 @@ jobs:
           node-version: 22
       - name: Check archive registration, moving assemblies and XR interactions
         run: node --test mobot-lab/tests/lab.test.mjs
-      - name: Install Chromium for WebGL2 and browser tests
-        run: |
-          npm install --no-save --package-lock=false playwright@1.56.1
-          npx playwright install --with-deps chromium
+      - name: Prepare the browser test driver
+        run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.56.1
       - name: Exercise desktop, mobile and offline exhibition
+        env:
+          MOBOT_CHROME_CHANNEL: chrome
         run: |
           python3 -m http.server 4200 --bind 127.0.0.1 > /tmp/mobot-lab-http.log 2>&1 &
           for i in {1..15}; do

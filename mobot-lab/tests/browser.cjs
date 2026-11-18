@@ -3,6 +3,50 @@ const assert = require('node:assert/strict');
 const {chromium} = require('playwright');
 const base = process.env.MOBOT_LAB_URL || 'http://127.0.0.1:4200/mobot-lab/';
 
+// Exercise the exact batched exhibit with a real WebGL2 renderer. The camera
+// and input here are simulated; physical stereo and tracking require a headset.
+async function renderXRExhibits(page) {
+  const rows=await page.evaluate(async()=>{
+    const T=await import('./engine/three.module.min.js');
+    const {machines}=await import('./catalog.js');
+    const {createXR}=await import('./xr.js');
+    const gl=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+    gl.setSize(256,192,false);
+    const camera=new T.PerspectiveCamera(57,256/192,.02,60);
+    camera.position.set(.1,1.55,0);camera.lookAt(.18,1.12,-1.9);
+    const controllers=[new T.Group(),new T.Group()];
+    let frame,year=1986,model=machines[year].create(T);
+    const adapter={
+      xr:{getController:i=>controllers[i],setReferenceSpaceType(){},async setSession(){},getReferenceSpace:()=>({})},
+      setAnimationLoop:cb=>{frame=cb},render:scene=>gl.render(scene,camera)
+    };
+    const xr=createXR(adapter,{
+      get:()=>({year,name:machines[year].title,root:model.root,ground:model.groundY??machines[year].ground,jointName:'Стрела',value:'0°',toolName:'Схват'}),
+      switchModel(){},nextJoint(){},change(){},nextTool(){},reset(){},ended(){}
+    });
+    const session=new EventTarget();session.requestReferenceSpace=async()=>({});
+    const results=[];
+    try {
+      await xr.start(session);
+      for(const next of [1986,1987]){
+        year=next;model=machines[year].create(T);machines[year].pose(model,machines[year].initial);xr.modelChanged();
+        const tools=year===1987?['gripper','breaker-arm','breaker-loader']:['gripper'];
+        for(const tool of tools){
+          if(year===1987)model.mechanisms.setWorkTool(tool);
+          xr.poseChanged();frame(0);
+          results.push({year,tool,calls:gl.info.render.calls,triangles:gl.info.render.triangles,glError:gl.getContext().getError()});
+        }
+      }
+    } finally {session.dispatchEvent(new Event('end'));gl.dispose()}
+    return results;
+  });
+  for(const frame of rows){
+    assert(frame.triangles>1000 && frame.calls>0);
+    assert.equal(frame.glError,0,JSON.stringify(frame));
+  }
+  console.log('Four XR exhibit configurations rendered through WebGL2:',JSON.stringify(rows));
+}
+
 async function exercise(browser, width, height, software) {
   const context=await browser.newContext({viewport:{width,height},hasTouch:width<600,reducedMotion:'reduce'});
   try {
@@ -15,6 +59,7 @@ async function exercise(browser, width, height, software) {
     page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text())});
     await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
     assert.equal(await page.locator('#surface').evaluate(s=>s.classList.contains('software')),software);
+    if(width===1440)await renderXRExhibits(page);
     const before=await page.locator('#surface canvas').screenshot();
     await page.locator('[data-view="side"]').click();
     const after=await page.locator('#surface canvas').screenshot();assert(!before.equals(after));
@@ -59,7 +104,7 @@ async function exercise(browser, width, height, software) {
   } finally {await context.close()}
 }
 (async()=>{
-  const browser=await chromium.launch({args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+  const browser=await chromium.launch({channel:process.env.MOBOT_CHROME_CHANNEL || undefined,args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   try {
     await exercise(browser,1440,960,false);
     await exercise(browser,390,844,false);
