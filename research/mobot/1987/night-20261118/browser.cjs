@@ -118,6 +118,35 @@ async function run(){
    await page.click('#reset');await page.evaluate(()=>{document.querySelector('#joints').open=false;window.scrollTo(0,0)});
    const name='webgl-'+w+'x'+h+'.png';await page.screenshot({path:path.join(out,name)});report.screens.push(name);
   }
+  await testAt('context-loss',async()=>{
+   const cases=w===1440?[[1,'snow-boom'],[5,'raised-bucket']]:
+     w===390?[[2,'front-gripper'],[3,'breaker-arm']]:[[0,'overview'],[4,'breaker-loader']];
+   const results=[];
+   for(const [i,name] of cases){
+    if(results.length){await page.reload();await page.waitForFunction(()=>window.mobot22?.status().frames>0);}
+    await page.selectOption('#pose',String(i));
+    const label=await page.locator('#poseLabel').innerText();
+    await page.check('#overlay');
+    await page.evaluate(()=>{
+     const gl=document.querySelector('#surface canvas').getContext('webgl2');
+     const loss=gl.getExtension('WEBGL_lose_context');
+     if(!loss)throw Error('WEBGL_lose_context unavailable');
+     loss.loseContext();
+    });
+    await page.waitForFunction(()=>window.mobot22?.status().mode==='static');
+    const still=await page.locator('#still').evaluate(async el=>{
+     await el.decode();return {url:el.currentSrc,width:el.naturalWidth,height:el.naturalHeight};
+    });
+    assert.equal(new URL(still.url).pathname.split('/').pop(),name+'.webp');
+    assert.deepEqual([still.width,still.height],[1120,690]);assert(await page.locator('#still').isVisible());
+    assert.equal(await page.locator('#poseLabel').innerText(),'Контрольный кадр · '+label);
+    assert(await page.locator('#pose').isDisabled());assert(!(await page.locator('#overlay').isChecked()));
+    assert(!(await page.locator('#overlayImage').isVisible()));
+    await page.click('[data-photo="3"]');await page.locator('#photo').evaluate(el=>el.decode());
+    results.push({pose:i,label,...still});
+   }
+   return results;
+  });
   if(publicRoute)await testAt('latest-to-v21', async()=>{
    assert.equal(page.url(),candidate+'?demo=v22#model');
    await page.locator('#backup a[href$="mobot-engineering-v21.html"]').click();

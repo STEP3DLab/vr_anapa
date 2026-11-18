@@ -1,4 +1,4 @@
-import {initial,poses} from './poses.js';
+import {initial,poses,stillNames} from './poses.js';
 import {inspectSurfaces} from './contact.js';
 import * as T from '../../../../mobot-assets/three.module.min.js';
 import {OrbitControls} from '../../../../mobot-assets/controls/OrbitControls.js';
@@ -117,6 +117,11 @@ function reset(){
 }
 function fallback(reason){
   ran=false;sceneMode='static';if(raf)cancelAnimationFrame(raf);raf=0;
+  const selected=$('pose').selectedIndex;
+  const index=selected>=0?selected:poses.findIndex(([,tool])=>tool===$('tool').value);
+  const label='Контрольный кадр · '+poses[index][0];
+  $('still').src=new URL(stillNames[index]+'.webp',import.meta.url).href;
+  $('still').alt=label;$('poseLabel').textContent=label;$('overlay').checked=false;
   surface.hidden=true;$('still').hidden=false;$('overlayImage').hidden=true;$('renderer').textContent='Статический кадр · v22';
   $('warning').textContent=reason+' Доступны контрольный кадр и четыре архивных снимка.';
   $('liveControls').disabled=true;$('overlay').disabled=$('match').disabled=true;
