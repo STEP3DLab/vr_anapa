@@ -66,3 +66,20 @@ dialog{width:min(760px,calc(100% - 24px));max-height:90dvh;padding:20px 23px;bor
   .bar nav .navlab{display:none}
   .partners{margin-left:0}
 }
+
+.match-actions{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin-top:auto}
+.match-actions a{color:#3b563c;font-size:12px}
+@media(min-width:761px){
+  #workbench[data-mode=photo] .bench{grid-template-columns:minmax(0,1.17fr) minmax(0,1fr)}
+  #panel-photo .photo-frame{height:clamp(210px,18.2vw,295px)}
+  #panel-photo .match-note{max-width:68ch}
+}
+
+.measurements{border-block:1px solid var(--line);margin:10px 0 14px;padding:7px 0;font-size:12px}
+.measurements summary{cursor:pointer;font-weight:610}
+.measurements table{border-collapse:collapse;width:100%;margin-top:9px}
+.measurements caption{text-align:left;color:var(--sub);padding-bottom:8px}
+.measurements th,.measurements td{padding:4px 6px;text-align:right;font-variant-numeric:tabular-nums}
+.measurements tbody th,.measurements thead th:first-child{text-align:left}
+.measurements tbody th{font-weight:480}
+.measurements thead,.measurements tr+tr{border-top:1px solid var(--line)}

@@ -11,7 +11,7 @@ export function openModal(kind, html, label=kind) {
 }
 export function closeModal() { dialog.close(); }
 $('closeDialog').onclick=closeModal;
-dialog.addEventListener('close',()=>{if(returnFocus?.isConnected) returnFocus.focus({preventScroll:true})});
+dialog.addEventListener('close',()=>{if(returnFocus?.isConnected && (document.activeElement===document.body || dialog.contains(document.activeElement))) returnFocus.focus({preventScroll:true})});
 dialog.addEventListener('click',e=>{
   if (e.target!==dialog) return;
   const b=dialog.getBoundingClientRect();

@@ -105,3 +105,13 @@ export const registrations = {
     ])
   }
 };
+
+// Compare only landmarks explicitly observed in the image and projected by the model.
+export function landmarkDifferences(overlay) {
+  const projected=new Map(overlay.points.filter(p=>p.kind==='model').map(p=>[p.label,p]));
+  return overlay.points.filter(p=>p.kind==='photo'&&projected.has(p.label)).map(photo=>{
+    const model=projected.get(photo.label);
+    const pixels=Math.hypot(model.x-photo.x,model.y-photo.y);
+    return {label:photo.label,pixels,percentWidth:pixels*100/overlay.width};
+  });
+}

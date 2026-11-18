@@ -4,7 +4,7 @@ import {existsSync} from 'node:fs';
 import * as T from '../engine/three.module.min.js';
 import {machines, demonstrations} from '../catalog.js';
 import {inspections} from '../inspection.js';
-import {registrations} from '../registrations.js';
+import {registrations,landmarkDifferences} from '../registrations.js';
 import {evidence} from '../evidence.js';
 import {readScene, sceneURL, photoKey} from '../scene-link.js';
 import {createXR} from '../xr.js';
@@ -100,4 +100,12 @@ test('The XR exhibit handles controller input, model replacement, local space fa
     loop(16);controllers[0].dispatchEvent({type:'squeezeend'});assert.notEqual(holder.rotation.y,startRotation);
     xr.poseChanged();await session.end();assert.equal(ended,1);assert.equal(loop,null);assert.equal(xr.active,false);
   } finally {globalThis.document=oldDocument}
+});
+
+test('The photo report measures only paired points in the displayed image coordinates',()=>{
+  const first=registrations['1986-fig6'].overlay;
+  const hanger=landmarkDifferences(first).find(p=>p.label==='Траверса грейфера');
+  assert(hanger.pixels>60 && hanger.pixels<75);
+  assert(Math.abs(hanger.percentWidth-hanger.pixels*100/first.width)<1e-9);
+  assert.deepEqual(landmarkDifferences(registrations['1987-breaker'].overlay),[]);
 });

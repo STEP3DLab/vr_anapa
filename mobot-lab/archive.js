@@ -1,6 +1,6 @@
 import {icon} from './icons.js';
 import {evidence} from './evidence.js';
-import {registrations} from './registrations.js';
+import {registrations,landmarkDifferences} from './registrations.js';
 import {photoKey} from './scene-link.js';
 
 export const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -25,7 +25,18 @@ function photoImage(photo, marked, enlarged) {
   return '<div class="photo-frame'+(enlarged?' enlarged':'')+'"><img src="'+h(photo.file)+'" alt="'+h(photo.title)+'">'+
     (marked && reg?.overlay ? overlaySVG(reg.overlay) : '')+'</div>';
 }
-const legend = '<div class="legend"><span><b class="photo-dot">○</b> Точка на снимке</span><span><b class="model-cross">+</b> Проекция модели</span></div>';
+const legend = '<div class="legend"><span><b class="photo-dot">○</b> Точка на снимке</span><span><b class="model-cross">+</b> Проекция архивной позы</span></div>';
+
+function measurements(overlay) {
+  const diffs=landmarkDifferences(overlay);
+  const num=n=>n.toLocaleString('ru-RU',{maximumFractionDigits:1,minimumFractionDigits:1});
+  if(!diffs.length)return '';
+  return '<details class="measurements"><summary>Расхождения по ориентирам ('+diffs.length+')</summary>'+
+    '<table><caption>Расстояние между отметкой на снимке и проекцией той же точки. Ширина кадра '+overlay.width+' пикс.</caption>'+
+    '<thead><tr><th scope="col">Ориентир</th><th scope="col">Пикс.</th><th scope="col">% ширины</th></tr></thead><tbody>'+
+    diffs.map(d=>'<tr><th scope="row">'+h(d.label)+'</th><td>'+num(d.pixels)+'</td><td>'+num(d.percentWidth)+'</td></tr>').join('')+
+    '</tbody></table></details>';
+}
 
 export function createArchive({openModal, closeModal, compare}) {
   let filter = 'all', expanded = false, gallery = null;
@@ -62,7 +73,7 @@ export function createArchive({openModal, closeModal, compare}) {
     openModal('ФОТОАРХИВ  /  '+year, '<h2>'+h(photo.title)+'</h2>'+
       photoImage(photo,marked,true)+(marked?legend:'')+
       '<div class="gallery-foot"><div class="source-links">'+external(photo.source,'Источник')+' '+external(photo.original,'Полный кадр')+'</div><div class="gallery-nav"><button class="icon" id="prevPhoto" aria-label="Предыдущий снимок">'+icon('left')+'</button><span>'+(index+1)+' / '+photos.length+'</span><button class="icon" id="nextPhoto" aria-label="Следующий снимок">'+icon('right')+'</button></div></div>'+
-      '<p>'+h(photo.note)+'</p>'+(marked?'<p class="evidence-note">'+h(reg.note)+'</p>':'')+
+      '<p>'+h(photo.note)+'</p>'+(marked?'<p class="evidence-note">'+h(reg.note)+'</p>'+measurements(reg.overlay):'')+
       '<div class="photo-actions">'+(reg && '<button id="galleryCompare" class="modal-action">'+icon('box')+'Сверить с 3D</button>' || '')+
       (reg?.overlay?'<button id="galleryMarks" class="secondary" aria-pressed="'+marked+'">'+(marked?'Скрыть разметку':'Показать разметку')+'</button>':'')+'</div>', photo.title);
     $('prevPhoto').onclick=()=>{openPhoto(year,index-1,marked);$('prevPhoto').focus()};
@@ -86,7 +97,7 @@ export function createArchive({openModal, closeModal, compare}) {
       '<button class="photo-zoom" id="photoEnlarge" aria-label="Увеличить архивный снимок">'+photoImage(photo,marks,false)+'<span>'+icon('expand')+'</span></button>'+
       (reg?.overlay?'<label class="overlay-toggle"><input id="overlayToggle" type="checkbox"'+(marks?' checked':'')+'>Разметка на снимке</label>':'')+
       (marks&&reg?.overlay?legend:'')+'<p class="match-note">'+h(reg?.note || photo.note)+'</p>'+
-      '<button class="secondary" id="restorePhoto"'+(live&&reg?'':' disabled')+'>'+icon('reset')+'Вернуть позу по снимку</button>';
+      '<div class="match-actions"><button class="secondary" id="restorePhoto"'+(live&&reg?'':' disabled')+'>'+icon('reset')+'Вернуть позу по снимку</button>'+external(photo.source,'Источник')+'</div>';
     $('photoSelect').onchange=e=>select(Number(e.target.value));
     $('photoEnlarge').onclick=()=>openPhoto(year,index,marks);
     if ($('overlayToggle')) $('overlayToggle').onchange=e=>toggle(e.target.checked);

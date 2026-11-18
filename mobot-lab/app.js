@@ -191,7 +191,7 @@ function photoPanel() {
   });
 }
 function setMode(next,{match=next==='photo'}={}) {
-  const previous=mode;mode=next;stopDemo();tell('');
+  const previous=mode;mode=next;$('workbench').dataset.mode=mode;stopDemo();tell('');
   if(previous==='parts'&&next!=='parts'&&viewer?.capture().detail)viewer.frame('iso');
   for(const b of all('[data-mode]')){
     const on=b.dataset.mode===mode;
