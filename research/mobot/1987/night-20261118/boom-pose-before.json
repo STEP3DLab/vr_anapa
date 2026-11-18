@@ -1,0 +1,143 @@
+{
+  "SKTB2": {
+    "pose": 0,
+    "pin": [
+      835,
+      106
+    ],
+    "rail": [
+      [
+        533,
+        245
+      ],
+      [
+        664,
+        180
+      ]
+    ],
+    "prox": [
+      517,
+      342
+    ],
+    "proxStatus": "possible visible bearing, identity provisional",
+    "referenceWidth": 1000,
+    "preset": {
+      "arm": 0,
+      "yaw": 0,
+      "tip": [
+        823.2657903957368,
+        109.35150808342404
+      ],
+      "proximal": [
+        461.42841518756126,
+        328.81121807542394
+      ],
+      "rail": [
+        [
+          477.16331636191575,
+          325.1783038414159
+        ],
+        [
+          704.6259545734035,
+          184.7455187088255
+        ]
+      ],
+      "railAngleError": 5.300863884348344,
+      "tipError": 12.203453669762522
+    },
+    "slopeFit": {
+      "arm": 5.199999999999999,
+      "yaw": 0,
+      "tip": [
+        843.784246564199,
+        143.52377527335435
+      ],
+      "proximal": [
+        461.42841518756126,
+        328.81121807542394
+      ],
+      "rail": [
+        [
+          478.2746924728351,
+          327.0579372352743
+        ],
+        [
+          718.2403119321658,
+          207.77102778359134
+        ]
+      ],
+      "railAngleError": 0.042135565810662266,
+      "tipError": 38.53824981062114
+    },
+    "note": "Near face of distal pin tested separately. Scale, roll and depth from deck camera; platform yaw fixed. No physical length estimated."
+  },
+  "SKTB4": {
+    "pose": 1,
+    "pin": [
+      104,
+      95
+    ],
+    "rail": [
+      [
+        382,
+        186
+      ],
+      [
+        241,
+        137
+      ]
+    ],
+    "prox": null,
+    "proxStatus": "masked by pedestal and actuator",
+    "referenceWidth": 1000,
+    "preset": {
+      "arm": -8,
+      "yaw": 180,
+      "tip": [
+        144.5286658868215,
+        47.054877903343446
+      ],
+      "proximal": [
+        421.44575304518963,
+        284.04496889643565
+      ],
+      "rail": [
+        [
+          408.4497740396324,
+          267.5094874099139
+        ],
+        [
+          238.35001022711384,
+          119.98282068654291
+        ]
+      ],
+      "railAngleError": -21.771688386872544,
+      "tipError": 62.77983347723147
+    },
+    "slopeFit": {
+      "arm": 13.899999999999999,
+      "yaw": 180,
+      "tip": [
+        74.71735693877768,
+        165.90290566013266
+      ],
+      "proximal": [
+        421.44575304518963,
+        284.04496889643565
+      ],
+      "rail": [
+        [
+          404.6695793240413,
+          274.0477989199002
+        ],
+        [
+          192.04262496112284,
+          200.07713668387584
+        ]
+      ],
+      "railAngleError": -0.01899792562850084,
+      "tipError": 76.71176712669721
+    },
+    "note": "Near face of distal pin tested separately. Scale, roll and depth from deck camera; platform yaw fixed. No physical length estimated."
+  }
+}
