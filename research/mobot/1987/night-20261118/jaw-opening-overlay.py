@@ -10,8 +10,9 @@ for id,view in results.items():
     crop=(690,260,965,440) if id=='SKTB2' else (238,440,675,728)
     w,h=crop[2]-crop[0],crop[3]-crop[1]
     panels=[('SKTB',None),('v22 / released',baseline[id]['revisions']['v22']['preset']),
-            ('v22 / candidate',view['revisions']['v22']['preset'])]
-    sheet=Image.new('RGB',(w*3,h+28),'#191d20')
+            ('v22 / same control',view['revisions']['v22']['preset']),
+            ('v22 / photo fit',view['photoMatch'])]
+    sheet=Image.new('RGB',(w*len(panels),h+28),'#191d20')
     for i,(label,model) in enumerate(panels):
         img=photo.copy()
         draw=ImageDraw.Draw(img)

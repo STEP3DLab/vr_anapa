@@ -1,3 +1,4 @@
+import {poses} from './poses.js';
 // Register only the right cheek. The left cheek is a held-out test of the assembled pose.
 // Both near cheek faces are coplanar in the model; a common affine camera is assumed.
 import fs from 'node:fs';
@@ -67,6 +68,12 @@ for(const [id,v] of Object.entries(views)){
     const best=sweep.reduce((a,b)=>a.rms<b.rms?a:b);
     data.revisions[rev]={preset,best,angleSweep:sweep.map(s=>[s.claw,s.rms,s.gapX])};
   }
+  const pose=poses[id==='SKTB2'?0:2][2];
+  const calibrated=measure(candidate(T,'desktop').mechanisms,v,pose.claw);
+  const observedGap=v.right[1][0]-v.left[1][0];
+  const grid=data.revisions.v22.angleSweep;
+  assert(Math.abs(calibrated.gapX-observedGap)<=Math.min(...grid.map(([,r,gap])=>Math.abs(gap-observedGap)))+1e-8);
+  data.photoMatch=calibrated;
   result[id]=data;
   console.log(id,Object.entries(data.revisions).map(([rev,s])=>[rev,s.preset.rms,s.preset.gapX,s.best.claw,s.best.rms]));
 }
