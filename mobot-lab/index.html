@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f5ef">
+<title>Лаборатория «Мобот» — Технопарк РГСУ</title>
+<meta name="description" content="Интерактивный атлас чернобыльских роботов Мобот-Ч-ХВ и Мобот-Ч-ХВ-2. Управление механизмами, архивные снимки и просмотр в VR.">
+<link rel="icon" href="./mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./style.css">
+<script type="module" src="./app.js"></script>
+</head>
+<body>
+<a href="#lab" class="skip">К модели</a>
+<header class="top"><div class="wrap bar">
+<a class="brand" href="#lab" aria-label="Атлас Мобот"><img src="./mark.svg" alt=""><span>МОБОТ<span class="brand-sub">Инженерный архив</span></span></a>
+<nav aria-label="Разделы"><a href="#lab" class="navlab active"><i data-i="box"></i>Лаборатория</a><a href="#archive" class="navarch"><i data-i="archive"></i>Фотоархив</a></nav>
+<div class="partners"><a href="http://sktbpr.ru/content/o-nas" target="_blank" rel="noopener" title="СКТБ прикладной робототехники"><img src="./media/sktbpr.png" alt="СКТБ ПР"></a><span></span><a href="https://rgsu.net/" target="_blank" rel="noopener" title="Российский государственный социальный университет"><img src="./media/rgsu.png" alt="РГСУ"></a></div>
+</div></header>
+<main class="wrap">
+<section id="lab" aria-labelledby="title">
+<div class="intro"><div><p class="overline"><span class="line"></span>ЧЕРНОБЫЛЬСКАЯ АЭС <b>/</b> 1986–1987</p><h1 id="title">Лаборатория «Мобот»</h1><p class="lead">Инженерные реконструкции роботов, работавших на кровле ЧАЭС.</p></div><button class="vr major" id="vr"><i data-i="vr"></i> Войти в VR <i data-i="arrowUpRight"></i></button></div>
+<div class="bench">
+<section class="viewblock" aria-label="Область просмотра">
+<div id="stage" class="stage">
+<div class="screen" id="surface"></div><img id="poster" alt="Обзорная реконструкция Мобот-Ч-ХВ" src="./media/1986-overview.webp">
+<div class="glass head"><div><span class="stage-tag"><span class="live-dot"></span><span id="renderMode">3D-МОДЕЛЬ</span></span><h2 id="modelTitle">Мобот-Ч-ХВ</h2></div><button class="icon glass-btn" id="fullscreen" aria-label="На весь экран" title="На весь экран"><i data-i="expand"></i></button></div>
+<div class="stage-bottom"><div class="view-controls" role="group" aria-label="Ракурс"><button data-view="iso" aria-pressed="true" title="Общий вид"><i data-i="box"></i> <span>Общий</span></button><button data-view="side" aria-pressed="false">Сбоку</button><button data-view="front" aria-pressed="false">Спереди</button><button data-view="top" aria-pressed="false">Сверху</button></div><div class="zoom"><button id="out" aria-label="Отдалить" title="Отдалить"><i data-i="minus"></i></button><button id="fit" aria-label="Вписать модель" title="Вписать модель"><i data-i="focus"></i></button><button id="in" aria-label="Приблизить" title="Приблизить"><i data-i="plus"></i></button></div></div>
+</div><div class="stage-foot"><span><i data-i="orbit"></i><span id="hint">Перетащите для вращения · Колесо или щипок для масштаба</span></span><span class="scene-id" id="sceneId">Ч-ХВ / 1986</span></div>
+</section>
+<aside class="panel" aria-label="Пульт управления">
+<h2><i data-i="sliders"></i>Пульт управления</h2>
+<div class="mini">МОДЕЛЬ РОБОТА</div>
+<div class="model-switch" role="group" aria-label="Выбор робота"><button data-year="1986" aria-pressed="true"><strong>Ч-ХВ</strong><span>1986</span></button><button data-year="1987" aria-pressed="false"><strong>Ч-ХВ-2</strong><span>1987</span></button></div>
+<div class="controls-head"><h3>Механизмы</h3><button id="reset" class="text-btn" title="Вернуть исходное положение"><i data-i="reset"></i>Сброс</button></div>
+<div id="toolRow" hidden><label for="tool">Рабочий орган</label><select id="tool"><option value="gripper">Двупалый схват</option><option value="breaker-arm">Молоток на стреле</option><option value="breaker-loader">Молоток на погрузчике*</option></select></div>
+<div id="joints"></div><details id="extra"><summary>Другие механизмы <i data-i="down"></i></summary><div id="moreJoints"></div></details>
+<button id="demo" class="demo" aria-pressed="false"><i data-i="play"></i><span>Демонстрация движения</span></button>
+</aside></div>
+<p class="bench-note" id="status" role="status" aria-live="polite"></p>
+</section>
+<section id="archive" class="archive" aria-labelledby="archiveTitle"><div class="archive-head"><div><p class="overline"><span class="line"></span>ИСТОЧНИКИ РЕКОНСТРУКЦИИ</p><h2 id="archiveTitle">Фотоархив</h2></div><span class="photo-count"><i data-i="image"></i> 6 снимков</span></div>
+<div class="cards">
+<button class="card" data-gallery="1986"><div class="thumb"><img loading="lazy" src="./media/1986-fig6.webp" alt="Мобот-Ч-ХВ с грейфером, архивный снимок"></div><div class="card-copy"><span class="mini">1986 <b>/</b> 2 СНИМКА</span><h3>Мобот-Ч-ХВ</h3><p>Решётчатая стрела и грейфер первой машины.</p></div><i data-i="arrowUpRight"></i></button>
+<button class="card" data-gallery="1987"><div class="thumb"><img loading="lazy" src="./media/1987-before-dispatch.webp" alt="Мобот-Ч-ХВ-2 перед отправкой на ЧАЭС"></div><div class="card-copy"><span class="mini">1987 <b>/</b> 4 СНИМКА</span><h3>Мобот-Ч-ХВ-2</h3><p>Испытания модернизированной машины со сменным оснащением.</p></div><i data-i="arrowUpRight"></i></button></div></section>
+</main>
+<footer><div class="wrap footer-inner"><div><strong>Технопарк РГСУ</strong><span>Цифровая реконструкция</span></div><div><strong>МВТУ им. Н. Э. Баумана</strong><span>Разработка исторических машин · <a href="http://sktbpr.ru/node/23" target="_blank" rel="noopener">Архив СКТБ ПР ↗</a></span></div><button id="about" class="text-btn"><i data-i="info"></i> О проекте</button></div></footer>
+<dialog id="dialog"><div class="modal-top"><span class="mini" id="dialogKind"></span><button id="closeDialog" class="icon" aria-label="Закрыть"><i data-i="x"></i></button></div><div id="dialogBody"></div></dialog>
+<noscript>Для управления 3D-моделями включите JavaScript. <a href="http://sktbpr.ru/node/23">История машин в архиве СКТБ ПР</a>.</noscript>
+</body></html>
