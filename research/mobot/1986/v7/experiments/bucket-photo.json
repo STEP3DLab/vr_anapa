@@ -1,0 +1,167 @@
+{
+  "fit": "fig6 cutting edge vector only",
+  "factor": 1.1616881090690871,
+  "posesChecked": 527,
+  "edges": {
+    "fig6-lip": {
+      "endpoints": [
+        [
+          1298,
+          1104
+        ],
+        [
+          1398,
+          948
+        ]
+      ],
+      "radiusEachPx": 10,
+      "scaleFromXandY": [
+        0.831,
+        3.274
+      ],
+      "photoAngleBoundsDeg": [
+        -63.54,
+        -51.14
+      ],
+      "baseline": {
+        "vectorPx": [
+          120.38,
+          -47.65
+        ],
+        "vectorResidualPx": 110.25,
+        "errorXY": [
+          20.38,
+          108.35
+        ]
+      },
+      "trial": {
+        "vectorPx": [
+          139.84,
+          -55.36
+        ],
+        "vectorResidualPx": 108.24,
+        "errorXY": [
+          39.84,
+          100.64
+        ]
+      }
+    },
+    "fig6-rail": {
+      "endpoints": [
+        [
+          1060,
+          873
+        ],
+        [
+          1215,
+          776
+        ]
+      ],
+      "radiusEachPx": 9,
+      "scaleFromXandY": [
+        1.296,
+        2.049
+      ],
+      "photoAngleBoundsDeg": [
+        -37.69,
+        -26.39
+      ],
+      "baseline": {
+        "vectorPx": [
+          119.57,
+          -47.34
+        ],
+        "vectorResidualPx": 61.0,
+        "errorXY": [
+          -35.43,
+          49.66
+        ]
+      },
+      "trial": {
+        "vectorPx": [
+          138.91,
+          -54.99
+        ],
+        "vectorResidualPx": 44.99,
+        "errorXY": [
+          -16.09,
+          42.01
+        ]
+      }
+    },
+    "fig9-rail": {
+      "endpoints": [
+        [
+          34,
+          828
+        ],
+        [
+          338,
+          906
+        ]
+      ],
+      "radiusEachPx": 10,
+      "scaleFromXandY": [
+        1.207,
+        1.107
+      ],
+      "photoAngleBoundsDeg": [
+        10.74,
+        18.04
+      ],
+      "baseline": {
+        "vectorPx": [
+          251.76,
+          70.48
+        ],
+        "vectorResidualPx": 52.77,
+        "errorXY": [
+          -52.24,
+          -7.52
+        ]
+      },
+      "trial": {
+        "vectorPx": [
+          292.47,
+          81.87
+        ],
+        "vectorResidualPx": 12.16,
+        "errorXY": [
+          -11.53,
+          3.87
+        ]
+      }
+    }
+  },
+  "cheekFig6": {
+    "landmarks": {
+      "heel": [
+        1060,
+        873
+      ],
+      "front": [
+        1281,
+        1085
+      ],
+      "knee": [
+        1202,
+        945
+      ]
+    },
+    "radiusEachPx": 12,
+    "bestLiftTipOnGrid": [
+      0,
+      0
+    ],
+    "frontErrorPx": 16.77,
+    "heldOutKneeErrorPx": 12.97,
+    "observedReachDropPx": [
+      221,
+      212
+    ],
+    "projectedReachDropPx": [
+      208.82,
+      200.48
+    ]
+  }
+}
