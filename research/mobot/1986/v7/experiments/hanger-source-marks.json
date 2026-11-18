@@ -1,0 +1,77 @@
+{
+  "C1-1": {
+    "size": [
+      9221,
+      6653
+    ],
+    "sha256": "50036db994c46c58baef63eb5438bff0ffb338ec1399b9914f6afd7be8d962cb",
+    "readings": {
+      "pin": [
+        1409,
+        1416,
+        38
+      ],
+      "collar": [
+        1639,
+        2112,
+        33
+      ],
+      "traverse": [
+        1672,
+        2608,
+        29
+      ]
+    },
+    "role": "fit"
+  },
+  "C1-2": {
+    "size": [
+      9463,
+      7014
+    ],
+    "sha256": "05828aaf90d9c6fe53eac19a05ff702d66d349bbffcc26b1b486e27a0d3db81c",
+    "readings": {
+      "pin": [
+        8051,
+        1146,
+        40
+      ],
+      "collar": [
+        7799,
+        1917,
+        40
+      ],
+      "traverse": [
+        7715,
+        2445,
+        30
+      ]
+    },
+    "role": "holdout"
+  },
+  "C1-6": {
+    "size": [
+      9441,
+      7014
+    ],
+    "sha256": "1a8fa2fdfcb6398dc77787f418c7d9eb829150315abcd48cdc1f13fbd2e9fcf0",
+    "readings": {
+      "pin": [
+        1381,
+        1032,
+        44
+      ],
+      "collar": [
+        1514,
+        1579,
+        33
+      ],
+      "traverse": [
+        1547,
+        2065,
+        39
+      ]
+    },
+    "role": "holdout"
+  }
+}

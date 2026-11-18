@@ -1,0 +1,84 @@
+{
+  "baseline": "206565902b72efa4ca635111571b3b87754293b3",
+  "comparison": "visible outer rod span / pin-to-upper-traverse height",
+  "marks": {
+    "C1-1": {
+      "role": "fit",
+      "photo": 0.4161,
+      "readingRange": [
+        0.3614,
+        0.4717
+      ],
+      "absoluteErrorBeforeAfter": [
+        0.4161,
+        0.0039
+      ]
+    },
+    "C1-2": {
+      "role": "holdout",
+      "photo": 0.4065,
+      "readingRange": [
+        0.3499,
+        0.4639
+      ],
+      "absoluteErrorBeforeAfter": [
+        0.4065,
+        0.0135
+      ]
+    },
+    "C1-6": {
+      "role": "holdout",
+      "photo": 0.4705,
+      "readingRange": [
+        0.3988,
+        0.5428
+      ],
+      "absoluteErrorBeforeAfter": [
+        0.4705,
+        0.0505
+      ]
+    }
+  },
+  "before": {
+    "rods": 0,
+    "openFraction": 0,
+    "shortestOverlapScene": null,
+    "poses": 11913,
+    "pinToTraversePx": {
+      "fig6": [
+        -11.994625544193614,
+        138.71636297015277
+      ],
+      "fig9": [
+        -17.644235520899826,
+        109.30017528210524
+      ]
+    },
+    "maxVectorChangePx": {
+      "fig6": 3.7301801820622945e-13,
+      "fig9": 3.416521190095895e-13
+    }
+  },
+  "after": {
+    "rods": 4,
+    "openFraction": 0.4200000004577352,
+    "shortestOverlapScene": 0.0040000017890333694,
+    "poses": 11913,
+    "pinToTraversePx": {
+      "fig6": [
+        -11.994625544193614,
+        138.71636297015277
+      ],
+      "fig9": [
+        -17.644235520899826,
+        109.30017528210524
+      ]
+    },
+    "maxVectorChangePx": {
+      "fig6": 3.7301801820622945e-13,
+      "fig9": 3.416521190095895e-13
+    }
+  },
+  "geometry": "C",
+  "status": "PASS"
+}

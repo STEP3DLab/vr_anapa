@@ -61,6 +61,15 @@ async function range(id,num){
     return {covers};
   });
   const original=await signature();
+  await test('Suspension collar and exterior rods loaded in WebGL2',async()=>{
+    const result=await page.evaluate(()=>{
+      const {model}=window.mobotV7;
+      const rods=model.objects.filter(o=>o.name==='Наружный стержень подвеса');
+      return {visibleRods:rods.filter(o=>o.visible&&o.parent===model.mechanisms.grab).length,
+        upperCollar:model.mechanisms.grab.getObjectByName('Верхний пояс подвеса')?.visible===true};
+    });
+    assert.equal(result.visibleRods,4);assert(result.upperCollar);return result;
+  });
   await test('Seven assemblies: highlights, isolation and exact restoration',async()=>{
     const options=await page.locator('#part option').evaluateAll(os=>os.map(o=>o.value).filter(v=>v!=='all'));assert.equal(options.length,7);
     for(const id of options){
