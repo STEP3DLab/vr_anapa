@@ -1,0 +1,28 @@
+{
+  "SKTB2": {
+    "trials": 2000,
+    "coordinatePerturbationPx": 3,
+    "lowerRmsCount": 2000,
+    "minGainPx": 3.6650156029626406,
+    "medianGainPx": 7.764941154590348,
+    "maxGainPx": 10.687607576332718,
+    "visibleTrackSpanPx": 625.2692031586504,
+    "originalRmsFractionOfTrack": {
+      "before": 0.01577004024720692,
+      "after": 0.0004853698887182343
+    }
+  },
+  "SKTB4": {
+    "trials": 2000,
+    "coordinatePerturbationPx": 4,
+    "lowerRmsCount": 1998,
+    "minGainPx": -0.39882604123647836,
+    "medianGainPx": 4.304746504456762,
+    "maxGainPx": 7.314164638807927,
+    "visibleTrackSpanPx": 507.0,
+    "originalRmsFractionOfTrack": {
+      "before": 0.01365045573070221,
+      "after": 0.0035648645695641325
+    }
+  }
+}
