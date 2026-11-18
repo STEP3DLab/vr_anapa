@@ -44,3 +44,24 @@ for key, row in json.loads((d/'bucket-heel.json').read_text()).items():
         sheet.paste(pic,(i*w,30))
         ImageDraw.Draw(sheet).text((i*w+10,8),f"{key}  |  {label}  |  RMS {row[name]['rms']:.2f} px  |  cyan: mesh, orange: archive, green: anchors",fill='white')
     sheet.save(d/f'{key}-bucket-heel.jpg',quality=93)
+
+# The actual shaft end and cutting lip are separate from the two points used for fitting.
+for key,row in json.loads((d/'loader-witnesses.json').read_text()).items():
+    name = 'before-dispatch' if key=='SKTB2' else 'snow-side'
+    box = (635,383,998,660) if key=='SKTB2' else (610,390,895,633)
+    photo=Image.open(d.parents[3]/'mobot-assets/archive'/f'1987-{name}.jpg')
+    photo=photo.resize((1000,round(photo.height*1000/photo.width)),Image.Resampling.LANCZOS)
+    w,h=box[2]-box[0],box[3]-box[1]
+    sheet=Image.new('RGB',(w*2,h+22),'#1e2528')
+    for i,field in enumerate(['reference','fit']):
+        state=row[field];panel=photo.copy();draw=ImageDraw.Draw(panel)
+        draw.line([tuple(p) for p in state['outline']],fill='cyan',width=2)
+        for p in [state['shaftEnd'],state['lip']]:
+            x,y=p;draw.ellipse((x-4,y-4,x+4,y+4),outline='magenta',width=2)
+        for p in [row['pinMark'],row['lipMark']]:
+            if p:
+                x,y=p;draw.line((x-5,y,x+5,y),fill='orange',width=2);draw.line((x,y-5,x,y+5),fill='orange',width=2)
+        sheet.paste(panel.crop(box),(i*w,22))
+        label=field if field!='fit' or key=='SKTB2' else 'fit / rejected'
+        ImageDraw.Draw(sheet).text((i*w+5,5),f"{key}  {label}  |  lift {state['bucket']}   tilt {state['tip']}",fill='white')
+    sheet.save(d/f'{key}-loader-pose.jpg',quality=93)
