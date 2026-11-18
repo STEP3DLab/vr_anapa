@@ -535,7 +535,8 @@ export function makeMobot(THREE, quality='auto') {
   blade.name='Сплошная рабочая кромка';
   for(const side of [-1,1]){
     const z=side*.75;
-    plate(scoopShell,[...sectionXY,[-.07,.245],[-.42,-.01]],.034,z-.017,m.frame,'bucket');
+    // Upper rim traced on SKTB 2; opposite cheek thickness and symmetry are inferred.
+    plate(scoopShell,[...sectionXY,[.025,.225],[-.352,.123],[-.590,-.143],[-.602,-.182]],.034,z-.017,m.frame,'bucket');
     beam(scoopShell,[.052,.15,z],[0,0,z],.04,m.frame,'bucket');
   }
   cylinder(scoopShell,.046,.046,1.72,[0,0,0],m.joint,'bucket','z');

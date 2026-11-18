@@ -48,4 +48,10 @@ for(const [id,p] of Object.entries(picks)){
    rawTipOffsetPx:tip.distanceTo(new T.Vector2(...p.tip)),rawRootOffsetPx:root.distanceTo(new T.Vector2(...p.root)),
    registeredPin:aligned(0,0).toArray()};
 }
+const before=read('bucket-cheek-before.json');
+for(const [id,view] of Object.entries(report)){
+ assert(view.rms < before[id].rms);
+ assert(Math.abs(view.rawTipOffsetPx-before[id].rawTipOffsetPx)<1e-8);
+ assert(Math.abs(view.rawRootOffsetPx-before[id].rawRootOffsetPx)<1e-8);
+}
 fs.writeFileSync(new URL('bucket-cheek.json',import.meta.url),JSON.stringify(report,null,2)+'\n');

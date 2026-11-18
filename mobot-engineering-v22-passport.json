@@ -280,6 +280,13 @@
       "data": "research/mobot/1987/night-20261118/boom-pose.json",
       "image": "research/mobot/1987/night-20261118/SKTB4-boom-pose.jpg",
       "role": "Shape fitted on SKTB2. SKTB4 checks shape with its previously fitted pose held fixed."
+    },
+    {
+      "photo": 4,
+      "part": "Верхняя кромка щеки ковша",
+      "data": "research/mobot/1987/night-20261118/bucket-cheek.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-bucket.jpg",
+      "role": "Форма по №2, проверка по №4 с регистрацией по двум углам. Нижний контур закрыт снегом."
     }
   ]
 }
