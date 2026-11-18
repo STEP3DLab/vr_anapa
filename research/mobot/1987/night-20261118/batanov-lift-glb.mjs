@@ -5,7 +5,11 @@ export function writeLiftGLB(path,rig,tilt,poseAngles){
   const doc={asset:{version:'2.0',generator:'Mobot v22 lift experiment'},scene:0,scenes:[{nodes:[0],extras:{units:'Uncalibrated v22 scene units. Do not interpret as physical metres.',scope:'Experimental loader only; rods mark the lines of centres.'}}],
     nodes:[],meshes:[],materials:[],buffers:[],bufferViews:[],accessors:[],animations:[]};
   const chunks=[],geometries=new Map(),materials=new Map(),nodes=new Map();let size=0;
+  // V8 versions vary at the last bits of sin/cos, especially around exact zeros.
+  // Quantise only the GLB presentation; the survey keeps full precision.
+  const canonical=v=>Math.round(v*1e7)/1e7||0;
   function stream(array,type,components){
+    if(array instanceof Float32Array)array=Float32Array.from(array,canonical);
     const buf=Buffer.from(array.buffer,array.byteOffset,array.byteLength);
     const view=doc.bufferViews.push({buffer:0,byteOffset:size,byteLength:buf.length})-1;
     chunks.push(buf);size+=buf.length;
@@ -18,13 +22,13 @@ export function writeLiftGLB(path,rig,tilt,poseAngles){
   }
   function material(m){
     if(!materials.has(m)){
-      const value={pbrMetallicRoughness:{baseColorFactor:[...m.color.toArray(),1],metallicFactor:.18,roughnessFactor:.72}};
+      const value={pbrMetallicRoughness:{baseColorFactor:[...m.color.toArray().map(canonical),1],metallicFactor:.18,roughnessFactor:.72}};
       materials.set(m,doc.materials.push(value)-1);
     }
     return materials.get(m);
   }
   function visit(o){
-    const raw={name:o.name||o.type,translation:o.position.toArray(),rotation:o.quaternion.toArray(),scale:o.scale.toArray()};
+    const raw={name:o.name||o.type,translation:o.position.toArray().map(canonical),rotation:o.quaternion.toArray().map(canonical),scale:o.scale.toArray().map(canonical)};
     const id=doc.nodes.push(raw)-1;nodes.set(o,id);
     if(o.isMesh){
       const g=o.geometry,k=g.uuid+':'+o.material.uuid;
