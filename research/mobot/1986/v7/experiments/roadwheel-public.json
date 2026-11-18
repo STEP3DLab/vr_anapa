@@ -1,0 +1,196 @@
+{
+  "geometryCommit": "902b2b6f7064adc0270f87223528d701da9435cf",
+  "verification": "https://github.com/STEP3DLab/vr_anapa/actions/runs/44256908447",
+  "artifactSHA256": "0da4d146f553b8bee72f90cbd1179fdc2928cec71eb2100069f5b8ba2430a0b1",
+  "publicURL": "https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v7.html?qa=1",
+  "browserTests": [
+    {
+      "name": "Desktop Chromium: live WebGL2 and non-uniform framebuffer",
+      "status": "PASS",
+      "isWebGL2": true,
+      "glError": 0,
+      "drawCalls": 323,
+      "triangles": 27916,
+      "extension": 0.105,
+      "version": "1986-v7",
+      "dark": 5594,
+      "bright": 26790
+    },
+    {
+      "name": "Rear covers and lower wheel rims in the live Three.js model",
+      "status": "PASS",
+      "covers": [
+        {
+          "lightFace": true,
+          "hubScale": 0.3333333333333333,
+          "lowerRims": 7
+        },
+        {
+          "lightFace": true,
+          "hubScale": 0.3333333333333333,
+          "lowerRims": 7
+        }
+      ]
+    },
+    {
+      "name": "Seven assemblies: highlights, isolation and exact restoration",
+      "status": "PASS",
+      "assemblies": [
+        "tracks",
+        "body",
+        "mast",
+        "boom",
+        "grab",
+        "loader",
+        "cameras"
+      ]
+    },
+    {
+      "name": "Camera controls, ray selection and reversible explosion",
+      "status": "PASS",
+      "picked": "cameras"
+    },
+    {
+      "name": "Six motion controls, archive poses and local source files",
+      "status": "PASS",
+      "inputs": 6,
+      "archivePoses": 2,
+      "linkedFiles": 10
+    },
+    {
+      "name": "Mobile Chromium with touch: layout, tap selection and touch orbit",
+      "status": "PASS",
+      "widths": [
+        320,
+        360,
+        390,
+        720
+      ],
+      "touchOrbit": true,
+      "activationsForTwoTaps": 2
+    },
+    {
+      "name": "Static fallback with WebGL disabled",
+      "status": "PASS"
+    },
+    {
+      "name": "No page exceptions or missing same-origin resources",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": {
+    "fig6": {
+      "file": "roadwheel-webgl-fig6.jpg",
+      "entry": "v7-production-output/archive-rear.jpg",
+      "sha256": "9959a39836adce4df3b039f0c23dee9aeda05c7db966f7d575c9e64cf992286a"
+    },
+    "fig9": {
+      "file": "roadwheel-webgl-fig9.jpg",
+      "entry": "v7-production-output/archive-front.jpg",
+      "sha256": "9b80fbf4c0fbf362061b9f8114e3008eccbc94af61ec5e675951a69c32f3cb9c"
+    }
+  },
+  "publishedFiles": [
+    {
+      "file": "mobot-ch-hv-1986-research-v7.html",
+      "status": "PASS",
+      "http": 200,
+      "actual": "e79000a460a9bd9275aa4586ebd30344684bffa4b4838f7716b4808bc848d240",
+      "expected": "e79000a460a9bd9275aa4586ebd30344684bffa4b4838f7716b4808bc848d240"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v7-model.js",
+      "status": "PASS",
+      "http": 200,
+      "actual": "1d3f6a6986f8ecce7565686d400d597fe75fbab00fc469c35068b3d48a356ed1",
+      "expected": "1d3f6a6986f8ecce7565686d400d597fe75fbab00fc469c35068b3d48a356ed1"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v7-passport.json",
+      "status": "PASS",
+      "http": 200,
+      "actual": "d5c90be7b1dcb61da8040cba07128008926b2705b817222e335f900f0936b796",
+      "expected": "d5c90be7b1dcb61da8040cba07128008926b2705b817222e335f900f0936b796"
+    },
+    {
+      "file": "mobot-ch-hv-1986-research-v7-qa.json",
+      "status": "PASS",
+      "http": 200,
+      "actual": "73864dd78ec7cd487b4bc7fcf5ea6e782aa479f1e8c56e4f77ad6fe65c092146",
+      "expected": "73864dd78ec7cd487b4bc7fcf5ea6e782aa479f1e8c56e4f77ad6fe65c092146"
+    },
+    {
+      "file": "research/mobot/1986/v7/viewer.js",
+      "status": "PASS",
+      "http": 200,
+      "actual": "34a8c18bb5cfaca13b63dd460003c5a8a4191c02cc905330c479774aa03625b4",
+      "expected": "34a8c18bb5cfaca13b63dd460003c5a8a4191c02cc905330c479774aa03625b4"
+    },
+    {
+      "file": "research/mobot/1986/v7/archive-camera.mjs",
+      "status": "PASS",
+      "http": 200,
+      "actual": "56b0ff60b25f01e6b7392c3c4b90f50cfe37d443c212e879561e875c09e837f4",
+      "expected": "56b0ff60b25f01e6b7392c3c4b90f50cfe37d443c212e879561e875c09e837f4"
+    },
+    {
+      "file": "research/mobot/1986/v7/overview.jpg",
+      "status": "PASS",
+      "http": 200,
+      "actual": "7d953ffbec69606b73a5199a2d8324187e2f7fa951fa58ec2b2586c1818a478f",
+      "expected": "7d953ffbec69606b73a5199a2d8324187e2f7fa951fa58ec2b2586c1818a478f"
+    },
+    {
+      "file": "research/mobot/1986/v7/comparison.jpg",
+      "status": "PASS",
+      "http": 200,
+      "actual": "88dc69fe22498ae7d2415a2e9adae663263d56a8399fc59596b9732d5b3d9214",
+      "expected": "88dc69fe22498ae7d2415a2e9adae663263d56a8399fc59596b9732d5b3d9214"
+    },
+    {
+      "file": "research/mobot/1986/v7/whole-machine.jpg",
+      "status": "PASS",
+      "http": 200,
+      "actual": "4d75e0f55b94939d38a4510f8563d0d0cea2def782dda4bee107ab42b7e35f46",
+      "expected": "4d75e0f55b94939d38a4510f8563d0d0cea2def782dda4bee107ab42b7e35f46"
+    },
+    {
+      "file": "research/mobot/1986/v7/registration/registration.json",
+      "status": "PASS",
+      "http": 200,
+      "actual": "aa75cc67e0393d5c55078a83f1efa8dd75a694a35bc533239452eadffed31cf5",
+      "expected": "aa75cc67e0393d5c55078a83f1efa8dd75a694a35bc533239452eadffed31cf5"
+    },
+    {
+      "file": "research/mobot/1986/v7/experiments/track-photo.jpg",
+      "status": "PASS",
+      "http": 200,
+      "actual": "153cdf746bfcd94230e051343eeb74bc162a387bfb35de6c612af56c48e7df3d",
+      "expected": "153cdf746bfcd94230e051343eeb74bc162a387bfb35de6c612af56c48e7df3d"
+    },
+    {
+      "file": "research/mobot/1986/v7/experiments/roadwheel-faces.jpg",
+      "status": "PASS",
+      "http": 200,
+      "actual": "266a347167e53cc62f2a2a505190af3ba77ae0dc319c881ab9b3cd6ae69d377b",
+      "expected": "266a347167e53cc62f2a2a505190af3ba77ae0dc319c881ab9b3cd6ae69d377b"
+    },
+    {
+      "file": "research/mobot/1986/v7/experiments/roadwheel-faces.json",
+      "status": "PASS",
+      "http": 200,
+      "actual": "d10dd187161a3758f8ba793d4a61fd84e7567c923b8bca54d7f23b1cb0323728",
+      "expected": "d10dd187161a3758f8ba793d4a61fd84e7567c923b8bca54d7f23b1cb0323728"
+    },
+    {
+      "file": "research/mobot/1986/v7/experiments/control-views.jpg",
+      "status": "PASS",
+      "http": 200,
+      "actual": "66c6a49f260d96c1933cd9e88a4164151b335776d1635a921052b84e87b76de5",
+      "expected": "66c6a49f260d96c1933cd9e88a4164151b335776d1635a921052b84e87b76de5"
+    }
+  ],
+  "status": "PASS",
+  "physicalMeasurements": "NOT RUN",
+  "physicalPhone": "NOT RUN"
+}
