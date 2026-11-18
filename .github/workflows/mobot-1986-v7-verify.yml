@@ -27,6 +27,7 @@ jobs:
           python research/mobot/1986/v7/night-research.py morning v7-engineering-output
       - name: Verify actual geometry and project contracts
         run: |
+          node research/mobot/1986/v7/suspension-clearance.mjs > v7-engineering-output/acceptance-clearance.json
           node research/mobot/1986/v7/scene-qa.mjs
           node scripts/mobot-compare-contract.cjs
           node mobot-geometry-gate.cjs

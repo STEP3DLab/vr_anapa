@@ -1,0 +1,839 @@
+{
+  "scope": "Six variants on regular and raised-bucket grids, grapple vs scoop/hood/deck only.",
+  "results": [
+    {
+      "extension": 0.105,
+      "grid": "regular",
+      "poses": 2025,
+      "flaggedPairs": 0,
+      "componentBoxOverlaps": 0,
+      "unresolved": 0,
+      "crossings": 0,
+      "separationStatus": "PASS",
+      "examples": []
+    },
+    {
+      "extension": 0.12,
+      "grid": "regular",
+      "poses": 2025,
+      "flaggedPairs": 8,
+      "componentBoxOverlaps": 4,
+      "unresolved": 0,
+      "crossings": 0,
+      "separationStatus": "PASS",
+      "examples": []
+    },
+    {
+      "extension": 0.135,
+      "grid": "regular",
+      "poses": 2025,
+      "flaggedPairs": 16,
+      "componentBoxOverlaps": 10,
+      "unresolved": 0,
+      "crossings": 0,
+      "separationStatus": "PASS",
+      "examples": []
+    },
+    {
+      "extension": 0.15,
+      "grid": "regular",
+      "poses": 2025,
+      "flaggedPairs": 16,
+      "componentBoxOverlaps": 10,
+      "unresolved": 0,
+      "crossings": 2,
+      "separationStatus": "FAIL",
+      "examples": [
+        {
+          "pose": {
+            "yaw": -150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5709035269625389,
+              1.099580693269968,
+              -0.745
+            ],
+            "segmentFraction": 0.4860671697402651,
+            "barycentric": [
+              0.03191915529290412,
+              0.7021626610097581,
+              0.2659181836973378
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": 150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.582111376329224,
+              1.0998050817233658,
+              0.726
+            ],
+            "segmentFraction": 0.4490551622502458,
+            "barycentric": [
+              0.01968770504527284,
+              0.6966129825195799,
+              0.2836993124351473
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "extension": 0.165,
+      "grid": "regular",
+      "poses": 2025,
+      "flaggedPairs": 32,
+      "componentBoxOverlaps": 20,
+      "unresolved": 0,
+      "crossings": 2,
+      "separationStatus": "FAIL",
+      "examples": [
+        {
+          "pose": {
+            "yaw": -150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5709035269625389,
+              1.084580693269968,
+              -0.745
+            ],
+            "segmentFraction": 0.4860671697402651,
+            "barycentric": [
+              0.0792804145437318,
+              0.5863307305020184,
+              0.3343888549542498
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": 150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.582111376329224,
+              1.0848050817233656,
+              0.726
+            ],
+            "segmentFraction": 0.4490551622502458,
+            "barycentric": [
+              0.06704896429609775,
+              0.5807810520118458,
+              0.3521699836920565
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "extension": 0.18,
+      "grid": "regular",
+      "poses": 2025,
+      "flaggedPairs": 48,
+      "componentBoxOverlaps": 32,
+      "unresolved": 0,
+      "crossings": 8,
+      "separationStatus": "FAIL",
+      "examples": [
+        {
+          "pose": {
+            "yaw": -150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 0
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.529804929637481,
+              1.122630592479129,
+              -0.745
+            ],
+            "segmentFraction": 0.5743719433373285,
+            "barycentric": [
+              0.0013951049947661387,
+              0.9068612574474778,
+              0.09174363755775602
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 0
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 2,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5321611234409156,
+              1.1221925953525795,
+              -0.745
+            ],
+            "segmentFraction": 0.4290930475136288,
+            "barycentric": [
+              0.00035560561387237843,
+              0.9019480219865461,
+              0.0976963723995815
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 16
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.6547310421223913,
+              1.0797251935263357,
+              -0.745
+            ],
+            "segmentFraction": 0.609342926031611,
+            "barycentric": [
+              0.008426896079307578,
+              0.4943679997838427,
+              0.4972051041368497
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5709035269625389,
+              1.069580693269968,
+              -0.745
+            ],
+            "segmentFraction": 0.4860671697402651,
+            "barycentric": [
+              0.12664167379455943,
+              0.4704987999942816,
+              0.402859526211159
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": 150,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 0
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 2,
+            "faceTriangle": 8,
+            "worldPoint": [
+              1.5298049299902117,
+              1.122630592479129,
+              0.7449999993890524
+            ],
+            "segmentFraction": 0.42562805873755827,
+            "barycentric": [
+              0.09174363814959352,
+              0.9068612572182863,
+              0.0013951046321201955
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "extension": 0.105,
+      "grid": "raised bucket stress",
+      "poses": 1734,
+      "flaggedPairs": 0,
+      "componentBoxOverlaps": 0,
+      "unresolved": 0,
+      "crossings": 0,
+      "separationStatus": "PASS",
+      "examples": []
+    },
+    {
+      "extension": 0.12,
+      "grid": "raised bucket stress",
+      "poses": 1734,
+      "flaggedPairs": 564,
+      "componentBoxOverlaps": 444,
+      "unresolved": 0,
+      "crossings": 0,
+      "separationStatus": "PASS",
+      "examples": []
+    },
+    {
+      "extension": 0.135,
+      "grid": "raised bucket stress",
+      "poses": 1734,
+      "flaggedPairs": 1116,
+      "componentBoxOverlaps": 1100,
+      "unresolved": 0,
+      "crossings": 0,
+      "separationStatus": "PASS",
+      "examples": []
+    },
+    {
+      "extension": 0.15,
+      "grid": "raised bucket stress",
+      "poses": 1734,
+      "flaggedPairs": 1392,
+      "componentBoxOverlaps": 1492,
+      "unresolved": 0,
+      "crossings": 116,
+      "separationStatus": "FAIL",
+      "examples": [
+        {
+          "pose": {
+            "yaw": -143,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 4,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.561127219069272,
+              1.1080537292312238,
+              -0.745
+            ],
+            "segmentFraction": 0.11104333947102088,
+            "barycentric": [
+              0.015217417572427339,
+              0.7739448088927382,
+              0.21083777353483446
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -144,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 28
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5999898273564828,
+              1.0971658184570878,
+              -0.745
+            ],
+            "segmentFraction": 0.9919854076602681,
+            "barycentric": [
+              0.009639850096006208,
+              0.6646155131906856,
+              0.3257446367133082
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -144,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 30
+          },
+          "a": "Боковая щека челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Боковая щека челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 0,
+            "faceTriangle": 19,
+            "worldPoint": [
+              1.5961197159516796,
+              1.1014790814553233,
+              -0.7388199641302132
+            ],
+            "segmentFraction": 0.006284955178184252,
+            "barycentric": [
+              0.6747349437628063,
+              0.02570279287933051,
+              0.2995622633578632
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -144,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 30
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5885528298685059,
+              1.0967998565955621,
+              -0.745
+            ],
+            "segmentFraction": 0.9722133535919488,
+            "barycentric": [
+              0.022553897376229814,
+              0.6692208353522067,
+              0.3082252672715636
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -144,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Боковая щека челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Боковая щека челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 0,
+            "faceTriangle": 19,
+            "worldPoint": [
+              1.588697499635617,
+              1.103895896856723,
+              -0.7334274083245386
+            ],
+            "segmentFraction": 0.01601450298621502,
+            "barycentric": [
+              0.3909162080221201,
+              0.3330071625686112,
+              0.27607662940926875
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "extension": 0.165,
+      "grid": "raised bucket stress",
+      "poses": 1734,
+      "flaggedPairs": 1576,
+      "componentBoxOverlaps": 1714,
+      "unresolved": 0,
+      "crossings": 256,
+      "separationStatus": "FAIL",
+      "examples": [
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 30
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 4,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.519682290620329,
+              1.1239899788960102,
+              -0.745
+            ],
+            "segmentFraction": 0.4259571406171706,
+            "barycentric": [
+              0.007510195647349338,
+              0.9239359208340778,
+              0.06855388351857285
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Боковая щека челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Боковая щека челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 1,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5196822877159093,
+              1.12513804447392,
+              -0.745
+            ],
+            "segmentFraction": 0.610571868027196,
+            "barycentric": [
+              0.003885276535273152,
+              0.9328014328705091,
+              0.06331329059421774
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 32
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 4,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5196822906203293,
+              1.120011223443142,
+              -0.745
+            ],
+            "segmentFraction": 0.3693488415280164,
+            "barycentric": [
+              0.020072786880609983,
+              0.8932114591591505,
+              0.08671575396023957
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -143,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 26
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 4,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.561127219069272,
+              1.1089952401494243,
+              -0.745
+            ],
+            "segmentFraction": 0.2919497937537517,
+            "barycentric": [
+              0.012244674726801463,
+              0.7812152773760229,
+              0.2065400478971756
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -143,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 28
+          },
+          "a": "Боковая щека челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Боковая щека челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 1,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.561127216098028,
+              1.1091209269710838,
+              -0.745
+            ],
+            "segmentFraction": 0.748077580292567,
+            "barycentric": [
+              0.01184783203857942,
+              0.7821858491194411,
+              0.20596631884197947
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "extension": 0.18,
+      "grid": "raised bucket stress",
+      "poses": 1734,
+      "flaggedPairs": 1576,
+      "componentBoxOverlaps": 1964,
+      "unresolved": 0,
+      "crossings": 744,
+      "separationStatus": "FAIL",
+      "examples": [
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 6
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.515320452577648,
+              1.1272743246118193,
+              -0.745
+            ],
+            "segmentFraction": 0.9921017187757583,
+            "barycentric": [
+              0.0016246184792816365,
+              0.9521322179090663,
+              0.04624316361165209
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 6
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 2,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5177742956514295,
+              1.1265733492763041,
+              -0.745
+            ],
+            "segmentFraction": 0.9965450618084978,
+            "barycentric": [
+              0.001315056324220576,
+              0.9451247820845106,
+              0.053560161591268834
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 8
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 1,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5062987016752685,
+              1.1294162497947402,
+              -0.745
+            ],
+            "segmentFraction": 0.9757654116811807,
+            "barycentric": [
+              0.004137067708906317,
+              0.9745344310590207,
+              0.02132850123207292
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 8
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 2,
+            "edgeIndex": 2,
+            "faceTriangle": 3,
+            "worldPoint": [
+              1.5085843184461643,
+              1.1285441571362416,
+              -0.745
+            ],
+            "segmentFraction": 0.9799041357352909,
+            "barycentric": [
+              0.0045407503955801065,
+              0.9663149123083073,
+              0.029144337296112516
+            ]
+          }
+        },
+        {
+          "pose": {
+            "yaw": -142,
+            "boom": 0,
+            "loader": 16,
+            "tip": 25,
+            "grab": 10
+          },
+          "a": "Лист ковшеобразной челюсти",
+          "b": "Боковина ковша",
+          "crossing": {
+            "edgeMesh": "Лист ковшеобразной челюсти",
+            "faceMesh": "Боковина ковша",
+            "edgeTriangle": 0,
+            "edgeIndex": 2,
+            "faceTriangle": 0,
+            "worldPoint": [
+              1.4970336190972737,
+              1.1315521758249043,
+              -0.745
+            ],
+            "segmentFraction": 0.04101151287465268,
+            "barycentric": [
+              0.0001107624971034317,
+              0.015287236944339724,
+              0.9846020005585568
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
