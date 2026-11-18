@@ -1,0 +1,32 @@
+{
+  "phase": "morning",
+  "commit": "9bd878d6554a136f99f7b1ae7e3f742cb6bad590",
+  "run": null,
+  "experiments": [
+    {
+      "phase": "registration",
+      "status": "PASS"
+    },
+    {
+      "phase": "candidate",
+      "status": "PASS"
+    },
+    {
+      "phase": "links",
+      "status": "PASS"
+    },
+    {
+      "phase": "tracks",
+      "status": "PASS"
+    },
+    {
+      "phase": "loader",
+      "status": "PASS"
+    },
+    {
+      "phase": "collisions",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS"
+}

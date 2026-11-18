@@ -1,0 +1,62 @@
+[
+  {
+    "path": "mobot-ch-hv-1986-research-v7-model.js",
+    "sha256": "9eafe8137016a9b357670c24d34254b9fdeff31aef5876c4b87a2b6962e1bfdb",
+    "status": "PASS"
+  },
+  {
+    "path": "mobot-ch-hv-1986-research-v7.html",
+    "sha256": "3f836df520eeef8c00881aef91c1b0d8bdfef58b0ccb75219189c62b3bd67449",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/archive-camera.mjs",
+    "sha256": "56b0ff60b25f01e6b7392c3c4b90f50cfe37d443c212e879561e875c09e837f4",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/comparison.jpg",
+    "sha256": "88dc69fe22498ae7d2415a2e9adae663263d56a8399fc59596b9732d5b3d9214",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/experiments/boom-photo.jpg",
+    "sha256": "72b4d223120f7015ea98f75c60317ab3e6f9cb157682448ddb4adda001591ee5",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/experiments/bucket-photo.jpg",
+    "sha256": "a39604f2dc4b18ade31b834d2f1b254824db560150444d4b8e26900ae06e2b38",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/experiments/control-views.jpg",
+    "sha256": "66c6a49f260d96c1933cd9e88a4164151b335776d1635a921052b84e87b76de5",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/experiments/jaw-photo.jpg",
+    "sha256": "cb7fcd377f9fce84a36614e885ce7cfa573ec78c996747d784ff8f716579dadb",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/experiments/suspension-photo.jpg",
+    "sha256": "6ac69a44db0f516dcd1092505ea4620c38bf6670265184bda728c10418072d36",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/experiments/track-photo.jpg",
+    "sha256": "153cdf746bfcd94230e051343eeb74bc162a387bfb35de6c612af56c48e7df3d",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/viewer.js",
+    "sha256": "34a8c18bb5cfaca13b63dd460003c5a8a4191c02cc905330c479774aa03625b4",
+    "status": "PASS"
+  },
+  {
+    "path": "research/mobot/1986/v7/whole-machine.jpg",
+    "sha256": "40a776e26b1d0dcd2b800a1844a2d4cbe05b01691af7521950a0422a107582a7",
+    "status": "PASS"
+  }
+]

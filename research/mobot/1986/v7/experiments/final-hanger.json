@@ -1,0 +1,92 @@
+{
+  "fig6": {
+    "target": [
+      293,
+      467,
+      7
+    ],
+    "rows": {
+      "original": [
+        {
+          "extension": 0.105,
+          "topXY": [
+            259.06,
+            398.55
+          ],
+          "error2dPx": 76.4
+        },
+        {
+          "extension": 0.135,
+          "topXY": [
+            258.14,
+            409.19
+          ],
+          "error2dPx": 67.51
+        }
+      ],
+      "hardwarePatch": [
+        {
+          "extension": 0.105,
+          "topXY": [
+            297.92,
+            410.96
+          ],
+          "error2dPx": 56.25
+        },
+        {
+          "extension": 0.135,
+          "topXY": [
+            297,
+            421.6
+          ],
+          "error2dPx": 45.57
+        }
+      ]
+    }
+  },
+  "fig9": {
+    "target": [
+      243,
+      345,
+      8
+    ],
+    "rows": {
+      "original": [
+        {
+          "extension": 0.105,
+          "topXY": [
+            226.18,
+            200.63
+          ],
+          "error2dPx": 145.35
+        },
+        {
+          "extension": 0.135,
+          "topXY": [
+            224.83,
+            209.01
+          ],
+          "error2dPx": 137.2
+        }
+      ],
+      "hardwarePatch": [
+        {
+          "extension": 0.105,
+          "topXY": [
+            245.35,
+            241.31
+          ],
+          "error2dPx": 103.72
+        },
+        {
+          "extension": 0.135,
+          "topXY": [
+            244,
+            249.69
+          ],
+          "error2dPx": 95.31
+        }
+      ]
+    }
+  }
+}
