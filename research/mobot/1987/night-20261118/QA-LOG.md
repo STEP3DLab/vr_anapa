@@ -65,3 +65,5 @@ PASS — исходный результат 50 из 81 воспроизведё
 
 ### Производственная приёмка v22
 PR #11 вошёл в main на 5fa6933ed3b6c36013b9a367325b0202ea818c07. [Развёртывание](https://github.com/STEP3DLab/vr_anapa/actions/runs/44208405620) и [испытания](https://github.com/STEP3DLab/vr_anapa/actions/runs/44208406487) успешны. На публичной странице все 27 групп PASS, включая оба резервных режима. Три PNG непосредственно с Pages побайтно совпали с кадрами веточной проверки. [Протокол Pages](browser-pages.json); [проверка SHA-256 опубликованных ресурсов](pages-bytes.json): 20 из 20. На момент проверки latest по-прежнему указывал на v21.
+
+Отдельный PR #16 обновляет постоянный адрес и проверки его целевой версии. В checkout предложения успешно выполнены mobot-geometry-gate.cjs, scripts/mobot-scene-qa.mjs и scripts/mobot-compare-contract.cjs.
