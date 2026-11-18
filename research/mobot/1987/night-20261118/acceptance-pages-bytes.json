@@ -1,0 +1,258 @@
+{
+  "base": "https://step3dlab.github.io/vr_anapa/",
+  "deployment": "bd67992c145f4e65a1f5fbaaceb0811040c1cee9",
+  "checks": [
+    {
+      "path": "mobot-engineering-v22.html",
+      "status": 200,
+      "sha256": "d65f83ab0f7ba1260adde644a595b33d21f2b600f6785b64cd7f95d4b7f5e1cc",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v22-passport.json",
+      "status": 200,
+      "sha256": "a3da2b36622d4440acd223d2bc7ff9304fb4f35034620b72d71ac16c03bc417d",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v22-model.js",
+      "status": 200,
+      "sha256": "a0f04a3caf65afb755141076ee55ea1b2b12889d9b6fc05ff269a3c59f5e2b08",
+      "match": true
+    },
+    {
+      "path": "mobot-latest.html",
+      "status": 200,
+      "sha256": "0c2ea6b5035947faf86d73449bf96b2206b26836b2aa31c27dff16007bae0e57",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/viewer.css",
+      "status": 200,
+      "sha256": "eea7d56c04f00a2b40c3cdc6a447e4d54204fab78c7f564ee2b218b5c31d2342",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/viewer.js",
+      "status": 200,
+      "sha256": "2ab9395f3de4da4b5af050f28912ee3de20cad007e074881648fe21f38783ee2",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/contact.js",
+      "status": 200,
+      "sha256": "39437b8de0273a357d292517727df2520af3af755b2e2e8f72b6eb729066edae",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/contact-sweep.json",
+      "status": 200,
+      "sha256": "a03c19bf776aaf9f7c0c527bec6aa4f5a579e1ce4869c20233c89568d1b57592",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/overview.webp",
+      "status": 200,
+      "sha256": "b8d41ec633649fa6f0453ae7d9f3122ef1ecaa927229757b2c31465e872dd8ef",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/side.webp",
+      "status": 200,
+      "sha256": "0a93ef9ffe64812c1ef1f495587b771199642aea9f8c3c5ce47294b152e89082",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/breaker-arm.webp",
+      "status": 200,
+      "sha256": "c14f1f3c608e35ed641754255c2dc2b6e2d088b1a37de2ce3146626f37954277",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/breaker-loader.webp",
+      "status": 200,
+      "sha256": "26195bbed7278a13afd862c44dc1b54591e1687c72391a75c2914404e2055fca",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-hood.jpg",
+      "status": 200,
+      "sha256": "d6a598b99bd44f0f536d256ddf9d6f5dc6e1d75ea2ea43daef15e2d266a9ed1b",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB3-jaw.jpg",
+      "status": 200,
+      "sha256": "3913232b587e4812627d3a3bc5a95f02e3e73cbebe8ae9ad09f82fcdb641de2d",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-hood.jpg",
+      "status": 200,
+      "sha256": "aca596f219c843b07c41e16e0d75fd9c91b04788655654dbc97e115784dfa065",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB9-breaker.jpg",
+      "status": 200,
+      "sha256": "39b3151682b407372907f645b9301698f9fa0f0bf9d184eca508b38a66b03597",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/poses.js",
+      "status": 200,
+      "sha256": "b4d62edfc9d4437205ebdbd2b838ceaddcd1c3c6c3af740bf0f746977e1d4196",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-opening.jpg",
+      "status": 200,
+      "sha256": "786167c8b7e767f81161bc7741ef2cd001ca58f80559bbc5161b041ee504e83b",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB3-opening.jpg",
+      "status": 200,
+      "sha256": "f5db4feaab2b7a38663ca68acbc7975cccccca57b24266570178e2b183a06c9c",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-boom-cheek.jpg",
+      "status": 200,
+      "sha256": "3fc7a0b4781a57a9087a3b6642bbd20e5f814e50b6a117ae96ce8c33893d3e6d",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-boom-cheek.jpg",
+      "status": 200,
+      "sha256": "ac3968509aa0c8caec18e5b2ee2024acd7f2c6b6e244cd0810647fadeec866bf",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-boom-pose.jpg",
+      "status": 200,
+      "sha256": "4efe334a859f0099f65d180397ec905c70b0675e03e9312b939df097b4adbc93",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-boom-pose.jpg",
+      "status": 200,
+      "sha256": "28216c9bdfd5c6d09d89a835c3af165c589acb923de595ac2df60ca92fc5a47d",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/boom-pose.json",
+      "status": 200,
+      "sha256": "5d999e697d91abbd1e564972c563ceb85efe813a6fe81671a0663fea32100a00",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/boom-cheek.json",
+      "status": 200,
+      "sha256": "7a007642de8274597e862119f2dbf1d8d7735645f282d55736e59774d030ad06",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/mount-axes.json",
+      "status": 200,
+      "sha256": "2f26e409b6ae0528caca1c5202c9fbe78e1e56ad06dd336e7cf1ca1fb812406c",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/deck-camera.js",
+      "status": 200,
+      "sha256": "745515e518e680f7a295dc5bc592574841dbc0450dc5d17fdf0df50a000a94d1",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB2-bucket.jpg",
+      "status": 200,
+      "sha256": "501c4993137956f0d4aa1a1d506a59d9a314bf21c9fddc1239bee7af8738f68e",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/SKTB4-bucket.jpg",
+      "status": 200,
+      "sha256": "f04a59c68ad62269d7f781d32815ca7b3f6c6a3fda5ab70fc995352ddfbb641d",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-cheek.json",
+      "status": 200,
+      "sha256": "fcbbdda4895dec11ad2fc63cc722142d54cd9adfd23987233461c1747ef7b764",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-cheek-before.json",
+      "status": 200,
+      "sha256": "99d5d317f16367b1ccae3daac0e440b9434db9ba96b83cacb9fb3b49ae5a64f8",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/night-20261118/bucket-pose.json",
+      "status": 200,
+      "sha256": "4dd823e6987d68fabc064b8704bac734321c10ef7690bb5df034e048d2ac601f",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v21.html",
+      "status": 200,
+      "sha256": "0fffda08fcf53fd42a00d0292f0d9fd0aff10a8c02b8412436377e18046f4551",
+      "match": true
+    },
+    {
+      "path": "mobot-engineering-v21-model.js",
+      "status": 200,
+      "sha256": "9f7516a177ccbc92f85c2796c51fc0e7cd2af33c0b0fc4a2a6405d1fe5c8732f",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/viewer.js",
+      "status": 200,
+      "sha256": "f91510e53928943cf4a047199d23b5ccb10c830bdbbcd1983a5d7810a5da410a",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/overview.webp",
+      "status": 200,
+      "sha256": "81abde836fb1fe87980571af84ffa5fd9812e1979013a4ef42dce615175abe15",
+      "match": true
+    },
+    {
+      "path": "research/mobot/1987/side.webp",
+      "status": 200,
+      "sha256": "2289bfe4bb87a4dea35d4ea297cabd54f6d6fc45b187e30354ae085f40ffad2d",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/three.module.min.js",
+      "status": 200,
+      "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-snow-side.jpg",
+      "status": 200,
+      "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-front.jpg",
+      "status": 200,
+      "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "status": 200,
+      "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
+      "match": true
+    },
+    {
+      "path": "mobot-assets/archive/1987-breaker.jpg",
+      "status": 200,
+      "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
+      "match": true
+    }
+  ]
+}
