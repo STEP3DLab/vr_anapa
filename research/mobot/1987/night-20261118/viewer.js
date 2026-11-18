@@ -1,18 +1,10 @@
+import {initial,poses} from './poses.js';
 import {inspectSurfaces} from './contact.js';
 import * as T from '../../../../mobot-assets/three.module.min.js';
 import {OrbitControls} from '../../../../mobot-assets/controls/OrbitControls.js';
 import {makeMobot} from '../../../../mobot-engineering-v22-model.js';
 
 const $=id=>document.getElementById(id);
-const initial={yaw:0,arm:0,wrist:90,claw:4,bucket:8,tip:0,track:0};
-const poses=[
-  ['Перед отправкой · №2','gripper',{}],
-  ['Стрела над кожухом · №4','gripper',{yaw:180,arm:-8,bucket:0}],
-  ['Фронтальный вид схвата · №3','gripper',{yaw:90,claw:22,bucket:0}],
-  ['Молоток на стреле · №9','breaker-arm',{yaw:-65,arm:22,wrist:60,bucket:0}],
-  ['Молоток на погрузчике · гипотеза','breaker-loader',{bucket:36}],
-  ['Подъём ковша','gripper',{yaw:90,bucket:32,tip:-10}]
-];
 const photos=[
   [2,'1987-before-dispatch.jpg','Перед отправкой на ЧАЭС','Видны очертания кожуха, семь нижних дисков, поднятые крайние колёса и открытые пролёты стрелы.',0,'side'],
   [3,'1987-front.jpg','Схват на приёмо-сдаточных испытаниях','Широкие рабочие пластины расходятся в стороны от подвесной головки. Привод и глубина рамки остаются условными.',2,'side'],

@@ -1,3 +1,4 @@
+import {poses} from './poses.js';
 // Offline surface audit. Only compares disjoint active assemblies named by inspectPose.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -20,7 +21,7 @@ const demos=[['gripper',{}],['gripper',{yaw:180,arm:-8,bucket:0}],
   ['gripper',{yaw:90,claw:22,bucket:0}],['breaker-arm',{yaw:-65,arm:22,wrist:60,bucket:0}],
   ['breaker-loader',{bucket:36}],['gripper',{yaw:90,bucket:32,tip:-10}]];
 const modes=['gripper','breaker-arm','breaker-loader'];
-function sweep(build){
+function sweep(build,presets){
   const model=build(T,'desktop'), m=model.mechanisms;
   const hood=model.meshes.find(o=>o.name.startsWith('Кожух с плоской'));
   const rows=[];
@@ -34,7 +35,7 @@ function sweep(build){
   }
   for(const tool of modes)for(const yaw of [-180,0,90])for(const arm of [-18,0,25])
     for(const bucket of [-8,12,36])rows.push(audit(tool,{yaw,arm,bucket,claw:8}));
-  const demoRows=demos.map(([tool,pose])=>audit(tool,pose,true));
+  const demoRows=presets.map(([tool,pose])=>audit(tool,pose,true));
   assert(demoRows.every(r=>!r.ground&&!r.envelopes.length));
   const all=rows.flatMap(r=>r.envelopes);
   const counts={flagged:rows.filter(r=>r.ground||r.envelopes.length).length,
@@ -43,7 +44,7 @@ function sweep(build){
     confirmedPoses:rows.filter(r=>r.ground||r.envelopes.some(e=>e.hits.length)).length};
   return {counts,rows,demoRows};
 }
-const data={defaults,v21:sweep(before),v22:sweep(after)};
+const data={defaults,v21:sweep(before,demos),v22:sweep(after,poses.map(([,tool,pose])=>[tool,pose]))};
 assert.equal(data.v21.counts.flagged,50);
 fs.writeFileSync(new URL('contact-sweep.json',import.meta.url),JSON.stringify(data)+'\n');
 for(const rev of ['v21','v22'])console.log(rev,data[rev].counts);

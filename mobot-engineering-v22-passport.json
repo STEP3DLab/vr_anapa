@@ -128,7 +128,7 @@
       "title": "Двупалый схват",
       "A": "Сменный двупалый схват.",
       "B": "Подвесная рамка и широкие пластины расходящихся губок на №2 и №3.",
-      "C": "Разделение на неподвижные и подвижные элементы, оси раскрытия и ориентация подвеса.",
+      "C": "Разделение на неподвижные и подвижные элементы, оси раскрытия и ориентация подвеса. Пара параллельных рычагов — кинематическое приближение. Точные оси, закон движения и привод по снимкам не установлены.",
       "sources": [
         "SKTB-TEXT",
         "SKTB2",
@@ -259,6 +259,13 @@
       "data": "research/mobot/1987/night-20261118/breaker-photo.json",
       "image": "research/mobot/1987/night-20261118/SKTB9-breaker.jpg",
       "role": "development"
+    },
+    {
+      "photo": 3,
+      "part": "раскрытие двух губок",
+      "data": "research/mobot/1987/night-20261118/jaw-opening.json",
+      "image": "research/mobot/1987/night-20261118/SKTB3-opening.jpg",
+      "role": "registration on right cheek; residual measured on left"
     }
   ]
 }

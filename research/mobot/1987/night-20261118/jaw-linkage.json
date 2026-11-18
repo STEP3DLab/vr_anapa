@@ -1,0 +1,8 @@
+{
+  "positions": 225,
+  "pinEndpointsPerPosition": 8,
+  "maxPinOffset": 4.611102534756203e-16,
+  "minGap": 0.09599999979138352,
+  "maxGap": 0.23509656989809424,
+  "units": "uncalibrated scene coordinates"
+}
