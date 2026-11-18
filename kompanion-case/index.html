@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f3ec">
+  <title>КОМПАНЬОН — чехол с характером</title>
+  <meta name="description" content="Авторский чехол с гравировкой сиба-ину для iPhone 18 Pro и Pro Max. Рассмотрите настоящую 3D-модель и скачайте STL и STEP для собственного прототипа.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+<a class="skip" href="#configuration">К настройкам чехла</a>
+<header class="header">
+  <a class="brand" href="#" aria-label="Компаньон — на главную"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 15 5 4l9 6h4l9-6-2 11c3 7-2 13-9 14C9 28 4 22 7 15Z" stroke="currentColor" stroke-width="1.6"/><path d="m12 19 4 3 4-3M16 22v3" stroke="currentColor" stroke-width="1.6"/><circle cx="11" cy="16" r="1" fill="currentColor"/><circle cx="21" cy="16" r="1" fill="currentColor"/></svg><span>КОМПАНЬОН</span></a>
+  <nav aria-label="Главное меню"><a href="#object">Объект</a><a href="#detail">Детали</a><a href="#printing">Как напечатать <span aria-hidden="true">↗</span></a></nav>
+  <span class="header-note"><i></i> Designed to be made</span>
+</header>
+<main>
+  <section class="product" id="object" aria-labelledby="main-title">
+    <div class="stage" id="stage">
+      <div class="stage-top"><span class="overline">ОБЪЕКТ № 01 <span class="dot">/</span> SHIBA</span><button class="icon-button" id="fullscreen" title="Развернуть 3D-просмотр" aria-label="Развернуть 3D-просмотр"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button></div>
+      <div class="vertical-label" aria-hidden="true">A LITTLE CHARACTER. EVERY DAY.</div>
+      <div class="viewer" id="viewer" role="img" aria-label="Интерактивная 3D-модель чехла с гравировкой собаки. Вращайте мышью или пальцем, приближайте колёсиком или двумя пальцами."></div>
+      <div id="loading" class="loading"><span class="spinner"></span><span>Знакомимся с компаньоном…</span></div>
+      <div class="fallback" id="fallback" hidden><div class="fallback-case"><div></div><img src="assets/shiba.svg" alt="Гравировка сиба-ину"></div><p>3D-просмотр недоступен в этом браузере.<br>Модели можно скачать справа.</p></div>
+      <div id="measurements" class="measurements" hidden><span id="measure-height">167,64 мм</span><span id="measure-width">82,19 мм</span></div>
+      <div class="stage-bottom">
+        <div class="view-buttons" role="group" aria-label="Ракурс модели"><button class="active" data-view="back" aria-pressed="true">Спинка</button><button data-view="inside" aria-pressed="false">Внутри</button><button data-view="side" aria-pressed="false">Сбоку</button><button data-view="detail" aria-pressed="false">Гравировка</button></div>
+        <div class="stage-actions"><button class="icon-button" id="dimensions" title="Показать габариты" aria-label="Показать габариты" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 17 13-13 4 4L8 21ZM10 11l3 3m0-6 3 3m-9 3 3 3"/></svg></button><button class="icon-button" id="rotate" title="Автовращение" aria-label="Включить автовращение" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 10a8 8 0 1 0-1 7M20 4v6h-6"/></svg></button></div>
+      </div>
+      <p class="stage-hint"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor"><path d="M5 7h8M5 7l2-2M5 7l2 2m6-2-2-2m2 2-2 2M6 13h6"/></svg> Вращайте, приближайте, рассматривайте</p>
+      <span class="stage-caption">3D · реальная геометрия файла</span>
+    </div>
+    <div class="configuration" id="configuration">
+      <div class="eyebrow">КОЛЛЕКЦИЯ ХАРАКТЕРОВ <span>01 / 01</span></div>
+      <h1 id="main-title">Всегда на вашей<br><em>стороне.</em></h1>
+      <p class="intro">Чехол с характером сиба-ину. Мягкая форма, спокойные цвета и маленький компаньон, вырезанный в самом пластике.</p>
+      <div class="control-section">
+        <div class="control-heading"><span>01 <b>Ваш iPhone</b></span><a href="#fit-note" title="Как узнать модель">Как узнать? ↗</a></div>
+        <div class="model-picker" role="group" aria-label="Модель телефона"><button data-model="pro" aria-pressed="false">18 Pro <small>6,3″</small></button><button class="active" data-model="pro-max" aria-pressed="true">18 Pro Max <small>6,9″</small></button></div>
+        <p class="micro" id="phone-size">Телефон: 77,98 × 163,43 × 8,75 мм</p>
+      </div>
+      <div class="control-section color-section">
+        <div class="control-heading"><span>02 <b>Оттенок</b></span><span id="color-name">Шалфей</span></div>
+        <div class="colors" role="group" aria-label="Цвет модели"><button class="swatch active" style="--swatch:#899575" data-color="#899575" data-name="Шалфей" aria-label="Шалфей" aria-pressed="true"></button><button class="swatch" style="--swatch:#e3d9c7" data-color="#e3d9c7" data-name="Овсяное молоко" aria-label="Овсяное молоко" aria-pressed="false"></button><button class="swatch" style="--swatch:#bb7962" data-color="#bb7962" data-name="Терракота" aria-label="Терракота" aria-pressed="false"></button><button class="swatch" style="--swatch:#454b49" data-color="#454b49" data-name="Графит" aria-label="Графит" aria-pressed="false"></button><button class="swatch" style="--swatch:#91a8b6" data-color="#91a8b6" data-name="Тихое небо" aria-label="Тихое небо" aria-pressed="false"></button></div>
+        <label class="paint-label"><input type="checkbox" id="paint"><span class="toggle"></span>Подчеркнуть гравировку<span class="tooltip" title="На экране — имитация заполнения углублений краской. STL остаётся одной деталью." aria-label="Имитация окраски углублений, не меняет STL">i</span></label>
+        <p class="micro">Цвет — для просмотра. Для печати выберите такой же пластик.</p>
+      </div>
+      <div class="download-area">
+        <a class="primary-button" id="download-stl" href="downloads/kompanion-iphone-18-pro-max.stl" download><span>Скачать для 3D-печати <small id="stl-label">STL · мм · 6,3 МБ</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a>
+        <div class="secondary-downloads"><a id="download-step" href="downloads/kompanion-iphone-18-pro-max.step" download>Исходная модель STEP <span>↗</span></a><a href="downloads/kompanion-print-kit.zip" download>Весь комплект <span>↓</span></a></div>
+        <p class="prototype"><span></span>Прототип · физическая посадка ещё не проверена</p>
+      </div>
+    </div>
+  </section>
+  <div class="spec-strip"><div><span>0,6 <small>мм</small></span><p>глубина гравировки</p></div><div><span>1,8 <small>мм</small></span><p>толщина спинки и стенок</p></div><div><span>TPU <small>95A</small></span><p>материал для прототипа</p></div><div><span id="weight">≈ 30 <small>г</small></span><p>расчётный вес без поддержек</p></div></div>
+  <section class="detail-section" id="detail">
+    <div class="illustration"><span class="overline">ПОРТРЕТ КОМПАНЬОНА</span><img src="assets/shiba.svg" alt="Авторский контурный портрет сиба-ину с ошейником" loading="lazy"><div class="illustration-foot"><span>SHIBA INU</span><span>忠実な友 <small>верный друг</small></span></div></div>
+    <div class="detail-copy"><span class="eyebrow">МАЛЕНЬКАЯ ДЕТАЛЬ. БОЛЬШОЙ ХАРАКТЕР.</span><h2>Его можно<br>почувствовать.</h2><p>Острые ушки, внимательный взгляд и улыбка, которую невозможно перепутать. Лаконичный рисунок остаётся тактильным: каждая линия углублена на 0,6 мм.</p><p>Гравировка уже встроена в 3D-модель. После печати её можно оставить в цвет пластика или аккуратно заполнить подходящей краской.</p>
+      <div class="cross-section"><svg viewBox="0 0 420 80" role="img" aria-label="Разрез спинки: 1,8 миллиметра всего, 0,6 миллиметра гравировка и 1,2 миллиметра оставшийся пластик"><path d="M0 20H164V42H200V20H420V75H0Z" fill="#dce0ce"/><path d="M0 20H164V42H200V20H420" fill="none" stroke="#6b785e" stroke-width="2"/><path d="M182 2v33m-3-4 3 4 3-4" stroke="#6b785e" fill="none"/><text x="215" y="43" font-size="13" fill="#6b785e">0,6 мм</text></svg><span>РАЗРЕЗ СПИНКИ <b>1,2 мм пластика под рисунком</b></span></div>
+      <a href="downloads/shiba-engraving.svg" class="text-link" download>Скачать рисунок в SVG <span>↗</span></a>
+    </div>
+  </section>
+  <section class="printing-section" id="printing">
+    <div class="section-heading"><div><span class="eyebrow">ОТ ЭКРАНА К ПРЕДМЕТУ</span><h2>Ваш следующий<br>небольшой проект.</h2></div><p>Начните с примерки, затем напечатайте чехол. Файлы подготовлены в миллиметрах — масштаб в слайсере 100%.</p></div>
+    <div class="steps">
+      <article><span class="step-number">01</span><h3>Проверьте модель</h3><p>Откройте «Настройки → Основные → Об этом устройстве → Название модели». Выберите соответствующий Pro или Pro Max.</p><p class="step-note" id="fit-note">Чехлы имеют разные размеры. Для другой версии iPhone потребуется отдельная модель.</p></article>
+      <article><span class="step-number">02</span><h3>Сначала — примерка</h3><p>Скачайте короткий фрагмент нижней части. Проверьте ширину, углы, разъём и удерживающий бортик. Стартовый зазор — 0,30 мм на сторону.</p><a id="download-fit" href="downloads/fit-test-iphone-18-pro-max.stl" class="text-link" download>Пробник посадки · STL <span>↓</span></a></article>
+      <article><span class="step-number">03</span><h3>Напечатайте в TPU</h3><p>Стартовые параметры: TPU 95A, сопло 0,4 мм, слой 0,15–0,20 мм, 4 периметра, 100% заполнение. Положите спинку на стол, полостью вверх.</p><p class="step-note">Проверьте мосты над вырезами и бортиком в слайсере; при необходимости добавьте локальные поддержки. Температуры — по паспорту пластика.</p></article>
+    </div>
+    <div class="engineering-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 10v7m0-10v1"/></svg><p><b>Прототип для проверки идеи.</b> Размеры корпуса и расположение элементов взяты из чертежей Apple; зазоры и бортик спроектированы для пробной печати. Модель не проходила примерку и испытания на падение. Открытый блок камер без выступа над линзами; магнитов MagSafe нет. Жёсткий PLA для установки этого чехла не предусмотрен.</p></div>
+    <a class="text-link" href="downloads/README-RU.txt" download>Инструкция и параметры модели <span>↗</span></a>
+  </section>
+  <details class="sources"><summary>Размеры, проверка и источники <span>+</span></summary><div><p>Номиналы по размерным чертежам Apple от 09.09.2026: iPhone 18 Pro — 71,85 × 150,01 × 8,75 мм; Pro Max — 77,98 × 163,43 × 8,75 мм. Радиусы и непрерывные углы восстановлены по профилю чертежа, точная посадка требует примерки. Чертежи Apple не входят в комплект.</p><p><a href="https://developer.apple.com/accessories/dimensional-drawings/" target="_blank" rel="noopener">Размерные чертежи Apple ↗</a> <a href="https://www.apple.com/iphone-18-pro/specs/" target="_blank" rel="noopener">Характеристики iPhone ↗</a> <a href="downloads/validation.json" download>Отчёт проверки геометрии ↓</a></p><p>STL проверены на замкнутость, согласованность нормалей и наличие одной связной детали. STEP — одно валидное твёрдое тело. Расчёт массы использует плотность 1,20 г/см³; реальный расход зависит от материала и настроек. Цвет не хранится в STL. 3D-просмотр создан из той же сетки STL; в облегчённом режиме используется меньше треугольников.</p></div></details>
+</main>
+<footer><a class="brand" href="#">КОМПАНЬОН</a><p>Немного характера. Каждый день.</p><span>SHIBA / 2026 <span class="footer-slash">—</span> СДЕЛАНО ДЛЯ ПЕЧАТИ</span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body></html>
