@@ -7,3 +7,6 @@ export const poses=[
   ['Молоток на погрузчике · гипотеза','breaker-loader',{bucket:36}],
   ['Подъём ковша','gripper',{yaw:90,bucket:32,tip:-10}]
 ];
+
+// Control images use the preset order above and the same model transforms.
+export const stillNames=['overview','snow-boom','front-gripper','breaker-arm','breaker-loader','raised-bucket'];
