@@ -91,6 +91,24 @@ async function range(id,num){
     for(const [preset,yaw] of [['rear',34],['front',111]]){
       await page.locator('[data-archive='+preset+']').click();assert.equal(await page.inputValue('#preset'),preset);
       assert.equal(await page.evaluate(()=>window.mobotV7.state.pose.yaw),yaw);
+      const err=await page.evaluate(async fig=>{
+        const {model,camera,renderer}=window.mobotV7;
+        const registration=await (await fetch('./research/mobot/1986/v7/registration/registration.json')).json();
+        const archive=registration.views[fig];
+        const section=model.sections['Борт '+(fig==='fig6'?1:-1)];
+        const hubs=[];section.traverse(o=>{if(o.name==='Ступица')hubs.push(o);});
+        const size=fig==='fig6'?[1456,1140]:[864,1170];
+        const {width,height}=renderer.domElement.getBoundingClientRect();
+        const scale=Math.min(width/size[0],height/size[1]);
+        return Math.max(...['endRear','endFront'].map((id,j)=>{
+          const v=hubs[7+j].getWorldPosition(camera.position.clone()).project(camera);
+          const px=[size[0]/2+v.x*width/(2*scale),size[1]/2-v.y*height/(2*scale)];
+          const target=archive.points.find(p=>p.point===id).projected;
+          return Math.hypot(px[0]-target[0],px[1]-target[1]);
+        }));
+      },preset==='rear'?'fig6':'fig9');
+      assert(err<.1,'Archive projection mismatch: '+err+' crop pixels');
+      await capture('archive-'+preset+'.jpg','#viewport');
     }
     const urls=await page.locator('.photo,#passport .footlinks a').evaluateAll(xs=>xs.map(x=>x.href));
     for(const u of urls)assert.equal((await page.request.get(u)).status(),200,u);
