@@ -1,0 +1,23 @@
+{
+  "tested": {
+    "gripper": 76,
+    "breaker-arm": 73,
+    "breaker-loader": 73
+  },
+  "maximum": {
+    "wrist/offset": 4.965068306494546e-16,
+    "wrist/direction": 4.965068306494546e-16,
+    "arm tool mount": 4.965068306494546e-16,
+    "loader/gripper/offset": 2.7194799110210365e-16,
+    "loader/gripper/direction": 2.663879692533171e-16,
+    "boom housing": 1.3597399555105182e-16,
+    "boom screw": 2.5438405243138006e-16,
+    "loader housing": 1.5700924586837752e-16,
+    "loader screw": 1.2412670766236366e-16,
+    "loader/breaker-arm/offset": 2.482534153247273e-16,
+    "loader/breaker-arm/direction": 2.663879692533171e-16,
+    "loader/breaker-loader/offset": 2.7194799110210365e-16,
+    "loader/breaker-loader/direction": 2.663879692533171e-16
+  },
+  "units": "offsets in scene units; direction residual is the sine of the angle between axes"
+}
