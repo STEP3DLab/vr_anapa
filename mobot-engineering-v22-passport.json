@@ -266,6 +266,13 @@
       "data": "research/mobot/1987/night-20261118/jaw-opening.json",
       "image": "research/mobot/1987/night-20261118/SKTB3-opening.jpg",
       "role": "registration on right cheek; residual measured on left"
+    },
+    {
+      "photo": 4,
+      "part": "наружная концевая пластина и колпачок оси",
+      "data": "research/mobot/1987/night-20261118/boom-cheek.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-boom-cheek.jpg",
+      "role": "independent; local end-plate fit on SKTB2"
     }
   ]
 }
