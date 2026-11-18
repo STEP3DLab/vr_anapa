@@ -24,7 +24,7 @@ jobs:
         run: |
           for test in contact-sweep hood-project jaw-profile breaker-photo jaw-opening jaw-linkage boom-pose boom-cheek mount-axes bucket-cheek bucket-pose bucket-heel loader-witnesses batanov-lift-rig; do node "$SUITE/$test.mjs"; done
           python3 "$SUITE/boom-pick-sensitivity.py"
-          git diff --exit-code -- "$SUITE/*.json"
+          git diff --exit-code -- "$SUITE/*.json" "$SUITE/batanov-loader-trial.glb"
       - name: Install Chromium
         run: |
           npm install --no-save --package-lock=false playwright@1.56.1
