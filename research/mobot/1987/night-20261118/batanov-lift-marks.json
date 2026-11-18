@@ -1,0 +1,19 @@
+{
+  "units": "Pixels at 1000 px full image width, origin top left. Wheel registration uses only the two raised terminal faces; seven lower wheel centres are withheld.",
+  "order": "Wheel centres: rear, front, seven lower wheels from rear to front. Bolt centres: clockwise in the image, starting at the highest bolt.",
+  "SKTB2": {
+    "wheels": [[140.9,612.7],[667.6,613.6],[183.7,689.4],[248.6,692.5],[317.2,694.7],[377.8,695.0],[442.0,695.8],[505.3,694.6],[565.4,694.1]],
+    "bolts": [[434.70,639.17],[445.87,648.85],[442.42,662.72],[427.83,667.45],[416.39,657.78],[419.64,643.58]],
+    "shaftMark": [795,531], "lipMark": [938,501]
+  },
+  "P014": {
+    "wheels": [[195.8,627.0],[718.3,625.5],[237.5,706.6],[301.7,711.1],[368.0,710.0],[432.4,710.1],[494.3,712.1],[559.2,712.0],[619.8,710.6]],
+    "bolts": [[484.55,652.61],[498.51,659.15],[499.52,674.40],[486.83,683.41],[472.72,676.93],[471.39,661.45]],
+    "shaftMark": [804,440], "lipMark": [945,406]
+  },
+  "SKTB4": {
+    "flangeMark": [364,536], "uncertaintyPx": 6,
+    "scope": "Different snow view. Flange identified by its bolt circle; cutting lip and shaft centre obscured. P028 is the same exposure."
+  },
+  "picking": "Full-resolution crop on each scan. Bolt positions are centroids of isolated bright components at thresholds 165/190 for SKTB2/P014; visual cross-check and sensitivity at 145/185 and 170/210. Silvery circular mark on the cheek is a tentative axle witness. Treat flange depth, axle identity and transverse offsets as C."
+}
