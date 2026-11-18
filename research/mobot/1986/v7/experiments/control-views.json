@@ -1,0 +1,199 @@
+{
+  "fig6": {
+    "training": [
+      "endRear",
+      "endFront",
+      "road0",
+      "lampNear",
+      "lampFar"
+    ],
+    "wheelControls": [
+      "road1",
+      "road2",
+      "road3",
+      "road4",
+      "road5",
+      "road6"
+    ],
+    "trials": [
+      {
+        "distance": null,
+        "leaveOneOutMeanPx": 26.22,
+        "wheelControlMeanPx": 24.58,
+        "hoodControlPx": 8.15,
+        "wheelErrors": [
+          14.88,
+          13.06,
+          19.66,
+          28.64,
+          36.1,
+          35.12
+        ]
+      },
+      {
+        "distance": 16,
+        "leaveOneOutMeanPx": 27.89,
+        "wheelControlMeanPx": 25.34,
+        "hoodControlPx": 9.8,
+        "wheelErrors": [
+          16.14,
+          14.34,
+          21.27,
+          29.21,
+          37.05,
+          34.05
+        ]
+      },
+      {
+        "distance": 10,
+        "leaveOneOutMeanPx": 29.62,
+        "wheelControlMeanPx": 26.3,
+        "hoodControlPx": 12.03,
+        "wheelErrors": [
+          17.33,
+          15.77,
+          22.97,
+          30.1,
+          38.13,
+          33.51
+        ]
+      },
+      {
+        "distance": 7,
+        "leaveOneOutMeanPx": 32.12,
+        "wheelControlMeanPx": 27.79,
+        "hoodControlPx": 15.38,
+        "wheelErrors": [
+          19.06,
+          18.03,
+          25.59,
+          31.6,
+          39.75,
+          32.73
+        ]
+      },
+      {
+        "distance": 5,
+        "leaveOneOutMeanPx": 36.31,
+        "wheelControlMeanPx": 29.61,
+        "hoodControlPx": 19.89,
+        "wheelErrors": [
+          21.3,
+          21.37,
+          29.51,
+          33.35,
+          41.72,
+          30.44
+        ]
+      },
+      {
+        "distance": 4,
+        "leaveOneOutMeanPx": 40.91,
+        "wheelControlMeanPx": 33.94,
+        "hoodControlPx": 23.09,
+        "wheelErrors": [
+          23.92,
+          25.74,
+          35.07,
+          37.86,
+          46.81,
+          34.24
+        ]
+      }
+    ],
+    "selectedDistance": null,
+    "publishedWheelControlMeanPx": 17.36,
+    "previousRegistrationRmsPx": 36.5797,
+    "previousArchiveWheelMeanPx": 44.91,
+    "registeredRegistrationRmsPx": 0.0,
+    "registeredArchiveWheelMeanPx": 14.98
+  },
+  "fig9": {
+    "training": [
+      "endRear",
+      "endFront",
+      "road0",
+      "lampNear",
+      "lampFar"
+    ],
+    "wheelControls": [
+      "road1",
+      "road2",
+      "road3"
+    ],
+    "trials": [
+      {
+        "distance": null,
+        "leaveOneOutMeanPx": 13.48,
+        "wheelControlMeanPx": 31.37,
+        "hoodControlPx": 20.92,
+        "wheelErrors": [
+          26.27,
+          29.23,
+          38.61
+        ]
+      },
+      {
+        "distance": 16,
+        "leaveOneOutMeanPx": 14.27,
+        "wheelControlMeanPx": 26.91,
+        "hoodControlPx": 18.3,
+        "wheelErrors": [
+          23.28,
+          25.27,
+          32.2
+        ]
+      },
+      {
+        "distance": 10,
+        "leaveOneOutMeanPx": 15.08,
+        "wheelControlMeanPx": 23.99,
+        "hoodControlPx": 17.91,
+        "wheelErrors": [
+          21.45,
+          22.68,
+          27.83
+        ]
+      },
+      {
+        "distance": 7,
+        "leaveOneOutMeanPx": 16.65,
+        "wheelControlMeanPx": 20.1,
+        "hoodControlPx": 18.46,
+        "wheelErrors": [
+          19.17,
+          19.23,
+          21.9
+        ]
+      },
+      {
+        "distance": 5,
+        "leaveOneOutMeanPx": 19.3,
+        "wheelControlMeanPx": 14.74,
+        "hoodControlPx": 19.1,
+        "wheelErrors": [
+          15.92,
+          14.93,
+          13.36
+        ]
+      },
+      {
+        "distance": 4,
+        "leaveOneOutMeanPx": 22.3,
+        "wheelControlMeanPx": 10.39,
+        "hoodControlPx": 19.68,
+        "wheelErrors": [
+          13.16,
+          12.41,
+          5.59
+        ]
+      }
+    ],
+    "selectedDistance": null,
+    "publishedWheelControlMeanPx": 44.14,
+    "previousRegistrationRmsPx": 102.8051,
+    "previousArchiveWheelMeanPx": 144.25,
+    "registeredRegistrationRmsPx": 0.0,
+    "registeredArchiveWheelMeanPx": 38.86
+  }
+}

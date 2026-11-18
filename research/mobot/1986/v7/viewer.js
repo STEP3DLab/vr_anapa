@@ -1,4 +1,5 @@
 import * as T from '../../../../mobot-assets/three.module.min.js';
+import {frameArchive} from './archive-camera.mjs';
 import {OrbitControls} from '../../../../mobot-assets/controls/OrbitControls.js';
 import {makeMobot1986} from '../../../../mobot-ch-hv-1986-research-v7-model.js';
 
@@ -91,8 +92,11 @@ async function start(){
     [roots.mast[0],0,.65,0],[roots.boom[0],-.36,.30,0],[roots.grab[0],-.27,-.40,0],
     [roots.loader[0],.61,.15,0],[roots.cameras[0],0,.30,.20],[roots.cameras[1],.16,.40,0]
   ].map(([node,x,y,z])=>({node,home:node.position.clone(),offset:new T.Vector3(x,y,z)}));
-  const dirs=(a,e)=>{a=T.MathUtils.degToRad(a);e=T.MathUtils.degToRad(e);return [Math.sin(a)*Math.cos(e),Math.sin(e),Math.cos(a)*Math.cos(e)];};
-  const directions={fig6:dirs(12.446,6.3285),fig9:dirs(142.169,5.0511),three:[2.15,1.52,4.9],side:[0,.015,5],front:[5,.32,.01],top:[.001,5,.001]};
+  const registration=await fetch(new URL('./registration/registration.json',import.meta.url));
+  if(!registration.ok)throw Error('Камеры архивных снимков недоступны');
+  const archive=(await registration.json()).views;
+  const sizes={fig6:[1456,1140],fig9:[864,1170]};
+  const directions={three:[2.15,1.52,4.9],side:[0,.015,5],front:[5,.32,.01],top:[.001,5,.001]};
   let selected='all',isolated=false,exploded=false,view='three',pose={...model.defaults};
   const render=()=>renderer.render(scene,camera);
   controls.addEventListener('change',render);
@@ -102,8 +106,13 @@ async function start(){
     return bounds;
   }
   function frame(align=false){
+    if(align && archive[view] && !isolated && !exploded){
+      frameArchive(camera,controls.target,archive[view].camera,sizes[view],viewport.clientWidth/viewport.clientHeight);
+      controls.update();render();return;
+    }
     const b=visibleBounds(),center=b.getCenter(new T.Vector3());
-    const d=align?new T.Vector3(...directions[view]):camera.position.clone().sub(controls.target);
+    camera.up.set(0,1,0);
+    const d=align && directions[view]?new T.Vector3(...directions[view]):camera.position.clone().sub(controls.target);
     camera.position.copy(center).addScaledVector(d.normalize(),9);controls.target.copy(center);camera.lookAt(center);camera.updateMatrixWorld();
     const aspect=viewport.clientWidth/viewport.clientHeight;
     // Fit projected corners to the live viewport even when a single small node is isolated.
