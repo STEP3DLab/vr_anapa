@@ -25,6 +25,7 @@ function choosePhoto(index){
   $('overlayImage').src=url;$('original').href='http://sktbpr.ru/sites/default/files/foto_album/'+id+'.jpg';
   pressed('[data-photo]','photo',String(index));
 }
+$('photoChoices').replaceChildren();
 photos.forEach(([id],i)=>{const button=document.createElement('button');button.textContent='№'+id;button.dataset.photo=i;button.onclick=()=>choosePhoto(i);$('photoChoices').append(button);});
 choosePhoto(0);
 for(const [i,p] of poses.entries())$('pose').add(new Option(p[0],i));

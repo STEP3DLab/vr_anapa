@@ -98,7 +98,18 @@ async function run(){
  });
  await test('without-javascript',async()=>{
   const ctx=await browser.newContext({javaScriptEnabled:false});const p=await ctx.newPage();await p.goto(base+'mobot-engineering-v22.html');
-  assert(await p.locator('#still').isVisible());assert(await p.locator('#still').evaluate(o=>o.naturalWidth>900));await ctx.close();
+  assert(await p.locator('#still').isVisible());assert(await p.locator('#still').evaluate(o=>o.naturalWidth>900));
+  const links=await p.locator('#photoChoices a').evaluateAll(items=>items.map(a=>a.href));
+  assert.equal(links.length,4);
+  const originals=[];
+  for(const url of links){
+    const image=await p.goto(url);
+    assert.equal(image.status(),200);
+    const dimensions=await p.locator('img').evaluate(async o=>{await o.decode();return [o.naturalWidth,o.naturalHeight]});
+    originals.push(dimensions);
+  }
+  assert.deepEqual(originals,[[2786,2106],[2721,2014],[2782,1993],[2056,1346]]);
+  await ctx.close();return originals;
  });
  await test('candidate-resources',async()=>{
   const ctx=await browser.newContext(), page=await ctx.newPage();
