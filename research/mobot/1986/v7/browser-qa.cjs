@@ -43,6 +43,20 @@ async function range(id,num){
     assert(metrics.isWebGL2&&metrics.glError===0&&metrics.triangles>10000&&metrics.dark>100&&metrics.bright>1000);
     assert.equal(metrics.version,'1986-v7');assert.equal(metrics.extension,Number(process.env.MOBOT_EXTENSION||.105));await capture('desktop.jpg');return metrics;
   });
+  await test('Rear covers in the live Three.js model',async()=>{
+    const covers=await page.evaluate(()=>{
+      const {model,materials}=window.mobotV7;
+      return [-1,1].map(side=>{
+        const rear=model.sections['Борт '+side].children.find(o=>
+          o.position.x===model.sourceProfile().endWheels[0][0] && o.getObjectByName('Ступица'));
+        const face=rear.getObjectByName('Лицевой диск');
+        return {lightFace:materials.get(face)===model.materials.structure,
+          hubScale:rear.getObjectByName('Ступица').scale.x};
+      });
+    });
+    assert(covers.every(c=>c.lightFace&&Math.abs(c.hubScale-1/3)<1e-9));
+    return {covers};
+  });
   const original=await signature();
   await test('Seven assemblies: highlights, isolation and exact restoration',async()=>{
     const options=await page.locator('#part option').evaluateAll(os=>os.map(o=>o.value).filter(v=>v!=='all'));assert.equal(options.length,7);

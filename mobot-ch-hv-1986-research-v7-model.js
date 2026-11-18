@@ -6,6 +6,20 @@ export function makeMobot1986(T,extension=.105){
   if(!suspensionTrials.includes(extension))throw new RangeError('Неизвестный вариант подвеса');
   const model=makeV6(T),{root,sections,materials,mechanisms}=model;
   const m=materials,up=new T.Vector3(0,1,0);
+  // Both 1986 views show a pale, nearly uninterrupted rear end-wheel cover.
+  // The small centre mark is schematic; its size and depth remain C.
+  const rearX=model.sourceProfile().endWheels[0][0];
+  for(const side of [-1,1]){
+    const rear=sections['Борт '+side].children.find(part=>
+      part.position.x===rearX && part.getObjectByName('Поднятое крайнее колесо'));
+    rear.getObjectByName('Лицевой диск').material=m.structure;
+    const hub=rear.getObjectByName('Ступица');
+    hub.material=m.steel;
+    hub.scale.set(1/3,1,1/3);
+    const recess=rear.getObjectByName('Условное углубление диска');
+    rear.remove(recess);
+    model.objects.splice(model.objects.indexOf(recess),1);
+  }
   function mesh(parent,geometry,material,name){
     const o=new T.Mesh(geometry,material);o.name=name;o.userData.geometry='C';
     parent.add(o);model.objects.push(o);return o;
