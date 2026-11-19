@@ -118,7 +118,7 @@ async function run(){
      await page.locator('#photo').evaluate(o=>o.decode());sizes.push(await page.locator('#photo').evaluate(o=>[o.naturalWidth,o.naturalHeight]));
      await page.click('#match');
      assert.equal(await page.inputValue('#pose'),String([0,2,1,3][i]));
-     assert.equal(await page.locator('#original').getAttribute('href'),'http://sktbpr.ru/sites/default/files/foto_album/'+[2,3,4,9][i]+'.jpg');
+     assert.equal(await page.locator('#original').getAttribute('href'),'https://sktbpr.ru/sites/default/files/foto_album/'+[2,3,4,9][i]+'.jpg');
      assert.equal(await page.evaluate(()=>window.mobot22.status().view),['side','side','side','three'][i]);
     }
     assert.deepEqual(sizes,[[2786,2106],[2721,2014],[2782,1993],[2056,1346]]);
