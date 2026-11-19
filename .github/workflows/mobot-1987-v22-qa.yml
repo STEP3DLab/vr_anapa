@@ -4,6 +4,9 @@ on:
     branches: [codex/mobot-1987-v22-night-20261118, main]
     paths:
       - 'mobot-engineering-v22*'
+      - 'scripts/mobot-v22-*'
+      - 'mobot-geometry-gate.cjs'
+      - 'mobot-qa/demo-2026-11-18/sktb-2-landmarks-manual.json'
       - 'research/mobot/1987/night-20261118/**'
       - '.github/workflows/mobot-1987-v22-qa.yml'
   workflow_dispatch:
@@ -20,6 +23,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Verify provenance and uncertainty of photographed track circles
+        run: |
+          node scripts/mobot-v22-track-contract.cjs > /tmp/v22-track-ledger.json
+          node scripts/mobot-v22-uncertainty.cjs > /tmp/v22-track-uncertainty.json
+          node mobot-geometry-gate.cjs > /tmp/v22-geometry-gate.json
+          node -e "const r=require('./scripts/mobot-v22-uncertainty.cjs'); if(!r.independentSnowSide||r.perPair.length!==20)process.exit(1)"
       - name: Reproduce geometry and source measurements
         run: |
           for test in contact-sweep hood-project jaw-profile breaker-photo jaw-opening jaw-linkage boom-pose boom-cheek mount-axes bucket-cheek bucket-pose bucket-heel loader-witnesses; do node "$SUITE/$test.mjs"; done
