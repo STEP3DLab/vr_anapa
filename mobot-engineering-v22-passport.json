@@ -18,17 +18,17 @@
   "physicalScaleKnown": false,
   "sources": {
     "SKTB-TEXT": {
-      "url": "http://sktbpr.ru/node/23",
+      "url": "https://sktbpr.ru/node/23",
       "type": "primary developer account",
       "identity": "Исходный Ч-ХВ и модернизированный Ч-ХВ-2; существование и функции узлов"
     },
     "SKTB-GALLERY": {
-      "url": "http://sktbpr.ru/foto-alb/65",
+      "url": "https://sktbpr.ru/foto-alb/65",
       "type": "primary developer gallery",
       "identity": "Подписи и атрибуция полных фотографий"
     },
     "SKTB2": {
-      "url": "http://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
       "local": "mobot-assets/archive/1987-before-dispatch.jpg",
       "identity": "Ч-ХВ-2 перед отправкой на ЧАЭС; дата съёмки не указана; оригинал 2786×2106",
       "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
@@ -38,7 +38,7 @@
       ]
     },
     "SKTB3": {
-      "url": "http://sktbpr.ru/sites/default/files/foto_album/3.jpg",
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/3.jpg",
       "local": "mobot-assets/archive/1987-front.jpg",
       "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; фронтальный вид схвата",
       "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
@@ -48,7 +48,7 @@
       ]
     },
     "SKTB4": {
-      "url": "http://sktbpr.ru/sites/default/files/foto_album/4.jpg",
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/4.jpg",
       "local": "mobot-assets/archive/1987-snow-side.jpg",
       "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; независимый боковой ракурс на снегу",
       "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
@@ -58,7 +58,7 @@
       ]
     },
     "SKTB9": {
-      "url": "http://sktbpr.ru/sites/default/files/foto_album/9.jpg",
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/9.jpg",
       "local": "mobot-assets/archive/1987-breaker.jpg",
       "identity": "Ч-ХВ-2: отработка применения молотка на манипуляторе",
       "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
