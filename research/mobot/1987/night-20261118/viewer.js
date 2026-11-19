@@ -22,7 +22,7 @@ function pressed(selector,field,value){document.querySelectorAll(selector).forEa
 function choosePhoto(index){
   photo=index;const [id,file,title,note]=photos[index],url='./mobot-assets/archive/'+file;
   $('photo').src=url;$('photo').alt=title;$('photoFile').href=url;$('photoTitle').textContent=title;$('photoNote').textContent=note;
-  $('overlayImage').src=url;$('original').href='http://sktbpr.ru/sites/default/files/foto_album/'+id+'.jpg';
+  $('overlayImage').src=url;$('original').href='https://sktbpr.ru/sites/default/files/foto_album/'+id+'.jpg';
   pressed('[data-photo]','photo',String(index));
 }
 $('photoChoices').replaceChildren();
