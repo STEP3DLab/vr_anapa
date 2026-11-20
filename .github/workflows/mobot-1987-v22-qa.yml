@@ -27,6 +27,8 @@ jobs:
         run: |
           node scripts/mobot-v22-track-contract.cjs > /tmp/v22-track-ledger.json
           node scripts/mobot-v22-uncertainty.cjs > /tmp/v22-track-uncertainty.json
+          mkdir -p /tmp/v22
+          node scripts/mobot-v22-perspective-holdout.cjs > /tmp/v22/cross-view-projectivity.json
           node mobot-geometry-gate.cjs > /tmp/v22-geometry-gate.json
           node -e "const r=require('./scripts/mobot-v22-uncertainty.cjs'); if(!r.independentSnowSide||r.perPair.length!==20)process.exit(1)"
       - name: Reproduce geometry and source measurements
