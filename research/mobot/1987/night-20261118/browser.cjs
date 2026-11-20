@@ -194,14 +194,21 @@ async function run(){
   const ctx=await browser.newContext(), page=await ctx.newPage();
   await page.goto(base+'mobot-engineering-v22.html');
   const paths=await page.locator('#backup a,section[aria-labelledby=compare] a').evaluateAll(items=>items.map(a=>a.href));
+  const checked=[];
   for(const url of paths){
-    const response=await ctx.request.get(url);
-    assert.equal(response.status(),200,url);
-    if(/\.(jpg|webp)$/.test(url))assert.match(response.headers()['content-type'],/^image\//);
-    if(url.endsWith('-passport.json'))assert.equal((await response.json()).revision,'v22');
-    if(url.endsWith('contact-sweep.json'))assert.equal((await response.json()).v22.counts.confirmedPoses,42);
+    // GitHub's unauthenticated HTML endpoint can return HTTP 429 for an existing
+    // blob. Resolve links to this exact repository against the checked-out site
+    // instead; all failures to fetch actual source files still fail this test.
+    const ownBlob=url.match(/^https:\/\/github\.com\/STEP3DLab\/vr_anapa\/blob\/main\/([^?#]+)(?:[?#].*)?$/);
+    const verifiedUrl=ownBlob?new URL(ownBlob[1],base).href:url;
+    const response=await ctx.request.get(verifiedUrl);
+    assert.equal(response.status(),200,url+' (local source '+verifiedUrl+')');
+    if(/\.(jpg|webp)$/.test(verifiedUrl))assert.match(response.headers()['content-type'],/^image\//);
+    if(verifiedUrl.endsWith('-passport.json'))assert.equal((await response.json()).revision,'v22');
+    if(verifiedUrl.endsWith('contact-sweep.json'))assert.equal((await response.json()).v22.counts.confirmedPoses,42);
+    checked.push({url,verifiedUrl,mirroredGithubSource:Boolean(ownBlob)});
   }
-  await ctx.close();return paths.length;
+  await ctx.close();return checked;
  });
  await browser.close();
 }
