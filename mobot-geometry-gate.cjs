@@ -10,6 +10,7 @@ const latest=read('mobot-latest.html');
 // released v22 photo-ledger contract. The result is a *scene* check, not metrology.
 const current1987TrackSource=require('./scripts/mobot-v22-track-contract.cjs');
 const current1987Uncertainty=require('./scripts/mobot-v22-uncertainty.cjs');
+const current1987TreadFootprint=require('./scripts/mobot-v22-tread-footprint.cjs');
 
 function requireOne(source,pattern,description){
  const m=source.match(pattern);assert(m,description);return m;
@@ -44,6 +45,7 @@ console.log(JSON.stringify({
  variant1986:{loaderOppositeGrapple:true,sceneGrappleXRange:[Math.min(...grabXs),Math.max(...grabXs)],sceneLoaderXRange:[Math.min(...bucketXs),Math.max(...bucketXs)],historicalDimensionsValidated:false},
  variant1987:{candidate:'v18',nominalAdjacentCircleOverlaps:overlaps,rearEndCircleOverlap:rearOverlap,realWheelClearanceEstablished:false,nominalCircleNonintersecting:overlaps.length===0&&rearOverlap===0,eligibleForLatest:false,additionalGatesMissing:['independent historical view','real WebGL/mobile verification','photogrammetric calibration']},
  current1987TrackSource,
+ current1987TreadFootprintSummary:{sampledPhases:current1987TreadFootprint.sampledPhases,nominalMaxBelowDatumScene:current1987TreadFootprint.maxBelowDatumScene,minWheelDiscToPadGapScene:current1987TreadFootprint.minWheelDiscToPadGapScene,QAStatus:current1987TreadFootprint.QAStatus,historicalGroundContactCertified:false},
  current1987UncertaintySummary:{nominalMinimumGapScene:current1987Uncertainty.nominalMinimumGapScene,endpointScenariosWithNegativeGap:current1987Uncertainty.endpointScenariosWithNegativeGap,independentSnowSideRmsPx:current1987Uncertainty.independentSnowSide.heldoutRmsPx,physicalOverlapCertified:false},
  latest:'v22 (research)',archivedStable:'v17',note:'v18 circle overlap is a scene-model warning; v22 is a research viewer, not factory-calibrated CAD.'
 },null,2));
