@@ -1,0 +1,65 @@
+{
+  "test": "v22-actual-threejs-instanced-track-geometry",
+  "revision": "v22",
+  "date": "2026-11-24",
+  "observedAtCommit": "574f574c4296fd68257c242f15328c2e6626f56d",
+  "workflowRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45282237977",
+  "reportArtifact": "v22-browser-acceptance / track-rendered.json",
+  "provenance": {
+    "algorithm": "scripts/mobot-v22-track-rendered.mjs",
+    "sourceModel": "mobot-engineering-v22-model.js",
+    "threeCore": "mobot-assets/three.core.min.js",
+    "sourceImages": [
+      "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "https://sktbpr.ru/sites/default/files/foto_album/4.jpg"
+    ],
+    "evidenceClass": "C: geometric behavior of the reconstructed model; source photos B for appearance",
+    "physicalScaleEstablished": false
+  },
+  "samples": {
+    "sides": 2,
+    "linksPerSide": 114,
+    "phaseCount": 101,
+    "instancesPerSide": 11514,
+    "denseSamples": 30000
+  },
+  "measuredFromRenderedInstances": {
+    "minPadYScene": 0.149072755,
+    "minCleatYScene": 0.138954872,
+    "nominalDatumYScene": 0.14,
+    "sampledMaxCleatBelowDatumScene": 0.001045128,
+    "belowDatumLinkInstancesBothSides": 6634,
+    "maximumPathMatrixErrorScene": 4.1847e-8,
+    "maxDirectionMatrixError": 4.0774e-8,
+    "maximumCleatNormalMatrixErrorScene": 7.7709e-8,
+    "maximumSideYDifferenceScene": 0
+  },
+  "sampledDenseUsingThreeCurve": {
+    "minPadYScene": 0.149039405,
+    "minCleatYScene": 0.138942982,
+    "approximateMaxBelowDatumScene": 0.001057018,
+    "fractionOfNominalPathBelowDatumApprox": 0.288133
+  },
+  "idealizedPolygon": {
+    "minCleatYScene": 0.138898746,
+    "maximumBelowDatumScene": 0.001101254,
+    "meaning": "Exact only for piecewise one-sided segment tangents; not an exact rendered Three.CurvePath result"
+  },
+  "orientation": {
+    "polygonMaxCornerTurnDegrees": 3.75,
+    "actualFiniteDifferenceNearCornerAtPlusMinus1eMinus6": 0.037513,
+    "actualPeriodicSeamDiscontinuityDegrees": 3.75,
+    "caveat": "Approximate one-sided sampling inside the curve; the periodic seam is not smoothed by default."
+  },
+  "qa": {
+    "localBrowserPass": 30,
+    "publicBrowserPass": 33,
+    "publicBrowserErrors": 0,
+    "pagesDeployRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45282236686",
+    "gpuMode": "Chromium SwiftShader WebGL2",
+    "physicalSmartphoneTested": false
+  },
+  "historicalDimensionsVerified": false,
+  "realTrackPitchVerified": false,
+  "realBalancersGeometryVerified": false
+}

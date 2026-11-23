@@ -351,7 +351,21 @@
     "historicalTrackPitchMeasured": false,
     "actualGroundPlaneCertified": false,
     "realSuspensionTopologyCertified": false,
-    "modelGeometryChanged": false
+    "modelGeometryChanged": false,
+    "renderedThreeJS": {
+      "date": "2026-11-24",
+      "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45282237977",
+      "report": "research/mobot/1987/2026-11-24-track-threejs.md",
+      "json": "research/mobot/1987/2026-11-24-track-threejs-qa.json",
+      "instanceSamplesPerSide": 11514,
+      "minRenderedCleatYScene": 0.138954872,
+      "approxDenseMinCleatYScene": 0.138942982,
+      "polygonOnlyIdealMinCleatYScene": 0.138898746,
+      "actualSeamTangentJumpDegrees": 3.75,
+      "precision": "Float32 matrices; no physical calibration",
+      "evidenceClass": "C",
+      "geometryModified": false
+    }
   },
   "trackProvenance": {
     "verifiedOn": "2026-11-23",
