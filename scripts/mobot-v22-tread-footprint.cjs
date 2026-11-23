@@ -92,6 +92,58 @@ assert(worstWheelCleatGap>=-1e-8,'Nominal track cleat section intersects a scene
 const scenePenetration=Math.max(0,groundY-Math.min(minPadY,minCleatY));
 assert(scenePenetration<.005,
   'Nominal ground intrusion grew >.005 scene units: inspect track geometry and photo basis');
+
+  // Segmentwise continuous envelope: each bottom corner height is affine along
+  // a straight path segment; both one-sided tangent frames are tested at corners.
+  function bottomAt(s,cleat,end){
+    const c=s.dx/s.length,t=s.dy/s.length,y=s.y+(end?s.dy:0);
+    return cleat
+      ? y+c*cleatOffset-Math.abs(t)*halfShoeX-Math.abs(c)*cleatHalf
+      : y-Math.abs(t)*halfPadX-Math.abs(c)*padHalf;
+  }
+  function belowDatumLength(s,cleat){
+    const a=bottomAt(s,cleat,false),b=bottomAt(s,cleat,true);
+    if(Math.max(a,b)<groundY)return s.length;
+    if(Math.min(a,b)>=groundY)return 0;
+    const fraction=(groundY-a)/(b-a);
+    return s.length*(a<groundY?fraction:1-fraction);
+  }
+  let continuousPad=Infinity,continuousCleat=Infinity,cleatLength=0,padLength=0,maxTurn=0;
+  for(let i=0;i<segments.length;i++){
+    const s=segments[i],p=segments[(i+segments.length-1)%segments.length];
+    continuousPad=Math.min(continuousPad,bottomAt(s,false,false),bottomAt(s,false,true));
+    continuousCleat=Math.min(continuousCleat,bottomAt(s,true,false),bottomAt(s,true,true));
+    cleatLength+=belowDatumLength(s,true);padLength+=belowDatumLength(s,false);
+    maxTurn=Math.max(maxTurn,Math.abs(Math.atan2(p.dx*s.dy-p.dy*s.dx,p.dx*s.dx+p.dy*s.dy)));
+  }
+  const continuousPenetration=Math.max(0,groundY-Math.min(continuousPad,continuousCleat));
+  const continuousFraction=cleatLength/perimeter;
+  const maxTurnDeg=maxTurn*180/Math.PI;
+  assert(continuousPad<=minPadY+1e-10&&continuousCleat<=minCleatY+1e-10,
+    'Continuous envelope must enclose all phase samples');
+  assert(continuousPenetration+1e-10>=scenePenetration,
+    'Phase sampling cannot be lower than the continuous bound');
+  assert(padLength<1e-10,'Unexpected virtual tread-pad intersection with datum');
+  assert(Math.abs(continuousPenetration-0.00110125434643)<1e-8,
+    'Frozen v22 continuous extreme changed; revisit the model assumption');
+  assert(Math.abs(continuousFraction-0.28812395373206)<1e-7,
+    'Frozen v22 below-datum path fraction changed; review provenance');
+  assert(Math.abs(maxTurnDeg-3.75)<1e-5,
+    'Frozen v22 tangent discontinuity changed; review link mechanics');
+  const continuousFootprint={
+    method:'piecewise linear exact segment envelope; both one-sided corner limits',
+    modelOnly:true,
+    minPadYScene:+continuousPad.toFixed(9),
+    minCleatYScene:+continuousCleat.toFixed(9),
+    maxBelowDatumScene:+continuousPenetration.toFixed(9),
+    pathLengthWithCleatBelowDatumScene:+cleatLength.toFixed(9),
+    fractionOfPathWithCleatBelowDatum:+continuousFraction.toFixed(9),
+    maxTangentJumpDegrees:+maxTurnDeg.toFixed(6),
+    realTrackPitchMeasured:false,
+    historicalGroundContactCertified:false,
+    note:'Virtual path length fraction, not the physical contact area or an operating probability.'
+  };
+
 const report={
   test:'mobot-v22-track-footprint-envelope',date:'2026-11-23',
   model:'mobot-engineering-v22-model.js',nominalModelOnly:true,
@@ -106,6 +158,7 @@ const report={
   sampleLinkCentersWithCleatBelowDatum:sampledIntersections,
   minWheelDiscToPadGapScene:+worstWheelPadGap.toFixed(9),
   minWheelDiscToCleatGapScene:+worstWheelCleatGap.toFixed(9),
+  continuousFootprint,
   QAStatus:scenePenetration>1e-6?'WARNING_TREAD_CLEAT_INTERSECTS_NOMINAL_PLANE':'NOMINAL_PLANE_CLEAR',
   historicalDimensionsCertified:false,trackLinkPitchCertified:false,
   historicalGroundContactCertified:false,measuredAxleSpacingCertified:false,
