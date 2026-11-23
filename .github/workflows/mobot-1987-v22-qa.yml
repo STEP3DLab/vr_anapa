@@ -31,6 +31,7 @@ jobs:
           node scripts/mobot-v22-perspective-holdout.cjs > /tmp/v22/cross-view-projectivity.json
           node mobot-geometry-gate.cjs > /tmp/v22-geometry-gate.json
           node scripts/mobot-v22-tread-footprint.cjs > /tmp/v22/track-footprint.json
+          node scripts/mobot-v22-evidence-contract.cjs > /tmp/v22/evidence-contract.json
           node -e "const x=require('./scripts/mobot-v22-tread-footprint.cjs'); if(!x.continuousFootprint || x.continuousFootprint.maxBelowDatumScene<=x.maxBelowDatumScene)process.exit(1)"
           node -e "const r=require('./scripts/mobot-v22-uncertainty.cjs'); if(!r.independentSnowSide||r.perPair.length!==20)process.exit(1)"
       - name: Reproduce geometry and source measurements

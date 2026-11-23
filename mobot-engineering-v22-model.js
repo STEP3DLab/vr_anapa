@@ -74,7 +74,7 @@ export function makeMobot(THREE, quality='auto') {
     bright:mat('Кромки деталей',0xc4c9c4,.78,.30),
     shadow:mat('Внутренние поверхности',0x252d2d,.62,.67),
     olive:mat('Потемневший защитный металл',0x6f7870,.57,.62),
-    rubber:mat('Полиуретановые траки',0x202727,.08,.92),
+    rubber:mat('Покрытие траков · материал Ч-ХВ-2 не установлен',0x202727,.08,.92),
     tread:mat('Рёбра гусениц',0x343b38,.18,.86),
     cable:mat('Кабельная оболочка',0x252a29,.07,.87),
     lens:new THREE.MeshPhysicalMaterial({color:0x203943,metalness:.30,roughness:.11,clearcoat:1,clearcoatRoughness:.10}),
@@ -235,7 +235,7 @@ export function makeMobot(THREE, quality='auto') {
     const linkCount=114; // Same geometry on mobile; historical pitch remains C.
     const treadGeo=new THREE.BoxGeometry(P/linkCount*.91,2*padHalf,.298);
     const tread=new THREE.InstancedMesh(treadGeo,m.rubber,linkCount);
-    tread.name='Отдельные полиуретановые траки';tread.userData.part=id;
+    tread.name='Отдельные траки · материал Ч-ХВ-2 не установлен';tread.userData.part=id;
     tread.castShadow=true;tread.receiveShadow=true;g.add(tread);meshes.push(tread);count++;
     const shoeGeo=new THREE.BoxGeometry(P/linkCount*.62,2*cleatHalf,.310);
     const cleats=new THREE.InstancedMesh(shoeGeo,m.tread,linkCount);
@@ -637,7 +637,7 @@ export function makeMobot(THREE, quality='auto') {
     box(mechanics,[1.46,.026,.025],[0,.692,side*.639],m.olive,'mechanics');
   // Surface highlights: two subtly separate shades for rebuilt welded steel.
   const info={
-    tracks:{name:'Гусеничный движитель',status:'Видимый контур ходовой восстановлен по архивному снимку. Балансиры упомянуты в воспоминаниях о ремонте 1987 года, но их количество, оси и схема не установлены. Отдельный рычажный механизм балансиров в этой модели НЕ построен: показаны упрощённые опоры колёс (C). Количество траков, положения осей и невидимый борт условны.',basis:'СКТБ ПР · архивный снимок; Батанов/Лосицкий «Чернобыльская крыша» · сведения о деформации балансиров'},
+    tracks:{name:'Гусеничный движитель',status:'Видимый контур ходовой восстановлен по архивному снимку. Балансиры упомянуты в воспоминаниях о ремонте 1987 года, но их количество, оси и схема не установлены. Отдельный рычажный механизм балансиров в этой модели НЕ построен: показаны упрощённые опоры колёс (C). Количество траков, положения осей и невидимый борт условны. Полиуретан описан для исходного Ч-ХВ (1986), но материал траков Ч-ХВ-2 (1987) документально не установлен.',basis:'СКТБ ПР · архивный снимок; Батанов/Лосицкий «Чернобыльская крыша» · сведения о деформации балансиров'},
     body:{name:'Корпус и рама',status:'Обводы защитного кожуха, листовые панели и крепеж восстановлены визуально. Не все люки и толщины металла документированы.',basis:'СКТБ ПР · архивный профиль'},
     turret:{name:'Поворотная опора',status:'Открытая опорная рама уточнена по снимкам; оси и фланцы условные. Внутреннее устройство опоры не установлено.',basis:'Фото, функциональная реконструкция'},
     arm:{name:'Манипулятор',status:'На стендовом снимке видны продольные тяги, наружные ребристые элементы и боковые пластины у головки. Их пропорции подобраны по фотографии.',basis:'А. Батанов, В. Лосицкий, «Чернобыльская крыша», рис. 7'},
