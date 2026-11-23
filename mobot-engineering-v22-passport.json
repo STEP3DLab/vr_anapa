@@ -230,7 +230,8 @@
     "Не получены заводские сборочные чертежи, абсолютный масштаб и истинные пределы движений.",
     "Пересечения габаритов служат предварительным предупреждением. При свободной установке регуляторов допустимы коллизии.",
     "Видимая связность габаритов и совпадение осей не доказывают сплошность контакта всех поверхностей, прочность и динамическую устойчивость.",
-    "Стыковка, дозиметр и скрытый барабан документированы без предполагаемой 3D-геометрии."
+    "Стыковка, дозиметр и скрытый барабан документированы без предполагаемой 3D-геометрии.",
+    "Тест 23.11.2026: непрерывная виртуальная траектория даёт до 0,001101254 условной единицы выхода грунтозацепа за произвольную плоскость y=0,14 и скачок локальной касательной 3,75°. Величины C, не параметры настоящего Ч-ХВ-2."
   ],
   "controls": [
     "overview",
@@ -295,5 +296,20 @@
       "image": "research/mobot/1987/night-20261118/SKTB4-bucket-heel.jpg",
       "role": "Форма по №2, независимая сверка открытого заднего участка по №4. Рабочая кромка в снегу исключена."
     }
-  ]
+  ],
+  "modelQA": {
+    "date": "2026-11-23",
+    "source": "scripts/mobot-v22-tread-footprint.cjs",
+    "report": "research/mobot/1987/2026-11-23-track-continuous.md",
+    "evidenceClass": "C",
+    "kind": "2D virtual track envelope, uncalibrated scene",
+    "sampledPenetrationScene": 0.001078296,
+    "continuousPenetrationScene": 0.001101254,
+    "virtualPathFractionWithCleatBelowDatum": 0.288123954,
+    "maxTangentJumpDegrees": 3.75,
+    "historicalTrackPitchMeasured": false,
+    "actualGroundPlaneCertified": false,
+    "realSuspensionTopologyCertified": false,
+    "modelGeometryChanged": false
+  }
 }
