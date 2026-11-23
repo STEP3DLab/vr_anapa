@@ -28,9 +28,24 @@ for(const id of p.modern1987.photoSources){
   assert(fs.existsSync(path.join(root,passport.sources[id].local)));
   assert(passport.sources[id].url.startsWith('https://sktbpr.ru/'));
 }
+// Explicitly exclude later MRK-46M engineering particulars from the 1987 Mobot.
+const foreign=passport.crossVariantExclusions;
+assert.equal(foreign.comparedWith,'МРК-46М');
+assert.equal(foreign.evidenceClassForMobot,'NOT APPLICABLE');
+assert.equal(foreign.geometryOfMobotEstablishedByTheseStatements,false);
+assert.equal(foreign.prohibitedTransfers.length,4);
+assert.deepEqual(foreign.prohibitedTransfers,[
+  'six road wheels per side',
+  'symmetrical torsion-bar suspension with coupled parallel torsion bars',
+  'eight reinforced polyurethane track segments',
+  'motor-sprocket transmission'
+]);
+assert(foreign.source.includes('bnti.ru/showart.asp'));
+assert(fs.existsSync(path.join(root,foreign.reference)));
+
 const result={test:'1986-1987-track-evidence-boundary',releasedVersion:'v22',
   polymerProvedFor1986:true,polymerProvedFor1987:false,
   balancersExactSchemeProved:false,trackLocksReinforcedOn1987Proved:false,
-  modelDimensionsMeasured:false,localSourcesExist:true,externalLinksHttpNotTested:true};
+  modelDimensionsMeasured:false,localSourcesExist:true,mrk46mAttributionExcluded:true,externalLinksHttpNotTested:true};
 if(require.main===module)console.log(JSON.stringify(result,null,2));
 module.exports=result;

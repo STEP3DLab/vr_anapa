@@ -349,5 +349,21 @@
       "linksPerSideHistoricMeasure": false,
       "meshMaterialNameDoesNotAssertComposition": true
     }
+  },
+  "crossVariantExclusions": {
+    "reference": "research/mobot/1987/2026-11-23-mrk46m-attribution.md",
+    "comparedWith": "МРК-46М",
+    "photoCaption": "МРК-46М — слева; Мобот-Ч-ХВ-2 — справа",
+    "evidenceClassForMobot": "NOT APPLICABLE",
+    "source": "https://www.bnti.ru/showart.asp?aid=464&lvl=04.03.",
+    "corroboratingCopy": "https://www.vrsystems.ru/robotic-systems-for-use-in-emergency-situations-2.htm",
+    "prohibitedTransfers": [
+      "six road wheels per side",
+      "symmetrical torsion-bar suspension with coupled parallel torsion bars",
+      "eight reinforced polyurethane track segments",
+      "motor-sprocket transmission"
+    ],
+    "geometryOfMobotEstablishedByTheseStatements": false,
+    "action": "Do not translate the MRK-46M design into v22 without primary evidence specifically identifying the 1987 Mobot."
   }
 }
