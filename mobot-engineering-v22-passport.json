@@ -71,6 +71,42 @@
       "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
       "type": "designer retrospective account",
       "identity": "А.Ф. Батанов и В. Лосицкий (29.09.2026): рекомендации об усилении замков после эксплуатации исходной машины и деформация балансиров машин 1987 года; размеры неизвестны."
+    },
+    "ARSENAL-2026-DEMO": {
+      "url": "https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/image009.jpg",
+      "articleUrl": "https://a.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "caption": "Демонстрация Ч-ХВ-2 в МВТУ — рис. 5",
+      "kind": "Historical photograph reproduced in the 2026 article by Batanov and Lositsky",
+      "evidenceClass": "B",
+      "originalCaptureDateEstablished": false,
+      "originalNegativeInspected": false,
+      "physicalScaleKnown": false
+    },
+    "ARSENAL-2026-PAIR": {
+      "url": "https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "articleUrl": "https://a.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "caption": "Два Ч-ХВ-2 на снегу — рис. 6",
+      "kind": "Historical photograph reproduced in the 2026 article by Batanov and Lositsky",
+      "evidenceClass": "B",
+      "originalCaptureDateEstablished": false,
+      "originalNegativeInspected": false,
+      "physicalScaleKnown": false
+    },
+    "ARSENAL-2026-GRIP": {
+      "url": "https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/image013.jpg",
+      "articleUrl": "https://a.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "caption": "Манипулятор Ч-ХВ-2 на стенде — рис. 7",
+      "kind": "Historical photograph reproduced in the 2026 article by Batanov and Lositsky",
+      "evidenceClass": "B",
+      "originalCaptureDateEstablished": false,
+      "originalNegativeInspected": false,
+      "physicalScaleKnown": false
+    },
+    "BATANOV-2019-OVERVIEW": {
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf",
+      "type": "Coauthored retrospective",
+      "identity": "2019 paper; page 75 figure 9 illustrates original 1986 Ch-HV, not necessarily 1987 Ch-HV-2",
+      "notA1987DimensionSource": true
     }
   },
   "nodes": [
@@ -78,13 +114,14 @@
       "id": "tracks",
       "title": "Гусеничная ходовая",
       "A": "Гусеничное шасси.",
-      "B": "На ближнем борту №2 различимы семь нижних дисков и два приподнятых крайних колеса. На №4 снег частично закрывает нижнюю ветвь.",
+      "B": "На ближнем борту №2 различимы семь нижних дисков и два приподнятых крайних колеса. На №4 снег частично закрывает нижнюю ветвь. Репродукция двух экземпляров 1987 года показывает различное положение оборудования; нельзя смешивать их конфигурации.",
       "C": "Нормировка по ширине видимой ленты; высоты нижних осей приведены к одной касательной. Контур опирается на габариты колёс и три ориентира верхней ветви. Невидимый борт, конструкция несущей полосы, число траков и профиль их рёбер условны. Отдельные рычаги балансиров в модели не воспроизведены: показаны лишь условные опоры осей. Материал траков именно Ч-ХВ-2 не установлен отдельным первичным документом. Полиуретан в описании СКТБ относится к исходному Ч-ХВ (1986). Рекомендация усилить замки гусениц после его эксплуатации не доказывает их исполнение в Ч-ХВ-2.",
       "sources": [
         "SKTB-TEXT",
         "SKTB2",
         "SKTB4",
-        "BATANOV-2026"
+        "BATANOV-2026",
+        "ARSENAL-2026-PAIR"
       ]
     },
     {
@@ -114,25 +151,28 @@
       "id": "arm",
       "title": "Стрела",
       "A": "Манипулятор несёт сменный орган.",
-      "B": "Продольные и наклонные элементы, наружные ребристые элементы и концевые щеки.",
+      "B": "Продольные и наклонные элементы, наружные ребристые элементы и концевые щеки. Другие ракурсы стрелы доступны, но метрическая регистрация ещё не выполнена.",
       "C": "Поперечные связи, внутренние пролёты, размеры и положение пальцев привода. Положение приводов в модели вычисляется по подвижным точкам крепления.",
       "sources": [
         "SKTB-TEXT",
         "SKTB2",
         "SKTB4",
-        "SKTB9"
+        "SKTB9",
+        "ARSENAL-2026-DEMO",
+        "ARSENAL-2026-GRIP"
       ]
     },
     {
       "id": "gripper",
       "title": "Двупалый схват",
       "A": "Сменный двупалый схват.",
-      "B": "Подвесная рамка и широкие пластины расходящихся губок на №2 и №3.",
+      "B": "Подвесная рамка и широкие пластины расходящихся губок на №2 и №3. Репродукция стендового снимка показывает внешнюю головку и узлы в ином ракурсе, без заводских размеров.",
       "C": "Разделение на неподвижные и подвижные элементы, оси раскрытия и ориентация подвеса. Пара параллельных рычагов — кинематическое приближение. Точные оси, закон движения и привод по снимкам не установлены.",
       "sources": [
         "SKTB-TEXT",
         "SKTB2",
-        "SKTB3"
+        "SKTB3",
+        "ARSENAL-2026-GRIP"
       ]
     },
     {
@@ -365,5 +405,6 @@
     ],
     "geometryOfMobotEstablishedByTheseStatements": false,
     "action": "Do not translate the MRK-46M design into v22 without primary evidence specifically identifying the 1987 Mobot."
-  }
+  },
+  "additionalPhotoAudit": "research/mobot/1987/2026-11-24-extra-photo-evidence.md"
 }

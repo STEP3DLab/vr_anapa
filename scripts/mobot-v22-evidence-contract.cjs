@@ -43,9 +43,24 @@ assert.deepEqual(foreign.prohibitedTransfers,[
 assert(foreign.source.includes('bnti.ru/showart.asp'));
 assert(fs.existsSync(path.join(root,foreign.reference)));
 
+// Retrospective 2026 imagery: B-grade photograph, NEVER metric calibration.
+for(const id of ['ARSENAL-2026-DEMO','ARSENAL-2026-PAIR','ARSENAL-2026-GRIP']){
+ const source=passport.sources[id];
+ assert.equal(source.evidenceClass,'B');
+ assert.equal(source.originalCaptureDateEstablished,false);
+ assert.equal(source.originalNegativeInspected,false);
+ assert.equal(source.physicalScaleKnown,false);
+ assert(source.url.startsWith('https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/'));
+ assert(page.includes(source.url));
+}
+assert(passport.nodes.find(n=>n.id==='tracks').sources.includes('ARSENAL-2026-PAIR'));
+assert(passport.nodes.find(n=>n.id==='gripper').sources.includes('ARSENAL-2026-GRIP'));
+assert(passport.sources['BATANOV-2019-OVERVIEW'].notA1987DimensionSource);
+assert(fs.existsSync(path.join(root,passport.additionalPhotoAudit)));
+
 const result={test:'1986-1987-track-evidence-boundary',releasedVersion:'v22',
   polymerProvedFor1986:true,polymerProvedFor1987:false,
   balancersExactSchemeProved:false,trackLocksReinforcedOn1987Proved:false,
-  modelDimensionsMeasured:false,localSourcesExist:true,mrk46mAttributionExcluded:true,externalLinksHttpNotTested:true};
+  modelDimensionsMeasured:false,localSourcesExist:true,mrk46mAttributionExcluded:true,additionalArchiveFiguresLinked:3,externalLinksHttpNotTested:true};
 if(require.main===module)console.log(JSON.stringify(result,null,2));
 module.exports=result;

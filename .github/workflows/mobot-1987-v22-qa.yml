@@ -52,7 +52,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           base=https://step3dlab.github.io/vr_anapa/
-          for file in mobot-latest.html mobot-engineering-v22.html mobot-engineering-v22-model.js mobot-engineering-v22-passport.json research/mobot/1987/2026-11-23-track-continuous.md research/mobot/1987/2026-11-23-mrk46m-attribution.md scripts/mobot-v22-evidence-contract.cjs "$SUITE/viewer.js" "$SUITE/contact.js"; do
+          for file in mobot-latest.html mobot-engineering-v22.html mobot-engineering-v22-model.js mobot-engineering-v22-passport.json research/mobot/1987/2026-11-23-track-continuous.md research/mobot/1987/2026-11-23-mrk46m-attribution.md research/mobot/1987/2026-11-24-extra-photo-evidence.md scripts/mobot-v22-evidence-contract.cjs "$SUITE/viewer.js" "$SUITE/contact.js"; do
             for attempt in {1..30}; do
               if curl -fsSL "$base$file?sha=$GITHUB_SHA" -o /tmp/v22-bytes && cmp -s "$file" /tmp/v22-bytes; then break; fi
               sleep 5
