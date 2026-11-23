@@ -199,7 +199,8 @@ export function makeMobot(THREE, quality='auto') {
     }
   }
 
-  // TRACK MODULES: archive-anchored asymmetrical track silhouette and an illustrative multi-balancer suspension.
+  // TRACK MODULES: photo-anchored track contour and schematic wheel supports only.
+  // Balancers are mentioned in a retrospective source, but their true linkage layout is unknown and NOT modeled.
   const tracks=section('tracks','Ходовая часть: два гусеничных борта');
   function trackSide(z,sign) {
     const g=new THREE.Group();g.position.z=z;tracks.add(g);
@@ -636,7 +637,7 @@ export function makeMobot(THREE, quality='auto') {
     box(mechanics,[1.46,.026,.025],[0,.692,side*.639],m.olive,'mechanics');
   // Surface highlights: two subtly separate shades for rebuilt welded steel.
   const info={
-    tracks:{name:'Гусеничный движитель',status:'К фотографическому профилю добавлена отдельная условная схема балансиров: три пары и одиночная опора на каждом борту. Наличие балансиров подтверждают воспоминания о ремонте 1987 года, но эта компоновка и оси не доказаны архивными чертежами. Контур и число катков — гипотеза.',basis:'СКТБ ПР · архивный снимок; Батанов/Лосицкий «Чернобыльская крыша» · сведения о деформации балансиров'},
+    tracks:{name:'Гусеничный движитель',status:'Видимый контур ходовой восстановлен по архивному снимку. Балансиры упомянуты в воспоминаниях о ремонте 1987 года, но их количество, оси и схема не установлены. Отдельный рычажный механизм балансиров в этой модели НЕ построен: показаны упрощённые опоры колёс (C). Количество траков, положения осей и невидимый борт условны.',basis:'СКТБ ПР · архивный снимок; Батанов/Лосицкий «Чернобыльская крыша» · сведения о деформации балансиров'},
     body:{name:'Корпус и рама',status:'Обводы защитного кожуха, листовые панели и крепеж восстановлены визуально. Не все люки и толщины металла документированы.',basis:'СКТБ ПР · архивный профиль'},
     turret:{name:'Поворотная опора',status:'Открытая опорная рама уточнена по снимкам; оси и фланцы условные. Внутреннее устройство опоры не установлено.',basis:'Фото, функциональная реконструкция'},
     arm:{name:'Манипулятор',status:'На стендовом снимке видны продольные тяги, наружные ребристые элементы и боковые пластины у головки. Их пропорции подобраны по фотографии.',basis:'А. Батанов, В. Лосицкий, «Чернобыльская крыша», рис. 7'},
