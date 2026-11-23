@@ -58,6 +58,15 @@ async function exercise(browser, width, height, software) {
     page.on('pageerror',error=>errors.push(error.message));
     page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text())});
     await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    for(const credit of ['sktb','rgsu']){
+      const badge=page.locator('.credit-'+credit);
+      assert(await badge.isVisible());
+      await badge.locator('img').evaluate(img=>img.decode());
+      assert(await badge.locator('strong').isVisible());
+      const box=await badge.boundingBox();assert(box.width>=44&&box.height>=44);
+    }
+    assert(await page.locator('.bar .navlab').isVisible());
+    assert(await page.locator('.bar .navarch').isVisible());
     assert.equal(await page.locator('#surface').evaluate(s=>s.classList.contains('software')),software);
     if(width===1440)await renderXRExhibits(page);
     const before=await page.locator('#surface canvas').screenshot();
