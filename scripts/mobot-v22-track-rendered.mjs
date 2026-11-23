@@ -56,7 +56,8 @@ for(let k=0;k<phases;k++){
   maxSideDifference=Math.max(maxSideDifference,Math.abs(out[0][0]-out[1][0]),Math.abs(out[0][1]-out[1][1]));
  }
 }
-assert(maxCentreError<1e-9&&maxAngleError<1e-8&&maxCleatNormalError<1e-9,
+// Three.InstancedMesh stores matrices as Float32; 1e-9 checks would reject valid round-off.
+assert(maxCentreError<2e-7&&maxAngleError<2e-7&&maxCleatNormalError<2e-7,
  JSON.stringify({maxCentreError,maxAngleError,maxCleatNormalError,
   firstPair:[pairs[0][0].name,pairs[0][1].name],lastPhase:phases-1}));
 assert(maxSideDifference<1e-9,'Mirrored virtual sides changed');
