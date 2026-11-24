@@ -32,6 +32,8 @@ jobs:
           node mobot-geometry-gate.cjs > /tmp/v22-geometry-gate.json
           node scripts/mobot-v22-tread-footprint.cjs > /tmp/v22/track-footprint.json
           node scripts/mobot-v22-track-rendered.mjs > /tmp/v22/track-rendered.json
+          node scripts/mobot-v22-periodic-tangent-candidate.cjs > /tmp/v22/periodic-tangent-numeric.json
+          node scripts/mobot-v22-periodic-tangent-three.mjs > /tmp/v22/periodic-tangent-three.json
           node scripts/mobot-v22-evidence-contract.cjs > /tmp/v22/evidence-contract.json
           node -e "const x=require('./scripts/mobot-v22-tread-footprint.cjs'); if(!x.continuousFootprint || x.continuousFootprint.maxBelowDatumScene<=x.maxBelowDatumScene)process.exit(1)"
           node -e "const r=require('./scripts/mobot-v22-uncertainty.cjs'); if(!r.independentSnowSide||r.perPair.length!==20)process.exit(1)"
