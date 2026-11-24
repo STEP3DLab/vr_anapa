@@ -147,6 +147,20 @@ async function exercise(browser, width, height, software) {
     assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
     assert(await page.locator('#keyboardHelp').textContent().then(t=>t.includes('стрелки')));
     if(width===1440)await renderXRExhibits(page);
+    if(width===390){
+      const archiveJump=page.locator('.navarch'), labJump=page.locator('#archiveReturn');
+      await archiveJump.focus();await page.keyboard.press('Enter');
+      assert.equal(new URL(page.url()).hash,'#archive');
+      assert(await page.locator('#archive').evaluate(el=>el===document.activeElement));
+      assert(await page.locator('#archiveTitle').evaluate(el=>el.getBoundingClientRect().top<innerHeight));
+      await page.locator('#expandArchive').click();
+      assert.equal(await page.locator('#archiveCards .photo-card').count(),10);
+      await labJump.click();
+      assert.equal(new URL(page.url()).hash,'#lab');
+      assert(await page.locator('#lab').evaluate(el=>el===document.activeElement));
+      await page.locator('#expandArchive').click(); // restore collapsed archive for the remaining checks
+      console.log('Archive entry and return from all ten photos move viewport and focus');
+    }
     if(width===1440||width===390){
       const compare=page.locator('#compareModels'),dialog=page.locator('#dialog');
       for(const [year,index] of [[1987,'3'],[1986,'1']]){

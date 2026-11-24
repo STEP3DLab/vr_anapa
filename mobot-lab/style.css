@@ -135,3 +135,7 @@ dialog{width:min(760px,calc(100% - 24px));max-height:90dvh;padding:20px 23px;bor
 .model-compare-card h3{margin:2px 0 0}
 .model-compare-card .secondary{margin-top:auto}
 @media(max-width:480px){.model-compare-grid{grid-template-columns:minmax(0,1fr)}}
+
+.archive-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 18px;margin-top:15px}
+.archive-actions .archive-more{margin:0}
+.archive-return{display:inline-flex;align-items:center;gap:5px;min-height:36px;color:#3b563c;text-underline-offset:3px;font-size:12px;font-weight:650}
