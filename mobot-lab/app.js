@@ -172,7 +172,7 @@ function showPart(id) {
     viewer.frame(item.view,{node:item.anchor(model)});
     markers();storeView();
   };
-  if($('movePart'))$('movePart').onclick=()=>{setMode('drive');focusJoint(item.joint)};
+  if($('movePart'))$('movePart').onclick=()=>{setMode('drive');focusJoint(item.joint,{reveal:true})};
   if(hadDetail) viewer.frame(item.view,{node:item.anchor(model)});
   markers();storeView();
 }
@@ -222,9 +222,12 @@ function compareFromGallery(y,i,marked) {
   photoIndex=i;marks=marked;setMode('photo');$('workbench').scrollIntoView({block:'start'});
   $('tab-photo').focus({preventScroll:true});
 }
-function focusJoint(key) {
+function focusJoint(key,{reveal=false}={}) {
   const i=def.joints.findIndex(([k])=>k===key);if(i<0||!canUse(key))return;
-  joint=i;if(i>=3)$('extra').open=true;$('j-'+key)?.focus({preventScroll:true});
+  joint=i;if(i>=3)$('extra').open=true;
+  const input=$('j-'+key);if(!input||input.disabled)return;
+  input.focus({preventScroll:true});
+  if(reveal) input.closest('.joint')?.scrollIntoView({block:'nearest',behavior:'instant'});
 }
 const getState=()=>{
   const [key,name]=def.joints[joint];
