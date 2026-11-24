@@ -40,7 +40,7 @@ function measurements(overlay) {
 
 export function createArchive({openModal, closeModal, compare}) {
   let filter = 'all', expanded = false, gallery = null;
-  const dialog = $('dialog');
+  const dialog = $('dialog'), announcement = $('galleryAnnouncement');
   const archive = Object.entries(evidence);
   function renderCards() {
     const collections = archive.filter(([year])=>filter==='all'||year===filter);
@@ -72,6 +72,7 @@ export function createArchive({openModal, closeModal, compare}) {
     index=(index+photos.length)%photos.length;
     const photo=photos[index], reg=registrations[photoKey(photo)];
     const marked=Boolean(showMarks && reg?.overlay);
+    const stepped=dialog.open && gallery?.year===year && gallery.index!==index;
     gallery={year,index};
     openModal('ФОТОАРХИВ  /  '+year, '<h2>'+h(photo.title)+'</h2>'+
       photoImage(photo,marked,true)+(marked?legend:'')+
@@ -79,12 +80,13 @@ export function createArchive({openModal, closeModal, compare}) {
       '<p>'+h(photo.note)+'</p>'+(marked?'<p class="evidence-note">'+h(reg.note)+'</p>'+measurements(reg.overlay):'')+
       '<div class="photo-actions">'+(reg && '<button id="galleryCompare" class="modal-action">'+icon('box')+'Сверить с 3D</button>' || '')+
       (reg?.overlay?'<button id="galleryMarks" class="secondary" aria-pressed="'+marked+'">'+(marked?'Скрыть разметку':'Показать разметку')+'</button>':'')+'</div>', photo.title);
+    if(stepped)announcement.textContent='Снимок '+(index+1)+' из '+photos.length+': '+photo.title;
     $('prevPhoto').onclick=()=>{openPhoto(year,index-1,showMarks);$('prevPhoto').focus()};
     $('nextPhoto').onclick=()=>{openPhoto(year,index+1,showMarks);$('nextPhoto').focus()};
     if ($('galleryMarks')) $('galleryMarks').onclick=()=>{openPhoto(year,index,!marked);$('galleryMarks').focus()};
     if ($('galleryCompare')) $('galleryCompare').onclick=()=>{closeModal();compare(year,index,marked)};
   }
-  dialog.addEventListener('close',()=>{gallery=null});
+  dialog.addEventListener('close',()=>{gallery=null;announcement.textContent=''});
   dialog.addEventListener('keydown',e=>{
     if (!gallery || !dialog.open || e.defaultPrevented || e.isComposing || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
     const target={ArrowLeft:'prevPhoto',ArrowRight:'nextPhoto'}[e.key];
