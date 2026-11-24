@@ -113,3 +113,16 @@ dialog{width:min(760px,calc(100% - 24px));max-height:90dvh;padding:20px 23px;bor
 @media(pointer:coarse){
   .viewblock:not(:has(canvas:focus-visible)) .keyboard-help{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 }
+
+/* Keep both control groups reachable on narrow phones or with enlarged text.
+   The canvas reserves its own space so the second row never covers the model. */
+@media(max-width:350px){
+  .screen,#markers{bottom:90px}
+  #poster{height:calc(100% - 128px)}
+  .stage-bottom{display:grid;grid-template-columns:minmax(0,1fr);justify-items:start;gap:4px}
+  .stage-bottom .zoom{justify-self:end}
+  .view-controls{width:100%;justify-content:space-between}
+  .view-controls button{flex:1 1 auto;padding-inline:4px}
+  .zoom button{width:32px}
+  .archive-head{flex-wrap:wrap;align-items:flex-start;gap:8px}
+}
