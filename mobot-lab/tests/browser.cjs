@@ -248,7 +248,19 @@ async function exercise(browser, width, height, software) {
     assert(await page.locator('#markers [data-part="tool"]').isVisible());
     await page.locator('#tab-drive').click();await page.locator('#reset').click();
     await page.locator('#expandArchive').click();assert.equal(await page.locator('.photo-card').count(),10);
+    const matches=page.locator('#archiveCards .archive-badge.has-match');
+    assert.equal(await matches.count(),6);
+    assert.equal(await page.locator('#archiveCards .archive-badge:not(.has-match)').count(),4);
     await page.locator('[data-filter="1986"]').click();assert.equal(await page.locator('.photo-card').count(),4);
+    assert.equal(await matches.count(),2);
+    if(width===390){
+      await page.getByRole('button',{name:/Пост оператора.*Архивный кадр/}).click();
+      assert.equal(await page.locator('#galleryCompare').count(),0);
+      await page.locator('#dialog').press('Escape');
+      await page.getByRole('button',{name:/Грейфер над фронтальным ковшом.*Есть 3D-сверка/}).click();
+      assert(await page.locator('#galleryCompare').isVisible());
+      await page.locator('#dialog').press('Escape');
+    }
     if(width===1440) {
       const card=page.locator('.photo-card[data-gallery="1986"][data-index="1"]');
       await card.click();

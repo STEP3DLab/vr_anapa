@@ -139,3 +139,7 @@ dialog{width:min(760px,calc(100% - 24px));max-height:90dvh;padding:20px 23px;bor
 .archive-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 18px;margin-top:15px}
 .archive-actions .archive-more{margin:0}
 .archive-return{display:inline-flex;align-items:center;gap:5px;min-height:36px;color:#3b563c;text-underline-offset:3px;font-size:12px;font-weight:650}
+
+.archive-guide{margin:0 0 12px;color:#485548;font-size:13px}
+.archive-badge{display:inline-block;margin-top:7px;padding:2px 7px;border:1px solid #d2d8cc;border-radius:4px;background:#f3f5ef;color:#415241;font-size:11px;font-weight:600;line-height:1.35}
+.archive-badge.has-match{color:#304e2b;background:#e7efdc;border-color:#b9c9a5}

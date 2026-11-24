@@ -46,9 +46,12 @@ export function createArchive({openModal, closeModal, compare}) {
     const collections = archive.filter(([year])=>filter==='all'||year===filter);
     const entries = collections.flatMap(([year,data]) => data.photos.map((photo,index)=>({year:Number(year),photo,index})));
     const shown = filter==='all' && !expanded ? entries.filter(item=>item.index<2) : entries;
-    $('archiveCards').innerHTML = shown.map(({year,photo,index})=>
-      '<button class="photo-card" data-gallery="'+year+'" data-index="'+index+'"><span class="archive-thumb"><img loading="lazy" src="'+h(photo.file)+'" alt=""><span>'+icon('expand')+'</span></span>'+
-      '<span class="photo-card-copy"><small>'+year+' <b> / </b> '+(year===1986?'Ч-ХВ':'Ч-ХВ-2')+'</small><strong>'+h(photo.title)+'</strong></span></button>').join('');
+    $('archiveCards').innerHTML = shown.map(({year,photo,index})=>{
+      const matched=Boolean(registrations[photoKey(photo)]);
+      return '<button class="photo-card" data-gallery="'+year+'" data-index="'+index+'"><span class="archive-thumb"><img loading="lazy" src="'+h(photo.file)+'" alt=""><span>'+icon('expand')+'</span></span>'+
+      '<span class="photo-card-copy"><small>'+year+' <b> / </b> '+(year===1986?'Ч-ХВ':'Ч-ХВ-2')+'</small><strong>'+h(photo.title)+'</strong>'+
+      '<span class="archive-badge'+(matched?' has-match':'')+'">'+(matched?'Есть 3D-сверка':'Архивный кадр')+'</span></span></button>';
+    }).join('');
     $('expandArchive').hidden = filter!=='all' || entries.length<=4;
     $('expandArchive').textContent = expanded ? 'Свернуть архив' : 'Все снимки ('+entries.length+')';
     $('expandArchive').setAttribute('aria-expanded',String(expanded));
