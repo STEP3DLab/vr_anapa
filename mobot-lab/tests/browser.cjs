@@ -300,6 +300,28 @@ async function exercise(browser, width, height, software) {
       assert(await pin.isVisible());
       console.log('Interrupted 3D shows the poster and transfers pin focus without losing the selected part');
     }
+    if(width===390){
+      const choices=page.locator('#partChoices');
+      for(const [part,key,extra] of [['loader','bucket',true],['arm','arm',false]]){
+        const tab=page.locator('#tab-parts');
+        if(await tab.getAttribute('aria-selected')!=='true')await tab.click();
+        await choices.locator('[data-part="'+part+'"]').click();
+        const button=page.locator('#movePart');
+        // Place the former part action at the top, exposing a scroll mismatch
+        // when the new slider sits well above the part card on a narrow view.
+        await button.evaluate(el=>el.scrollIntoView({block:'start',behavior:'instant'}));
+        await button.press('Enter');
+        const input=page.locator('#j-'+key);
+        assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
+        if(extra)assert(await page.locator('#extra').evaluate(el=>el.open));
+        assert(await input.evaluate(el=>el===document.activeElement));
+        await page.waitForFunction(id=>{
+          const r=document.getElementById(id).closest('.joint').getBoundingClientRect();
+          return r.top>=-1 && r.bottom<=innerHeight+1;
+        },'j-'+key);
+      }
+      console.log('390px: from part details, the selected slider and label are visible and focused');
+    }
     await page.locator('#tab-drive').click();await page.locator('#reset').click();
     await page.locator('#expandArchive').click();assert.equal(await page.locator('.photo-card').count(),10);
     const matches=page.locator('#archiveCards .archive-badge.has-match');
