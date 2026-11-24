@@ -95,9 +95,21 @@ export function setupPresentation({getLink,getState}) {
       '<label class="select-title" for="shareURL">Адрес сцены</label><input id="shareURL" class="url-field" type="url" readonly value="'+h(link)+'">'+
       '<button id="copyLink" class="modal-action">'+icon('link')+'Скопировать ссылку</button><p id="copyStatus" role="status"></p>', title);
     putQR(link,$('qr'));
-    $('copyLink').onclick=async()=>{
-      try { await navigator.clipboard.writeText(link);$('copyStatus').textContent='Ссылка скопирована.'; }
-      catch { $('shareURL').select();$('copyStatus').textContent='Адрес выделен для копирования.'; }
+    const copy=$('copyLink'), input=$('shareURL'), status=$('copyStatus');
+    let attempt=0;
+    copy.onclick=async()=>{
+      const id=++attempt;
+      const current=()=>dialog.open&&copy.isConnected&&id===attempt;
+      try {
+        await navigator.clipboard.writeText(link);
+        if(current())status.textContent='Ссылка скопирована.';
+      } catch {
+        if(!current())return;
+        if(document.activeElement===copy){
+          input.focus({preventScroll:true});input.select();
+          status.textContent='Адрес выделен. Скопируйте его вручную.';
+        } else status.textContent='Автокопирование недоступно. Скопируйте адрес вручную.';
+      }
     };
   }
   $('share').onclick=()=>transfer();

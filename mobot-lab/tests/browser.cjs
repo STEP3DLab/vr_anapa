@@ -85,6 +85,44 @@ async function vrAvailability(browser) {
   } finally {await page.close()}
 }
 
+async function sharingClipboard(browser) {
+  const page=await browser.newPage({viewport:{width:390,height:844}});
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  try {
+    await page.addInitScript(()=>{
+      window.writes=[];
+      Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:value=>
+        new Promise((resolve,reject)=>window.writes.push({value,resolve,reject}))}});
+    });
+    await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    const share=page.locator('#share'),dialog=page.locator('#dialog'),copy=page.locator('#copyLink');
+    await share.click();
+    await copy.focus();await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>window.writes.length===1);
+    await page.evaluate(()=>window.writes[0].reject(new DOMException('Denied','NotAllowedError')));
+    await page.waitForFunction(()=>document.querySelector('#copyStatus').textContent.includes('вручную'));
+    assert(await page.locator('#shareURL').evaluate(el=>document.activeElement===el&&el.selectionStart===0&&el.selectionEnd===el.value.length));
+    await dialog.press('Escape');
+
+    await share.click();await copy.click();
+    await page.waitForFunction(()=>window.writes.length===2);
+    await dialog.press('Escape');
+    await page.locator('[data-year="1987"]').click();
+    await share.click();
+    await page.evaluate(async()=>{window.writes[1].reject(new DOMException('Denied','NotAllowedError'));await Promise.resolve()});
+    assert.equal(await page.locator('#copyStatus').innerText(),'');
+    assert(await page.locator('#closeDialog').evaluate(el=>document.activeElement===el));
+    await copy.click();
+    await page.waitForFunction(()=>window.writes.length===3);
+    assert.equal(await page.evaluate(()=>new URL(window.writes[2].value).searchParams.get('model')),'1987');
+    await page.evaluate(()=>window.writes[2].resolve());
+    await page.waitForFunction(()=>document.querySelector('#copyStatus').textContent==='Ссылка скопирована.');
+    assert.deepEqual(errors,[]);
+    console.log('Share dialog handles clipboard success, manual copy and stale results without losing focus');
+  } finally {await page.close()}
+}
+
 async function compactControls(browser) {
   const page=await browser.newPage({viewport:{width:320,height:680},hasTouch:true,reducedMotion:'reduce'});
   try {
@@ -255,5 +293,6 @@ async function exercise(browser, width, height, software) {
     await exercise(browser,360,800,true);
     await compactControls(browser);
     await vrAvailability(browser);
+    await sharingClipboard(browser);
   } finally {await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});
