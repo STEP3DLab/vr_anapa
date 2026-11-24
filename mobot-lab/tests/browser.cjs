@@ -47,6 +47,44 @@ async function renderXRExhibits(page) {
   console.log('Four XR exhibit configurations rendered through WebGL2:',JSON.stringify(rows));
 }
 
+async function vrAvailability(browser) {
+  const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});
+  try {
+    await page.addInitScript(()=>{
+      const xr=new EventTarget(),checks=[];
+      window.vrRequests=0;window.vrChecks=checks;
+      xr.isSessionSupported=()=>new Promise(resolve=>checks.push(resolve));
+      xr.requestSession=()=>{window.vrRequests++;return Promise.reject(new DOMException('Denied','NotAllowedError'))};
+      Object.defineProperty(navigator,'xr',{value:xr,configurable:true});
+    });
+    await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    await page.waitForFunction(()=>window.vrChecks.length===1);
+    const vr=page.locator('#vr'),dialog=page.locator('#dialog');
+    assert.equal(await vr.innerText(),'Как открыть в VR');
+    await vr.click();
+    assert((await dialog.innerText()).includes('можно изучать на этой странице без шлема'));
+    const link=new URL(await page.locator('#shareURL').inputValue());
+    assert.equal(link.pathname,'/vr_anapa/mobot-lab/');
+    await dialog.press('Escape');assert(await vr.evaluate(el=>el===document.activeElement));
+    assert.equal(await page.evaluate(()=>window.vrRequests),0);
+    await page.evaluate(()=>navigator.xr.dispatchEvent(new Event('devicechange')));
+    await page.waitForFunction(()=>window.vrChecks.length===2);
+    await page.evaluate(()=>window.vrChecks[1](true));
+    await page.waitForFunction(()=>document.querySelector('#vrLabel').textContent==='Войти в VR');
+    await page.evaluate(async()=>{window.vrChecks[0](false);await Promise.resolve()});
+    assert.equal(await vr.innerText(),'Войти в VR');
+    await vr.click();
+    assert((await dialog.innerText()).includes('разрешите сеанс VR'));
+    assert.equal(await page.evaluate(()=>window.vrRequests),1);
+    await dialog.press('Escape');
+    await page.evaluate(()=>navigator.xr.dispatchEvent(new Event('devicechange')));
+    await page.waitForFunction(()=>window.vrChecks.length===3);
+    await page.evaluate(()=>window.vrChecks[2](false));
+    await page.waitForFunction(()=>document.querySelector('#vrLabel').textContent==='Как открыть в VR');
+    console.log('VR setup without a headset, device changes, stale result, permission denial and focus return passed');
+  } finally {await page.close()}
+}
+
 async function compactControls(browser) {
   const page=await browser.newPage({viewport:{width:320,height:680},hasTouch:true,reducedMotion:'reduce'});
   try {
@@ -159,5 +197,6 @@ async function exercise(browser, width, height, software) {
     await exercise(browser,390,844,false);
     await exercise(browser,360,800,true);
     await compactControls(browser);
+    await vrAvailability(browser);
   } finally {await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

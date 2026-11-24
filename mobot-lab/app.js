@@ -279,14 +279,22 @@ $('passport').onclick=()=>{
 };
 $('about').onclick=()=>openModal('О ПРОЕКТЕ','<h2>Две машины для работ на ЧАЭС</h2><p>В 1986 году в МВТУ им. Н. Э. Баумана создали «Мобот-Ч-ХВ» для расчистки кровли. В 1987 году работы продолжили модернизированные комплексы «Мобот-Ч-ХВ-2» со сменным оснащением.</p><p>Технопарк РГСУ объединил исследовательские модели 1986 и 1987 годов. В разделе «Сверка» архивный снимок задаёт позу и ракурс, а разметка связывает модель с видимыми деталями. Углы движения и масштаб сцены условны.</p><p><a href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">История комплексов в архиве СКТБ ПР ↗</a></p>');
 const presentation=setupPresentation({getLink:()=>link(),getState});
-let vrSupported=false,busy=false;
+let vrSupported=false,busy=false,vrCheck=0;
+function showVRAvailability(supported) {
+  vrSupported=supported;
+  $('vrLabel').textContent=supported?'Войти в VR':'Как открыть в VR';
+}
 async function checkVR() {
-  try{vrSupported=!!viewer?.xr&&!!navigator.xr&&await navigator.xr.isSessionSupported('immersive-vr')}catch{vrSupported=false}
+  const check=++vrCheck;
+  let supported=false;
+  try{supported=!!viewer?.xr&&!!navigator.xr&&await navigator.xr.isSessionSupported('immersive-vr')}catch{}
+  if(check===vrCheck)showVRAvailability(supported);
 }
 checkVR();navigator.xr?.addEventListener('devicechange',checkVR);
 $('vr').onclick=async()=>{
-  if(busy)return;stopDemo();
-  if(!vrSupported){presentation.vrHelp();return}
+  if(busy)return;
+  if(!vrSupported){presentation.vrHelp('На этом устройстве не обнаружен доступный режим VR. Обе модели можно изучать на этой странице без шлема.');return}
+  stopDemo();
   busy=true;let session;
   try {
     session=await navigator.xr.requestSession('immersive-vr',{optionalFeatures:['local-floor','bounded-floor']});

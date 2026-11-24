@@ -89,7 +89,7 @@ export function setupPresentation({getLink,getState}) {
   fullscreen();setupOffline();
   function transfer(vr=false,error='') {
     const link=getLink(), state=getState(), title=vr?'Просмотр в VR':'Ссылка на этот вид';
-    const text=vr?'Откройте ссылку в браузере VR-шлема. На виртуальном пульте можно менять модель, оснастку и положение механизмов. Боковая кнопка контроллера вращает экспонат движением руки.':'Ссылка откроет ту же машину, оснастку, положение механизмов и ракурс. QR-код можно считать с другого устройства.';
+    const text=vr?'Откройте ссылку в браузере VR-шлема, затем нажмите «Войти в VR». На виртуальном пульте можно менять модель, оснастку и положение механизмов. Боковая кнопка контроллера вращает экспонат движением руки.':'Ссылка откроет ту же машину, оснастку, положение механизмов и ракурс. QR-код можно считать с другого устройства.';
     openModal(vr?'ВИРТУАЛЬНАЯ РЕАЛЬНОСТЬ':'ПЕРЕДАЧА СЦЕНЫ','<h2>'+title+'</h2>'+
       (error?'<p>'+h(error)+'</p>':'')+'<div class="transfer"><canvas id="qr" aria-label="QR-код ссылки на текущую сцену"></canvas><div><strong>'+h(state.name)+' · '+state.year+'</strong><p>'+text+'</p>'+(vr?'<p>Масштаб настольного экспоната можно изменить в пульте шлема.</p>':'')+'</div></div>'+
       '<label class="select-title" for="shareURL">Адрес сцены</label><input id="shareURL" class="url-field" type="url" readonly value="'+h(link)+'">'+
