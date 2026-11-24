@@ -147,7 +147,7 @@ function markers() {
     if(xy){button.style.left=xy[0]+'%';button.style.top=xy[1]+'%'}
   }
 }
-function showPart(id,closeup=false) {
+function showPart(id) {
   const item=inspections[year].find(p=>p.id===id);
   if(!item)return;
   const hadDetail=viewer?.capture().detail;
@@ -157,9 +157,14 @@ function showPart(id,closeup=false) {
     '<div class="part-actions"><button id="closeup" class="secondary"'+(viewer?'':' disabled')+'>'+icon('focus')+'Крупный план</button>'+
     '<a href="'+h(item.source)+'" target="_blank" rel="noopener">Источник ↗</a></div>'+
     (item.joint&&canUse(item.joint)?'<button class="text-btn move-part" id="movePart">'+icon('sliders')+'Управлять узлом</button>':'');
-  $('closeup').onclick=()=>showPart(id,true);
+  // Changing camera is not a change of part. Keep the focused button in place.
+  $('closeup').onclick=()=>{
+    if(!viewer)return;
+    viewer.frame(item.view,{node:item.anchor(model)});
+    markers();storeView();
+  };
   if($('movePart'))$('movePart').onclick=()=>{setMode('drive');focusJoint(item.joint)};
-  if(closeup||hadDetail) viewer?.frame(item.view,{node:item.anchor(model)});
+  if(hadDetail) viewer.frame(item.view,{node:item.anchor(model)});
   markers();storeView();
 }
 function partsPanel() {

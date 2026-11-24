@@ -171,7 +171,15 @@ async function exercise(browser, width, height, software) {
     assert.equal(await page.locator('#photoSelect').inputValue(),'3');
     assert(await page.locator('#overlayToggle').isChecked());
     await page.locator('#tab-parts').click();await page.locator('#partChoices [data-part="tool"]').click();
-    await page.locator('#closeup').click();assert(await page.locator('#markers [data-part="tool"]').isVisible());
+    const closeup=page.locator('#closeup');
+    if(width===1440){
+      await closeup.focus();await page.keyboard.press('Enter');
+      assert(await closeup.evaluate(el=>el===document.activeElement),'Close-up must retain keyboard focus');
+      await page.keyboard.press('Tab');
+      assert(await page.locator('.part-actions a').evaluate(el=>el===document.activeElement));
+      console.log('Keyboard close-up retains focus and Tab reaches the source');
+    }else await closeup.click();
+    assert(await page.locator('#markers [data-part="tool"]').isVisible());
     await page.locator('#tab-drive').click();await page.locator('#reset').click();
     await page.locator('#expandArchive').click();assert.equal(await page.locator('.photo-card').count(),10);
     await page.locator('[data-filter="1986"]').click();assert.equal(await page.locator('.photo-card').count(),4);
