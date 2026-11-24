@@ -45,8 +45,8 @@ function setupOffline() {
       const registration=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
       // A failed install never becomes ready. Track the actual installing worker
       // so a visitor can retry after a dropped connection.
-      const previouslySaved=!!registration.active;
-      if(previouslySaved && !registration.installing) await registration.update();
+      const previousWorker=registration.active;
+      if(previousWorker && !registration.installing) await registration.update();
       const worker=registration.installing || registration.waiting || registration.active;
       if(!worker) throw Error('worker');
       if(worker.state!=='activated') await new Promise((resolve,reject)=>{
@@ -56,7 +56,9 @@ function setupOffline() {
         }
         worker.addEventListener('statechange',changed);changed();
       });
-      if(previouslySaved) await new Promise((resolve,reject)=>{
+      // A newly activated worker has already downloaded the entire copy.
+      // Only refresh files explicitly when continuing with the same worker.
+      if(worker===previousWorker) await new Promise((resolve,reject)=>{
         const channel=new MessageChannel();
         const timeout=setTimeout(()=>finish(false),45000);
         function finish(ok){clearTimeout(timeout);channel.port1.close();if(ok)resolve();else reject(Error('refresh'))}

@@ -148,6 +148,40 @@ async function compactControls(browser) {
   } finally {await page.close()}
 }
 
+async function offlineUpdate(browser) {
+  for(const updated of [false,true]){
+    const context=await browser.newContext();
+    try {
+      await context.addInitScript(updated=>{
+        window.refreshes=0;
+        const scriptURL=new URL('./offline-worker.js',location.href).href;
+        function makeWorker(state){
+          return Object.assign(new EventTarget(),{state,scriptURL,postMessage(message,[port]){
+            window.refreshes++;port.postMessage({saved:message==='refresh-exhibition'});port.close();
+          }});
+        }
+        const registration={active:makeWorker('activated'),installing:null,waiting:null,async update(){
+          if(!updated)return;
+          const next=makeWorker('installing');this.installing=next;
+          setTimeout(()=>{
+            next.state='activated';this.active=next;this.installing=null;
+            next.dispatchEvent(new Event('statechange'));
+          },25);
+        }};
+        Object.defineProperty(navigator,'serviceWorker',{value:{
+          getRegistration:async()=>registration,register:async()=>registration
+        }});
+      },updated);
+      const page=await context.newPage();await page.goto(base);
+      await page.waitForFunction(()=>document.querySelector('#offline').textContent.includes('Обновить'));
+      await page.locator('#offline').click();
+      await page.waitForFunction(()=>document.querySelector('#offlineStatus').textContent.includes('сохранены'));
+      assert.equal(await page.evaluate(()=>window.refreshes),updated?0:1);
+    }finally{await context.close()}
+  }
+  console.log('An updated offline copy is downloaded once; the same worker still refreshes on request');
+}
+
 async function exercise(browser, width, height, software) {
   const context=await browser.newContext({viewport:{width,height},hasTouch:width<600,reducedMotion:'reduce'});
   try {
@@ -319,5 +353,6 @@ async function exercise(browser, width, height, software) {
     await compactControls(browser);
     await vrAvailability(browser);
     await sharingClipboard(browser);
+    await offlineUpdate(browser);
   } finally {await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});
