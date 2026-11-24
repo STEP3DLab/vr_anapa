@@ -149,10 +149,10 @@ async function compactControls(browser) {
 }
 
 async function offlineUpdate(browser) {
-  for(const updated of [false,true]){
+  for(const scenario of ['same','updated','update-failed','save-failed']){
     const context=await browser.newContext();
     try {
-      await context.addInitScript(updated=>{
+      await context.addInitScript(scenario=>{
         window.refreshes=0;
         const scriptURL=new URL('./offline-worker.js',location.href).href;
         function makeWorker(state){
@@ -160,8 +160,9 @@ async function offlineUpdate(browser) {
             window.refreshes++;port.postMessage({saved:message==='refresh-exhibition'});port.close();
           }});
         }
-        const registration={active:makeWorker('activated'),installing:null,waiting:null,async update(){
-          if(!updated)return;
+        const registration={active:scenario==='save-failed'?null:makeWorker('activated'),installing:null,waiting:null,async update(){
+          if(scenario==='update-failed')throw new Error('offline');
+          if(scenario!=='updated')return;
           const next=makeWorker('installing');this.installing=next;
           setTimeout(()=>{
             next.state='activated';this.active=next;this.installing=null;
@@ -169,14 +170,19 @@ async function offlineUpdate(browser) {
           },25);
         }};
         Object.defineProperty(navigator,'serviceWorker',{value:{
-          getRegistration:async()=>registration,register:async()=>registration
+          getRegistration:async()=>registration,register:async()=>{
+            if(scenario==='save-failed')throw new Error('offline');
+            return registration;
+          }
         }});
-      },updated);
+      },scenario);
       const page=await context.newPage();await page.goto(base);
-      await page.waitForFunction(()=>document.querySelector('#offline').textContent.includes('Обновить'));
+      if(scenario!=='save-failed')await page.waitForFunction(()=>document.querySelector('#offline').textContent.includes('Обновить'));
       await page.locator('#offline').click();
-      await page.waitForFunction(()=>document.querySelector('#offlineStatus').textContent.includes('сохранены'));
-      assert.equal(await page.evaluate(()=>window.refreshes),updated?0:1);
+      const expected={same:'сохранены',updated:'сохранены','update-failed':'Предыдущая автономная версия остаётся активной','save-failed':'Сохранение не завершено'}[scenario];
+      await page.waitForFunction(text=>document.querySelector('#offlineStatus').textContent.includes(text),expected);
+      assert(await page.locator('#offline').isEnabled());
+      assert.equal(await page.evaluate(()=>window.refreshes),scenario==='same'?1:0);
     }finally{await context.close()}
   }
   console.log('An updated offline copy is downloaded once; the same worker still refreshes on request');

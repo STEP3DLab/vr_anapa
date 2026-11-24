@@ -41,11 +41,13 @@ function setupOffline() {
   if(!('serviceWorker' in navigator) || !window.isSecureContext){button.hidden=true;return}
   async function prepare() {
     button.disabled=true; out.textContent='Сохраняются обе модели, пульт и фотоархив…';
+    let previousWorker;
     try {
+      previousWorker=(await navigator.serviceWorker.getRegistration('./').catch(()=>null))?.active;
       const registration=await navigator.serviceWorker.register('./offline-worker.js',{scope:'./',updateViaCache:'none'});
       // A failed install never becomes ready. Track the actual installing worker
       // so a visitor can retry after a dropped connection.
-      const previousWorker=registration.active;
+      previousWorker=registration.active || previousWorker;
       if(previousWorker && !registration.installing) await registration.update();
       const worker=registration.installing || registration.waiting || registration.active;
       if(!worker) throw Error('worker');
@@ -68,7 +70,9 @@ function setupOffline() {
       button.innerHTML=icon('download')+'Обновить копию';
       out.textContent='Обе модели и 10 снимков сохранены. Эту страницу можно открыть без интернета на данном устройстве.';
     } catch {
-      out.textContent='Сохранение не завершено. Проверьте соединение и повторите попытку.';
+      out.textContent=previousWorker?.scriptURL===new URL('./offline-worker.js',location.href).href && previousWorker.state==='activated'
+        ? 'Обновление не завершено. Предыдущая автономная версия остаётся активной. Повторите попытку при устойчивом соединении.'
+        : 'Сохранение не завершено. Проверьте соединение и повторите попытку.';
     } finally {button.disabled=false}
   }
   button.onclick=prepare;
