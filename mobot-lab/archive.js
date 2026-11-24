@@ -64,26 +64,26 @@ export function createArchive({openModal, closeModal, compare}) {
     if(button) openPhoto(Number(button.dataset.gallery),Number(button.dataset.index));
   });
 
-  function openPhoto(year, index, marked=false) {
+  function openPhoto(year, index, showMarks=false) {
     const photos=evidence[year].photos;
     index=(index+photos.length)%photos.length;
     const photo=photos[index], reg=registrations[photoKey(photo)];
-    marked=Boolean(marked && reg?.overlay);
-    gallery={year,index,marked};
+    const marked=Boolean(showMarks && reg?.overlay);
+    gallery={year,index};
     openModal('ФОТОАРХИВ  /  '+year, '<h2>'+h(photo.title)+'</h2>'+
       photoImage(photo,marked,true)+(marked?legend:'')+
       '<div class="gallery-foot"><div class="source-links">'+external(photo.source,'Источник')+' '+external(photo.original,'Полный кадр')+'</div><div class="gallery-nav"><button class="icon" id="prevPhoto" aria-label="Предыдущий снимок">'+icon('left')+'</button><span>'+(index+1)+' / '+photos.length+'</span><button class="icon" id="nextPhoto" aria-label="Следующий снимок">'+icon('right')+'</button></div></div>'+
       '<p>'+h(photo.note)+'</p>'+(marked?'<p class="evidence-note">'+h(reg.note)+'</p>'+measurements(reg.overlay):'')+
       '<div class="photo-actions">'+(reg && '<button id="galleryCompare" class="modal-action">'+icon('box')+'Сверить с 3D</button>' || '')+
       (reg?.overlay?'<button id="galleryMarks" class="secondary" aria-pressed="'+marked+'">'+(marked?'Скрыть разметку':'Показать разметку')+'</button>':'')+'</div>', photo.title);
-    $('prevPhoto').onclick=()=>{openPhoto(year,index-1,marked);$('prevPhoto').focus()};
-    $('nextPhoto').onclick=()=>{openPhoto(year,index+1,marked);$('nextPhoto').focus()};
+    $('prevPhoto').onclick=()=>{openPhoto(year,index-1,showMarks);$('prevPhoto').focus()};
+    $('nextPhoto').onclick=()=>{openPhoto(year,index+1,showMarks);$('nextPhoto').focus()};
     if ($('galleryMarks')) $('galleryMarks').onclick=()=>{openPhoto(year,index,!marked);$('galleryMarks').focus()};
     if ($('galleryCompare')) $('galleryCompare').onclick=()=>{closeModal();compare(year,index,marked)};
   }
   dialog.addEventListener('close',()=>{gallery=null});
   dialog.addEventListener('keydown',e=>{
-    if (!gallery || !dialog.open) return;
+    if (!gallery || !dialog.open || e.defaultPrevented || e.isComposing || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
     const target={ArrowLeft:'prevPhoto',ArrowRight:'nextPhoto'}[e.key];
     if (target) { e.preventDefault(); $(target)?.click(); }
   });

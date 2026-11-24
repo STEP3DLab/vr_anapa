@@ -175,6 +175,26 @@ async function exercise(browser, width, height, software) {
     await page.locator('#tab-drive').click();await page.locator('#reset').click();
     await page.locator('#expandArchive').click();assert.equal(await page.locator('.photo-card').count(),10);
     await page.locator('[data-filter="1986"]').click();assert.equal(await page.locator('.photo-card').count(),4);
+    if(width===1440) {
+      const card=page.locator('.photo-card[data-gallery="1986"][data-index="1"]');
+      await card.click();
+      const dialog=page.locator('#dialog');
+      await page.locator('#galleryMarks').click();
+      assert.equal(await dialog.locator('svg.registration').count(),1);
+      await page.locator('#nextPhoto').click();
+      assert((await dialog.locator('h2').innerText()).includes('Пост оператора'));
+      assert.equal(await dialog.locator('svg.registration').count(),0);
+      const free=await dialog.evaluate(el=>el.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowLeft',altKey:true,bubbles:true,cancelable:true})));
+      assert(free,'Browser Back shortcut must remain available');
+      assert((await dialog.locator('h2').innerText()).includes('Пост оператора'));
+      await page.keyboard.press('ArrowLeft');
+      assert((await dialog.locator('h2').innerText()).includes('Грейфер над фронтальным ковшом'));
+      assert.equal(await dialog.locator('svg.registration').count(),1,'Marks remain enabled across unaligned photos');
+      assert(await page.locator('#prevPhoto').evaluate(el=>el===document.activeElement));
+      await dialog.press('Escape');
+      assert(await card.evaluate(el=>el===document.activeElement));
+      console.log('Archive retains marks across reference-only photos and honors browser Back and focus');
+    }
     assert(await page.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
     await page.locator('#offline').click();
     await page.waitForFunction(()=>document.querySelector('#offlineStatus').textContent.includes('сохранены'));
