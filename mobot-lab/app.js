@@ -137,8 +137,17 @@ function selectYear(next) {
   if(next===year)return;
   setYear(next);setMode(mode,{match:mode==='photo'&&!viewer?.xr?.active});storeView();
 }
+function markerVisibility() {
+  const pins=$('markers');
+  const hide=mode!=='parts'||!ready;
+  if(hide&&mode==='parts'&&pins.contains(document.activeElement)){
+    const id=document.activeElement.dataset.part;
+    [...$('partChoices').children].find(button=>button.dataset.part===id)?.focus({preventScroll:true});
+  }
+  pins.hidden=hide;
+}
 function markers() {
-  const pins=$('markers');pins.hidden=mode!=='parts'||!viewer;
+  const pins=$('markers');markerVisibility();
   if(pins.hidden)return;
   for(const button of pins.children) {
     const info=inspections[year].find(p=>p.id===button.dataset.part);
@@ -202,7 +211,7 @@ function setMode(next,{match=next==='photo'}={}) {
     const on=b.dataset.mode===mode;
     b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;$('panel-'+b.dataset.mode).hidden=!on;
   }
-  $('markers').hidden=mode!=='parts'||!viewer;
+  markerVisibility();
   if(mode==='parts')partsPanel();
   if(mode==='photo'){if(match)applyPhoto();photoPanel()}
   if(mode==='drive')inspectPose();
@@ -236,8 +245,20 @@ const callbacks={
     }
     if(map[key]){partId=map[key];setMode('parts')}
   },
-  contextLost(){ready=false;$('poster').hidden=false;$('renderMode').textContent='ВОССТАНОВЛЕНИЕ 3D'},
-  drawn(){if(!ready){$('poster').hidden=true;$('renderMode').textContent='3D-РЕКОНСТРУКЦИЯ';ready=true}if(mode==='parts')markers()}
+  contextLost(){
+    ready=false;stopDemo();markerVisibility();
+    $('poster').hidden=false;$('renderMode').textContent='ОБЗОРНЫЙ ВИД';
+    $('graphicsStatus').textContent='3D временно недоступно. Пока можно смотреть обзорный вид, узлы и фотоархив.';
+  },
+  drawn(){
+    if(!ready){
+      $('poster').hidden=true;$('renderMode').textContent='3D-РЕКОНСТРУКЦИЯ';ready=true;
+      if($('graphicsStatus').textContent.startsWith('3D временно')){
+        $('graphicsStatus').textContent='3D снова доступно.';
+      }
+    }
+    if(mode==='parts')markers();
+  }
 };
 try {viewer=createViewer($('surface'),callbacks)} catch(e) {console.error('Просмотрщик',e)}
 setYear(year);

@@ -155,7 +155,7 @@ export function createViewer(surface, callbacks) {
   canvas.addEventListener('pointerup', e => {
     const start = down;
     activePointers.delete(e.pointerId); down = null;
-    if (!start || start.id !== e.pointerId || Math.hypot(e.clientX-start.x, e.clientY-start.y)>6 || !current) return;
+    if (contextLost || !start || start.id !== e.pointerId || Math.hypot(e.clientX-start.x, e.clientY-start.y)>6 || !current) return;
     const rect = canvas.getBoundingClientRect();
     picker.setFromCamera(new T.Vector2((e.clientX-rect.left)/rect.width*2-1, 1-(e.clientY-rect.top)/rect.height*2), camera);
     visibleMeshes.length = 0;
@@ -174,7 +174,7 @@ export function createViewer(surface, callbacks) {
   }
   canvas.addEventListener('keydown', e => {
     // Browser zoom, OS shortcuts and assistive technology keep their own modifiers.
-    if (e.defaultPrevented || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (contextLost || e.defaultPrevented || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === '+' || e.key === '=') zoom(1.2);
     else if (e.key === '-') zoom(1/1.2);
     else if (e.key === 'Home') frame('iso');

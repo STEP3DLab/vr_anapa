@@ -246,6 +246,20 @@ async function exercise(browser, width, height, software) {
       console.log('Keyboard close-up retains focus and Tab reaches the source');
     }else await closeup.click();
     assert(await page.locator('#markers [data-part="tool"]').isVisible());
+    if(width===1440){
+      const canvas=page.locator('#surface canvas'),pin=page.locator('#markers [data-part="tool"]');
+      await pin.focus();
+      await canvas.evaluate(el=>el.dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
+      assert(await page.locator('#poster').isVisible());
+      assert(!(await pin.isVisible()));
+      assert(await page.locator('#partChoices [data-part="tool"]').evaluate(el=>el===document.activeElement));
+      assert.match(await page.locator('#graphicsStatus').innerText(),/3D временно недоступно/);
+      await canvas.evaluate(el=>el.dispatchEvent(new Event('webglcontextrestored')));
+      await page.locator('#poster').waitFor({state:'hidden'});
+      assert.match(await page.locator('#graphicsStatus').innerText(),/3D снова доступно/);
+      assert(await pin.isVisible());
+      console.log('Interrupted 3D shows the poster and transfers pin focus without losing the selected part');
+    }
     await page.locator('#tab-drive').click();await page.locator('#reset').click();
     await page.locator('#expandArchive').click();assert.equal(await page.locator('.photo-card').count(),10);
     const matches=page.locator('#archiveCards .archive-badge.has-match');
