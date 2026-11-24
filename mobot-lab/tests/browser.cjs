@@ -68,6 +68,21 @@ async function exercise(browser, width, height, software) {
     assert(await page.locator('.bar .navlab').isVisible());
     assert(await page.locator('.bar .navarch').isVisible());
     assert.equal(await page.locator('#surface').evaluate(s=>s.classList.contains('software')),software);
+    const canvas=page.locator('#surface canvas');
+    assert.equal(await canvas.getAttribute('aria-describedby'),'hint keyboardHelp');
+    await canvas.focus();
+    const shortcuts=await canvas.evaluate(el=>{
+      const press=(key,mods={})=>el.dispatchEvent(new KeyboardEvent('keydown',{key,...mods,bubbles:true,cancelable:true}));
+      return [press('=',{ctrlKey:true}),press('-', {metaKey:true}),press('ArrowLeft',{altKey:true}),press('ArrowLeft'),press('Home')];
+    });
+    assert.deepEqual(shortcuts,[true,true,true,false,false]);
+    assert.equal(await page.locator('#workbench').getAttribute('data-mode'),'drive');
+    assert.equal(await page.locator('#workbench').getAttribute('tabindex'),null);
+    await page.locator('#tab-drive').focus();await page.keyboard.press('ArrowRight');
+    assert.equal(await page.locator('#tab-parts').getAttribute('aria-selected'),'true');
+    await page.keyboard.press('Home');
+    assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
+    assert(await page.locator('#keyboardHelp').textContent().then(t=>t.includes('стрелки')));
     if(width===1440)await renderXRExhibits(page);
     const before=await page.locator('#surface canvas').screenshot();
     await page.locator('[data-view="side"]').click();

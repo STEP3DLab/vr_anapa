@@ -193,7 +193,7 @@ function photoPanel() {
 function setMode(next,{match=next==='photo'}={}) {
   const previous=mode;mode=next;$('workbench').dataset.mode=mode;stopDemo();tell('');
   if(previous==='parts'&&next!=='parts'&&viewer?.capture().detail)viewer.frame('iso');
-  for(const b of all('[data-mode]')){
+  for(const b of all('.mode-tabs [role=tab][data-mode]')){
     const on=b.dataset.mode===mode;
     b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;$('panel-'+b.dataset.mode).hidden=!on;
   }
@@ -249,12 +249,16 @@ $('renderMode').textContent=viewer?'3D-РЕКОНСТРУКЦИЯ':'ОБЗОРН
 if(!viewer){
   $('hint').textContent='Доступны обзорные виды, описания узлов и фотоархив.';
   for(const b of [...all('[data-view]'),$('demo'),$('reset'),$('in'),$('out'),$('fit'),$('tool')])b.disabled=true;
-} else if(matchMedia('(pointer:coarse)').matches) $('hint').textContent='Один палец — вращение, два — масштаб';
+} else {
+  $('keyboardHelp').hidden=false;
+  if(matchMedia('(pointer:coarse)').matches) $('hint').textContent='Один палец — вращение, два — масштаб';
+}
 
 all('[data-year]').forEach(b=>b.onclick=()=>selectYear(+b.dataset.year));
-all('[data-mode]').forEach((b,i,buttons)=>{
+all('.mode-tabs [role=tab][data-mode]').forEach((b,i,buttons)=>{
   b.onclick=()=>{if(mode!==b.dataset.mode)setMode(b.dataset.mode)};
   b.onkeydown=e=>{
+    if(e.target!==b||e.defaultPrevented||e.isComposing||e.ctrlKey||e.metaKey||e.altKey) return;
     const destination={ArrowRight:(i+1)%3,ArrowLeft:(i+2)%3,Home:0,End:2}[e.key];
     if(destination===undefined)return;e.preventDefault();buttons[destination].focus();buttons[destination].click();
   };
