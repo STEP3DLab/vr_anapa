@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-24",
+  "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "threeCoreBlob": "70c40977daa0f6e1e312c6b58e9bfe49cb5a87a4",
+  "execution": "Repository Three.js r180 core and actual makeMobot executed in V8; document canvas and unused AbortController stubbed; no WebGL or browser for candidate.",
+  "candidateIsOneLineChange": true,
+  "modelOnly": true,
+  "physicalScaleKnown": false,
+  "threeRevision": "180",
+  "qualities": {
+    "desktop": {
+      "phases": 246,
+      "instanceSamplesPerVariant": 56088,
+      "adjacentChecksPerVariant": 224352,
+      "maxCenterDelta": 0,
+      "maxDirectionDelta": 1.8750003338826986,
+      "nearSeamDegrees": {
+        "baseline": 3.750000043202409,
+        "candidate": 0.0003751416774999028
+      },
+      "baseline": {
+        "minPadY": 0.14904645480882497,
+        "minCleatY": 0.13893970263140207,
+        "adjacentMinSeparatingAxisGap": {
+          "padPad": -0.0013208853753846842,
+          "cleatCleat": 0.012988892512883397,
+          "padCleat": 0.008032583519447647,
+          "cleatPad": 0.008032582613973958
+        },
+        "overlapCounts": {
+          "padPad": 3516,
+          "cleatCleat": 0,
+          "padCleat": 0,
+          "cleatPad": 0
+        },
+        "minWheelGap": 0.00029995786159875415
+      },
+      "candidate": {
+        "minPadY": 0.14904645480882497,
+        "minCleatY": 0.13893970263140207,
+        "adjacentMinSeparatingAxisGap": {
+          "padPad": -0.0013208853753846842,
+          "cleatCleat": 0.012988892512883397,
+          "padCleat": 0.008032583519447647,
+          "cleatPad": 0.008032582613973958
+        },
+        "overlapCounts": {
+          "padPad": 3504,
+          "cleatCleat": 0,
+          "padCleat": 0,
+          "cleatPad": 0
+        },
+        "minWheelGap": 0.00029995786159875415
+      }
+    },
+    "mobile": {
+      "phases": 246,
+      "instanceSamplesPerVariant": 56088,
+      "adjacentChecksPerVariant": 224352,
+      "maxCenterDelta": 0,
+      "maxDirectionDelta": 1.8750003338826986,
+      "nearSeamDegrees": {
+        "baseline": 3.750000043202409,
+        "candidate": 0.0003751416774999028
+      },
+      "baseline": {
+        "minPadY": 0.14904645480882497,
+        "minCleatY": 0.13893970263140207,
+        "adjacentMinSeparatingAxisGap": {
+          "padPad": -0.0013208853753846842,
+          "cleatCleat": 0.012988892512883397,
+          "padCleat": 0.008032583519447647,
+          "cleatPad": 0.008032582613973958
+        },
+        "overlapCounts": {
+          "padPad": 3516,
+          "cleatCleat": 0,
+          "padCleat": 0,
+          "cleatPad": 0
+        },
+        "minWheelGap": 0.00029995786159875415
+      },
+      "candidate": {
+        "minPadY": 0.14904645480882497,
+        "minCleatY": 0.13893970263140207,
+        "adjacentMinSeparatingAxisGap": {
+          "padPad": -0.0013208853753846842,
+          "cleatCleat": 0.012988892512883397,
+          "padCleat": 0.008032583519447647,
+          "cleatPad": 0.008032582613973958
+        },
+        "overlapCounts": {
+          "padPad": 3504,
+          "cleatCleat": 0,
+          "padCleat": 0,
+          "cleatPad": 0
+        },
+        "minWheelGap": 0.00029995786159875415
+      }
+    }
+  }
+}
