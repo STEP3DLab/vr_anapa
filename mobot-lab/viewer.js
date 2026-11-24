@@ -12,7 +12,8 @@ export function createViewer(surface, callbacks) {
     if(context) gl=new T.WebGLRenderer({canvas,context,...graphics});
   } catch { /* Use the same articulated geometry through the software renderer. */ }
   if(!gl){canvas=document.createElement('canvas');raster=makeRasterRenderer(canvas)}
-  canvas.setAttribute('aria-label','Вращаемая трёхмерная модель');canvas.tabIndex=0;
+  canvas.setAttribute('aria-label','Вращаемая трёхмерная модель');
+  canvas.setAttribute('aria-describedby','hint keyboardHelp');canvas.tabIndex=0;
   surface.append(canvas);
   const controls=new OrbitControls(camera,canvas);
   controls.enablePan=false;controls.minZoom=.4;controls.maxZoom=5;
@@ -172,6 +173,8 @@ export function createViewer(surface, callbacks) {
     camera.updateProjectionMatrix(); draw();
   }
   canvas.addEventListener('keydown', e => {
+    // Browser zoom, OS shortcuts and assistive technology keep their own modifiers.
+    if (e.defaultPrevented || e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === '+' || e.key === '=') zoom(1.2);
     else if (e.key === '-') zoom(1/1.2);
     else if (e.key === 'Home') frame('iso');

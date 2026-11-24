@@ -249,7 +249,10 @@ $('renderMode').textContent=viewer?'3D-РЕКОНСТРУКЦИЯ':'ОБЗОРН
 if(!viewer){
   $('hint').textContent='Доступны обзорные виды, описания узлов и фотоархив.';
   for(const b of [...all('[data-view]'),$('demo'),$('reset'),$('in'),$('out'),$('fit'),$('tool')])b.disabled=true;
-} else if(matchMedia('(pointer:coarse)').matches) $('hint').textContent='Один палец — вращение, два — масштаб';
+} else {
+  $('keyboardHelp').hidden=false;
+  if(matchMedia('(pointer:coarse)').matches) $('hint').textContent='Один палец — вращение, два — масштаб';
+}
 
 all('[data-year]').forEach(b=>b.onclick=()=>selectYear(+b.dataset.year));
 all('[data-mode]').forEach((b,i,buttons)=>{
