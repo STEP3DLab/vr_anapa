@@ -47,6 +47,31 @@ async function renderXRExhibits(page) {
   console.log('Four XR exhibit configurations rendered through WebGL2:',JSON.stringify(rows));
 }
 
+async function compactControls(browser) {
+  const page=await browser.newPage({viewport:{width:320,height:680},hasTouch:true,reducedMotion:'reduce'});
+  try {
+    await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    await page.evaluate(()=>document.fonts.ready);
+    const area=await page.locator('#stage').boundingBox();
+    const canvas=await page.locator('#surface canvas').boundingBox();
+    const views=await page.locator('.view-controls').boundingBox();
+    const zoom=await page.locator('.zoom').boundingBox();
+    assert(views.x>=area.x && views.x+views.width<=area.x+area.width,'Views must not be clipped at 320px');
+    assert(zoom.x>=area.x && zoom.x+zoom.width<=area.x+area.width,'Zoom must not be clipped at 320px');
+    assert(views.y+views.height<=zoom.y,'Zoom and views must never overlap');
+    assert(canvas.y+canvas.height<=views.y,'Controls must not cover the model');
+    await page.locator('[data-view="top"]').click();
+    assert.equal(await page.locator('[data-view="top"]').getAttribute('aria-pressed'),'true');
+    await page.locator('#in').click();
+    await page.locator('[data-year="1987"]').click();
+    await page.locator('#tab-photo').click();
+    await page.locator('[data-filter="1987"]').click();
+    assert.equal(await page.locator('[data-filter="1987"]').getAttribute('aria-pressed'),'true');
+    assert(await page.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1),'No page overflow at 320px');
+    console.log('320px touch: views and zoom fully reachable without overlap; model, comparison and archive work');
+  } finally {await page.close()}
+}
+
 async function exercise(browser, width, height, software) {
   const context=await browser.newContext({viewport:{width,height},hasTouch:width<600,reducedMotion:'reduce'});
   try {
@@ -133,5 +158,6 @@ async function exercise(browser, width, height, software) {
     await exercise(browser,1440,960,false);
     await exercise(browser,390,844,false);
     await exercise(browser,360,800,true);
+    await compactControls(browser);
   } finally {await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});
