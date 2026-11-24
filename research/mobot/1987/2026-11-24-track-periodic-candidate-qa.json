@@ -1,0 +1,46 @@
+{
+  "modelOnly": true,
+  "sourceVertices": 102,
+  "P": 3.8966788494655114,
+  "datum": 0.14,
+  "finiteDifferenceNormalizedStep": 0.0001,
+  "linkCount": 114,
+  "denseSamples": 30000,
+  "seamSamples": 2001,
+  "baselineJump": 3.750000000005234,
+  "candidateJump": 0,
+  "nearJump": 0.00037513392565004955,
+  "maxElsewhere": 1.489453757329365e-11,
+  "maxChange": 1.8750000000026203,
+  "global": {
+    "baseline": {
+      "minPad": 0.14903940547666114,
+      "minCleat": 0.13894298151097145,
+      "minWheelGap": 0.00029999999999946736
+    },
+    "candidate": {
+      "minPad": 0.1490394054766613,
+      "minCleat": 0.13894298151097145,
+      "minWheelGap": 0.0002999999999994951
+    }
+  },
+  "seam": {
+    "baseline": {
+      "minPad": 0.4505642347375029,
+      "minCleat": 0.4564672405559614,
+      "minWheelGap": 0.00029999999999939797
+    },
+    "candidate": {
+      "minPad": 0.45082649143751713,
+      "minCleat": 0.4564672405559614,
+      "minWheelGap": 0.0002999999999999947
+    }
+  },
+  "actualThreeRuntime": false,
+  "physicalScaleKnown": false,
+  "date": "2026-11-24",
+  "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "kinematicsBlob": "7912b5295bfa91c3a9e40720e45da306346ff29e",
+  "execution": "Executed numerical core in isolated V8 on exact repository text; standalone Node and actual Three.js verification not run.",
+  "decision": "Candidate only: keep latest v22. No historical geometry or physical dimensions changed."
+}
