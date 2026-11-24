@@ -27,9 +27,9 @@
   </div>
 </div></header>
 <main class="wrap">
-<section id="lab" aria-labelledby="title">
+<section id="lab" aria-labelledby="title" tabindex="-1">
   <div class="intro"><div><p class="overline"><span class="line"></span>ЧЕРНОБЫЛЬСКАЯ АЭС <b>/</b> 1986–1987</p>
-    <h1 id="title">Лаборатория «Мобот»</h1><p class="lead">Две цифровые реконструкции роботов для расчистки кровли ЧАЭС. Выберите машину, изучите её узлы или сравните модель с архивным снимком.</p><button id="compareModels" class="text-btn compare-models" hidden>Чем отличаются модели?</button></div>
+    <h1 id="title">Лаборатория «Мобот»</h1><p class="lead">Две цифровые реконструкции роботов для расчистки кровли ЧАЭС. Выберите машину, изучите её узлы или сравните модель с архивным снимком.</p><div class="intro-links"><button id="compareModels" class="text-btn compare-models" hidden>Чем отличаются модели?</button><a id="mobileArchive" class="mobile-section-link" href="#archive">К фотоархиву <span aria-hidden="true">↓</span></a></div></div>
     <div class="launch"><button id="share" class="secondary"><i data-i="link"></i><span>Ссылка на вид</span></button><button class="vr major" id="vr"><i data-i="vr"></i><span id="vrLabel">Как открыть в VR</span></button></div>
   </div>
   <div id="workbench">
@@ -74,7 +74,8 @@
     <p class="bench-note" id="status" role="status" aria-live="polite"></p>
   </div>
 </section>
-<section id="archive" class="archive" aria-labelledby="archiveTitle">
+<section id="archive" class="archive" aria-labelledby="archiveTitle" tabindex="-1">
+  <a id="mobileLab" class="mobile-section-link" href="#lab"><span aria-hidden="true">↑</span> К лаборатории</a>
   <div class="archive-head"><div><p class="overline"><span class="line"></span>ИСТОЧНИКИ РЕКОНСТРУКЦИИ</p><h2 id="archiveTitle">Фотоархив</h2></div>
     <div class="archive-filter" role="group" aria-label="Фильтр архива"><button data-filter="all" aria-pressed="true">Все</button><button data-filter="1986" aria-pressed="false">1986</button><button data-filter="1987" aria-pressed="false">1987</button></div>
   </div>

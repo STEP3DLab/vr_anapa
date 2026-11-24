@@ -147,6 +147,22 @@ async function exercise(browser, width, height, software) {
     assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
     assert(await page.locator('#keyboardHelp').textContent().then(t=>t.includes('стрелки')));
     if(width===1440)await renderXRExhibits(page);
+    if(width===390){
+      const archiveJump=page.locator('#mobileArchive'), labJump=page.locator('#mobileLab');
+      assert(await archiveJump.isVisible());
+      assert(!(await page.locator('.navarch').isVisible()));
+      await archiveJump.focus();await page.keyboard.press('Enter');
+      assert.equal(new URL(page.url()).hash,'#archive');
+      assert(await page.locator('#archive').evaluate(el=>el===document.activeElement));
+      assert(await page.locator('#archiveTitle').evaluate(el=>el.getBoundingClientRect().top<innerHeight));
+      await labJump.click();
+      assert.equal(new URL(page.url()).hash,'#lab');
+      assert(await page.locator('#lab').evaluate(el=>el===document.activeElement));
+      console.log('Narrow-screen archive and laboratory shortcuts move both viewport and focus');
+    } else if(width===1440){
+      assert(!(await page.locator('#mobileArchive').isVisible()));
+      assert(await page.locator('.navarch').isVisible());
+    }
     if(width===1440||width===390){
       const compare=page.locator('#compareModels'),dialog=page.locator('#dialog');
       for(const [year,index] of [[1987,'3'],[1986,'1']]){
