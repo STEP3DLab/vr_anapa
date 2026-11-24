@@ -137,13 +137,14 @@ function selectYear(next) {
   if(next===year)return;
   setYear(next);setMode(mode,{match:mode==='photo'&&!viewer?.xr?.active});storeView();
 }
+function retainMarkerFocus(button) {
+  if(button!==document.activeElement)return;
+  [...$('partChoices').children].find(choice=>choice.dataset.part===button.dataset.part)?.focus({preventScroll:true});
+}
 function markerVisibility() {
   const pins=$('markers');
   const hide=mode!=='parts'||!ready;
-  if(hide&&mode==='parts'&&pins.contains(document.activeElement)){
-    const id=document.activeElement.dataset.part;
-    [...$('partChoices').children].find(button=>button.dataset.part===id)?.focus({preventScroll:true});
-  }
+  if(hide&&mode==='parts'&&pins.contains(document.activeElement))retainMarkerFocus(document.activeElement);
   pins.hidden=hide;
 }
 function markers() {
@@ -152,6 +153,7 @@ function markers() {
   for(const button of pins.children) {
     const info=inspections[year].find(p=>p.id===button.dataset.part);
     const xy=info && viewer.project(info.anchor(model));
+    if(!xy)retainMarkerFocus(button);
     button.hidden=!xy;
     if(xy){button.style.left=xy[0]+'%';button.style.top=xy[1]+'%'}
   }

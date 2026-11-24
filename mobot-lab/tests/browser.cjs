@@ -299,6 +299,24 @@ async function exercise(browser, width, height, software) {
       assert.match(await page.locator('#graphicsStatus').innerText(),/3D снова доступно/);
       assert(await pin.isVisible());
       console.log('Interrupted 3D shows the poster and transfers pin focus without losing the selected part');
+      await page.locator('#fit').click();
+      const outerPart=await page.evaluate(async()=>{
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+        const edge=b=>Math.max(Math.abs(parseFloat(b.style.left)-50),Math.abs(parseFloat(b.style.top)-50));
+        return [...document.querySelectorAll('#markers button:not([hidden])')].sort((a,b)=>edge(b)-edge(a))[0]?.dataset.part;
+      });
+      assert(outerPart,'The fitted model has an on-screen marker');
+      const outerPin=page.locator('#markers [data-part="'+outerPart+'"]');
+      const outerChoice=page.locator('#partChoices [data-part="'+outerPart+'"]');
+      await outerPin.focus();
+      await page.locator('#in').evaluate(button=>{for(let i=0;i<10;i++)button.click()});
+      await outerPin.waitFor({state:'hidden'});
+      assert(await outerChoice.evaluate(el=>document.activeElement===el),'Zooming a focused marker out of view must preserve keyboard position in the matching list item');
+      assert.equal(await page.locator('#partChoices [aria-pressed="true"]').getAttribute('data-part'),'tool','Zoom and focus must not select a different node');
+      await page.locator('#fit').evaluate(button=>button.click());
+      await outerPin.waitFor({state:'visible'});
+      assert(await outerChoice.evaluate(el=>document.activeElement===el),'Reappearing markers must not steal focus');
+      console.log('Zooming a marker out of the viewport transfers focus without changing the selected part');
     }
     if(width===390){
       const choices=page.locator('#partChoices');
