@@ -147,6 +147,21 @@ async function exercise(browser, width, height, software) {
     assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
     assert(await page.locator('#keyboardHelp').textContent().then(t=>t.includes('стрелки')));
     if(width===1440)await renderXRExhibits(page);
+    if(width===1440||width===390){
+      const compare=page.locator('#compareModels'),dialog=page.locator('#dialog');
+      for(const [year,index] of [[1987,'3'],[1986,'1']]){
+        await compare.click();
+        assert.equal(await dialog.locator('.model-compare-card').count(),2);
+        for(const image of await dialog.locator('.model-compare-card img').all())await image.evaluate(img=>img.decode());
+        assert(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1));
+        await dialog.locator('[data-compare-year="'+year+'"]').click();
+        assert.equal(await page.locator('[data-year="'+year+'"]').getAttribute('aria-pressed'),'true');
+        assert.equal(await page.locator('#photoSelect').inputValue(),index);
+        assert(await page.locator('#tab-photo').evaluate(el=>el===document.activeElement));
+      }
+      await page.locator('#tab-drive').click();
+      console.log('Two dated comparison cards link to the correct matched photos and model');
+    }
     const before=await page.locator('#surface canvas').screenshot();
     await page.locator('[data-view="side"]').click();
     const after=await page.locator('#surface canvas').screenshot();assert(!before.equals(after));

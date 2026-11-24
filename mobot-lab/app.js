@@ -282,6 +282,27 @@ $('passport').onclick=()=>{
     data.facts.map(f=>'<div><dt>'+h(f.label)+'</dt><dd>'+h(f.value)+'</dd></div>').join('')+'</dl><h3>Границы реконструкции</h3><p>'+h(data.note)+'</p>'+
     '<div class="source-links"><a href="'+h(data.reference)+'" target="_blank" rel="noopener">Публикация разработчиков ↗</a> <a href="'+def.original+'" target="_blank" rel="noopener">Инженерная версия '+def.code+' ↗</a></div>',def.title);
 };
+const overview=[
+  {year:1986, photo:1, detail:'Грейфер для отдельных обломков и фронтальный ковш для сбора материала. На снимке видно, как грейфер расположен над ковшом.'},
+  {year:1987, photo:3, detail:'Двупалый схват можно было заменить отбойным молотком. На снимке молоток установлен на стреле.'}
+];
+$('compareModels').onclick=()=>{
+  const cards=overview.map(({year,photo,detail})=>{
+    const shot=evidence[year].photos[photo];
+    return '<article class="model-compare-card"><img src="'+h(shot.file)+'" alt="'+h(shot.title)+'">'+
+      '<p class="mini">'+year+'</p><h3>'+h(machines[year].title)+'</h3><p>'+h(detail)+'</p>'+
+      '<button class="secondary" data-compare-year="'+year+'">Сверка с 3D: '+year+'</button></article>';
+  }).join('');
+  openModal('1986 / 1987','<h2>Чем отличаются модели</h2><div class="model-compare-grid">'+cards+'</div>'+
+    '<p class="source-links"><a href="'+h(evidence[1986].reference)+'" target="_blank" rel="noopener">Публикация «Роботы в Чернобыле» ↗</a>'+
+    '<a href="https://sktbpr.ru/content/hronologiya-razvitiya" target="_blank" rel="noopener">Хронология разработчиков ↗</a></p>','Чем отличаются модели');
+  for(const {year,photo} of overview){
+    document.querySelector('[data-compare-year="'+year+'"]').onclick=()=>{
+      closeModal();compareFromGallery(year,photo,false);
+    };
+  }
+};
+$('compareModels').hidden=false;
 $('about').onclick=()=>openModal('О ПРОЕКТЕ','<h2>Две машины для работ на ЧАЭС</h2><p>В 1986 году в МВТУ им. Н. Э. Баумана создали «Мобот-Ч-ХВ» для расчистки кровли. В 1987 году работы продолжили модернизированные комплексы «Мобот-Ч-ХВ-2» со сменным оснащением.</p><p>Технопарк РГСУ объединил исследовательские модели 1986 и 1987 годов. В разделе «Сверка» архивный снимок задаёт позу и ракурс, а разметка связывает модель с видимыми деталями. Углы движения и масштаб сцены условны.</p><p><a href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">История комплексов в архиве СКТБ ПР ↗</a></p>');
 const presentation=setupPresentation({getLink:()=>link(),getState});
 let vrSupported=false,busy=false,vrCheck=0;
