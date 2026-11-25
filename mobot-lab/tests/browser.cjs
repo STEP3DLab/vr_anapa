@@ -432,6 +432,15 @@ async function staticRobots(browser) {
     try {
       const page=await context.newPage();
       await page.goto(base);
+      const brand=page.locator('.brand img');
+      const mark='./mark.svg?v=20261125-robot';
+      assert.equal(await brand.getAttribute('src'),mark);
+      assert.equal(await page.locator('link[rel="icon"]').getAttribute('href'),mark);
+      assert(await brand.evaluate(img=>img.complete&&img.naturalWidth>0));
+      const badge=await brand.boundingBox();
+      assert(badge.width>=32&&badge.height===badge.width&&badge.x>=0&&badge.x+badge.width<=width,'Robot mark must fit the header');
+      assert.equal(await page.locator('.credit-sktb img').getAttribute('src'),'./media/sktbpr.png');
+      assert.equal(await page.locator('.credit-rgsu img').getAttribute('src'),'./media/rgsu.png');
       const exhibit=page.getByRole('region',{name:'Обе модели без JavaScript'});
       assert(await exhibit.isVisible(),'Both models need an in-page no-script alternative');
       assert.equal(await exhibit.locator('figure').count(),2);
