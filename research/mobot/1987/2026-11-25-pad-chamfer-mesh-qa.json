@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-25",
+  "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "threeCoreBlob": "70c40977daa0f6e1e312c6b58e9bfe49cb5a87a4",
+  "chamferScene": 0.004,
+  "execution": "Actual Three.js core r180 and original model plus in-memory isolated patches in V8; stubbed canvas and AbortController. No WebGL, no continuous collision guarantee.",
+  "modelOnly": true,
+  "physicalScaleKnown": false,
+  "threeRevision": "180",
+  "qualities": {
+    "desktop": {
+      "phases": 246,
+      "positionsPerVariant": 56088,
+      "checksPerVariant": 224352,
+      "centerDelta": 0,
+      "baselinePeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.13893970261886712,
+        "minPadGap": -0.0013208849070563966,
+        "minCrossGap": 0.008032583165890284,
+        "overlaps": 3504
+      },
+      "chamferPeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.13893970261886712,
+        "minPadGap": 0.00044826967846156585,
+        "minCrossGap": 0.008032583165890284,
+        "overlaps": 0
+      },
+      "actualCandidatePadHull": [
+        [
+          -0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          -0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          0.01555253379046917,
+          0.010999999940395355
+        ],
+        [
+          -0.01555253379046917,
+          0.010999999940395355
+        ]
+      ],
+      "actualPadWidth": 0.2980000078678131
+    },
+    "mobile": {
+      "phases": 246,
+      "positionsPerVariant": 56088,
+      "checksPerVariant": 224352,
+      "centerDelta": 0,
+      "baselinePeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.13893970261886712,
+        "minPadGap": -0.0013208849070563966,
+        "minCrossGap": 0.008032583165890284,
+        "overlaps": 3504
+      },
+      "chamferPeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.13893970261886712,
+        "minPadGap": 0.00044826967846156585,
+        "minCrossGap": 0.008032583165890284,
+        "overlaps": 0
+      },
+      "actualCandidatePadHull": [
+        [
+          -0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          -0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          0.01555253379046917,
+          0.010999999940395355
+        ],
+        [
+          -0.01555253379046917,
+          0.010999999940395355
+        ]
+      ],
+      "actualPadWidth": 0.2980000078678131
+    }
+  }
+}
