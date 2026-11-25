@@ -397,6 +397,25 @@ async function exercise(browser, width, height, software) {
     console.log(width+'×'+height+' · '+(software?'software rasterizer':'WebGL2')+' · views, tool motion, archive, links and offline navigation passed');
   } finally {await context.close()}
 }
+async function staticRobots(browser) {
+  for(const width of [320,1440]) {
+    const context=await browser.newContext({javaScriptEnabled:false,viewport:{width,height:760}});
+    try {
+      const page=await context.newPage();
+      await page.goto(base);
+      const exhibit=page.getByRole('region',{name:'Обе модели без JavaScript'});
+      assert(await exhibit.isVisible(),'Both models need an in-page no-script alternative');
+      assert.equal(await exhibit.locator('figure').count(),2);
+      assert.match(await exhibit.locator('figcaption').first().innerText(),/1986 · Мобот-Ч-ХВ$/);
+      assert.match(await exhibit.locator('figcaption').last().innerText(),/1987 · Мобот-Ч-ХВ-2$/);
+      for(const image of await exhibit.locator('img').all()) assert(await image.evaluate(el=>el.complete&&el.naturalWidth>0));
+      assert.equal(await exhibit.getByRole('link',{name:'История машин у разработчика'}).getAttribute('href'),'https://sktbpr.ru/node/23');
+      for(const control of ['#workbench','#share','#offline','#archive']) assert(!(await page.locator(control).isVisible()),control+' appears usable without JavaScript');
+      assert(await page.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
+    } finally {await context.close()}
+  }
+  console.log('Both reconstructions and the original archive link are readable without JavaScript at 320 and 1440 px');
+}
 (async()=>{
   const browser=await chromium.launch({channel:process.env.MOBOT_CHROME_CHANNEL || undefined,args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   try {
@@ -404,6 +423,7 @@ async function exercise(browser, width, height, software) {
     await exercise(browser,390,844,false);
     await exercise(browser,360,800,true);
     await compactControls(browser);
+    await staticRobots(browser);
     await vrAvailability(browser);
     await sharingClipboard(browser);
     await offlineUpdate(browser);

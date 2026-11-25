@@ -9,6 +9,17 @@
   <link rel="icon" href="./mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.js"></script>
+  <noscript><style>
+    #workbench, #archive, .navarch, .launch, .footer-actions {display:none}
+    .static-exhibit {margin:12px 0 44px}
+    .static-exhibit p {max-width:64ch;margin:0 0 16px}
+    .static-exhibit a {text-decoration:underline;text-underline-offset:.16em}
+    .static-models {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .static-models figure {margin:0;overflow:hidden;border:1px solid #cbd3c5;border-radius:14px;background:#fff}
+    .static-models img {display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#edf1e9}
+    .static-models figcaption {padding:12px 15px;font-weight:700}
+    @media(max-width:620px){.static-models{grid-template-columns:1fr}}
+  </style></noscript>
 </head>
 <body>
 <a href="#lab" class="skip">К модели</a>
@@ -32,6 +43,17 @@
     <h1 id="title">Лаборатория «Мобот»</h1><p class="lead">Две цифровые реконструкции роботов для расчистки кровли ЧАЭС. Выберите машину, изучите её узлы или сравните модель с архивным снимком.</p><button id="compareModels" class="text-btn compare-models" hidden>Чем отличаются модели?</button></div>
     <div class="launch"><button id="share" class="secondary"><i data-i="link"></i><span>Ссылка на вид</span></button><button class="vr major" id="vr"><i data-i="vr"></i><span id="vrLabel">Как открыть в VR</span></button></div>
   </div>
+  <noscript>
+    <section class="static-exhibit" aria-labelledby="staticExhibitTitle">
+      <h2 id="staticExhibitTitle">Обе модели без JavaScript</h2>
+      <p>Ниже показаны цифровые реконструкции. Для вращения моделей, управления механизмами и 3D-сверки с архивными кадрами включите JavaScript.</p>
+      <div class="static-models">
+        <figure><img src="./media/1986-overview.webp" alt="Общий вид цифровой модели Мобот-Ч-ХВ"><figcaption>1986 · Мобот-Ч-ХВ</figcaption></figure>
+        <figure><img src="./media/1987-overview.webp" alt="Общий вид цифровой модели Мобот-Ч-ХВ-2"><figcaption>1987 · Мобот-Ч-ХВ-2</figcaption></figure>
+      </div>
+      <a href="https://sktbpr.ru/node/23">История машин у разработчика</a>
+    </section>
+  </noscript>
   <div id="workbench">
     <div class="bench-toolbar">
       <div class="model-switch" role="group" aria-label="Выбор робота"><button data-year="1986" aria-pressed="true"><strong>Ч-ХВ</strong><span>1986</span></button><button data-year="1987" aria-pressed="false"><strong>Ч-ХВ-2</strong><span>1987</span></button></div>
@@ -90,5 +112,4 @@
   <div class="footer-actions"><button id="offline" class="text-btn"><i data-i="download"></i>Сохранить без сети</button><button id="about" class="text-btn"><i data-i="info"></i>О проекте</button></div>
 </div><p id="offlineStatus" role="status" class="wrap offline-status"></p></footer>
 <dialog id="dialog"><div class="modal-top"><span class="mini" id="dialogKind"></span><button id="closeDialog" class="icon" aria-label="Закрыть"><i data-i="x"></i></button></div><div id="dialogBody"></div><p id="galleryAnnouncement" class="visually-hidden" role="status" aria-atomic="true"></p></dialog>
-<noscript>Для управления моделями включите JavaScript. <a href="https://sktbpr.ru/node/23">История машин у разработчика</a>.</noscript>
 </body></html>
