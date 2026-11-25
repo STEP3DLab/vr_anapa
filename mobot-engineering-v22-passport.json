@@ -274,7 +274,8 @@
     "Стыковка, дозиметр и скрытый барабан документированы без предполагаемой 3D-геометрии.",
     "Тест 23.11.2026: непрерывная виртуальная траектория даёт до 0,001101254 условной единицы выхода грунтозацепа за произвольную плоскость y=0,14 и скачок локальной касательной 3,75°. Величины C, не параметры настоящего Ч-ХВ-2.",
     "СКТБ ПР описывает полиуретановые траки базового Ч-ХВ (1986), но материал траков Ч-ХВ-2 (1987) не подтверждён. Рекомендация об усилении замков не является доказательством конкретной конструкции.",
-    "24.11.2026: соседние условные прямоугольные основания траков пересекаются при части проверенных фаз; периодическая касательная уменьшает агрегированное число случаев, но не устраняет наихудшее пересечение. Это не подтверждение конструкции настоящего трака."
+    "24.11.2026: соседние условные прямоугольные основания траков пересекаются при части проверенных фаз; периодическая касательная уменьшает агрегированное число случаев, но не устраняет наихудшее пересечение. Это не подтверждение конструкции настоящего трака.",
+    "25.11.2026: две внутренние фаски условных оснований устраняют соседние пересечения в дискретных проверках кандидата. Исторический профиль не установлен, браузерный выпуск не выполнен, дефект выхода грунтозацепов ниже условной опоры сохраняется."
   ],
   "controls": [
     "overview",
@@ -391,6 +392,30 @@
       "candidateBrowserVerified": false,
       "candidateReleasePublished": false,
       "physicalScaleKnown": false
+    },
+    "padChamferCandidate": {
+      "date": "2026-11-25",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-25-pad-chamfer.md",
+      "numericQA": "research/mobot/1987/2026-11-25-pad-chamfer-sweep-qa.json",
+      "meshQA": "research/mobot/1987/2026-11-25-pad-chamfer-mesh-qa.json",
+      "numericSamples": 41854,
+      "meshPhasesPerMode": 246,
+      "meshPositionsPerVariantPerMode": 56088,
+      "meshAdjacentChecksPerVariantPerMode": 224352,
+      "chamferScene": 0.004,
+      "sectionAreaRemovedFraction": 0.023381164994232928,
+      "baselinePeriodicOverlapCount": 3504,
+      "candidateOverlapCount": 0,
+      "candidateMinSignedAxisGapScene": 0.00044826967846156585,
+      "centerDelta": 0,
+      "minCleatYScene": 0.13893970261886712,
+      "datumScene": 0.14,
+      "physicalScaleKnown": false,
+      "originalProfileEstablished": false,
+      "continuousClearanceCertified": false,
+      "candidateBrowserVerified": false,
+      "candidateReleasePublished": false
     }
   },
   "trackProvenance": {
