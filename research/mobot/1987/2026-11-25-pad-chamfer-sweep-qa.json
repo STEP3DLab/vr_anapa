@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-25",
+  "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "kinematicsBlob": "7912b5295bfa91c3a9e40720e45da306346ff29e",
+  "execution": "Numerical JS in V8, exact model contour; no candidate mesh or browser execution.",
+  "modelOnly": true,
+  "physicalScaleKnown": false,
+  "P": 3.8966788494655114,
+  "N": 114,
+  "pitch": 0.034181393416364135,
+  "sourceVertices": 102,
+  "datum": 0.14,
+  "h": 0.0001,
+  "samples": 41854,
+  "profileType": "two inner-side 45-degree corner cuts, outer face and maximum width preserved",
+  "wheelClearanceNonRegression": "each candidate cross-section is a subset of the baseline rectangle at the same pose",
+  "result": [
+    {
+      "chamferScene": 0,
+      "removedSectionFraction": 0,
+      "minGap": -0.0013238359186542592,
+      "collisions": 2951,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.001,
+      "removedSectionFraction": 0.0014613228121397315,
+      "minGap": -0.0008815472284352532,
+      "collisions": 937,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.002,
+      "removedSectionFraction": 0.00584529124855826,
+      "minGap": -0.0004392585382162473,
+      "collisions": 636,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.003,
+      "removedSectionFraction": 0.013151905309256029,
+      "minGap": 0.0000030301520027586903,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.004,
+      "removedSectionFraction": 0.023381164994232928,
+      "minGap": 0.00044531884222165363,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.005,
+      "removedSectionFraction": 0.03653307030348896,
+      "minGap": 0.0008876075324406596,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.006,
+      "removedSectionFraction": 0.05260762123702423,
+      "minGap": 0.0013298962226595545,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.007,
+      "removedSectionFraction": 0.07160481779483852,
+      "minGap": 0.0017721849128784495,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.867125
+    },
+    {
+      "chamferScene": 0.008,
+      "removedSectionFraction": 0.09352465997693182,
+      "minGap": 0.002206081001654314,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.865075
+    },
+    {
+      "chamferScene": 0.009,
+      "removedSectionFraction": 0.11836714778330437,
+      "minGap": 0.0025837509334356024,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.864
+    },
+    {
+      "chamferScene": 0.01,
+      "removedSectionFraction": 0.14613228121395627,
+      "minGap": 0.002919808379554578,
+      "collisions": 0,
+      "minCrossGap": 0.0080326274528425,
+      "minPadY": 0.1490333675696661,
+      "minCleatY": 0.13893693978533145,
+      "worstT": 0.99655
+    }
+  ]
+}
