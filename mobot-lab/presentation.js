@@ -25,14 +25,38 @@ function fullscreen() {
     const text=active()?'Выйти из полного экрана':'На весь экран';
     button.title=text; button.setAttribute('aria-label',text); button.setAttribute('aria-pressed',String(active()));
   }
+  const outside=new Set();
+  function fallback(on) {
+    bench.classList.toggle('full-window',on);
+    if (on) {
+      // The CSS fallback is visually full-screen, but unlike native fullscreen
+      // it leaves background controls in the tab order unless we isolate them.
+      for (let node=bench;node!==document.body;node=node.parentElement) {
+        for (const sibling of node.parentElement.children) {
+          if (sibling===node || sibling===dialog || sibling.inert) continue;
+          sibling.inert=true;outside.add(sibling);
+        }
+      }
+      button.focus({preventScroll:true});
+    } else {
+      for (const sibling of outside) sibling.inert=false;
+      outside.clear();
+      button.focus({preventScroll:true});
+    }
+    label();
+  }
   button.onclick=async()=>{
     if(document.fullscreenElement){await document.exitFullscreen();return}
-    if (bench.classList.contains('full-window')) bench.classList.remove('full-window');
-    else {try {await bench.requestFullscreen()} catch {bench.classList.add('full-window')}}
+    if (bench.classList.contains('full-window')) {fallback(false);return}
+    try {await bench.requestFullscreen()} catch {fallback(true)}
     label();
   };
   document.addEventListener('fullscreenchange',label);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!dialog.open){bench.classList.remove('full-window');label()}});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!dialog.open&&bench.classList.contains('full-window')){
+      e.preventDefault();fallback(false);
+    }
+  });
   // Native dialogs must be descendants of a fullscreen element on some browsers.
   document.addEventListener('fullscreenchange',()=>{(document.fullscreenElement===bench?bench:document.body).append(dialog)});
 }

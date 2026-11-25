@@ -148,6 +148,35 @@ async function compactControls(browser) {
   } finally {await page.close()}
 }
 
+async function fullscreenFallback(browser) {
+  const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});
+  try {
+    await page.addInitScript(()=>{
+      HTMLElement.prototype.requestFullscreen=()=>Promise.reject(new Error('Native fullscreen unavailable'));
+    });
+    await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    const bench=page.locator('#workbench'),button=page.locator('#fullscreen'),archive=page.locator('.navarch');
+    await button.focus();await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>document.querySelector('#fullscreen').getAttribute('aria-pressed')==='true');
+    assert(await bench.evaluate(el=>el.classList.contains('full-window')));
+    assert.equal(await page.locator('html').evaluate(el=>getComputedStyle(el).overflowY),'hidden');
+    assert(await page.locator('#archive').evaluate(el=>el.inert),'Archive must not be reachable behind the full-window viewer');
+    assert(await archive.evaluate(el=>{el.focus();return document.activeElement!==el}),'Keyboard focus escaped behind the viewer');
+    assert(await page.locator('#dialog').evaluate(el=>!el.inert),'Dialog must not be isolated with the background');
+    await page.locator('[data-year="1987"]').click();
+    assert.equal(await page.locator('[data-year="1987"]').getAttribute('aria-pressed'),'true');
+    await page.keyboard.press('Escape');
+    assert.equal(await button.getAttribute('aria-pressed'),'false');
+    assert(await button.evaluate(el=>document.activeElement===el),'Escape must return focus to the full-screen button');
+    assert(!await page.locator('#archive').evaluate(el=>el.inert));
+    await archive.focus();assert(await archive.evaluate(el=>document.activeElement===el));
+    await button.focus();await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>document.querySelector('#fullscreen').getAttribute('aria-pressed')==='true');
+    await button.click();assert.equal(await button.getAttribute('aria-pressed'),'false');
+  } finally {await page.close()}
+  console.log('Full-window fallback blocks the background, preserves model controls, and restores focus on exit');
+}
+
 async function offlineUpdate(browser) {
   for(const scenario of ['same','updated','update-failed','save-failed']){
     const context=await browser.newContext();
@@ -423,6 +452,7 @@ async function staticRobots(browser) {
     await exercise(browser,390,844,false);
     await exercise(browser,360,800,true);
     await compactControls(browser);
+    await fullscreenFallback(browser);
     await staticRobots(browser);
     await vrAvailability(browser);
     await sharingClipboard(browser);
