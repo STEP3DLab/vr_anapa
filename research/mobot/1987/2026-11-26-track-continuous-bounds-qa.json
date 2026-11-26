@@ -2,7 +2,7 @@
   "date": "2026-11-26",
   "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
   "kinematicsBlob": "7912b5295bfa91c3a9e40720e45da306346ff29e",
-  "execution": "Numerical core run on exact repository sources in isolated V8; not formal interval arithmetic, no new candidate browser or GPU runtime.",
+  "execution": "Re-executed optimized numerical core on exact repository sources in isolated V8; angular-sector bound uses ordinary floating point with explicit margin, not formal interval arithmetic. No new candidate browser or GPU runtime.",
   "modelOnly": true,
   "physicalScaleKnown": false,
   "datum": 0.14,
@@ -13,52 +13,52 @@
   "method": "piecewise affine center/chord; angular-sector displacement bound; adaptive subdivision and fixed midpoint separating axis; conservative numerical bound, not formal interval arithmetic",
   "ground": {
     "original": {
-      "lowerBound": 0.13893692188037712,
+      "lowerBound": 0.13893692103585303,
       "sampledUpper": 0.13893693978533145,
-      "uncertainty": 1.7904954324743372e-8,
+      "uncertainty": 1.8749478414292753e-8,
       "where": 0.8661159716822446,
-      "leaves": 8915,
-      "splits": 8609
+      "leaves": 1603,
+      "splits": 1297
     },
     "outerCenter": {
-      "lowerBound": 0.1396539674857296,
+      "lowerBound": 0.13965398738563028,
       "sampledUpper": 0.1396539874856303,
-      "uncertainty": 1.999990068002333e-8,
+      "uncertainty": 1.000000082740371e-10,
       "where": 0.633719558535228,
-      "leaves": 9887204,
-      "splits": 9886898
+      "leaves": 306,
+      "splits": 0
     },
     "outerChamfer006": {
-      "lowerBound": 0.1395250244220052,
+      "lowerBound": 0.1395250238778302,
       "sampledUpper": 0.13952504262730864,
-      "uncertainty": 1.820530343144e-8,
+      "uncertainty": 1.874947844204833e-8,
       "where": 0.8661159716822446,
-      "leaves": 9421,
-      "splits": 9115
+      "leaves": 429,
+      "splits": 123
     },
     "inset0011": {
-      "lowerBound": 0.14003162507971656,
+      "lowerBound": 0.14003162423519244,
       "sampledUpper": 0.14003164298467086,
-      "uncertainty": 1.7904954296987796e-8,
+      "uncertainty": 1.8749478414292753e-8,
       "where": 0.8661159716822446,
-      "leaves": 8402,
-      "splits": 8096
+      "leaves": 1569,
+      "splits": 1263
     },
     "inset0012": {
-      "lowerBound": 0.14013114355238376,
+      "lowerBound": 0.14013114270785967,
       "sampledUpper": 0.1401311614573381,
-      "uncertainty": 1.7904954324743372e-8,
+      "uncertainty": 1.8749478414292753e-8,
       "where": 0.8661159716822446,
-      "leaves": 7960,
-      "splits": 7654
+      "leaves": 1493,
+      "splits": 1187
     },
     "pad": {
-      "lowerBound": 0.149033348155497,
+      "lowerBound": 0.14903335197280707,
       "sampledUpper": 0.1490333675696661,
-      "uncertainty": 1.9414169105669288e-8,
+      "uncertainty": 1.559685902652319e-8,
       "where": 0.8674904877602314,
-      "leaves": 3588,
-      "splits": 3282
+      "leaves": 1278,
+      "splits": 972
     }
   },
   "adjacent": {
