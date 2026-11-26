@@ -275,7 +275,8 @@
     "Тест 23.11.2026: непрерывная виртуальная траектория даёт до 0,001101254 условной единицы выхода грунтозацепа за произвольную плоскость y=0,14 и скачок локальной касательной 3,75°. Величины C, не параметры настоящего Ч-ХВ-2.",
     "СКТБ ПР описывает полиуретановые траки базового Ч-ХВ (1986), но материал траков Ч-ХВ-2 (1987) не подтверждён. Рекомендация об усилении замков не является доказательством конкретной конструкции.",
     "24.11.2026: соседние условные прямоугольные основания траков пересекаются при части проверенных фаз; периодическая касательная уменьшает агрегированное число случаев, но не устраняет наихудшее пересечение. Это не подтверждение конструкции настоящего трака.",
-    "25.11.2026: две внутренние фаски условных оснований устраняют соседние пересечения в дискретных проверках кандидата. Исторический профиль не установлен, браузерный выпуск не выполнен, дефект выхода грунтозацепов ниже условной опоры сохраняется."
+    "25.11.2026: две внутренние фаски условных оснований устраняют соседние пересечения в дискретных проверках кандидата. Исторический профиль не установлен, браузерный выпуск не выполнен, дефект выхода грунтозацепов ниже условной опоры сохраняется.",
+    "26.11.2026: непрерывная численная оценка соседних профилей кандидата с фасками положительна; устранение проникновения в условную опору посредством снятия наружной грани грунтозацепа на 0.0011 не доказывает реальный контакт или исторический профиль. Кандидат не выпущен."
   ],
   "controls": [
     "overview",
@@ -414,6 +415,37 @@
       "physicalScaleKnown": false,
       "originalProfileEstablished": false,
       "continuousClearanceCertified": false,
+      "candidateBrowserVerified": false,
+      "candidateReleasePublished": false
+    },
+    "continuousTrackCandidate": {
+      "date": "2026-11-26",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-26-track-continuous-bounds.md",
+      "continuousQA": "research/mobot/1987/2026-11-26-track-continuous-bounds-qa.json",
+      "meshQA": "research/mobot/1987/2026-11-26-cleat-inset-mesh-qa.json",
+      "continuousTest": "scripts/mobot-v22-track-continuous-bounds.cjs",
+      "meshTest": "scripts/mobot-v22-cleat-inset-mesh.mjs",
+      "adjacentPadGapNumericalLowerBoundScene": 0.000013320208384182564,
+      "originalCleatMinYBoundsScene": [
+        0.13893692103585303,
+        0.13893693978533145
+      ],
+      "outerCenterMinYBoundsScene": [
+        0.13965398738563028,
+        0.1396539874856303
+      ],
+      "insetScene": 0.0011,
+      "insetMinYBoundsScene": [
+        0.14003162423519244,
+        0.14003164298467086
+      ],
+      "insetMeshSampleMinYScene": 0.14003440580445414,
+      "datumScene": 0.14,
+      "formalIntervalArithmetic": false,
+      "physicalContactVerified": false,
+      "physicalScaleKnown": false,
+      "historicalProfileVerified": false,
       "candidateBrowserVerified": false,
       "candidateReleasePublished": false
     }
