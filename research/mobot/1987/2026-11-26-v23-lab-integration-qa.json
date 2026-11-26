@@ -1,0 +1,158 @@
+{
+  "date": "2026-11-26",
+  "version": "v23-lab",
+  "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "threeCoreBlob": "70c40977daa0f6e1e312c6b58e9bfe49cb5a87a4",
+  "execution": "Actual candidate module code and baseline with periodic tangent executed using repository Three.js r180 core in isolated V8; document canvas and unused AbortController stubbed; no WebGL.",
+  "browserAcceptance": "not run",
+  "pagesVerified": false,
+  "nonTrackModelComparison": {
+    "desktop": {
+      "poses": 3,
+      "nonTrackMeshCount": 171,
+      "unchanged": true
+    },
+    "mobile": {
+      "poses": 3,
+      "nonTrackMeshCount": 171,
+      "unchanged": true
+    }
+  },
+  "modelOnly": true,
+  "physicalScaleKnown": false,
+  "threeRevision": "180",
+  "qualities": {
+    "desktop": {
+      "phases": 246,
+      "positionsPerVariant": 56088,
+      "checksPerVariant": 224352,
+      "centerDelta": 0,
+      "baselinePeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.13893970261886712,
+        "minPadGap": -0.0013208849070563966,
+        "minCrossGap": 0.008032583165890284,
+        "overlaps": 3504
+      },
+      "chamferAndInsetPeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.14003440580445414,
+        "minPadGap": 0.00044826967846156585,
+        "minCrossGap": 0.008032583165890395,
+        "overlaps": 0
+      },
+      "actualCandidatePadHull": [
+        [
+          -0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          -0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          0.01555253379046917,
+          0.010999999940395355
+        ],
+        [
+          -0.01555253379046917,
+          0.010999999940395355
+        ]
+      ],
+      "actualPadWidth": 0.2980000078678131,
+      "actualCleatHull": [
+        [
+          -0.010596231557428837,
+          -0.006000000052154064
+        ],
+        [
+          0.010596231557428837,
+          -0.006000000052154064
+        ],
+        [
+          0.010596231557428837,
+          0.004900000058114529
+        ],
+        [
+          -0.010596231557428837,
+          0.004900000058114529
+        ]
+      ],
+      "actualCleatWidth": 0.3100000023841858
+    },
+    "mobile": {
+      "phases": 246,
+      "positionsPerVariant": 56088,
+      "checksPerVariant": 224352,
+      "centerDelta": 0,
+      "baselinePeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.13893970261886712,
+        "minPadGap": -0.0013208849070563966,
+        "minCrossGap": 0.008032583165890284,
+        "overlaps": 3504
+      },
+      "chamferAndInsetPeriodic": {
+        "minPadY": 0.1490464549024893,
+        "minCleatY": 0.14003440580445414,
+        "minPadGap": 0.00044826967846156585,
+        "minCrossGap": 0.008032583165890395,
+        "overlaps": 0
+      },
+      "actualCandidatePadHull": [
+        [
+          -0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          -0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.011552534066140652,
+          -0.010999999940395355
+        ],
+        [
+          0.01555253379046917,
+          -0.007000000216066837
+        ],
+        [
+          0.01555253379046917,
+          0.010999999940395355
+        ],
+        [
+          -0.01555253379046917,
+          0.010999999940395355
+        ]
+      ],
+      "actualPadWidth": 0.2980000078678131,
+      "actualCleatHull": [
+        [
+          -0.010596231557428837,
+          -0.006000000052154064
+        ],
+        [
+          0.010596231557428837,
+          -0.006000000052154064
+        ],
+        [
+          0.010596231557428837,
+          0.004900000058114529
+        ],
+        [
+          -0.010596231557428837,
+          0.004900000058114529
+        ]
+      ],
+      "actualCleatWidth": 0.3100000023841858
+    }
+  }
+}
