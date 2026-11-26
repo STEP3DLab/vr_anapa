@@ -25,7 +25,14 @@ function analyze(source,kin){
  function movement(a,m,b,r,dt){const angle=ang(a,b);if(angle>=Math.PI-1e-6)throw Error('Unbounded tangent interval');return P*dt/2+2*r*Math.sin(Math.max(ang(a,m),ang(m,b))/2)+1e-10;}
  function minY(r,tol=2e-8){const rr=radius(r),br=breaks([0]),f=q=>Math.min(...poly(r,q).map(v=>v[1]));let upper=Infinity,lower=Infinity,where=0,leaves=0,splits=0;
   function visit(a,b,A,B){const t=(a+b)/2,M=pose(t),v=f(M);for(const [u,q] of [[a,A],[t,M],[b,B]]){const val=f(q);if(val<upper){upper=val;where=u;}}
-   const L=v-movement(A,M,B,rr,b-a);
+   // Exact linear center ordinate and angular sector projection bound for each vertex.
+   const lowY=Math.min(A.y,B.y);
+   const L=lowY+Math.min(...r.map(([u,w])=>{
+    const len=Math.hypot(u,w),d1=u*A.s+w*A.c,d2=u*B.s+w*B.c;
+    if(len===0)return 0;
+    const anti={c:-w/len,s:-u/len};
+    return ang(A,anti)+ang(anti,B)<=ang(A,B)+1e-12?-len:Math.min(d1,d2);
+   }))-1e-10;
    if(L>=upper-tol){lower=Math.min(lower,L);leaves++;return;}
    if(b-a<1e-13)throw Error('min bound not converged');
    splits++;visit(a,t,A,M);visit(t,b,M,B);
