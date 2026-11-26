@@ -133,6 +133,31 @@
       "description": "Chapter Mobot-Ch-HV-2, 07:34–08:21; footage attributed to 1998, published 16.08.2026",
       "framesInspected": false,
       "evidenceClass": "unverified lead; not used for geometry"
+    },
+    "SKTB-REPAIR-1997": {
+      "url": "https://sktbpr.ru/node/23",
+      "evidenceClass": "A",
+      "identity": "Developer account: repaired assembly from parts of two robots; 1997 use",
+      "figure23Inspected": false,
+      "notOriginal1987GeometrySource": true
+    },
+    "MUSEUM-2015-LEAD": {
+      "url": "https://storage01.sb.by/iblock/688/68874d7f45ef2bfd6c76e19bfe60ad96.pdf",
+      "identity": "Мария Дарманская. Прокатись по Москве на «Минске». СОЮЗ, 13.08.2015, №30 (706), с. VIII.",
+      "evidenceClass": "unverified provenance lead; journalistic report",
+      "inventoryIdentityVerified": false,
+      "currentConditionKnown": false,
+      "photoInspected": false
+    },
+    "MUSEUM-2020-LEAD": {
+      "url": "https://vm.ru/news/812058-moskovskij-muzej-industrialnoj-kultury-pereehal-v-tulskuyu-oblast",
+      "evidenceClass": "secondary report, not verified identity or transport"
+    },
+    "MUSEUM-HISTORY": {
+      "url": "https://museum-ic.ru/about",
+      "reopeningUrl": "https://museum-ic.ru/news/16-avgusta-2026-muzej-nachal-rabotu",
+      "evidenceClass": "primary museum institutional history, not a verified robot inventory",
+      "robotCurrentLocationKnown": false
     }
   },
   "nodes": [
@@ -303,7 +328,9 @@
     "24.11.2026: соседние условные прямоугольные основания траков пересекаются при части проверенных фаз; периодическая касательная уменьшает агрегированное число случаев, но не устраняет наихудшее пересечение. Это не подтверждение конструкции настоящего трака.",
     "25.11.2026: две внутренние фаски условных оснований устраняют соседние пересечения в дискретных проверках кандидата. Исторический профиль не установлен, браузерный выпуск не выполнен, дефект выхода грунтозацепов ниже условной опоры сохраняется.",
     "26.11.2026: непрерывная численная оценка соседних профилей кандидата с фасками положительна; устранение проникновения в условную опору посредством снятия наружной грани грунтозацепа на 0.0011 не доказывает реальный контакт или исторический профиль. Кандидат не выпущен.",
-    "26.11.2026: v23 выпущена на основании проверенной v23-lab; геометрия ходовой, её размеры и условная опорная плоскость имеют класс C. Историческая конструкция балансиров не восстановлена."
+    "26.11.2026: v23 выпущена на основании проверенной v23-lab; геометрия ходовой, её размеры и условная опорная плоскость имеют класс C. Историческая конструкция балансиров не восстановлена.",
+    "26.11.2026: исходная v23 пропорционально масштабирует условные корпус и шток приводов. Лабораторный кандидат фиксирует их длины, но не прошёл полную проверку коллизий и браузерную приёмку; реальные приводы и их размеры неизвестны.",
+    "26.11.2026: поздняя ремонтная сборка, использовавшаяся в 1997 году, не равнозначна исходным экземплярам 1987 года. Сведения о музейном экземпляре требуют проверки сохранности и идентичности."
   ],
   "controls": [
     "overview",
@@ -487,6 +514,23 @@
       "pickAllowanceScreenPx": 6,
       "modelGeometryChanged": false,
       "physicalScaleKnown": false
+    },
+    "actuatorRigidityCandidate": {
+      "date": "2026-11-26",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-26-actuator-rigidity.md",
+      "model": "mobot-engineering-v24-actuator-lab-model.js",
+      "qa": "research/mobot/1987/2026-11-26-actuator-rigidity-qa.json",
+      "test": "scripts/mobot-v24-actuator-rigidity.mjs",
+      "posesPerQuality": 1989,
+      "actuatorCount": 3,
+      "nonActuatorMeshes": 293,
+      "checkedOtherMeshPoseCountPerQuality": 27,
+      "maxAnchorDeltaScene": 0,
+      "continuousRangeCertified": false,
+      "collisionWithOtherComponentsVerified": false,
+      "browserVerified": false,
+      "releasePublished": false
     }
   },
   "trackProvenance": {
@@ -559,5 +603,13 @@
     "candidatePagesVerified": true,
     "releaseRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794284267",
     "releasePagesVerified": true
+  },
+  "postRepairAttributionGuard": {
+    "report": "research/mobot/1987/2026-11-26-postrepair-museum-provenance.md",
+    "registry": "research/mobot/1987/2026-11-26-postrepair-museum-provenance.json",
+    "repairCombinationDocumented": true,
+    "lateConfigurationAs1987Allowed": false,
+    "museumCurrentLocationKnown": false,
+    "videoFramesInspected": false
   }
 }

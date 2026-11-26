@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-26",
+  "sources": {
+    "SKTB-REPAIR": {
+      "url": "https://sktbpr.ru/node/23",
+      "class": "A: primary developer's account (indexed text)",
+      "finding": "Two post-operation robots were combined into one after decontamination and repair at Jupiter; repaired unit used in summer 1997, fig. 23.",
+      "figure23Inspected": false,
+      "limits": "not an as-built drawing; changes to individual components unknown"
+    },
+    "BATANOV-2019-REPAIR": {
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf",
+      "class": "A for coauthor testimony; indexed text",
+      "finding": "Confirms repaired robot's 1997 operation; may share primary developer narrative rather than independently corroborate each detail."
+    },
+    "MUSEUM-2015": {
+      "url": "https://storage01.sb.by/iblock/688/68874d7f45ef2bfd6c76e19bfe60ad96.pdf",
+      "citation": "Мария Дарманская. Прокатись по Москве на «Минске». СОЮЗ, 13.08.2015, №30 (706), с. VIII.",
+      "class": "Secondary report; acquisition/provenance unverified",
+      "finding": "Report identifies a third specimen in Moscow Museum of Industrial Culture, purportedly provided by developer and not sent to Chernobyl.",
+      "pdfScreenshotAttempt": "403 Forbidden",
+      "inventoryNumberKnown": false,
+      "photoInspected": false
+    },
+    "MUSEUM-2020": {
+      "url": "https://vm.ru/news/812058-moskovskij-muzej-industrialnoj-kultury-pereehal-v-tulskuyu-oblast",
+      "class": "Secondary report, 02.07.2020",
+      "finding": "Museum relocation; robot mentioned among exhibits. No verified evidence of robot arrival in Tula region."
+    },
+    "MUSEUM-HISTORY": {
+      "url": "https://museum-ic.ru/about",
+      "class": "Primary museum account",
+      "finding": "2020 demolition with items still inside; completed relocation May 2024.",
+      "robotPresentNow": false,
+      "robotPresenceStatus": "unknown (not disproved)"
+    },
+    "MUSEUM-2026": {
+      "url": "https://museum-ic.ru/news/16-avgusta-2026-muzej-nachal-rabotu",
+      "class": "Primary museum announcement",
+      "finding": "Museum reopened in Pokrovskoye on 16.08.2026 with railway-focused exhibition; no Mobot confirmed."
+    },
+    "VHS-1998": {
+      "url": "https://www.youtube.com/watch?v=8OE41XtMR7Q&t=454s",
+      "class": "Unverified video lead",
+      "framesInspected": false,
+      "access": "Fetch throttled; no frames inspected.",
+      "limits": "Possible repaired configuration; date and serial identity unverified."
+    }
+  },
+  "historicalGeometryChanged": false,
+  "guards": {
+    "postRepairTo1987TransferAllowed": false,
+    "museumIdentityAndConditionEstablished": false,
+    "physicalScaleKnown": false,
+    "noPermissionRequestsSent": true
+  },
+  "nextWitnesses": [
+    "Identify actual surviving specimen with dated views and inventory identity.",
+    "Distinguish repaired 1997 machine from a putative museum specimen and pre-dispatch photos.",
+    "Look for clear side views, inboard pivot and coupler mounting; use scale only with actual reference."
+  ]
+}
