@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-26",
+  "revision": "v23",
+  "status": "release prepared from verified v23-lab",
+  "candidateCommit": "fcca911268f9d983c45059bc7baa4dfb3a93839c",
+  "candidateModelBlob": "54971d8a01deadd9f9c6f6becfec36ce2ba06e9e",
+  "candidateRun": 45791515471,
+  "candidateJob": 139811442909,
+  "candidatePagesDeploymentRun": 45791514450,
+  "candidateChecks": {
+    "local": {
+      "passed": 34,
+      "total": 34
+    },
+    "pages": {
+      "passed": 34,
+      "total": 34
+    },
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        360,
+        800
+      ]
+    ],
+    "consoleErrors": 0,
+    "meshMotionVerified": true,
+    "archiveAndOverlayVerified": true,
+    "staticFallbackVerified": true,
+    "resourcesCheckedPerEnvironment": 18
+  },
+  "candidateArtifact": 15102946901,
+  "releaseModelChanges": "Version labels and release status only; exact candidate geometry preserved.",
+  "latestTarget": "mobot-engineering-v23.html",
+  "historicalAccuracy": "C; no new dimensions; actual track profile and ground contact unverified",
+  "releaseSpecificCI": "pending"
+}

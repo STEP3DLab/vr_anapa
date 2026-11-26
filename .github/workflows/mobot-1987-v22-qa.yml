@@ -61,7 +61,7 @@ jobs:
             done
             cmp "$file" /tmp/v22-bytes
           done
-          MOBOT_PUBLIC_ROUTE=1 MOBOT_REPORT_DIR=/tmp/v22/pages MOBOT_BASE_URL="$base" node "$SUITE/browser.cjs"
+          MOBOT_PUBLIC_ROUTE=0 MOBOT_REPORT_DIR=/tmp/v22/pages MOBOT_BASE_URL="$base" node "$SUITE/browser.cjs"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

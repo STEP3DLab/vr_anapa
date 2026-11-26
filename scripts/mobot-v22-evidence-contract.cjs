@@ -21,7 +21,7 @@ assert(model.includes("tread.name='Отдельные траки · матери
 assert(!model.includes("tread.name='Отдельные полиуретановые траки'"));
 assert(model.includes('Полиуретан описан для исходного Ч-ХВ (1986)'));
 assert(page.includes('Материал траков Ч-ХВ-2 (1987) не установлен'));
-assert(latest.includes('mobot-engineering-v22.html')&&latest.includes('паспорт достоверности'));
+assert(/mobot-engineering-v(?:22|23)\.html/.test(latest)&&latest.includes('паспорт достоверности'));
 assert.equal(passport.sources['SKTB-TEXT'].url,'https://sktbpr.ru/node/23');
 assert.equal(passport.sources['BATANOV-2026'].url,'https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha');
 for(const id of p.modern1987.photoSources){

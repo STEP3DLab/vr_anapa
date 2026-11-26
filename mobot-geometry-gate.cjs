@@ -39,15 +39,15 @@ for(let i=0;i<wheels.length-1;i++){
  if(overlap>0)overlaps.push({indexPair:[i,i+1],sceneOverlap:Number(overlap.toFixed(6))});
 }
 const rearOverlap=Number(Math.max(0,.14+radii.at(-1)-Math.hypot(.72-wheels.at(-1),.47-.25)).toFixed(6));
-assert(latest.includes('mobot-engineering-v22.html')&&!latest.includes('mobot-engineering-v18.html'),'Research latest must point to v22, not rejected v18 candidate');
+assert(/mobot-engineering-v(?:22|23)\.html/.test(latest)&&!latest.includes('mobot-engineering-v18.html'),'Research latest must point to an approved v22/v23, not rejected v18 candidate');
 assert(fs.existsSync(path.join(__dirname,'mobot-engineering-v17.html')),'Preserved historical v17 file missing');
 console.log(JSON.stringify({
  researchGate:'reproducible-static-layout-screening',
  variant1986:{loaderOppositeGrapple:true,sceneGrappleXRange:[Math.min(...grabXs),Math.max(...grabXs)],sceneLoaderXRange:[Math.min(...bucketXs),Math.max(...bucketXs)],historicalDimensionsValidated:false},
  variant1987:{candidate:'v18',nominalAdjacentCircleOverlaps:overlaps,rearEndCircleOverlap:rearOverlap,realWheelClearanceEstablished:false,nominalCircleNonintersecting:overlaps.length===0&&rearOverlap===0,eligibleForLatest:false,additionalGatesMissing:['independent historical view','real WebGL/mobile verification','photogrammetric calibration']},
- current1987TrackSource,
- current1987Evidence,
- current1987TreadFootprintSummary:{sampledPhases:current1987TreadFootprint.sampledPhases,nominalMaxBelowDatumScene:current1987TreadFootprint.maxBelowDatumScene,continuousMaxBelowDatumScene:current1987TreadFootprint.continuousFootprint.maxBelowDatumScene,continuousFractionBelowDatum:current1987TreadFootprint.continuousFootprint.fractionOfPathWithCleatBelowDatum,maxTangentJumpDegrees:current1987TreadFootprint.continuousFootprint.maxTangentJumpDegrees,minWheelDiscToPadGapScene:current1987TreadFootprint.minWheelDiscToPadGapScene,QAStatus:current1987TreadFootprint.QAStatus,historicalGroundContactCertified:false},
- current1987UncertaintySummary:{nominalMinimumGapScene:current1987Uncertainty.nominalMinimumGapScene,endpointScenariosWithNegativeGap:current1987Uncertainty.endpointScenariosWithNegativeGap,independentSnowSideRmsPx:current1987Uncertainty.independentSnowSide.heldoutRmsPx,physicalOverlapCertified:false},
- latest:'v22 (research)',archivedStable:'v17',note:'v18 circle overlap is a scene-model warning; v22 is a research viewer, not factory-calibrated CAD.'
+ archivedV22TrackSource:current1987TrackSource,
+ archivedV22Evidence:current1987Evidence,
+ archivedV22TreadFootprintSummary:{sampledPhases:current1987TreadFootprint.sampledPhases,nominalMaxBelowDatumScene:current1987TreadFootprint.maxBelowDatumScene,continuousMaxBelowDatumScene:current1987TreadFootprint.continuousFootprint.maxBelowDatumScene,continuousFractionBelowDatum:current1987TreadFootprint.continuousFootprint.fractionOfPathWithCleatBelowDatum,maxTangentJumpDegrees:current1987TreadFootprint.continuousFootprint.maxTangentJumpDegrees,minWheelDiscToPadGapScene:current1987TreadFootprint.minWheelDiscToPadGapScene,QAStatus:current1987TreadFootprint.QAStatus,historicalGroundContactCertified:false},
+ archivedV22UncertaintySummary:{nominalMinimumGapScene:current1987Uncertainty.nominalMinimumGapScene,endpointScenariosWithNegativeGap:current1987Uncertainty.endpointScenariosWithNegativeGap,independentSnowSideRmsPx:current1987Uncertainty.independentSnowSide.heldoutRmsPx,physicalOverlapCertified:false},
+ latest:latest.match(/mobot-engineering-(v\d+)\.html/)[1]+' (research)',archivedStable:'v17',note:'v18 circle overlap is a scene-model warning; v22 is a research viewer, not factory-calibrated CAD.'
 },null,2));

@@ -31,9 +31,9 @@ assert(app.includes("T.Raycaster()"),'clickable structural node support required
 assert(app.includes("window.__mobotCompareQA"),'browser test surface required');
 assert(styles.includes('@media(max-width:720px)'), 'mobile breakpoint missing');
 assert(main.includes('href="./mobot-compare.html"'),'comparison missing from landing page');
-assert(latest.includes('mobot-engineering-v22.html'),'latest must point to v22');
+assert(/mobot-engineering-v(?:22|23)\.html/.test(latest),'latest must point to approved research version');
 assert(html.includes('href="./mobot-engineering-v20.html"'),'historical comparison must link directly to its v20 model');
 assert(fs.existsSync(path.join(base,'mobot-engineering-v17.html')),'archived v17 must be preserved');
 assert(release.comparison.page.endsWith('/mobot-compare.html'),'comparison not registered in release');
-const report={gate:'comparison-static-contract',resourceCount:paths.length,elementCount:ids.length,comparisonModel:'1987-v20',current:'1987-v22',archived:'1987-v17',twoDistinctModels:true,scope:'static dependency/semantic checks, not browser render or historical metrology'};
+const report={gate:'comparison-static-contract',resourceCount:paths.length,elementCount:ids.length,comparisonModel:'1987-v20',current:'1987-'+latest.match(/mobot-engineering-(v\d+)\.html/)[1],archived:'1987-v17',twoDistinctModels:true,scope:'static dependency/semantic checks, not browser render or historical metrology'};
 console.log(JSON.stringify(report,null,2));
