@@ -1,4 +1,4 @@
-// Static research contract for the *current* 1987 track source and its manual photo ledger.
+// Static research contract for the archived v22 track source and its manual photo ledger.
 // Usage: node scripts/mobot-v22-track-contract.cjs
 // Deliberately checks projected MODEL circles and traceability only, NOT real wheel sizes,
 // suspension construction, physical collisions, independent camera calibration, or WebGL.
@@ -47,7 +47,7 @@ assert.equal(passport.physicalScaleKnown,false,'Passport cannot assert factory d
 assert.equal(passport.trackFit.landmarks,'mobot-qa/demo-2026-11-18/sktb-2-landmarks-manual.json');
 assert(html.includes('mobot-engineering-v22-passport.json')&&html.includes('contact-sweep.json'),
        'Released viewer must expose its provenance and surface-contact diagnostics');
-assert(latest.includes('mobot-engineering-v22.html'),'Permanent entrypoint unexpectedly changed');
+assert(/mobot-engineering-v(?:22|23)\.html/.test(latest),'Permanent entrypoint must target an approved research release');
 assert(fs.existsSync(path.join(root,'mobot-engineering-v17.html'))&&
        fs.existsSync(path.join(root,'mobot-engineering-v21.html')),
        'Previous public releases must remain available');
