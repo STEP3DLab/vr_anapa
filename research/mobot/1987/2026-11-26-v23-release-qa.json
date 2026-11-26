@@ -1,7 +1,7 @@
 {
   "date": "2026-11-26",
   "revision": "v23",
-  "status": "release prepared from verified v23-lab",
+  "status": "v23 committed to main; Pages deployment successful",
   "candidateCommit": "fcca911268f9d983c45059bc7baa4dfb3a93839c",
   "candidateModelBlob": "54971d8a01deadd9f9c6f6becfec36ce2ba06e9e",
   "candidateRun": 45791515471,
@@ -40,5 +40,79 @@
   "releaseModelChanges": "Version labels and release status only; exact candidate geometry preserved.",
   "latestTarget": "mobot-engineering-v23.html",
   "historicalAccuracy": "C; no new dimensions; actual track profile and ground contact unverified",
-  "releaseSpecificCI": "pending"
+  "releaseSpecificCI": {
+    "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794284267",
+    "jobStatus": "in_progress",
+    "conclusion": null,
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-node@v4",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Syntax and mesh integration",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install Chromium",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Local candidate acceptance",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Published candidate and unchanged latest",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "pending",
+        "conclusion": null
+      },
+      {
+        "name": "Post Run actions/setup-node@v4",
+        "status": "pending",
+        "conclusion": null
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "pending",
+        "conclusion": null
+      }
+    ]
+  },
+  "releaseCommit": "a0a0d57c727e806433f1e9f85440faf8ea9c2a1b",
+  "releasePagesRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794282759",
+  "releasePagesDeployment": "success",
+  "archivedQaTransition": {
+    "firstRunsFailedDueToObsoleteV22OnlyEntrypointAssertion": [
+      45794284307,
+      45794284193
+    ],
+    "fixCommit": "c9fe591a6c43bc1cc7b8d894cef14094ccc38904",
+    "rerunV22": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794408653",
+    "rerunShared": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794454300"
+  },
+  "newSourceLead": {
+    "citation": "Резник С.В., Моисеенко В.В. Студенческие конструкторские бюро. Часть 2. Перспективы развития. Alma mater, 2025, №6, с. 68–76, рис. 2, с. 70. DOI 10.20339/AM.06-25.068",
+    "status": "Text and caption accessible; image screenshot failed (404). Photo not attributed or used for geometry.",
+    "historicalGeometryChanged": false
+  },
+  "dockingSourceStatus": "Developer page indexed text confirms function; direct fetch returned 502; no inspected drawing of mechanism."
 }
