@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-26",
+  "citation": "Резник С.В., Моисеенко В.В. Студенческие конструкторские бюро. Часть 2. Перспективы развития. Alma Mater, 2025, №6, с. 68–75, рис. 2, с. 70.",
+  "doi": "10.20339/AM.06-25.068",
+  "articleUrl": "https://www.almavest.ru/articles/studencheskie-konstruktorskie-byuro-chast-2-perspektivy-razvitiya",
+  "pdfUrl": "https://www.almavest.ru/api/pdf/3801/10_%D0%A0%D0%B5%D0%B7%D0%BD%D0%B8_%D0%9C%D0%BE%D0%B8%D1%81%D0%B5%D0%B5%D0%BD%D0%BA%D0%BE_%D0%90%D0%9C_25_6_%D0%A1%D0%9F%D0%95%D0%A6_%D1%87%D0%B0%D1%81%D1%82%D1%8C2.pdf#page=3",
+  "pageNumberPrinted": 70,
+  "pdfPageZeroBased": 2,
+  "renderSizePx": [
+    1054,
+    1440
+  ],
+  "figureBoundsApproxPx": [
+    257,
+    835,
+    800,
+    1234
+  ],
+  "wheelXApproxPx": [
+    550,
+    580,
+    611,
+    642,
+    673,
+    703,
+    730
+  ],
+  "wheelXPickingTolerancePx": 6,
+  "pickingToleranceKind": "rough visual reading allowance; not statistically calibrated",
+  "direction": "front (bucket, left) to rear (hood, right)",
+  "sourceLedger": "mobot-qa/demo-2026-11-18/sktb-2-landmarks-manual.json",
+  "sourceLedgerBlob": "908d6b9457c143c1ebb48fabb082960bb0964814",
+  "observations": {
+    "sevenApparentLowerWheelFeatures": true,
+    "rearRaisedTerminalVisible": true,
+    "frontTerminalOccludedOrUnresolved": true,
+    "obliqueSideView": true,
+    "individualPivotIdentification": false
+  },
+  "limits": {
+    "originalNegativeInspected": false,
+    "originalImageOrientationEstablished": false,
+    "samePhysicalRobotEstablished": false,
+    "independentOriginalFrameEstablished": false,
+    "scaleEstablished": false,
+    "lowerWheelCentersCalibrated": false,
+    "historicalSuspensionTopologyEstablished": false
+  },
+  "evidenceClass": "B for visible features and caption; C for manual screen coordinates and all model comparisons"
+}

@@ -1,0 +1,168 @@
+{
+  "source": "Alma Mater 2025 #6 fig2 page70; screenshot only",
+  "evidenceClass": "C",
+  "modelGeometryChanged": false,
+  "physicalScaleKnown": false,
+  "sourceXNormalized": [
+    0,
+    0.15630885122410546,
+    0.3220338983050847,
+    0.4905838041431262,
+    0.6497175141242938,
+    0.8295668549905838,
+    1
+  ],
+  "targetXScreenPx": [
+    550,
+    580,
+    611,
+    642,
+    673,
+    703,
+    730
+  ],
+  "pickAllowancePx": 6,
+  "primary": {
+    "anchors": [
+      0,
+      3,
+      6
+    ],
+    "coefficients": [
+      242.47862502181118,
+      550,
+      0.08558715756412492
+    ],
+    "heldout": [
+      {
+        "index": 1,
+        "residual": -0.14041922939429696
+      },
+      {
+        "index": 2,
+        "residual": -0.239377922195672
+      },
+      {
+        "index": 4,
+        "residual": 2.7294438848909977
+      },
+      {
+        "index": 5,
+        "residual": 1.6442188540914913
+      }
+    ],
+    "rmsPx": 1.5992450492761578
+  },
+  "otherAnchorSets": [
+    {
+      "anchors": [
+        0,
+        2,
+        6
+      ],
+      "coefficients": [
+        237.7930119416207,
+        550,
+        0.07916850950906944
+      ],
+      "heldout": [
+        {
+          "index": 1,
+          "residual": 0.008095780321241364
+        },
+        {
+          "index": 3,
+          "residual": 0.26674192734958524
+        },
+        {
+          "index": 4,
+          "residual": 2.9663483704149485
+        },
+        {
+          "index": 5,
+          "residual": 1.7873410291450682
+        }
+      ],
+      "rmsPx": 1.7367374158601203
+    },
+    {
+      "anchors": [
+        0,
+        4,
+        6
+      ],
+      "coefficients": [
+        299.2723112128149,
+        550,
+        0.1633867276887875
+      ],
+      "heldout": [
+        {
+          "index": 1,
+          "residual": -1.917442804483926
+        },
+        {
+          "index": 2,
+          "residual": -3.066087930551703
+        },
+        {
+          "index": 3,
+          "residual": -3.1094748105599592
+        },
+        {
+          "index": 5,
+          "residual": 0.016186417618087034
+        }
+      ],
+      "rmsPx": 2.3846686197438527
+    }
+  ],
+  "affineRmsPx": 3.962976821984072,
+  "equalPitchAffineRmsPx": 2.179449471770337,
+  "equalPitchProjective": {
+    "anchors": [
+      0,
+      3,
+      6
+    ],
+    "coefficients": [
+      213.1818181818182,
+      550,
+      0.045454545454545456
+    ],
+    "heldout": [
+      {
+        "index": 1,
+        "residual": -1.1278195488721394
+      },
+      {
+        "index": 2,
+        "residual": -0.7910447761194064
+      },
+      {
+        "index": 4,
+        "residual": 1.2352941176470722
+      },
+      {
+        "index": 5,
+        "residual": 1.9051094890511422
+      }
+    ],
+    "rmsPx": 1.3278857721026045
+  },
+  "sensitivity": {
+    "cornerCases": 128,
+    "valid": 128,
+    "rejected": 0,
+    "existingProjectiveRmsRangePx": [
+      1.5992450492761554,
+      13.058360473351549
+    ],
+    "equalPitchProjectiveRmsRangePx": [
+      1.3278857721025614,
+      12.373056062024062
+    ],
+    "existingLowerRmsCases": 60
+  },
+  "conclusion": "Existing and equal-pitch hypotheses both fit below crude picking allowance. This is consistent with seven visible wheel centres but does not identify true axle spacing, far-side identity, or balance-arm pivots."
+}

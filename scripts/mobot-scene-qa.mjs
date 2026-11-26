@@ -8,8 +8,8 @@ import fs from 'node:fs';
 // Only decorative CanvasTexture generation is unavailable in Node. No THREE stub.
 globalThis.document={createElement:()=>({getContext:()=>null})};
 const models=[['1986-v5',makeMobot1986(T)],['1987-v20',makeMobot(T,'desktop')],['1987-v19',makeV19(T,'desktop')]];
-const report={engine:'real vendored THREE geometry under Node; no WebGL',canvasTextureGenerated:false,models:[],latestResearchV22:fs.readFileSync(new URL('../mobot-latest.html',import.meta.url),'utf8').includes('mobot-engineering-v22.html'),archiveV17Preserved:fs.existsSync(new URL('../mobot-engineering-v17.html',import.meta.url))};
-assert(report.latestResearchV22,'Latest research viewer must be v22');
+const report={engine:'real vendored THREE geometry under Node; no WebGL',canvasTextureGenerated:false,models:[],latestResearchApproved:/mobot-engineering-v(?:22|23)\.html/.test(fs.readFileSync(new URL('../mobot-latest.html',import.meta.url),'utf8')),archiveV17Preserved:fs.existsSync(new URL('../mobot-engineering-v17.html',import.meta.url))};
+assert(report.latestResearchApproved,'Latest must target an approved research viewer v22 or v23');
 assert(report.archiveV17Preserved,'Historical v17 archive must remain accessible');
 for(const [name,m] of models){
  m.root.updateMatrixWorld(true);let meshes=0,instances=0,vertices=0,invalid=0;

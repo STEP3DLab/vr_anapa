@@ -108,6 +108,31 @@
       "type": "Coauthored retrospective",
       "identity": "2019 paper; page 75 figure 9 illustrates original 1986 Ch-HV, not necessarily 1987 Ch-HV-2",
       "notA1987DimensionSource": true
+    },
+    "ALMA-2025-FIG2": {
+      "url": "https://www.almavest.ru/articles/studencheskie-konstruktorskie-byuro-chast-2-perspektivy-razvitiya",
+      "pdfUrl": "https://www.almavest.ru/api/pdf/3801/10_%D0%A0%D0%B5%D0%B7%D0%BD%D0%B8_%D0%9C%D0%BE%D0%B8%D1%81%D0%B5%D0%B5%D0%BD%D0%BA%D0%BE_%D0%90%D0%9C_25_6_%D0%A1%D0%9F%D0%95%D0%A6_%D1%87%D0%B0%D1%81%D1%82%D1%8C2.pdf#page=3",
+      "doi": "10.20339/AM.06-25.068",
+      "identity": "Резник С.В., Моисеенко В.В. Студенческие конструкторские бюро. Часть 2. Перспективы развития. Alma Mater, 2025, №6, с. 68–75, рис. 2, с. 70.",
+      "evidenceClass": "B",
+      "imageActuallyInspected": true,
+      "renderSizePx": [
+        1054,
+        1440
+      ],
+      "originalNegativeInspected": false,
+      "originalCaptureDateEstablished": false,
+      "physicalScaleKnown": false,
+      "orientationAndMachineIdentityEstablished": false,
+      "landmarks": "research/mobot/1987/2026-11-26-alma-mater-figure2-landmarks.json",
+      "qa": "research/mobot/1987/2026-11-26-alma-mater-figure2-qa.json"
+    },
+    "VHS-1998-LEAD": {
+      "url": "https://www.youtube.com/watch?v=8OE41XtMR7Q&t=454s",
+      "type": "publisher-attributed archival video lead only",
+      "description": "Chapter Mobot-Ch-HV-2, 07:34–08:21; footage attributed to 1998, published 16.08.2026",
+      "framesInspected": false,
+      "evidenceClass": "unverified lead; not used for geometry"
     }
   },
   "nodes": [
@@ -115,14 +140,15 @@
       "id": "tracks",
       "title": "Гусеничная ходовая",
       "A": "Гусеничное шасси.",
-      "B": "На ближнем борту №2 различимы семь нижних дисков и два приподнятых крайних колеса. На №4 снег частично закрывает нижнюю ветвь. Репродукция двух экземпляров 1987 года показывает различное положение оборудования; нельзя смешивать их конфигурации.",
-      "C": "Нормировка по ширине видимой ленты; высоты нижних осей приведены к одной касательной. Контур опирается на габариты колёс и три ориентира верхней ветви. Невидимый борт, конструкция несущей полосы, число траков и профиль их рёбер условны. Отдельные рычаги балансиров в модели не воспроизведены: показаны лишь условные опоры осей. Материал траков именно Ч-ХВ-2 не установлен отдельным первичным документом. Полиуретан в описании СКТБ относится к исходному Ч-ХВ (1986). Рекомендация усилить замки гусениц после его эксплуатации не доказывает их исполнение в Ч-ХВ-2. В исследовательской версии v23 фаски внутренних углов и уменьшение наружной грани грунтозацепа — расчётные профили C, не исторические измерения.",
+      "B": "На ближнем борту №2 различимы семь нижних дисков и два приподнятых крайних колеса. На №4 снег частично закрывает нижнюю ветвь. Репродукция двух экземпляров 1987 года показывает различное положение оборудования; нельзя смешивать их конфигурации. На опубликованном в Alma Mater (2025, рис. 2, с. 70) ракурсе также различимы семь нижних круглых элементов и поднятое заднее колесо; неизвестны ориентация оригинала и идентичность экземпляра.",
+      "C": "Нормировка по ширине видимой ленты; высоты нижних осей приведены к одной касательной. Контур опирается на габариты колёс и три ориентира верхней ветви. Невидимый борт, конструкция несущей полосы, число траков и профиль их рёбер условны. Отдельные рычаги балансиров в модели не воспроизведены: показаны лишь условные опоры осей. Материал траков именно Ч-ХВ-2 не установлен отдельным первичным документом. Полиуретан в описании СКТБ относится к исходному Ч-ХВ (1986). Рекомендация усилить замки гусениц после его эксплуатации не доказывает их исполнение в Ч-ХВ-2. В исследовательской версии v23 фаски внутренних углов и уменьшение наружной грани грунтозацепа — расчётные профили C, не исторические измерения. Грубая проективная сверка нового кадра допускает как текущий, так и равномерный условный шаг; точные оси и шарниры не установлены.",
       "sources": [
         "SKTB-TEXT",
         "SKTB2",
         "SKTB4",
         "BATANOV-2026",
-        "ARSENAL-2026-PAIR"
+        "ARSENAL-2026-PAIR",
+        "ALMA-2025-FIG2"
       ]
     },
     {
@@ -449,6 +475,18 @@
       "historicalProfileVerified": false,
       "candidateBrowserVerified": false,
       "candidateReleasePublished": false
+    },
+    "almaMaterFigure2": {
+      "date": "2026-11-26",
+      "evidenceClass": "C",
+      "landmarks": "research/mobot/1987/2026-11-26-alma-mater-figure2-landmarks.json",
+      "qa": "research/mobot/1987/2026-11-26-alma-mater-figure2-qa.json",
+      "report": "research/mobot/1987/2026-11-26-alma-mater-figure2.md",
+      "primaryHoldoutRmsScreenPx": 1.5992450492761578,
+      "equalPitchHoldoutRmsScreenPx": 1.3278857721026045,
+      "pickAllowanceScreenPx": 6,
+      "modelGeometryChanged": false,
+      "physicalScaleKnown": false
     }
   },
   "trackProvenance": {
@@ -514,10 +552,12 @@
     "trackCentresChanged": false,
     "historicalMeasurementsAdded": false,
     "physicalContactVerified": false,
-    "browserAcceptance": "passed on exact geometry v23-lab; release-specific routing verification pending",
+    "browserAcceptance": "success: v23 release 34/34 local and 37/37 published Pages, including latest-to-v22",
     "staticFallback": "v22 archive frames (explicitly marked)",
     "modelQA": "research/mobot/1987/2026-11-26-v23-lab-integration-qa.json",
     "validatedCandidateRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45791515471",
-    "candidatePagesVerified": true
+    "candidatePagesVerified": true,
+    "releaseRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794284267",
+    "releasePagesVerified": true
   }
 }
