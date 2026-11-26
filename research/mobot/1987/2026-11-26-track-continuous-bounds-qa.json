@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-26",
+  "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "kinematicsBlob": "7912b5295bfa91c3a9e40720e45da306346ff29e",
+  "execution": "Numerical core run on exact repository sources in isolated V8; not formal interval arithmetic, no new candidate browser or GPU runtime.",
+  "modelOnly": true,
+  "physicalScaleKnown": false,
+  "datum": 0.14,
+  "P": 3.8966788494655114,
+  "N": 114,
+  "h": 0.0001,
+  "vertices": 102,
+  "method": "piecewise affine center/chord; angular-sector displacement bound; adaptive subdivision and fixed midpoint separating axis; conservative numerical bound, not formal interval arithmetic",
+  "ground": {
+    "original": {
+      "lowerBound": 0.13893692188037712,
+      "sampledUpper": 0.13893693978533145,
+      "uncertainty": 1.7904954324743372e-8,
+      "where": 0.8661159716822446,
+      "leaves": 8915,
+      "splits": 8609
+    },
+    "outerCenter": {
+      "lowerBound": 0.1396539674857296,
+      "sampledUpper": 0.1396539874856303,
+      "uncertainty": 1.999990068002333e-8,
+      "where": 0.633719558535228,
+      "leaves": 9887204,
+      "splits": 9886898
+    },
+    "outerChamfer006": {
+      "lowerBound": 0.1395250244220052,
+      "sampledUpper": 0.13952504262730864,
+      "uncertainty": 1.820530343144e-8,
+      "where": 0.8661159716822446,
+      "leaves": 9421,
+      "splits": 9115
+    },
+    "inset0011": {
+      "lowerBound": 0.14003162507971656,
+      "sampledUpper": 0.14003164298467086,
+      "uncertainty": 1.7904954296987796e-8,
+      "where": 0.8661159716822446,
+      "leaves": 8402,
+      "splits": 8096
+    },
+    "inset0012": {
+      "lowerBound": 0.14013114355238376,
+      "sampledUpper": 0.1401311614573381,
+      "uncertainty": 1.7904954324743372e-8,
+      "where": 0.8661159716822446,
+      "leaves": 7960,
+      "splits": 7654
+    },
+    "pad": {
+      "lowerBound": 0.149033348155497,
+      "sampledUpper": 0.1490333675696661,
+      "uncertainty": 1.9414169105669288e-8,
+      "where": 0.8674904877602314,
+      "leaves": 3588,
+      "splits": 3282
+    }
+  },
+  "adjacent": {
+    "padPad": {
+      "lowerBound": 0.000013320208384182564,
+      "sampleMin": 0.00044408471626566914,
+      "leaves": 2374,
+      "splits": 1762,
+      "target": 0.00001
+    },
+    "padCleat": {
+      "lowerBound": 0.0004974168625234681,
+      "sampleMin": 0.008032627452843055,
+      "leaves": 1164,
+      "splits": 552,
+      "target": 0.00001
+    },
+    "cleatPad": {
+      "lowerBound": 0.0005113461483092297,
+      "sampleMin": 0.008032627452843055,
+      "leaves": 1164,
+      "splits": 552,
+      "target": 0.00001
+    },
+    "cleatCleat": {
+      "lowerBound": 0.0015420418969460115,
+      "sampleMin": 0.012988929498213952,
+      "leaves": 900,
+      "splits": 288,
+      "target": 0.00001
+    }
+  }
+}
