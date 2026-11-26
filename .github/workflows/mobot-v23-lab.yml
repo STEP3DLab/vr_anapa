@@ -1,0 +1,57 @@
+name: Mobot v23-lab acceptance
+on:
+  push:
+    paths:
+      - 'mobot-engineering-v23-lab*'
+      - 'research/mobot/1987/night-20261118/*v23-lab*'
+      - 'scripts/mobot-v23-lab-integration.mjs'
+      - '.github/workflows/mobot-v23-lab.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SUITE: research/mobot/1987/night-20261118
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and mesh integration
+        run: |
+          node --check mobot-engineering-v23-lab-model.js
+          node --check "$SUITE/viewer-v23-lab.js"
+          node --check "$SUITE/browser-v23-lab.cjs"
+          mkdir -p /tmp/mobot23
+          node scripts/mobot-v23-lab-integration.mjs > /tmp/mobot23/mesh.json
+          node scripts/mobot-v22-track-continuous-bounds.cjs > /tmp/mobot23/continuous.json
+          grep -q 'mobot-engineering-v22.html' mobot-latest.html
+      - name: Install Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Local candidate acceptance
+        run: |
+          python3 -m http.server 4187 --bind 127.0.0.1 >/tmp/mobot23/server.log 2>&1 &
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:4187/mobot-engineering-v23-lab.html >/dev/null && break; sleep 1; done
+          MOBOT_REPORT_DIR=/tmp/mobot23/local node "$SUITE/browser-v23-lab.cjs"
+      - name: Published candidate and unchanged latest
+        run: |
+          base=https://step3dlab.github.io/vr_anapa/
+          for file in mobot-engineering-v23-lab.html mobot-engineering-v23-lab-model.js mobot-engineering-v23-lab-passport.json "$SUITE/viewer-v23-lab.js" mobot-latest.html; do
+            for attempt in $(seq 1 60); do
+              if curl -fsSL "$base$file?sha=$GITHUB_SHA" -o /tmp/mobot23-pages && cmp -s "$file" /tmp/mobot23-pages; then break; fi
+              sleep 5
+            done
+            cmp "$file" /tmp/mobot23-pages
+          done
+          MOBOT_BASE_URL="$base" MOBOT_REPORT_DIR=/tmp/mobot23/pages node "$SUITE/browser-v23-lab.cjs"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobot-v23-lab-qa
+          path: /tmp/mobot23
+          retention-days: 30
