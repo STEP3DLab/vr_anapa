@@ -1,0 +1,34 @@
+{
+  "schema": "mobot-consolidation/1",
+  "date": "2026-11-27",
+  "baseCommit": "a54dcd30c14653f46024447c7be6e07ebff49d5c",
+  "mainProject": "https://step3dlab.github.io/vr_anapa/mobot-lab/",
+  "models": [
+    {
+      "year": 1986,
+      "revision": "v7",
+      "original": "mobot-ch-hv-1986-research-v7-passport.json",
+      "copy": "./data/1986-passport.json",
+      "sha256": "7b45a7b0f26ab7b156e7ffd85bf5a20deacc4c11ace2db23105d895f036098d4",
+      "physicalScaleKnown": false,
+      "relativeReferencesResolveFrom": "repository root"
+    },
+    {
+      "year": 1987,
+      "revision": "v23",
+      "original": "mobot-engineering-v23-passport.json",
+      "copy": "./data/1987-passport.json",
+      "sha256": "f067b305604b04edd1066664d2a82f57b508d3aa00c6075213295748216beb8d",
+      "physicalScaleKnown": false,
+      "relativeReferencesResolveFrom": "repository root"
+    }
+  ],
+  "geometryPolicy": "Keep accepted 1986 v7 and 1987 v23. Historical source readings and experimental candidates do not calibrate their scale.",
+  "importedBranch": {
+    "name": "codex/mobot-1987-v22-night-20261118",
+    "commit": "003778a76985e28d09a7c4ed0711dfd7900aae14",
+    "directory": "research/mobot/consolidation-20261127/1987-batanov/",
+    "geometryImported": false
+  },
+  "passportNote": "Byte copies of the accepted passports. Dated limitations contain the chronological research history; current acceptance is described in releaseStatus/candidateChanges and research.js."
+}

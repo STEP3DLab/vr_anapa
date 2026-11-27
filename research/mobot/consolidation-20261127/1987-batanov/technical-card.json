@@ -1,0 +1,50 @@
+{
+  "schema": "mobot-source-transcription/1",
+  "origin": {
+    "repository": "STEP3DLab/vr_anapa",
+    "branch": "codex/mobot-1987-v22-night-20261118",
+    "commit": "003778a76985e28d09a7c4ed0711dfd7900aae14",
+    "path": "mobot-engineering-v22-passport.json",
+    "key": "sources.BATANOV-P015"
+  },
+  "status": "Source transcription retained; not a metric calibration of the current v23 model",
+  "currentModel": {
+    "variant": "Мобот-Ч-ХВ-2 (1987)",
+    "revision": "v23",
+    "physicalScaleKnown": false,
+    "geometryChanged": false
+  },
+  "source": {
+    "type": "Архивная техническая карточка из переданной подборки, стр. 15",
+    "printedTitle": "Мобильный робототехнический комплекс «Мобот-Ч-2»",
+    "developerLine": "ОКТБ СР НИИСМ МГТУ имени Н. Э. Баумана",
+    "developmentYear": 1986,
+    "implementationYear": 1987,
+    "sha256": "9e3865183ceb35a1203daa6d2cd71f2342c16b212a4e7035424102e1956bd8e5",
+    "documented": {
+      "envelope_m": [
+        2.2,
+        1.1,
+        1.4
+      ],
+      "mass_kg": 570,
+      "totalDrivePower_kW": 1.8,
+      "travelSpeed_km_h": 0.25,
+      "drawbarPullAsphalt_N": 5000,
+      "bucketBladeCapacity_N": 1200,
+      "manipulatorVerticalGrip_N": 1000,
+      "manipulatorOtherGrip_N": 800,
+      "manipulatorDOF": 5,
+      "maxGripOpening_m": 0.3,
+      "cableNominal_m": 200,
+      "cableWithExtension_m": 400
+    },
+    "scope": "A для значений и обозначения на карточке. Связь с исследуемой машиной поддерживают год, назначение и состав оборудования. Порядок осей, поза при обмере, комплектация и точки обмера габарита на листе не указаны. Масштаб мешей не калиброван."
+  },
+  "limits": [
+    "Это значения технической карточки «Мобот-Ч-2», а не проверенные размеры текущей 3D-модели.",
+    "Комплектация, поза и точки обмера не установлены; масштаб сцены не изменён.",
+    "Источник прочитан и расшифрован в прежней ветке; при объединении скан карточки повторно не проверялся."
+  ]
+}
+

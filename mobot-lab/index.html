@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f6f7f2">
   <title>Лаборатория «Мобот» — Технопарк РГСУ</title>
-  <meta name="description" content="Два робота для Чернобыльской АЭС. Исследуйте механизмы в 3D и VR, сравнивайте реконструкции с архивными фотографиями.">
+  <meta name="description" content="Единый проект двух роботов для Чернобыльской АЭС: актуальные 3D-модели, управление механизмами, фотосверка, инженерные паспорта и редактируемые исходники.">
+  <link rel="canonical" href="https://step3dlab.github.io/vr_anapa/mobot-lab/">
   <link rel="icon" href="./mark.svg?v=20261125-robot" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./app.js"></script>
@@ -25,7 +26,7 @@
 <a href="#lab" class="skip">К модели</a>
 <header class="top"><div class="wrap bar">
   <a class="brand" href="#lab" aria-label="Лаборатория Мобот"><img src="./mark.svg?v=20261125-robot" width="41" height="41" alt=""><span>МОБОТ<span class="brand-sub">Инженерный архив</span></span></a>
-  <nav aria-label="Разделы"><a href="#lab" class="navlab active">Лаборатория</a><a href="#archive" class="navarch">Фотоархив</a></nav>
+  <nav aria-label="Разделы"><a href="#lab" class="navlab active">Лаборатория</a><a href="#archive" class="navarch">Фотоархив</a><a href="#research" class="navresearch">Материалы</a></nav>
   <div class="credits" role="group" aria-label="Создатели машин и авторы реконструкции">
     <a class="credit credit-sktb" href="https://sktbpr.ru/node/1">
       <img src="./media/sktbpr.png" width="137" height="60" alt="">
@@ -40,7 +41,7 @@
 <main class="wrap">
 <section id="lab" aria-labelledby="title" tabindex="-1">
   <div class="intro"><div><p class="overline"><span class="line"></span>ЧЕРНОБЫЛЬСКАЯ АЭС <b>/</b> 1986–1987</p>
-    <h1 id="title">Лаборатория «Мобот»</h1><p class="lead">Две цифровые реконструкции роботов для расчистки кровли ЧАЭС. Выберите машину, изучите её узлы или сравните модель с архивным снимком.</p><button id="compareModels" class="text-btn compare-models" hidden>Чем отличаются модели?</button></div>
+    <h1 id="title">Лаборатория «Мобот»</h1><p class="lead">Две цифровые реконструкции роботов для расчистки кровли ЧАЭС. Выберите машину, изучите её узлы или сравните модель с архивным снимком.</p><button id="compareModels" class="text-btn compare-models" hidden>Два робота рядом</button></div>
     <div class="launch"><button id="share" class="secondary"><i data-i="link"></i><span>Ссылка на вид</span></button><button class="vr major" id="vr"><i data-i="vr"></i><span id="vrLabel">Как открыть в VR</span></button></div>
   </div>
   <noscript>
@@ -105,6 +106,12 @@
   <p class="archive-guide">На снимках с пометкой «Есть 3D-сверка» можно сопоставить архивный кадр с моделью в подобранном по нему ракурсе.</p>
   <div id="archiveCards" class="archive-grid"></div>
   <div class="archive-actions"><button id="expandArchive" class="secondary archive-more" hidden></button><a id="archiveReturn" class="archive-return" href="#lab"><span aria-hidden="true">↑</span> К моделям</a></div>
+</section>
+<section id="research" class="research-section" aria-labelledby="researchTitle" tabindex="-1">
+  <div class="archive-head"><div><p class="overline"><span class="line"></span>ЕДИНЫЙ ПРОЕКТ</p><h2 id="researchTitle">Паспорта и исходники</h2></div><a class="text-btn" href="#lab">К моделям</a></div>
+  <p class="research-intro">Материалы обеих реконструкций собраны здесь: принятые версии, основания для деталей и вопросы, которые ещё предстоит уточнить.</p>
+  <div id="researchContent"></div>
+  <noscript><p><a href="./data/1986-passport.json">Паспорт 1986 · v7</a> · <a href="./data/1987-passport.json">Паспорт 1987 · v23</a></p><p><a href="./downloads/?file=mobot-research-sources.zip">Blender и фотосверка · ZIP, 14,2 МБ</a> · <a href="./downloads/?file=mobot-photo-archive-20261114.zip">Фотоархив · ZIP, 29,9 МБ</a> (для загрузки нужен JavaScript)</p><p>Blender-сцены относятся к раннему исследовательскому этапу и не являются экспортом актуальных v7/v23. Масштаб и часть кинематики условны.</p></noscript>
 </section>
 </main>
 <footer><div class="wrap footer-inner">

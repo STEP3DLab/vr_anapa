@@ -24,17 +24,18 @@ export const machines = {
     initial:{yaw:0,boom:0,grab:0,loader:0,tip:0,track:0},
     joints:[['yaw','Поворот стойки',-180,180],['boom','Подъём стрелы',0,32],['grab','Раскрытие грейфера',0,32],['loader','Подъём погрузчика',0,16],['tip','Наклон ковша',-5,25],['track','Прокрутка гусениц',-100,100]],
     demo:{yaw:46,boom:20,grab:18,loader:16,tip:18,track:75},
-    groups:m=>({yaw:m.mechanisms.turntable,boom:m.mechanisms.boom,grab:m.mechanisms.grab,loader:m.mechanisms.loader,tip:m.mechanisms.scoop,track:m.sections['Открытая ходовая'],camera:m.sections['Верхний цилиндрический корпус камеры']}),
-    original:'https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v7.html'
+    groups:m=>({body:m.sections['Рама и округлый кожух'],yaw:m.mechanisms.turntable,boom:m.mechanisms.boom,grab:m.mechanisms.grab,loader:m.mechanisms.loader,tip:m.mechanisms.scoop,track:m.sections['Открытая ходовая'],camera:m.sections['Верхний цилиндрический корпус камеры']}),
+    original:'https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v7.html',
+    passport:'./data/1986-passport.json'
   },
   1987:{
     title:'Мобот-Ч-ХВ-2',short:'Ч-ХВ-2',code:'v23',posterCode:'v22',ground:.14,side:-1,
     create:T=>makeMobot(T,'mobile'),pose:(m,p)=>m.mechanisms.setPose(p),
     initial:demonstrations.gripper.start,
     joints:[['yaw','Поворот опоры',-180,180],['arm','Наклон стрелы',-18,25],['claw','Раскрытие схвата',0,24],['wrist','Наклон головки',55,115],['bucket','Подъём погрузчика',-8,36],['tip','Наклон ковша',-25,25],['track','Прокрутка гусениц',0,100]],
-    groups:m=>({yaw:m.mechanisms.turntable,arm:m.mechanisms.arm,claw:m.mechanisms.fingerHead,wrist:m.mechanisms.gripper,bucket:m.mechanisms.bucketLift,tip:m.mechanisms.bucketTilt,track:m.parts.tracks,camera:m.mechanisms.cameras,tool:m.root.userData.activeWorkTool==='breaker-loader'?m.mechanisms.breakerLoader:m.mechanisms.breakerArm}),
+    groups:m=>({body:m.parts.body,yaw:m.mechanisms.turntable,arm:m.mechanisms.arm,claw:m.mechanisms.fingerHead,wrist:m.mechanisms.gripper,bucket:m.mechanisms.bucketLift,tip:m.mechanisms.bucketTilt,track:m.parts.tracks,camera:m.mechanisms.cameras,tool:m.root.userData.activeWorkTool==='breaker-loader'?m.mechanisms.breakerLoader:m.mechanisms.breakerArm}),
     original:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v23.html',
-    passport:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v23-passport.json',
+    passport:'./data/1987-passport.json',
     previous:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v22.html'
   }
 };

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f7f2">
+  <title>Материалы «Мобот» — скачать ZIP</title>
+  <link rel="icon" href="../mark.svg" type="image/svg+xml">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f6f7f2;color:#233125;font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{width:min(760px,100%);margin:0 auto;padding:clamp(24px,6vw,60px) clamp(18px,5vw,42px)}a{color:#355c37;text-underline-offset:3px;overflow-wrap:anywhere}
+    .back{display:inline-block;min-height:44px;margin-bottom:22px}.eyebrow{font-size:13px;font-weight:650;letter-spacing:.08em;color:#57654d;margin:0 0 8px}
+    h1{font-size:clamp(30px,5vw,44px);line-height:1.16;letter-spacing:-.04em;margin:0 0 20px;overflow-wrap:break-word}h2{font-size:21px;line-height:1.3;margin:0 0 10px}
+    p{margin:0 0 16px}.card{padding:clamp(20px,4vw,30px);border:1px solid #cbd4c2;border-radius:14px;background:#fff;margin:24px 0}.description{color:#52604e}
+    .size{font-weight:650;font-size:18px}.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}button,.save{display:inline-flex;align-items:center;justify-content:center;min-height:46px;border:1px solid #355239;border-radius:7px;padding:10px 18px;font-family:inherit;font-size:16px;font-weight:600;line-height:1.4;cursor:pointer}
+    button{font-family:inherit;background:#355239;color:white}button:hover:not(:disabled){background:#28452c}button:disabled{cursor:wait;opacity:.65}.save{background:#edf3e7;color:#24422b;text-decoration:none;font-weight:600}
+    :focus-visible{outline:3px solid #8fae65;outline-offset:4px}progress{display:block;width:100%;height:14px;margin:20px 0 10px;accent-color:#638449}.progress-copy{font-size:14px;color:#52604e;margin:0}
+    .status{margin:16px 0 0;font-size:15px}.status.error{color:#8b3124}.guidance{font-size:14px;color:#52604e;margin-top:12px}.choices{display:grid;gap:12px;margin:18px 0}.choices a{display:block;padding:15px 18px;border:1px solid #cbd4c2;border-radius:9px;background:white;text-decoration:none}.choices a:hover{border-color:#638449}
+    .choices strong,.choices span{display:block}.choices span{color:#52604e;font-size:14px}.footer{font-size:14px;margin-top:26px;color:#52604e}[hidden]{display:none!important}
+  </style>
+  <script type="module" src="./download.js"></script>
+</head>
+<body>
+<main>
+  <a class="back" href="../">К проекту с двумя роботами</a>
+  <p class="eyebrow">МОБОТ · МАТЕРИАЛЫ ПРОЕКТА</p>
+  <h1 id="pageTitle">Скачать материалы</h1>
+  <section id="fileCard" class="card" aria-labelledby="pageTitle" hidden>
+    <p id="description" class="description"></p>
+    <p id="fileSize" class="size"></p>
+    <p>После нажатия файл будет загружен, проверен и сохранён как один ZIP. Оставьте эту страницу открытой до завершения.</p>
+    <div class="actions">
+      <button type="button" id="download" disabled>Скачать ZIP</button>
+      <a id="save" class="save" hidden>Сохранить ZIP</a>
+    </div>
+    <div id="progressArea" hidden>
+      <progress id="progress" value="0" max="100" aria-label="Загрузка ZIP"></progress>
+      <p id="progressCopy" class="progress-copy"></p>
+    </div>
+    <p id="downloadStatus" class="status" role="status" aria-live="polite"></p>
+    <p id="saveHint" class="guidance" hidden>Если скачивание не началось автоматически, нажмите «Сохранить ZIP».</p>
+  </section>
+  <p id="pageStatus" class="status" role="status">Загружается список материалов…</p>
+  <nav id="choices" class="choices" aria-label="Доступные комплекты" hidden></nav>
+  <noscript><p>Для скачивания ZIP включите JavaScript. Состав и ограничения материалов доступны по ссылке ниже.</p></noscript>
+  <p class="footer"><a href="./README-RU.txt">Состав и ограничения материалов</a> · <a href="./manifest.json">Размеры и контрольные суммы</a></p>
+</main>
+</body>
+</html>

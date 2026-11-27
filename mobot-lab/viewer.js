@@ -3,7 +3,7 @@ import {OrbitControls} from './engine/controls/OrbitControls.js';
 import {makeRasterRenderer} from './engine/orthographic-raster.js';
 import {createXR} from './xr.js';
 
-export function createViewer(surface, callbacks) {
+export function createViewer(surface, callbacks, options = {}) {
   const scene=new T.Scene(),camera=new T.OrthographicCamera(-2,2,2,-2,.01,80);
   let canvas=document.createElement('canvas'),gl=null,raster=null;
   const graphics={alpha:true,antialias:true,depth:true,powerPreference:'high-performance'};
@@ -44,30 +44,32 @@ export function createViewer(surface, callbacks) {
   }
   surface.classList.toggle('software',!!raster);
   let current, definition, selectedView = 'iso', targetNode = null, frameId = 0;
-  let contextLost = false, switchedInXR = false;
+  let contextLost = false, switchedInXR = false, disposed = false;
   if (gl) {
     canvas.addEventListener('webglcontextlost', event => {
+      if(disposed)return;
       event.preventDefault(); contextLost=true; callbacks.contextLost();
     });
     canvas.addEventListener('webglcontextrestored', () => {
+      if(disposed)return;
       contextLost=false; resize(); draw();
     });
   }
-  const xr = gl ? createXR(gl, {...callbacks, ended() {
+  const xr = gl && options.xr !== false ? createXR(gl, {...callbacks, ended() {
     gl.xr.enabled = false;
     requestAnimationFrame(() => { resize(); if(switchedInXR) frame('iso'); switchedInXR=false; callbacks.ended(); });
   }}) : null;
   function draw() {
-    if (frameId || contextLost || xr?.active || !current) return;
+    if (disposed || frameId || contextLost || xr?.active || !current) return;
     frameId = requestAnimationFrame(() => {
       frameId = 0;
-      if (contextLost || xr?.active || !current) return;
+      if (disposed || contextLost || xr?.active || !current) return;
       if (gl) gl.render(scene, camera);
       else raster.render(current.root, camera);
       callbacks.drawn();
     });
   }
-  controls.addEventListener('change', draw);
+  controls.addEventListener('change', () => { draw(); callbacks.cameraChanged?.(capture()); });
   // OrbitControls also emits "start" for an ordinary tap. Keep the named
   // view until the direction actually changes.
   let orbitStart;
@@ -143,7 +145,7 @@ export function createViewer(surface, callbacks) {
     const state = capture();
     frame(selectedView, {...state, node:targetNode});
   }
-  new ResizeObserver(resize).observe(surface);
+  const resizeObserver = new ResizeObserver(resize); resizeObserver.observe(surface);
   const picker = new T.Raycaster();
   const visibleMeshes = [];
   let down = null, activePointers = new Set();
@@ -170,7 +172,7 @@ export function createViewer(surface, callbacks) {
   });
   function zoom(factor) {
     camera.zoom = T.MathUtils.clamp(camera.zoom * factor,.4,5);
-    camera.updateProjectionMatrix(); draw();
+    camera.updateProjectionMatrix(); draw(); callbacks.cameraChanged?.(capture());
   }
   canvas.addEventListener('keydown', e => {
     // Browser zoom, OS shortcuts and assistive technology keep their own modifiers.
@@ -191,6 +193,7 @@ export function createViewer(surface, callbacks) {
   const markerBox = new T.Box3(), markerPoint = new T.Vector3();
   function project(node) {
     if (!node) return null;
+    for (let parent=node;parent;parent=parent.parent) if (!parent.visible) return null;
     markerBox.setFromObject(node);
     if (markerBox.isEmpty()) return null;
     markerBox.getCenter(markerPoint).project(camera);
@@ -206,6 +209,21 @@ export function createViewer(surface, callbacks) {
       if (xr?.active) { switchedInXR=true; xr.modelChanged(); }
       else { resize(); frame('iso'); }
     },
-    draw() { if (xr?.active) xr.poseChanged(); else draw(); }
+    draw() { if (xr?.active) xr.poseChanged(); else draw(); },
+    dispose({models=false}={}) {
+      disposed=true; cancelAnimationFrame(frameId); resizeObserver.disconnect(); controls.dispose();
+      const geometries=new Set(), materials=new Set(), textures=new Set();
+      for (const root of [deck,...(models&&current?[current.root]:[])]) root.traverse(o=>{
+        if(o.geometry) geometries.add(o.geometry);
+        for(const material of (Array.isArray(o.material)?o.material:[o.material]).filter(Boolean)) materials.add(material);
+      });
+      for(const material of materials) {
+        for(const value of Object.values(material)) if(value?.isTexture) textures.add(value);
+        material.dispose();
+      }
+      for(const texture of textures)texture.dispose();
+      for(const geometry of geometries)geometry.dispose();
+      gl?.dispose(); gl?.forceContextLoss(); canvas.remove(); current=null;
+    }
   };
 }

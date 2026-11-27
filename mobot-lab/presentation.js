@@ -3,7 +3,11 @@ import {escapeHTML as h} from './archive.js';
 const $ = id => document.getElementById(id);
 const dialog = $('dialog');
 let returnFocus;
+let modalCleanups=[];
+function cleanupModal() { const cleanups=modalCleanups;modalCleanups=[];for(const dispose of cleanups)dispose(); }
+export function onModalCleanup(dispose) { modalCleanups.push(dispose); }
 export function openModal(kind, html, label=kind) {
+  cleanupModal();
   if (!dialog.open) returnFocus=document.activeElement;
   $('dialogKind').textContent=kind; $('dialogBody').innerHTML=html;
   dialog.setAttribute('aria-label',label);
@@ -11,7 +15,7 @@ export function openModal(kind, html, label=kind) {
 }
 export function closeModal() { dialog.close(); }
 $('closeDialog').onclick=closeModal;
-dialog.addEventListener('close',()=>{if(returnFocus?.isConnected && (document.activeElement===document.body || dialog.contains(document.activeElement))) returnFocus.focus({preventScroll:true})});
+dialog.addEventListener('close',()=>{cleanupModal();if(returnFocus?.isConnected && (document.activeElement===document.body || dialog.contains(document.activeElement))) returnFocus.focus({preventScroll:true})});
 dialog.addEventListener('click',e=>{
   if (e.target!==dialog) return;
   const b=dialog.getBoundingClientRect();
@@ -64,7 +68,7 @@ function setupOffline() {
   const button=$('offline'), out=$('offlineStatus');
   if(!('serviceWorker' in navigator) || !window.isSecureContext){button.hidden=true;return}
   async function prepare() {
-    button.disabled=true; out.textContent='Сохраняются обе модели, пульт и фотоархив…';
+    button.disabled=true; out.textContent='Сохраняются обе модели, пульт, паспорта и фотоархив…';
     let previousWorker;
     try {
       previousWorker=(await navigator.serviceWorker.getRegistration('./').catch(()=>null))?.active;
@@ -92,7 +96,7 @@ function setupOffline() {
         worker.postMessage('refresh-exhibition',[channel.port2]);
       });
       button.innerHTML=icon('download')+'Обновить копию';
-      out.textContent='Обе модели и 10 снимков сохранены. Эту страницу можно открыть без интернета на данном устройстве.';
+      out.textContent='Обе модели, паспорта и 10 снимков сохранены. Эту страницу можно открыть без интернета. ZIP-исходники и внешние источники скачиваются отдельно.';
     } catch {
       out.textContent=previousWorker?.scriptURL===new URL('./offline-worker.js',location.href).href && previousWorker.state==='activated'
         ? 'Обновление не завершено. Предыдущая автономная версия остаётся активной. Повторите попытку при устойчивом соединении.'

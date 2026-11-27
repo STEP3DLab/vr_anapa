@@ -1,9 +1,12 @@
 // The cache and the fetch handler are confined to this laboratory's directory.
 const prefix='mobot-lab:'+self.registration.scope+':';
-const cacheName=prefix+'2026-11-27.1';
+const cacheName=prefix+'2026-11-27.2-consolidated';
 const files=[
   'index.html','style.css','app.js','catalog.js','evidence.js','inspection.js','registrations.js',
   'scene-link.js','archive.js','presentation.js','viewer.js','xr.js','icons.js','mark.svg',
+  'dual.js','isolation.js','research.js','research-ui.js','pose-check.js','engine/contact.js',
+  'data/1986-passport.json','data/1987-passport.json','data/release-data.json',
+  'downloads/README-RU.txt','downloads/manifest.json',
   'engine/three.core.min.js','engine/three.module.min.js','engine/controls/OrbitControls.js',
   'engine/orthographic-raster.js','engine/qr.js',
   'models/mobot-ch-hv-1986-research-v6-model.js','models/mobot-ch-hv-1986-research-v7-model.js',

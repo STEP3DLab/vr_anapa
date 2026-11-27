@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-27",
+  "scope": "Pre-publication verification of the consolidated two-robot laboratory",
+  "baseCommit": "a54dcd30c14653f46024447c7be6e07ebff49d5c",
+  "acceptedModels": {"1986": "v7", "1987": "v23"},
+  "modelGeometryChanged": false,
+  "nodeTests": {"command": "node --test mobot-lab/tests/*.test.mjs", "passed": 12, "failed": 0},
+  "browserObserved": [
+    "Both current models render together; common viewpoints and motion controls are available",
+    "Seven assemblies per model; isolation and restoration preserve the selected tool",
+    "Model selection, tool switching, archive pose restoration and passports work",
+    "A 390 CSS-pixel iframe renders stacked comparison panes without horizontal overflow",
+    "Both downloadable ZIP files are assembled and pass full SHA-256 verification in the browser",
+    "Offline save reports both models, passports and ten photographs saved"
+  ],
+  "downloadChecks": {
+    "mobot-photo-archive-20261114.zip": {"bytes": 29850580, "sha256": "b517ec7ecc3dd7add7bedf9ac1fbfd5293316cb33fc013d9a088075cc0ab89ec"},
+    "mobot-research-sources.zip": {"bytes": 14168966, "sha256": "1825dae361cbeeec8bed3c72eb58b402a2e17da36644218061d0127822b39c66"}
+  },
+  "limitations": [
+    "The narrow viewport check is not a physical-phone test",
+    "No physical VR headset was tested during this consolidation",
+    "Collision checks cover only the documented pairs and poses, not every possible configuration",
+    "The Blender source archive belongs to an earlier research stage and is not an export of v7/v23",
+    "Publication and GitHub Actions results must be checked separately for the release commit"
+  ]
+}

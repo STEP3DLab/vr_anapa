@@ -250,6 +250,7 @@ async function exercise(browser, width, height, software) {
     assert.equal(await page.locator('#workbench').getAttribute('tabindex'),null);
     await page.locator('#tab-drive').focus();await page.keyboard.press('ArrowRight');
     assert.equal(await page.locator('#tab-parts').getAttribute('aria-selected'),'true');
+    assert.equal(await page.locator('#partChoices [data-part]').count(),7);
     await page.keyboard.press('Home');
     assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
     assert(await page.locator('#keyboardHelp').textContent().then(t=>t.includes('стрелки')));
@@ -269,18 +270,36 @@ async function exercise(browser, width, height, software) {
     }
     if(width===1440||width===390){
       const compare=page.locator('#compareModels'),dialog=page.locator('#dialog');
-      for(const [year,index] of [[1987,'3'],[1986,'1']]){
+      for(const year of [1987,1986]){
         await compare.click();
-        assert.equal(await dialog.locator('.model-compare-card').count(),2);
-        for(const image of await dialog.locator('.model-compare-card img').all())await image.evaluate(img=>img.decode());
+        assert.equal(await dialog.locator('.dual-card').count(),2);
+        assert.equal(await dialog.locator('.dual-surface canvas').count(),2);
+        assert.match(await dialog.locator('.dual-card').first().innerText(),/1986 · v7/);
+        assert.match(await dialog.locator('.dual-card').last().innerText(),/1987 · v23/);
+        assert(await page.locator('#dualSync').isChecked());
         assert(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1));
-        await dialog.locator('[data-compare-year="'+year+'"]').click();
+        if(year===1987){
+          const first=page.locator('#dual-1986 canvas'),second=page.locator('#dual-1987 canvas');
+          await dialog.locator('[data-dual-view="side"]').click();
+          const linked=await second.screenshot();
+          await first.focus();await page.keyboard.press('ArrowLeft');
+          await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+          assert(!linked.equals(await second.screenshot()),'The second 3D camera follows the first while linked');
+          await page.locator('#dualSync').uncheck();
+          const independent=await second.screenshot();
+          await first.focus();await page.keyboard.press('ArrowRight');
+          await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+          assert(independent.equals(await second.screenshot()),'Unlinked camera retains its own view');
+        }
+        await dialog.locator('[data-dual-open="'+year+'"]').click();
+        assert(!(await dialog.isVisible()));
+        assert.equal(await page.locator('.dual-surface canvas').count(),0,'Closing the comparison removes its renderers');
         assert.equal(await page.locator('[data-year="'+year+'"]').getAttribute('aria-pressed'),'true');
-        assert.equal(await page.locator('#photoSelect').inputValue(),index);
-        assert(await page.locator('#tab-photo').evaluate(el=>el===document.activeElement));
+        assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
+        assert.equal(await page.locator('#partChoices [data-part]').count(),7);
       }
       await page.locator('#tab-drive').click();
-      console.log('Two dated comparison cards link to the correct matched photos and model');
+      console.log('Two current interactive models support linked and independent views and return to the selected control panel');
     }
     const before=await page.locator('#surface canvas').screenshot();
     await page.locator('[data-view="side"]').click();
@@ -311,8 +330,15 @@ async function exercise(browser, width, height, software) {
       await closeup.focus();await page.keyboard.press('Enter');
       assert(await closeup.evaluate(el=>el===document.activeElement),'Close-up must retain keyboard focus');
       await page.keyboard.press('Tab');
+      const isolate=page.locator('#isolatePart');
+      assert(await isolate.evaluate(el=>el===document.activeElement));
+      await page.keyboard.press('Enter');
+      assert.equal(await isolate.getAttribute('aria-pressed'),'true');
+      await page.keyboard.press('Tab');
       assert(await page.locator('.part-actions a').evaluate(el=>el===document.activeElement));
-      console.log('Keyboard close-up retains focus and Tab reaches the source');
+      await isolate.click();
+      assert.equal(await isolate.getAttribute('aria-pressed'),'false');
+      console.log('Keyboard close-up retains focus; Tab reaches assembly isolation and then the source');
     }else await closeup.click();
     assert(await page.locator('#markers [data-part="tool"]').isVisible());
     if(width===1440){

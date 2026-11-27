@@ -25,15 +25,16 @@ export function readScene(params, def, photos, parts) {
     direction, up:safeUp, view:views.includes(params.get('view')) ? params.get('view') : null,
     zoom:zoom >= .4 && zoom <= 5 ? zoom : 1, detail:mode==='parts' && params.get('detail')==='1'
   } : null;
-  return {mode,photo,part,pose,tool:tools.includes(params.get('tool')) ? params.get('tool') : 'gripper',camera,marks:params.get('marks')==='1'};
+  return {mode,photo,part,pose,tool:tools.includes(params.get('tool')) ? params.get('tool') : 'gripper',camera,marks:params.get('marks')==='1',isolated:mode==='parts'&&params.get('isolate')==='1'};
 }
 
-export function sceneURL(base, {year,def,mode,photo,part,pose,tool,camera,marks}) {
+export function sceneURL(base, {year,def,mode,photo,part,pose,tool,camera,marks,isolated}) {
   const url = new URL(base); url.search = ''; url.hash = '';
   const p = url.searchParams; p.set('model',year);
   if (mode !== 'drive') p.set('mode',mode);
   if (mode === 'photo') { p.set('photo',photoKey(photo)); if (marks) p.set('marks','1'); }
   if (mode === 'parts') p.set('part',part);
+  if (mode === 'parts' && isolated) p.set('isolate','1');
   if (year===1987 && tool!=='gripper') p.set('tool',tool);
   p.set('pose',def.joints.map(([key])=>+pose[key].toFixed(3)).join(','));
   if (camera) {

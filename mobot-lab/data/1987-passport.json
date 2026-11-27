@@ -1,0 +1,628 @@
+{
+  "schema": "mobot-engineering-evidence/3",
+  "revision": "v23",
+  "variant": "Мобот-Ч-ХВ-2 (1987)",
+  "parent": "mobot-engineering-v22-model.js",
+  "baselineSHA": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+  "page": "mobot-engineering-v23.html",
+  "model": "mobot-engineering-v23-model.js",
+  "controller": "research/mobot/1987/night-20261118/viewer-v23.js",
+  "qa": "research/mobot/1987/2026-11-26-v23-release-qa.json",
+  "log": "research/mobot/1987/2026-11-26-track-continuous-bounds.md",
+  "evidenceClasses": {
+    "A": "Существование/функция подтверждены первичным документом; это не подтверждение точной формы.",
+    "B": "Внешний признак различим на идентифицированном историческом изображении; не размерный чертёж.",
+    "C": "Исследовательская гипотеза. Все численные параметры сцены, невидимые стороны и кинематика без обмера."
+  },
+  "units": "условные единицы сцены",
+  "physicalScaleKnown": false,
+  "sources": {
+    "SKTB-TEXT": {
+      "url": "https://sktbpr.ru/node/23",
+      "type": "primary developer account",
+      "identity": "Исходный Ч-ХВ и модернизированный Ч-ХВ-2; существование и функции узлов",
+      "alternateUrl": "https://sktbpr.ru/content/mrk-mobot-ch-hv-2"
+    },
+    "SKTB-GALLERY": {
+      "url": "https://sktbpr.ru/foto-alb/65",
+      "type": "primary developer gallery",
+      "identity": "Подписи и атрибуция полных фотографий"
+    },
+    "SKTB2": {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/2.jpg",
+      "local": "mobot-assets/archive/1987-before-dispatch.jpg",
+      "identity": "Ч-ХВ-2 перед отправкой на ЧАЭС; дата съёмки не указана; оригинал 2786×2106",
+      "sha256": "c78dbd5cbcb71cbd08ef9c1e13f9798cfe02baacd5af323e7512b0d6ec62385f",
+      "pixels": [
+        2786,
+        2106
+      ]
+    },
+    "SKTB3": {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/3.jpg",
+      "local": "mobot-assets/archive/1987-front.jpg",
+      "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; фронтальный вид схвата",
+      "sha256": "15c9f105828b5a66fec9723ed2948c73f0c0ff1c52c20e65863b228072abd994",
+      "pixels": [
+        2721,
+        2014
+      ]
+    },
+    "SKTB4": {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/4.jpg",
+      "local": "mobot-assets/archive/1987-snow-side.jpg",
+      "identity": "Ч-ХВ-2, приёмо-сдаточные испытания; независимый боковой ракурс на снегу",
+      "sha256": "40d4d552ec96cd2cf45ac62baa8c1a99bb4859fedd24569993258c5481c971d8",
+      "pixels": [
+        2782,
+        1993
+      ]
+    },
+    "SKTB9": {
+      "url": "https://sktbpr.ru/sites/default/files/foto_album/9.jpg",
+      "local": "mobot-assets/archive/1987-breaker.jpg",
+      "identity": "Ч-ХВ-2: отработка применения молотка на манипуляторе",
+      "sha256": "1081b90ab101a7c8a84cec10e0013328f7f1578c7ee11b80855b67daceccea33",
+      "pixels": [
+        2056,
+        1346
+      ]
+    },
+    "BATANOV-2026": {
+      "url": "https://storage.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "type": "designer retrospective account",
+      "identity": "А.Ф. Батанов и В. Лосицкий (29.09.2026): рекомендации об усилении замков после эксплуатации исходной машины и деформация балансиров машин 1987 года; размеры неизвестны."
+    },
+    "ARSENAL-2026-DEMO": {
+      "url": "https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/image009.jpg",
+      "articleUrl": "https://a.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "caption": "Демонстрация Ч-ХВ-2 в МВТУ — рис. 5",
+      "kind": "Historical photograph reproduced in the 2026 article by Batanov and Lositsky",
+      "evidenceClass": "B",
+      "originalCaptureDateEstablished": false,
+      "originalNegativeInspected": false,
+      "physicalScaleKnown": false
+    },
+    "ARSENAL-2026-PAIR": {
+      "url": "https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/image011.jpg",
+      "articleUrl": "https://a.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "caption": "Два Ч-ХВ-2 на снегу — рис. 6",
+      "kind": "Historical photograph reproduced in the 2026 article by Batanov and Lositsky",
+      "evidenceClass": "B",
+      "originalCaptureDateEstablished": false,
+      "originalNegativeInspected": false,
+      "physicalScaleKnown": false
+    },
+    "ARSENAL-2026-GRIP": {
+      "url": "https://a.arsenal-otechestva.ru/images/articles/2026/04/chern/image013.jpg",
+      "articleUrl": "https://a.arsenal-otechestva.ru/article/2375-chernobylskaya-krysha",
+      "caption": "Манипулятор Ч-ХВ-2 на стенде — рис. 7",
+      "kind": "Historical photograph reproduced in the 2026 article by Batanov and Lositsky",
+      "evidenceClass": "B",
+      "originalCaptureDateEstablished": false,
+      "originalNegativeInspected": false,
+      "physicalScaleKnown": false
+    },
+    "BATANOV-2019-OVERVIEW": {
+      "url": "https://cyberleninka.ru/article/n/roboty-v-chernobyle.pdf",
+      "type": "Coauthored retrospective",
+      "identity": "2019 paper; page 75 figure 9 illustrates original 1986 Ch-HV, not necessarily 1987 Ch-HV-2",
+      "notA1987DimensionSource": true
+    },
+    "ALMA-2025-FIG2": {
+      "url": "https://www.almavest.ru/articles/studencheskie-konstruktorskie-byuro-chast-2-perspektivy-razvitiya",
+      "pdfUrl": "https://www.almavest.ru/api/pdf/3801/10_%D0%A0%D0%B5%D0%B7%D0%BD%D0%B8_%D0%9C%D0%BE%D0%B8%D1%81%D0%B5%D0%B5%D0%BD%D0%BA%D0%BE_%D0%90%D0%9C_25_6_%D0%A1%D0%9F%D0%95%D0%A6_%D1%87%D0%B0%D1%81%D1%82%D1%8C2.pdf#page=3",
+      "doi": "10.20339/AM.06-25.068",
+      "identity": "Резник С.В., Моисеенко В.В. Студенческие конструкторские бюро. Часть 2. Перспективы развития. Alma Mater, 2025, №6, с. 68–75, рис. 2, с. 70.",
+      "evidenceClass": "B",
+      "imageActuallyInspected": true,
+      "renderSizePx": [
+        1054,
+        1440
+      ],
+      "originalNegativeInspected": false,
+      "originalCaptureDateEstablished": false,
+      "physicalScaleKnown": false,
+      "orientationAndMachineIdentityEstablished": false,
+      "landmarks": "research/mobot/1987/2026-11-26-alma-mater-figure2-landmarks.json",
+      "qa": "research/mobot/1987/2026-11-26-alma-mater-figure2-qa.json"
+    },
+    "VHS-1998-LEAD": {
+      "url": "https://www.youtube.com/watch?v=8OE41XtMR7Q&t=454s",
+      "type": "publisher-attributed archival video lead only",
+      "description": "Chapter Mobot-Ch-HV-2, 07:34–08:21; footage attributed to 1998, published 16.08.2026",
+      "framesInspected": false,
+      "evidenceClass": "unverified lead; not used for geometry"
+    },
+    "SKTB-REPAIR-1997": {
+      "url": "https://sktbpr.ru/node/23",
+      "evidenceClass": "A",
+      "identity": "Developer account: repaired assembly from parts of two robots; 1997 use",
+      "figure23Inspected": false,
+      "notOriginal1987GeometrySource": true
+    },
+    "MUSEUM-2015-LEAD": {
+      "url": "https://storage01.sb.by/iblock/688/68874d7f45ef2bfd6c76e19bfe60ad96.pdf",
+      "identity": "Мария Дарманская. Прокатись по Москве на «Минске». СОЮЗ, 13.08.2015, №30 (706), с. VIII.",
+      "evidenceClass": "unverified provenance lead; journalistic report",
+      "inventoryIdentityVerified": false,
+      "currentConditionKnown": false,
+      "photoInspected": false
+    },
+    "MUSEUM-2020-LEAD": {
+      "url": "https://vm.ru/news/812058-moskovskij-muzej-industrialnoj-kultury-pereehal-v-tulskuyu-oblast",
+      "evidenceClass": "secondary report, not verified identity or transport"
+    },
+    "MUSEUM-HISTORY": {
+      "url": "https://museum-ic.ru/about",
+      "reopeningUrl": "https://museum-ic.ru/news/16-avgusta-2026-muzej-nachal-rabotu",
+      "evidenceClass": "primary museum institutional history, not a verified robot inventory",
+      "robotCurrentLocationKnown": false
+    }
+  },
+  "nodes": [
+    {
+      "id": "tracks",
+      "title": "Гусеничная ходовая",
+      "A": "Гусеничное шасси.",
+      "B": "На ближнем борту №2 различимы семь нижних дисков и два приподнятых крайних колеса. На №4 снег частично закрывает нижнюю ветвь. Репродукция двух экземпляров 1987 года показывает различное положение оборудования; нельзя смешивать их конфигурации. На опубликованном в Alma Mater (2025, рис. 2, с. 70) ракурсе также различимы семь нижних круглых элементов и поднятое заднее колесо; неизвестны ориентация оригинала и идентичность экземпляра.",
+      "C": "Нормировка по ширине видимой ленты; высоты нижних осей приведены к одной касательной. Контур опирается на габариты колёс и три ориентира верхней ветви. Невидимый борт, конструкция несущей полосы, число траков и профиль их рёбер условны. Отдельные рычаги балансиров в модели не воспроизведены: показаны лишь условные опоры осей. Материал траков именно Ч-ХВ-2 не установлен отдельным первичным документом. Полиуретан в описании СКТБ относится к исходному Ч-ХВ (1986). Рекомендация усилить замки гусениц после его эксплуатации не доказывает их исполнение в Ч-ХВ-2. В исследовательской версии v23 фаски внутренних углов и уменьшение наружной грани грунтозацепа — расчётные профили C, не исторические измерения. Грубая проективная сверка нового кадра допускает как текущий, так и равномерный условный шаг; точные оси и шарниры не установлены.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4",
+        "BATANOV-2026",
+        "ARSENAL-2026-PAIR",
+        "ALMA-2025-FIG2"
+      ]
+    },
+    {
+      "id": "body",
+      "title": "Рама и защитный кожух",
+      "A": null,
+      "B": "На №2 и №4 у низкого кожуха различимы скруглённые плечи и уплощённая верхняя часть.",
+      "C": "Сечения, ширина, точное число поперечин и места соединения рамы с бортами.",
+      "sources": [
+        "SKTB2",
+        "SKTB4"
+      ]
+    },
+    {
+      "id": "turret",
+      "title": "Поворотная опора",
+      "A": "Манипулятор входит в состав комплекса.",
+      "B": "Открытая опора и боковые стойки различимы под основанием стрелы.",
+      "C": "Ось вращения, посадки и задние поперечины.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4"
+      ]
+    },
+    {
+      "id": "arm",
+      "title": "Стрела",
+      "A": "Манипулятор несёт сменный орган.",
+      "B": "Продольные и наклонные элементы, наружные ребристые элементы и концевые щеки. Другие ракурсы стрелы доступны, но метрическая регистрация ещё не выполнена.",
+      "C": "Поперечные связи, внутренние пролёты, размеры и положение пальцев привода. Положение приводов в модели вычисляется по подвижным точкам крепления.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4",
+        "SKTB9",
+        "ARSENAL-2026-DEMO",
+        "ARSENAL-2026-GRIP"
+      ]
+    },
+    {
+      "id": "gripper",
+      "title": "Двупалый схват",
+      "A": "Сменный двупалый схват.",
+      "B": "Подвесная рамка и широкие пластины расходящихся губок на №2 и №3. Репродукция стендового снимка показывает внешнюю головку и узлы в ином ракурсе, без заводских размеров.",
+      "C": "Разделение на неподвижные и подвижные элементы, оси раскрытия и ориентация подвеса. Пара параллельных рычагов — кинематическое приближение. Точные оси, закон движения и привод по снимкам не установлены.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB3",
+        "ARSENAL-2026-GRIP"
+      ]
+    },
+    {
+      "id": "breaker-arm",
+      "title": "Молоток на стреле",
+      "A": "Молоток может устанавливаться вместо схвата.",
+      "B": "На №9 видны удлинённый корпус и тонкий рабочий стержень.",
+      "C": "Конструкция переходника и соединения рабочих сегментов.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB9"
+      ]
+    },
+    {
+      "id": "breaker-loader",
+      "title": "Молоток на погрузчике",
+      "A": "Документировано второе место установки молотка.",
+      "B": null,
+      "C": "В модели молоток заменяет ковш и поворачивается с его осью. Снимок этой конфигурации среди №2, 3, 4 и 9 отсутствует. Геометрия адаптера и сохранение свободной подвесной головки условны.",
+      "sources": [
+        "SKTB-TEXT"
+      ]
+    },
+    {
+      "id": "bucket",
+      "title": "Фронтальный погрузчик",
+      "A": "Фронтальный погрузчик.",
+      "B": "Внешние рычаги и цельная рабочая кромка видны на №2 и №4.",
+      "C": "Продольный профиль ковша, глубокие участки полости, смещение оси впереди ходовой и места крепления приводов. Высота рабочей кромки считается по вершинам её сетки.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4"
+      ]
+    },
+    {
+      "id": "cameras",
+      "title": "Телевизионная система",
+      "A": "Телевизионное наблюдение.",
+      "B": "На наружной опоре различимы корпуса.",
+      "C": "Назначение каждого видимого цилиндра, местоположение каждой камеры, объективы и вид кронштейнов.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB3",
+        "SKTB4"
+      ]
+    },
+    {
+      "id": "cable",
+      "title": "Связной кабель и кабелеукладчик",
+      "A": "При модернизации изменены укладка и точка выхода кабеля.",
+      "B": "На №2 и №4 кабель уходит за край корпуса.",
+      "C": "Диаметр и трасса наружного кабеля. Внутренний механизм не локализован и не смоделирован.",
+      "sources": [
+        "SKTB-TEXT",
+        "SKTB2",
+        "SKTB4"
+      ]
+    },
+    {
+      "id": "dock",
+      "title": "Стыковочное приспособление",
+      "A": "Разработчик подтверждает полуавтоматическое сцепное устройство (рис. 7). В описании эвакуации упомянуто буксирное кольцо повреждённой машины. Приспособление на рис. 10 является отдельным средством эвакуации, не постоянным узлом машины.",
+      "B": null,
+      "C": "Точная геометрия и расположение сцепного устройства, буксирного кольца и ответной части не установлены. Рис. 7 и 10–12 не осмотрены в проверке 24.11.2026. Геометрия не добавлена.",
+      "sources": [
+        "SKTB-TEXT"
+      ]
+    },
+    {
+      "id": "dose",
+      "title": "Дозиметрия",
+      "A": "Таблица 2 описания СКТБ ПР прямо указывает дозиметр ИМД-21 среди оборудования дозиметрической разведки Ч-ХВ-2 в 1987 году.",
+      "B": null,
+      "C": "Местоположение, способ монтажа, форма корпуса и наличие прибора в каждой конфигурации не подтверждены изображениями. Трёхмерная форма исключена.",
+      "sources": [
+        "SKTB-TEXT"
+      ]
+    }
+  ],
+  "trackFit": {
+    "landmarks": "mobot-qa/demo-2026-11-18/sktb-2-landmarks-manual.json",
+    "originalPixels": [
+      2786,
+      2106
+    ],
+    "sceneScale": "1.78 / (1980 − 238)",
+    "centresUncertaintyPx": 8,
+    "lowerRadiusUncertaintyPx": 12,
+    "endRadiusUncertaintyPx": 15,
+    "method": "Вручную размеченные радиусы и абсциссы перенесены в условный масштаб. Полоса проходит по выпуклой огибающей. Камера не откалибрована; один снимок даёт перспективное сокращение, а зеркальное воспроизведение второй стороны — гипотеза. На №4 по шести удержанным центрам RMS 8,18 px на копии шириной 1000 px; результат чувствителен к выбору камеры."
+  },
+  "limitations": [
+    "Не получены заводские сборочные чертежи, абсолютный масштаб и истинные пределы движений.",
+    "Пересечения габаритов служат предварительным предупреждением. При свободной установке регуляторов допустимы коллизии.",
+    "Видимая связность габаритов и совпадение осей не доказывают сплошность контакта всех поверхностей, прочность и динамическую устойчивость.",
+    "Стыковка, дозиметр и скрытый барабан документированы без предполагаемой 3D-геометрии.",
+    "Тест 23.11.2026: непрерывная виртуальная траектория даёт до 0,001101254 условной единицы выхода грунтозацепа за произвольную плоскость y=0,14 и скачок локальной касательной 3,75°. Величины C, не параметры настоящего Ч-ХВ-2.",
+    "СКТБ ПР описывает полиуретановые траки базового Ч-ХВ (1986), но материал траков Ч-ХВ-2 (1987) не подтверждён. Рекомендация об усилении замков не является доказательством конкретной конструкции.",
+    "24.11.2026: соседние условные прямоугольные основания траков пересекаются при части проверенных фаз; периодическая касательная уменьшает агрегированное число случаев, но не устраняет наихудшее пересечение. Это не подтверждение конструкции настоящего трака.",
+    "25.11.2026: две внутренние фаски условных оснований устраняют соседние пересечения в дискретных проверках кандидата. Исторический профиль не установлен, браузерный выпуск не выполнен, дефект выхода грунтозацепов ниже условной опоры сохраняется.",
+    "26.11.2026: непрерывная численная оценка соседних профилей кандидата с фасками положительна; устранение проникновения в условную опору посредством снятия наружной грани грунтозацепа на 0.0011 не доказывает реальный контакт или исторический профиль. Кандидат не выпущен.",
+    "26.11.2026: v23 выпущена на основании проверенной v23-lab; геометрия ходовой, её размеры и условная опорная плоскость имеют класс C. Историческая конструкция балансиров не восстановлена.",
+    "26.11.2026: исходная v23 пропорционально масштабирует условные корпус и шток приводов. Лабораторный кандидат фиксирует их длины, но не прошёл полную проверку коллизий и браузерную приёмку; реальные приводы и их размеры неизвестны.",
+    "26.11.2026: поздняя ремонтная сборка, использовавшаяся в 1997 году, не равнозначна исходным экземплярам 1987 года. Сведения о музейном экземпляре требуют проверки сохранности и идентичности.",
+    "27.11.2026: v24-actuator-lab не принят: на реальных треугольниках подтверждены дополнительные пересечения с губкой схвата и внутренними деталями стрелы. v24b ограничивает габарит условных цилиндров исходным объёмом v23, но не устраняет исходные пересечения. Реальная кинематика и размещение приводов ещё требуют независимой фотопривязки."
+  ],
+  "controls": [
+    "overview",
+    "side",
+    "breaker-arm",
+    "breaker-loader"
+  ],
+  "comparisons": [
+    {
+      "photo": 4,
+      "part": "кожух",
+      "data": "research/mobot/1987/night-20261118/hood-results.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-hood.jpg",
+      "role": "independent"
+    },
+    {
+      "photo": 3,
+      "part": "щека схвата",
+      "data": "research/mobot/1987/night-20261118/jaw-profile.json",
+      "image": "research/mobot/1987/night-20261118/SKTB3-jaw.jpg",
+      "role": "independent"
+    },
+    {
+      "photo": 9,
+      "part": "молоток на стреле",
+      "data": "research/mobot/1987/night-20261118/breaker-photo.json",
+      "image": "research/mobot/1987/night-20261118/SKTB9-breaker.jpg",
+      "role": "development"
+    },
+    {
+      "photo": 3,
+      "part": "раскрытие двух губок",
+      "data": "research/mobot/1987/night-20261118/jaw-opening.json",
+      "image": "research/mobot/1987/night-20261118/SKTB3-opening.jpg",
+      "role": "registration on right cheek; residual measured on left"
+    },
+    {
+      "photo": 4,
+      "part": "наружная концевая пластина и колпачок оси",
+      "data": "research/mobot/1987/night-20261118/boom-cheek.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-boom-cheek.jpg",
+      "role": "independent; local end-plate fit on SKTB2"
+    },
+    {
+      "photo": 4,
+      "part": "Ребристый элемент и верхний пояс стрелы",
+      "data": "research/mobot/1987/night-20261118/boom-pose.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-boom-pose.jpg",
+      "role": "Shape fitted on SKTB2. SKTB4 checks shape with its previously fitted pose held fixed."
+    },
+    {
+      "photo": 4,
+      "part": "Верхняя кромка щеки ковша",
+      "data": "research/mobot/1987/night-20261118/bucket-cheek.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-bucket.jpg",
+      "role": "Форма по №2, проверка по №4 с регистрацией по двум углам. Нижний контур закрыт снегом."
+    },
+    {
+      "photo": 4,
+      "part": "Нижняя граница наружной боковины ковша",
+      "data": "research/mobot/1987/night-20261118/bucket-heel.json",
+      "image": "research/mobot/1987/night-20261118/SKTB4-bucket-heel.jpg",
+      "role": "Форма по №2, независимая сверка открытого заднего участка по №4. Рабочая кромка в снегу исключена."
+    }
+  ],
+  "modelQA": {
+    "date": "2026-11-23",
+    "source": "scripts/mobot-v22-tread-footprint.cjs",
+    "report": "research/mobot/1987/2026-11-23-track-continuous.md",
+    "evidenceClass": "C",
+    "kind": "2D virtual track envelope, uncalibrated scene",
+    "sampledPenetrationScene": 0.001078296,
+    "continuousPenetrationScene": 0.001101254,
+    "virtualPathFractionWithCleatBelowDatum": 0.288123954,
+    "maxTangentJumpDegrees": 3.75,
+    "historicalTrackPitchMeasured": false,
+    "actualGroundPlaneCertified": false,
+    "realSuspensionTopologyCertified": false,
+    "modelGeometryChanged": false,
+    "renderedThreeJS": {
+      "date": "2026-11-24",
+      "run": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45282237977",
+      "report": "research/mobot/1987/2026-11-24-track-threejs.md",
+      "json": "research/mobot/1987/2026-11-24-track-threejs-qa.json",
+      "instanceSamplesPerSide": 11514,
+      "minRenderedCleatYScene": 0.138954872,
+      "approxDenseMinCleatYScene": 0.138942982,
+      "polygonOnlyIdealMinCleatYScene": 0.138898746,
+      "actualSeamTangentJumpDegrees": 3.75,
+      "precision": "Float32 matrices; no physical calibration",
+      "evidenceClass": "C",
+      "geometryModified": false
+    },
+    "periodicInstancedCandidate": {
+      "date": "2026-11-24",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-24-periodic-instanced-neighbours.md",
+      "json": "research/mobot/1987/2026-11-24-periodic-instanced-neighbours-qa.json",
+      "test": "scripts/mobot-v22-periodic-instanced-neighbours.mjs",
+      "baselineModelBlob": "3a6ff7cbfc9a88d2937f6a31207d5ee1474479bb",
+      "threeRevision": "180",
+      "qualityModes": [
+        "desktop",
+        "mobile"
+      ],
+      "phasesPerMode": 246,
+      "instanceSamplesPerVariantPerMode": 56088,
+      "adjacentPairChecksPerVariantPerMode": 224352,
+      "baselineNearSeamDegrees": 3.750000043202409,
+      "candidateNearSeamDegrees": 0.0003751416774999028,
+      "baselineAndCandidateMinAdjacentPadAxisGapScene": -0.0013208853753846842,
+      "baselineAdjacentPadOverlapCount": 3516,
+      "candidateAdjacentPadOverlapCount": 3504,
+      "candidateBrowserVerified": false,
+      "candidateReleasePublished": false,
+      "physicalScaleKnown": false
+    },
+    "padChamferCandidate": {
+      "date": "2026-11-25",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-25-pad-chamfer.md",
+      "numericQA": "research/mobot/1987/2026-11-25-pad-chamfer-sweep-qa.json",
+      "meshQA": "research/mobot/1987/2026-11-25-pad-chamfer-mesh-qa.json",
+      "numericSamples": 41854,
+      "meshPhasesPerMode": 246,
+      "meshPositionsPerVariantPerMode": 56088,
+      "meshAdjacentChecksPerVariantPerMode": 224352,
+      "chamferScene": 0.004,
+      "sectionAreaRemovedFraction": 0.023381164994232928,
+      "baselinePeriodicOverlapCount": 3504,
+      "candidateOverlapCount": 0,
+      "candidateMinSignedAxisGapScene": 0.00044826967846156585,
+      "centerDelta": 0,
+      "minCleatYScene": 0.13893970261886712,
+      "datumScene": 0.14,
+      "physicalScaleKnown": false,
+      "originalProfileEstablished": false,
+      "continuousClearanceCertified": false,
+      "candidateBrowserVerified": false,
+      "candidateReleasePublished": false
+    },
+    "continuousTrackCandidate": {
+      "date": "2026-11-26",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-26-track-continuous-bounds.md",
+      "continuousQA": "research/mobot/1987/2026-11-26-track-continuous-bounds-qa.json",
+      "meshQA": "research/mobot/1987/2026-11-26-cleat-inset-mesh-qa.json",
+      "continuousTest": "scripts/mobot-v22-track-continuous-bounds.cjs",
+      "meshTest": "scripts/mobot-v22-cleat-inset-mesh.mjs",
+      "adjacentPadGapNumericalLowerBoundScene": 0.000013320208384182564,
+      "originalCleatMinYBoundsScene": [
+        0.13893692103585303,
+        0.13893693978533145
+      ],
+      "outerCenterMinYBoundsScene": [
+        0.13965398738563028,
+        0.1396539874856303
+      ],
+      "insetScene": 0.0011,
+      "insetMinYBoundsScene": [
+        0.14003162423519244,
+        0.14003164298467086
+      ],
+      "insetMeshSampleMinYScene": 0.14003440580445414,
+      "datumScene": 0.14,
+      "formalIntervalArithmetic": false,
+      "physicalContactVerified": false,
+      "physicalScaleKnown": false,
+      "historicalProfileVerified": false,
+      "candidateBrowserVerified": false,
+      "candidateReleasePublished": false
+    },
+    "almaMaterFigure2": {
+      "date": "2026-11-26",
+      "evidenceClass": "C",
+      "landmarks": "research/mobot/1987/2026-11-26-alma-mater-figure2-landmarks.json",
+      "qa": "research/mobot/1987/2026-11-26-alma-mater-figure2-qa.json",
+      "report": "research/mobot/1987/2026-11-26-alma-mater-figure2.md",
+      "primaryHoldoutRmsScreenPx": 1.5992450492761578,
+      "equalPitchHoldoutRmsScreenPx": 1.3278857721026045,
+      "pickAllowanceScreenPx": 6,
+      "modelGeometryChanged": false,
+      "physicalScaleKnown": false
+    },
+    "actuatorRigidityCandidate": {
+      "date": "2026-11-26",
+      "evidenceClass": "C",
+      "report": "research/mobot/1987/2026-11-26-actuator-rigidity.md",
+      "model": "mobot-engineering-v24-actuator-lab-model.js",
+      "qa": "research/mobot/1987/2026-11-26-actuator-rigidity-qa.json",
+      "test": "scripts/mobot-v24-actuator-rigidity.mjs",
+      "posesPerQuality": 1989,
+      "actuatorCount": 3,
+      "nonActuatorMeshes": 293,
+      "checkedOtherMeshPoseCountPerQuality": 27,
+      "maxAnchorDeltaScene": 0,
+      "continuousRangeCertified": false,
+      "collisionWithOtherComponentsVerified": false,
+      "browserVerified": false,
+      "releasePublished": false,
+      "followup": {
+        "date": "2026-11-27",
+        "screen": "research/mobot/1987/2026-11-27-actuator-added-volume-qa.json",
+        "exactWitness": "research/mobot/1987/2026-11-27-actuator-witness-qa.json",
+        "decision": "Rejected for release: additional intersections with existing model geometry confirmed; some intersections already in v23.",
+        "successor": "mobot-engineering-v24b-actuator-lab-model.js",
+        "successorQA": "research/mobot/1987/2026-11-27-actuator-envelope-qa.json",
+        "report": "research/mobot/1987/2026-11-27-actuator-collision-review.md",
+        "physicalScaleKnown": false,
+        "fullCollisionClearanceVerified": false,
+        "browserVerified": false
+      }
+    }
+  },
+  "trackProvenance": {
+    "verifiedOn": "2026-11-23",
+    "type": "historical source attribution, not metrology",
+    "scaleEstablished": false,
+    "base1986": {
+      "model": "Мобот Ч-ХВ",
+      "polyurethaneTrackLinksMentioned": true,
+      "source": "SKTB-TEXT",
+      "confidence": "A: explicit primary developer text"
+    },
+    "modern1987": {
+      "model": "Мобот Ч-ХВ-2",
+      "trackedChassisPhotographed": true,
+      "photoSources": [
+        "SKTB2",
+        "SKTB4"
+      ],
+      "trackMaterial": null,
+      "trackMaterialHistoricallyVerified": false,
+      "trackPitchHistoricallyMeasured": false,
+      "balancersExistenceSupported": true,
+      "balancersGeometryHistoricallyVerified": false,
+      "confidence": "B: photographed external profile; C: material, pitch and hidden topology"
+    },
+    "lockReinforcement": {
+      "source": "BATANOV-2026",
+      "historicalCommissionRecommendation": true,
+      "implementationOn1987Established": false,
+      "geometryModeled": false,
+      "confidence": "designers' retrospective: recommendation only, not an assembly drawing"
+    },
+    "reconstruction": {
+      "linksPerSide": 114,
+      "linksPerSideHistoricMeasure": false,
+      "meshMaterialNameDoesNotAssertComposition": true
+    }
+  },
+  "crossVariantExclusions": {
+    "reference": "research/mobot/1987/2026-11-23-mrk46m-attribution.md",
+    "comparedWith": "МРК-46М",
+    "photoCaption": "МРК-46М — слева; Мобот-Ч-ХВ-2 — справа",
+    "evidenceClassForMobot": "NOT APPLICABLE",
+    "source": "https://www.bnti.ru/showart.asp?aid=464&lvl=04.03.",
+    "corroboratingCopy": "https://www.vrsystems.ru/robotic-systems-for-use-in-emergency-situations-2.htm",
+    "prohibitedTransfers": [
+      "six road wheels per side",
+      "symmetrical torsion-bar suspension with coupled parallel torsion bars",
+      "eight reinforced polyurethane track segments",
+      "motor-sprocket transmission"
+    ],
+    "geometryOfMobotEstablishedByTheseStatements": false,
+    "action": "Do not translate the MRK-46M design into v22 without primary evidence specifically identifying the 1987 Mobot."
+  },
+  "additionalPhotoAudit": "research/mobot/1987/2026-11-24-extra-photo-evidence.md",
+  "releaseStatus": "research-release",
+  "candidateChanges": {
+    "evidenceClass": "C",
+    "periodicTangent": true,
+    "padInnerChamferScene": 0.004,
+    "cleatOuterFaceInsetScene": 0.0011,
+    "trackCentresChanged": false,
+    "historicalMeasurementsAdded": false,
+    "physicalContactVerified": false,
+    "browserAcceptance": "success: v23 release 34/34 local and 37/37 published Pages, including latest-to-v22",
+    "staticFallback": "v22 archive frames (explicitly marked)",
+    "modelQA": "research/mobot/1987/2026-11-26-v23-lab-integration-qa.json",
+    "validatedCandidateRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45791515471",
+    "candidatePagesVerified": true,
+    "releaseRun": "https://github.com/STEP3DLab/vr_anapa/actions/runs/45794284267",
+    "releasePagesVerified": true
+  },
+  "postRepairAttributionGuard": {
+    "report": "research/mobot/1987/2026-11-26-postrepair-museum-provenance.md",
+    "registry": "research/mobot/1987/2026-11-26-postrepair-museum-provenance.json",
+    "repairCombinationDocumented": true,
+    "lateConfigurationAs1987Allowed": false,
+    "museumCurrentLocationKnown": false,
+    "videoFramesInspected": false
+  }
+}

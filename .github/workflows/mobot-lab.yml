@@ -19,8 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Check archive registration, moving assemblies and XR interactions
-        run: node --test mobot-lab/tests/lab.test.mjs
+      - name: Check archive registration, isolation, pose contacts and XR interactions
+        run: node --test mobot-lab/tests/*.test.mjs
       - name: Prepare the browser test driver
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund playwright@1.56.1
       - name: Exercise desktop, mobile and offline exhibition
