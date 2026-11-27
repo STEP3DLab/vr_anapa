@@ -1,0 +1,224 @@
+{
+  "date": "2026-11-27",
+  "baselineBlob": "ff0b38f601ca365653f37a74edf8da796e3e13fd",
+  "parentLabBlob": "acd056377fe0c4dc0a850e6b65e651d991a13017",
+  "threeBlob": "70c40977daa0f6e1e312c6b58e9bfe49cb5a87a4",
+  "model": "mobot-engineering-v24b-actuator-lab-model.js",
+  "releaseAllowed": false,
+  "browserVerified": false,
+  "existingCollisionsResolved": false,
+  "continuousEnvelopeInclusionAnalytic": true,
+  "scope": "Only union of same-axis two cylinders in slider ranges. Does not resolve pre-existing intersections, fasteners or real mechanism design; no source dimensions.",
+  "threeRevision": "180",
+  "modelOnly": true,
+  "physicalScaleKnown": false,
+  "method": "Rigid pivot => D²=c0+cCos*cos(theta)+cSin*sin(theta); fit three orthogonal angles and evaluate endpoints and stationary points. Cross-check independent slider grid. Cylinder envelope inclusion follows axial interval inclusion and same regular polygon radii and orientation.",
+  "qualities": {
+    "desktop": [
+      {
+        "actuator": "arm",
+        "key": "arm",
+        "limits": [
+          -18,
+          25
+        ],
+        "coefficients": {
+          "c0": 0.36348095039999995,
+          "cos": 0.23224170493744037,
+          "sin": -0.13101482300286027
+        },
+        "criticalAngles": [
+          -18,
+          25
+        ],
+        "minDistance": 0.7201348202244743,
+        "maxDistance": 0.7904693188601051,
+        "fixedHousing": 0.488,
+        "fixedRod": 0.4167885870515141,
+        "margins": {
+          "outerHousing": 0.001691677752642562,
+          "rodBehindBase": 0.30334623317296017,
+          "insertion": 0.11431926819140903,
+          "rodExposed": 0.2321348202244743
+        },
+        "maxDistanceSquaredFitError": 3.3306690738754696e-16,
+        "maxAxisError": 2.220446049250313e-16,
+        "maxAnchorOffset": 2.486410087150353e-16,
+        "maxLengthError": 1.6653345369377348e-16,
+        "maxEnvelopeExcess": 0,
+        "gridPoses": 7920
+      },
+      {
+        "actuator": "loader-left",
+        "key": "bucket",
+        "limits": [
+          -8,
+          36
+        ],
+        "coefficients": {
+          "c0": 0.513,
+          "cos": 0.3232,
+          "sin": -0.02799999999999986
+        },
+        "criticalAngles": [
+          -8,
+          36,
+          -4.951380619943663
+        ],
+        "minDistance": 0.8706413185220385,
+        "maxDistance": 0.9151014173407461,
+        "fixedHousing": 0.5730000000000001,
+        "fixedRod": 0.4990521241386679,
+        "margins": {
+          "outerHousing": 0.0016232702245453368,
+          "rodBehindBase": 0.3715891943833706,
+          "insertion": 0.1569507067979219,
+          "rodExposed": 0.29764131852203846
+        },
+        "maxDistanceSquaredFitError": 2.220446049250313e-16,
+        "maxAxisError": 2.220446049250313e-16,
+        "maxAnchorOffset": 1.2412670766236366e-16,
+        "maxLengthError": 2.220446049250313e-16,
+        "maxEnvelopeExcess": 0,
+        "gridPoses": 7920
+      },
+      {
+        "actuator": "loader-right",
+        "key": "bucket",
+        "limits": [
+          -8,
+          36
+        ],
+        "coefficients": {
+          "c0": 0.513,
+          "cos": 0.3232,
+          "sin": -0.02799999999999986
+        },
+        "criticalAngles": [
+          -8,
+          36,
+          -4.951380619943663
+        ],
+        "minDistance": 0.8706413185220385,
+        "maxDistance": 0.9151014173407461,
+        "fixedHousing": 0.5730000000000001,
+        "fixedRod": 0.4990521241386679,
+        "margins": {
+          "outerHousing": 0.0016232702245453368,
+          "rodBehindBase": 0.3715891943833706,
+          "insertion": 0.1569507067979219,
+          "rodExposed": 0.29764131852203846
+        },
+        "maxDistanceSquaredFitError": 2.220446049250313e-16,
+        "maxAxisError": 2.220446049250313e-16,
+        "maxAnchorOffset": 1.2412670766236366e-16,
+        "maxLengthError": 2.220446049250313e-16,
+        "maxEnvelopeExcess": 0,
+        "gridPoses": 7920
+      }
+    ],
+    "mobile": [
+      {
+        "actuator": "arm",
+        "key": "arm",
+        "limits": [
+          -18,
+          25
+        ],
+        "coefficients": {
+          "c0": 0.36348095039999995,
+          "cos": 0.23224170493744037,
+          "sin": -0.13101482300286027
+        },
+        "criticalAngles": [
+          -18,
+          25
+        ],
+        "minDistance": 0.7201348202244743,
+        "maxDistance": 0.7904693188601051,
+        "fixedHousing": 0.488,
+        "fixedRod": 0.4167885870515141,
+        "margins": {
+          "outerHousing": 0.001691677752642562,
+          "rodBehindBase": 0.30334623317296017,
+          "insertion": 0.11431926819140903,
+          "rodExposed": 0.2321348202244743
+        },
+        "maxDistanceSquaredFitError": 3.3306690738754696e-16,
+        "maxAxisError": 2.220446049250313e-16,
+        "maxAnchorOffset": 2.486410087150353e-16,
+        "maxLengthError": 1.6653345369377348e-16,
+        "maxEnvelopeExcess": 0,
+        "gridPoses": 7920
+      },
+      {
+        "actuator": "loader-left",
+        "key": "bucket",
+        "limits": [
+          -8,
+          36
+        ],
+        "coefficients": {
+          "c0": 0.513,
+          "cos": 0.3232,
+          "sin": -0.02799999999999986
+        },
+        "criticalAngles": [
+          -8,
+          36,
+          -4.951380619943663
+        ],
+        "minDistance": 0.8706413185220385,
+        "maxDistance": 0.9151014173407461,
+        "fixedHousing": 0.5730000000000001,
+        "fixedRod": 0.4990521241386679,
+        "margins": {
+          "outerHousing": 0.0016232702245453368,
+          "rodBehindBase": 0.3715891943833706,
+          "insertion": 0.1569507067979219,
+          "rodExposed": 0.29764131852203846
+        },
+        "maxDistanceSquaredFitError": 2.220446049250313e-16,
+        "maxAxisError": 2.220446049250313e-16,
+        "maxAnchorOffset": 1.2412670766236366e-16,
+        "maxLengthError": 2.220446049250313e-16,
+        "maxEnvelopeExcess": 0,
+        "gridPoses": 7920
+      },
+      {
+        "actuator": "loader-right",
+        "key": "bucket",
+        "limits": [
+          -8,
+          36
+        ],
+        "coefficients": {
+          "c0": 0.513,
+          "cos": 0.3232,
+          "sin": -0.02799999999999986
+        },
+        "criticalAngles": [
+          -8,
+          36,
+          -4.951380619943663
+        ],
+        "minDistance": 0.8706413185220385,
+        "maxDistance": 0.9151014173407461,
+        "fixedHousing": 0.5730000000000001,
+        "fixedRod": 0.4990521241386679,
+        "margins": {
+          "outerHousing": 0.0016232702245453368,
+          "rodBehindBase": 0.3715891943833706,
+          "insertion": 0.1569507067979219,
+          "rodExposed": 0.29764131852203846
+        },
+        "maxDistanceSquaredFitError": 2.220446049250313e-16,
+        "maxAxisError": 2.220446049250313e-16,
+        "maxAnchorOffset": 1.2412670766236366e-16,
+        "maxLengthError": 2.220446049250313e-16,
+        "maxEnvelopeExcess": 0,
+        "gridPoses": 7920
+      }
+    ]
+  }
+}
