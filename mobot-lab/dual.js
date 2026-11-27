@@ -3,7 +3,7 @@ import {machines, demonstrations} from './catalog.js';
 import {createViewer} from './viewer.js';
 import {escapeHTML as h} from './archive.js';
 import {orientComparisonCamera} from './scene-link.js';
-import {setupLinkSharing} from './presentation.js';
+import {setupLinkSharing,putQR} from './presentation.js';
 
 // Both panes use the very same accepted factories as the main laboratory.
 // Their geometry and control state remain independent.
@@ -21,15 +21,18 @@ export function openDual({openModal, onModalCleanup, select, getLink, closed}) {
     '<label class="select-title" for="dualURL">Адрес двух моделей</label><input id="dualURL" class="url-field" type="url" readonly><button id="dualCopy" class="modal-action">Скопировать ссылку</button><p id="dualCopyStatus" role="status"></p></details>', 'Два робота рядом');
   const dialog=document.getElementById('dialog');dialog.classList.add('dual-dialog');
   const status=document.getElementById('dualStatus'), motion=document.getElementById('dualMotion');
-  const sharing=document.getElementById('dualShare');let sharingReady=false;
-  sharing.hidden=!getLink;
+  const sharing=document.getElementById('dualShare'),shareLink=getLink?.();let sharingReady=false;
+  sharing.hidden=!shareLink;
+  // The address and copy action are ready when the dialog opens. Only the
+  // QR image waits for the details panel's deferred toggle event.
+  if(shareLink)setupLinkSharing(shareLink,{
+    input:document.getElementById('dualURL'),copy:document.getElementById('dualCopy'),
+    status:document.getElementById('dualCopyStatus')
+  });
   sharing.addEventListener('toggle',()=>{
-    if(!sharing.open||sharingReady||disposed)return;
+    if(!shareLink||!sharing.open||sharingReady||disposed)return;
     sharingReady=true;
-    setupLinkSharing(getLink(),{
-      canvas:document.getElementById('dualQR'),input:document.getElementById('dualURL'),
-      copy:document.getElementById('dualCopy'),status:document.getElementById('dualCopyStatus')
-    });
+    putQR(shareLink,document.getElementById('dualQR'));
   });
   function stop() {
     cancelAnimationFrame(animation);animation=0;
