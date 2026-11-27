@@ -1,4 +1,4 @@
-import {inspectSurfaces} from './engine/contact.js';
+import {inspectSurfaces,inspectGroupPairs} from './engine/contact.js';
 
 // Evaluate the assembled model in its normal scene coordinates. The viewer
 // must restore an isolated/exploded view before calling this helper.
@@ -72,4 +72,54 @@ export function assessPose(model, tool) {
       : 'Предварительное предупреждение не подтвердилось: в проверенных парах поверхностей установлен зазор.');
   }
   return {messages, report};
+}
+
+const names1986 = {
+  'grapple/bucket':'грейфера и ковша',
+  'grapple/hood':'грейфера и арочного кожуха',
+  'grapple/deck':'грейфера и настила платформы',
+  'grapple/front-equipment':'грейфера и переднего оборудования',
+  'bucket/front-equipment':'ковша и переднего оборудования'
+};
+
+export function pairs1986(model) {
+  const {grab,scoop}=model.mechanisms;
+  const hood=model.root.getObjectByName('Арочный кожух');
+  const deck=model.root.getObjectByName('Настил платформы');
+  const front=model.root.getObjectByName('Оборудование на конце у ковша');
+  return [
+    {id:'grapple/bucket',a:grab,b:scoop},
+    {id:'grapple/hood',a:grab,b:hood},
+    {id:'grapple/deck',a:grab,b:deck},
+    {id:'grapple/front-equipment',a:grab,b:front},
+    {id:'bucket/front-equipment',a:scoop,b:front}
+  ];
+}
+
+// The 1986 model has a different grapple and loader. Never reuse the 1987
+// group names or silently classify an untested machine as collision-free.
+export function assess1986Pose(model) {
+  const report={status:'unavailable',modelVersion:model?.root?.userData?.version??null,modelOnly:true,allPairsChecked:false,
+    scope:{contactPairs:Object.keys(names1986),nominalGround:true,
+      excluded:'Стрела, приводы, остальные пары деталей и другие положения не проверяются.'},ground:null,pairs:[]};
+  const messages=[];
+  if(typeof model?.auditPose!=='function'||!model.mechanisms)return {messages:['Проверка контактов для этой модели недоступна.'],report};
+  try{
+    model.root.updateMatrixWorld(true);
+    const {bucketClearance,grappleClearance}=model.auditPose();
+    if(![bucketClearance,grappleClearance].every(Number.isFinite))throw Error('Некорректный просвет');
+    report.ground={bucketClearance,grappleClearance,below:Math.min(bucketClearance,grappleClearance)<-.001};
+    if(report.ground.below)messages.push('Рабочий орган ниже условной плоскости опоры модели.');
+    report.pairs=inspectGroupPairs(pairs1986(model));
+    for(const pair of report.pairs){
+      if(pair.status==='confirmed')messages.push('Подтверждён контакт поверхностей '+names1986[pair.id]+' в модели.');
+      else if(pair.status==='unresolved')messages.push('Возможен контакт '+names1986[pair.id]+'; зазор не установлен.');
+    }
+    report.status=report.ground.below||report.pairs.some(p=>p.status==='confirmed')?'confirmed':
+      report.pairs.some(p=>p.status==='unresolved')?'unresolved':'clear-in-checked-scope';
+  }catch(error){
+    report.status='unavailable';report.refinementUnavailable=String(error);
+    messages.push('Проверка выбранных контактов не завершена.');
+  }
+  return {messages,report};
 }
