@@ -512,6 +512,10 @@ async function directComparison(browser) {
     const dialog=page.locator('#dialog');
     await dialog.waitFor({state:'visible'});
     assert.equal(await dialog.locator('.dual-surface canvas').count(),2);
+    await page.waitForFunction(()=>new URL(location.href).searchParams.get('compare')==='1'&&new URL(location.href).searchParams.get('z')==='1.400');
+    await page.reload();
+    await dialog.waitFor({state:'visible'});
+    assert.equal(await dialog.locator('.dual-surface canvas').count(),2);
     await page.locator('#dualShare summary').click();
     const address=new URL(await page.locator('#dualURL').inputValue());
     assert.equal(address.pathname,'/vr_anapa/mobot-lab/');
