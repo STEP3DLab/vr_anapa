@@ -19,18 +19,21 @@ async function screenshotDifference(page, before, after) {
       const context = canvas.getContext('2d');context.drawImage(image,0,0);
       return context.getImageData(0,0,canvas.width,canvas.height).data;
     });
-    let squared = 0, changed = 0;
+    let squared = 0, changed = 0, significant = 0, maximum = 0;
     for (let i = 0; i < data[0].length; i += 4) {
-      let pixelChanged = false;
+      let pixelChanged = false, pixelSignificant = false;
       for (let channel = 0; channel < 3; channel++) {
         const difference = data[0][i+channel] - data[1][i+channel];
         squared += difference*difference;
         pixelChanged ||= difference !== 0;
+        pixelSignificant ||= Math.abs(difference) > 2;
+        maximum = Math.max(maximum,Math.abs(difference));
       }
       if (pixelChanged) changed++;
+      if (pixelSignificant) significant++;
     }
     const pixels = sizes[0].width*sizes[0].height;
-    return {sizes,sameSize,rms:Math.sqrt(squared/(pixels*3)),changedPixelFraction:changed/pixels};
+    return {sizes,sameSize,rms:Math.sqrt(squared/(pixels*3)),changedPixelFraction:changed/pixels,significantPixelFraction:significant/pixels,maximum};
   }, [before,after].map(buffer => 'data:image/png;base64,'+buffer.toString('base64')));
 }
 
@@ -319,7 +322,7 @@ async function exercise(browser, width, height, software) {
           const linkedDifference=await screenshotDifference(page,linked,await second.screenshot());
           console.log('Linked dual-view image difference:',JSON.stringify({viewport:[width,height],...linkedDifference,beforeBox:linkedBeforeBox,afterBox:await second.boundingBox()}));
           assert(linkedDifference.sameSize,'Linked view retains the same screenshot dimensions');
-          assert(linkedDifference.rms>0.5,'The second 3D camera follows the first while linked');
+          assert(linkedDifference.rms>5,'The linked camera produces a substantial visible turn, beyond raster noise');
           await page.locator('#dualSync').uncheck();
           await first.focus();
           await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
@@ -330,7 +333,10 @@ async function exercise(browser, width, height, software) {
           const independentDifference=await screenshotDifference(page,independent,await second.screenshot());
           console.log('Unlinked dual-view image difference:',JSON.stringify({viewport:[width,height],...independentDifference,beforeBox:independentBeforeBox,afterBox:await second.boundingBox()}));
           assert(independentDifference.sameSize,'Unlinked view retains the same screenshot dimensions');
-          assert(independentDifference.rms<=0.5,'Unlinked camera retains its own view within a sub-level RGB raster tolerance');
+          // A static GPU/compositor capture can differ at the final 8-bit color
+          // level. Require a strong separation from the visible linked turn.
+          assert(independentDifference.rms<=1 && independentDifference.rms<linkedDifference.rms/20,
+            'Unlinked camera retains its view within one RGB level and below 5% of the linked turn');
         }
         await dialog.locator('[data-dual-open="'+year+'"]').click();
         assert(!(await dialog.isVisible()));
