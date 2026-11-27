@@ -157,6 +157,132 @@ async function sharingClipboard(browser) {
   } finally {await page.close()}
 }
 
+async function consolidatedSceneTransitions(browser) {
+  const page=await browser.newPage({viewport:{width:1440,height:960},reducedMotion:'reduce'});
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  try {
+    await page.addInitScript(()=>{
+      window.copiedLinks=[];
+      Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async value=>{window.copiedLinks.push(value)}}});
+      const xr=new EventTarget();xr.isSessionSupported=async()=>false;
+      Object.defineProperty(navigator,'xr',{configurable:true,value:xr});
+    });
+    await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    const dialog=page.locator('#dialog');
+    const sceneKeys=['model','mode','pose','tool','part','isolate','view','z','detail'];
+    const sceneFields=url=>Object.fromEntries(sceneKeys.map(key=>[key,url.searchParams.get(key)]));
+    const shareURL=async()=>{
+      await page.locator('#share').click();
+      const url=new URL(await page.locator('#shareURL').inputValue());
+      assert.equal(url.searchParams.has('dual'),false,'Ordinary sharing must not request the comparison');
+      await dialog.press('Escape');return url;
+    };
+    const cameraFields=url=>['view','z'].map(key=>url.searchParams.get(key));
+    const poseFields=()=>page.locator('#joints input,#moreJoints input').evaluateAll(inputs=>
+      Object.fromEntries(inputs.map(input=>[input.id,input.value])));
+
+    // Give the machines deliberately different cameras through their controls.
+    await page.locator('[data-view="side"]').click();
+    await page.locator('#in').click();await page.locator('#in').click();
+    const firstCamera=cameraFields(await shareURL());
+    assert.equal(firstCamera[0],'side');assert(Number(firstCamera[1])>1);
+    await page.locator('[data-year="1987"]').click();
+    await page.locator('#tool').selectOption('breaker-arm');
+    await page.locator('#j-yaw').press('ArrowRight');await page.locator('#j-arm').press('ArrowRight');
+    await page.locator('[data-view="front"]').click();await page.locator('#in').click();
+    const secondCamera=cameraFields(await shareURL());
+    assert.equal(secondCamera[0],'front');assert(Number(secondCamera[1])>1);
+    assert.notEqual(firstCamera[1],secondCamera[1]);
+    for(const mode of ['drive','parts']) {
+      await page.locator('#tab-'+mode).click();
+      for(const [year,camera] of [[1986,firstCamera],[1987,secondCamera]]) {
+        await page.locator('[data-year="'+year+'"]').click();
+        assert.equal(await page.locator('#workbench').getAttribute('data-mode'),mode);
+        assert.deepEqual(cameraFields(await shareURL()),camera,'Each robot retains its view and zoom in '+mode);
+      }
+    }
+
+    // The shared comparison must carry the underlying single-model scene, too.
+    await page.locator('#partChoices [data-part="tool"]').click();
+    await page.locator('#isolatePart').click();
+    const mainScene=await shareURL(), expectedPose=await poseFields();
+    assert.equal(mainScene.searchParams.get('mode'),'parts');
+    assert.equal(mainScene.searchParams.get('tool'),'breaker-arm');
+    assert.equal(mainScene.searchParams.get('part'),'tool');
+    assert.equal(mainScene.searchParams.get('isolate'),'1');
+    await page.locator('#compareModels').click();
+    await page.locator('#dualShare > summary').click();
+    await page.waitForFunction(()=>document.querySelector('#dualShareURL')?.value);
+    const dualURL=new URL(await page.locator('#dualShareURL').inputValue());
+    assert.equal(dualURL.searchParams.get('dual'),'1');
+    assert.deepEqual(sceneFields(dualURL),sceneFields(mainScene));
+    await page.waitForFunction(()=>document.querySelector('#dualQR')?.width>100 && document.querySelector('#dualQR').height===document.querySelector('#dualQR').width);
+    await page.locator('#dualCopyLink').click();
+    await page.waitForFunction(url=>window.copiedLinks.at(-1)===url,dualURL.href);
+    assert.equal(await page.locator('#dualCopyStatus').innerText(),'Ссылка скопирована.');
+
+    // Use the shared query against the tested origin, then exercise an actual reload.
+    const reloadURL=new URL(base);reloadURL.search=dualURL.search;
+    await page.goto(reloadURL.href);await page.locator('#dialog.dual-dialog').waitFor();
+    await page.reload();await page.locator('#dialog.dual-dialog').waitFor();
+    await page.locator('#poster').waitFor({state:'hidden'});
+    assert.equal(await dialog.locator('.dual-surface canvas').count(),2);
+    await dialog.press('Escape');
+    await page.waitForURL(url=>!url.searchParams.has('dual'));
+    await page.locator('.dual-surface canvas').first().waitFor({state:'detached'});
+    assert.equal(await page.locator('#workbench').getAttribute('data-mode'),'parts');
+    assert.equal(await page.locator('#tool').inputValue(),'breaker-arm');
+    assert.equal(await page.locator('#partChoices [aria-pressed="true"]').getAttribute('data-part'),'tool');
+    assert.equal(await page.locator('#isolatePart').getAttribute('aria-pressed'),'true');
+    assert.deepEqual(await poseFields(),expectedPose);
+    assert.deepEqual(sceneFields(await shareURL()),sceneFields(mainScene));
+    await page.locator('#vr').click();
+    assert.equal(new URL(await page.locator('#shareURL').inputValue()).searchParams.has('dual'),false,'VR handoff must share the single-model scene');
+    await dialog.press('Escape');
+
+    await page.locator('#compareModels').click();
+    await page.locator('[data-dual-open="1986"]').click();
+    await dialog.waitFor({state:'hidden'});
+    await page.locator('.dual-surface canvas').first().waitFor({state:'detached'});
+    assert.equal(await page.locator('[data-year="1986"]').getAttribute('aria-pressed'),'true');
+    assert(await page.locator('#tab-drive').evaluate(el=>el===document.activeElement),'Selecting a comparison model must focus its control tab');
+    for(const year of [1987,1986]) {
+      await page.locator('[data-research-model="'+year+'"]').click();
+      assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
+      assert(await page.locator('[data-year="'+year+'"]').evaluate(el=>el===document.activeElement),'Materials must focus the selected model button');
+      const passport=page.locator('[data-research-passport="'+year+'"]');
+      await passport.click();
+      const download=dialog.locator('a[download]');
+      assert.equal(await download.count(),1);
+      assert.equal(await download.getAttribute('href'),'./data/'+year+'-passport.json');
+      assert.notEqual(await download.getAttribute('download'),null);
+      await dialog.press('Escape');assert(await passport.evaluate(el=>el===document.activeElement));
+    }
+    const archives=page.locator('#researchContent .download-grid a.download-card');
+    assert.equal(await archives.count(),2);
+    for(const archive of await archives.all()) {
+      assert.equal(await archive.getAttribute('target'),'_blank');
+      assert((await archive.getAttribute('rel')).split(/\s+/).includes('noopener'));
+      assert(new URL(await archive.getAttribute('href'),page.url()).searchParams.get('file').endsWith('.zip'));
+    }
+    // Start without saved per-model state: the first photo transition must
+    // preserve A's free camera before the registered photo replaces it.
+    await page.goto(base);await page.locator('#poster').waitFor({state:'hidden'});
+    await page.locator('[data-view="side"]').click();
+    await page.locator('#in').click();await page.locator('#in').click();
+    const beforeFirstPhoto=cameraFields(await shareURL());
+    await page.locator('#tab-photo').click();
+    await page.locator('[data-year="1987"]').click();
+    await page.locator('#tab-drive').click();
+    await page.locator('[data-year="1986"]').click();
+    assert.equal(await page.locator('#workbench').getAttribute('data-mode'),'drive');
+    assert.deepEqual(cameraFields(await shareURL()),beforeFirstPhoto,
+      'A drive → first photo → B → drive → A must restore A\'s free camera');
+    assert.deepEqual(errors,[]);
+    console.log('Shared dual view survives reload and restores its scene; per-model cameras, selection focus and material download attributes pass');
+  } finally {await page.close()}
+}
+
 async function compactControls(browser) {
   const page=await browser.newPage({viewport:{width:320,height:680},hasTouch:true,reducedMotion:'reduce'});
   try {
@@ -543,6 +669,7 @@ async function staticRobots(browser) {
     await staticRobots(browser);
     await vrAvailability(browser);
     await sharingClipboard(browser);
+    await consolidatedSceneTransitions(browser);
     await offlineUpdate(browser);
   } finally {await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

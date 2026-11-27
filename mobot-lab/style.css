@@ -196,6 +196,14 @@ dialog{width:min(760px,calc(100% - 24px));max-height:90dvh;padding:20px 23px;bor
 .dual-card>button{margin:13px 17px;font-size:14px;min-height:38px}
 .dual-actions{display:flex;gap:15px;align-items:center;flex-wrap:wrap;margin-top:18px}.dual-actions button{font-size:14px;min-height:40px}
 .dual-actions p{flex:1;margin:0}
+.dual-sharing{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.dual-sharing summary{font-size:14px;font-weight:600;cursor:pointer;min-height:40px;padding:8px 0}
+.dual-sharing[open] summary{margin-bottom:12px}
+.dual-sharing .transfer{margin-bottom:16px}
+.dual-sharing .transfer p{font-size:16px}
+.dual-sharing .select-title{font-size:14px}
+.dual-sharing .url-field{box-sizing:border-box;width:100%;min-width:0;font-size:16px}
+.dual-sharing .modal-action{font-size:14px;min-height:44px}
 @media(max-width:1100px){.bar{gap:22px}.bar nav{gap:19px}}
 @media(max-width:760px){
   .bar nav{gap:14px}.bar nav a{font-size:12px}

@@ -2,10 +2,11 @@ import * as T from './engine/three.module.min.js';
 import {machines, demonstrations} from './catalog.js';
 import {createViewer} from './viewer.js';
 import {escapeHTML as h} from './archive.js';
+import {setupLinkSharing} from './presentation.js';
 
 // Both panes use the very same accepted factories as the main laboratory.
 // Their geometry and control state remain independent.
-export function openDual({openModal, onModalCleanup, select}) {
+export function openDual({openModal, onModalCleanup, select, getLink, closed}) {
   const years=[1986,1987], viewers=new Map(), models=new Map();
   let syncing=false, disposed=false, animation=0;
   openModal('ДВЕ МАШИНЫ', '<h2>Два робота рядом</h2><p>Поверните любую модель. При связанных ракурсах вторая повторит направление осмотра.</p>'+
@@ -14,9 +15,21 @@ export function openDual({openModal, onModalCleanup, select}) {
     '<div class="dual-grid">'+years.map(year=>'<article class="dual-card"><div class="dual-heading"><div><span class="mini">'+year+' · '+machines[year].code+'</span><h3>'+h(machines[year].title)+'</h3></div></div>'+
       '<div id="dual-'+year+'" class="dual-surface" aria-label="Модель '+year+' года"></div><button class="secondary" data-dual-open="'+year+'">Управлять этой машиной</button></article>').join('')+'</div>'+
     '<div class="dual-actions"><button class="secondary" id="dualMotion" aria-pressed="false">Движение обоих роботов</button><p id="dualStatus" role="status"></p></div>'+
-    '<p class="evidence-note">Каждая машина вписана в своё окно. Размеры на экране не задают общий физический масштаб. Для подробного осмотра выберите машину и откройте её узлы.</p>', 'Два робота рядом');
+    '<p class="evidence-note">Каждая машина вписана в своё окно. Размеры на экране не задают общий физический масштаб. Для подробного осмотра выберите машину и откройте её узлы.</p>'+
+    '<details class="dual-sharing" id="dualShare"><summary>Ссылка на два робота</summary><div class="transfer"><canvas id="dualQR" aria-label="QR-код для открытия двух роботов"></canvas><div><strong>Обе машины на одном экране</strong><p>Ссылка откроет обе модели в общем ракурсе. QR-код можно считать с другого устройства.</p></div></div>'+
+    '<label class="select-title" for="dualShareURL">Адрес двух моделей</label><input id="dualShareURL" class="url-field" type="url" readonly><button id="dualCopyLink" class="modal-action">Скопировать ссылку</button><p id="dualCopyStatus" role="status"></p></details>', 'Два робота рядом');
   const dialog=document.getElementById('dialog');dialog.classList.add('dual-dialog');
   const status=document.getElementById('dualStatus'), motion=document.getElementById('dualMotion');
+  const sharing=document.getElementById('dualShare');let sharingReady=false;
+  sharing.hidden=!getLink;
+  sharing.addEventListener('toggle',()=>{
+    if(!sharing.open||sharingReady||disposed)return;
+    sharingReady=true;
+    setupLinkSharing(getLink(),{
+      canvas:document.getElementById('dualQR'),input:document.getElementById('dualShareURL'),
+      copy:document.getElementById('dualCopyLink'),status:document.getElementById('dualCopyStatus')
+    });
+  });
   function stop() {
     cancelAnimationFrame(animation);animation=0;
     motion.textContent='Движение обоих роботов';motion.setAttribute('aria-pressed','false');
@@ -76,5 +89,6 @@ export function openDual({openModal, onModalCleanup, select}) {
   onModalCleanup(()=>{
     disposed=true;stop();for(const view of viewers.values())view.dispose({models:true});
     viewers.clear();models.clear();dialog.classList.remove('dual-dialog');
+    closed?.();
   });
 }

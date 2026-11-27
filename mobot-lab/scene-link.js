@@ -25,12 +25,13 @@ export function readScene(params, def, photos, parts) {
     direction, up:safeUp, view:views.includes(params.get('view')) ? params.get('view') : null,
     zoom:zoom >= .4 && zoom <= 5 ? zoom : 1, detail:mode==='parts' && params.get('detail')==='1'
   } : null;
-  return {mode,photo,part,pose,tool:tools.includes(params.get('tool')) ? params.get('tool') : 'gripper',camera,marks:params.get('marks')==='1',isolated:mode==='parts'&&params.get('isolate')==='1'};
+  return {dual:params.get('dual')==='1',mode,photo,part,pose,tool:tools.includes(params.get('tool')) ? params.get('tool') : 'gripper',camera,marks:params.get('marks')==='1',isolated:mode==='parts'&&params.get('isolate')==='1'};
 }
 
-export function sceneURL(base, {year,def,mode,photo,part,pose,tool,camera,marks,isolated}) {
+export function sceneURL(base, {year,def,mode,photo,part,pose,tool,camera,marks,isolated,dual}) {
   const url = new URL(base); url.search = ''; url.hash = '';
   const p = url.searchParams; p.set('model',year);
+  if (dual === true) p.set('dual','1');
   if (mode !== 'drive') p.set('mode',mode);
   if (mode === 'photo') { p.set('photo',photoKey(photo)); if (marks) p.set('marks','1'); }
   if (mode === 'parts') p.set('part',part);

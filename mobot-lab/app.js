@@ -25,14 +25,15 @@ let year=Number(params.get('model'))===1987?1987:1986;
 let model,def,pose,tool='gripper',joint=0,viewer=null,mode='drive';
 let partId,photoIndex=0,marks=false,demoId=0,ready=false,auditTimer=0;
 let isolation=null,isolated=false;
+let dual=false;
 const archive=createArchive({openModal,closeModal,compare:compareFromGallery});
 const part=()=>inspections[year].find(p=>p.id===partId);
 const photo=()=>evidence[year].photos[photoIndex];
 const unit=k=>k==='track'?'%':'°';
 const canUse=k=>year!==1987||k!=='claw'||tool==='gripper';
 
-function link(base=canonical) {
-  return sceneURL(base,{year,def,mode,photo:photo(),part:partId,pose,tool,camera:viewer?.capture(),marks,isolated});
+function link(base=canonical,showDual=dual) {
+  return sceneURL(base,{year,def,mode,photo:photo(),part:partId,pose,tool,camera:viewer?.capture(),marks,isolated,dual:showDual});
 }
 let urlTimer=0, initialising=true;
 function storeView() {
@@ -129,7 +130,8 @@ function labelView(live) {
 function setYear(next) {
   stopDemo();clearTimeout(auditTimer);
   isolation?.restore();isolated=false;
-  if(def)saved.set(year,{pose:{...pose},tool,partId,photoIndex,marks});
+  if(def)saved.set(year,{pose:{...pose},tool,partId,photoIndex,marks,
+    camera:mode==='photo'?saved.get(year)?.camera:viewer?.capture()});
   year=next;def=machines[year];joint=0;ready=false;
   const prev=saved.get(year);
   pose={...(prev?.pose||def.initial)};tool=prev?.tool||'gripper';
@@ -144,10 +146,16 @@ function setYear(next) {
   isolation=model?createIsolation(model.root):null;
   makeJoints();if(year===1987)setTool(tool);
   if(model){def.pose(model,pose);viewer.select(model,def)}
+  return prev?.camera;
 }
 function selectYear(next) {
   if(next===year)return;
-  setYear(next);setMode(mode,{match:mode==='photo'&&!viewer?.xr?.active});storeView();
+  const camera=setYear(next);
+  setMode(mode,{match:mode==='photo'&&!viewer?.xr?.active});
+  if(camera&&viewer&&mode!=='photo'&&!viewer.xr?.active){
+    viewer.frame(camera.view,{...camera,node:mode==='parts'&&camera.detail?part().anchor(model):null});
+  }
+  storeView();
 }
 function retainMarkerFocus(button) {
   if(button!==document.activeElement)return;
@@ -232,7 +240,11 @@ function photoPanel() {
   });
 }
 function setMode(next,{match=next==='photo'}={}) {
-  const previous=mode;mode=next;$('workbench').dataset.mode=mode;stopDemo();tell('');
+  const previous=mode;
+  if(previous!=='photo'&&next==='photo'&&viewer){
+    saved.set(year,{...saved.get(year),camera:viewer.capture()});
+  }
+  mode=next;$('workbench').dataset.mode=mode;stopDemo();tell('');
   if(next!=='parts'&&isolated){isolation.restore();isolated=false;viewer?.frame('iso');}
   if(previous==='parts'&&next!=='parts'&&viewer?.capture().detail)viewer.frame('iso');
   for(const b of all('.mode-tabs [role=tab][data-mode]')){
@@ -337,14 +349,22 @@ function openPassport(requestedYear=year) {
     '<div class="source-links"><a href="'+h(data.reference)+'" target="_blank" rel="noopener">Публикация разработчиков</a> <a href="'+definition.original+'" target="_blank" rel="noopener">Инженерная версия '+definition.code+'</a></div>',definition.title);
 }
 $('passport').onclick=()=>openPassport();
-$('compareModels').onclick=()=>{
+function compareModels() {
   stopDemo();
-  openDual({openModal,onModalCleanup,select(next){closeModal();setMode('drive');selectYear(next);$('workbench').scrollIntoView({block:'start'});}});
-};
+  openDual({openModal,onModalCleanup,getLink:()=>link(canonical,true),
+    closed(){dual=false;storeView();},
+    select(next){
+      closeModal();setMode('drive');selectYear(next);$('workbench').scrollIntoView({block:'start'});
+      $('tab-drive').focus({preventScroll:true});
+    }
+  });
+  dual=true;storeView();
+}
+$('compareModels').onclick=compareModels;
 $('compareModels').hidden=false;
 setupResearch({openModal,openPassport,selectModel:next=>{setMode('drive');selectYear(next);}});
 $('about').onclick=()=>openModal('О ПРОЕКТЕ','<h2>Две машины для работ на ЧАЭС</h2><p>В 1986 году в МВТУ им. Н. Э. Баумана создали «Мобот-Ч-ХВ» для расчистки кровли. В 1987 году работы продолжили модернизированные комплексы «Мобот-Ч-ХВ-2» со сменным оснащением.</p><p>Технопарк РГСУ объединил исследовательские модели 1986 и 1987 годов. В разделе «Сверка» архивный снимок задаёт позу и ракурс, а разметка связывает модель с видимыми деталями. Углы движения и масштаб сцены условны.</p><p><a href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">История комплексов в архиве СКТБ ПР ↗</a></p>');
-const presentation=setupPresentation({getLink:()=>link(),getState});
+const presentation=setupPresentation({getLink:()=>link(canonical,false),getState});
 let vrSupported=false,busy=false,vrCheck=0;
 function showVRAvailability(supported) {
   vrSupported=supported;
@@ -377,4 +397,8 @@ if('IntersectionObserver' in window) {
     }
   },{rootMargin:'-10% 0px -65% 0px',threshold:0});
   for(const id of ['lab','archive','research'])navigation.observe($(id));
+}
+if(initial.dual){
+  $('compareModels').focus({preventScroll:true});
+  compareModels();
 }
