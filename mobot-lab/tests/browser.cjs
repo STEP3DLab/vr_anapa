@@ -340,6 +340,9 @@ async function exercise(browser, width, height, software) {
         }
         await dialog.locator('[data-dual-open="'+year+'"]').click();
         assert(!(await dialog.isVisible()));
+        // dialog.close() hides immediately; its native close event performs
+        // renderer cleanup in a subsequent task.
+        await page.locator('.dual-surface canvas').first().waitFor({state:'detached',timeout:3000});
         assert.equal(await page.locator('.dual-surface canvas').count(),0,'Closing the comparison removes its renderers');
         assert.equal(await page.locator('[data-year="'+year+'"]').getAttribute('aria-pressed'),'true');
         assert.equal(await page.locator('#tab-drive').getAttribute('aria-selected'),'true');
