@@ -1,0 +1,742 @@
+{
+  "date": "2026-11-27",
+  "baselineBlob": "ff0b38f601ca365653f37a74edf8da796e3e13fd",
+  "candidateBlob": "acd056377fe0c4dc0a850e6b65e651d991a13017",
+  "threeBlob": "70c40977daa0f6e1e312c6b58e9bfe49cb5a87a4",
+  "scope": "Newly occupied outer housing annulus only, not all existing intersections. Newly occupied rod volume is inside prior housing/rod union for tested ranges. Conservative circle bounds, possible false positives. Not full volumetric containment or full pose-space certification.",
+  "actualArchiveGeometryVerified": false,
+  "releaseAllowed": false,
+  "threeRevision": "180",
+  "method": "conservative newly occupied annular slab vs visible mesh triangles; includes instances, boundary contacts; not volumetric or continuous proof",
+  "fixturesPassed": 4,
+  "qualities": {
+    "desktop": {
+      "poses": 405,
+      "addedSlabs": 405,
+      "unchangedOrReduced": 810,
+      "meshInstancesBroadphase": 1272,
+      "triangleTests": 161220,
+      "hitSlabs": 405,
+      "hitInstances": 542,
+      "distinctMeshPairWitnesses": 6,
+      "hits": {
+        "loader-left / bucket / mesh 164": {
+          "count": 135,
+          "name": "",
+          "parent": "Фронтальный погрузчик и ковш",
+          "geometry": "ExtrudeGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 1,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.3068519123131867,
+              0.9651267495412984,
+              -0.8654999996125697
+            ],
+            [
+              0.13873660049832442,
+              0.8638799897840832,
+              -0.8654999996125697
+            ],
+            [
+              0.3564445747253524,
+              0.6871648674230016,
+              -0.8654999996125697
+            ]
+          ]
+        },
+        "loader-right / bucket / mesh 168": {
+          "count": 135,
+          "name": "",
+          "parent": "Фронтальный погрузчик и ковш",
+          "geometry": "ExtrudeGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 1,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.3068519123131867,
+              0.9651267495412984,
+              0.8045000003874302
+            ],
+            [
+              0.13873660049832442,
+              0.8638799897840832,
+              0.8045000003874302
+            ],
+            [
+              0.3564445747253524,
+              0.6871648674230016,
+              0.8045000003874302
+            ]
+          ]
+        },
+        "arm / arm / mesh 211": {
+          "count": 135,
+          "name": "",
+          "parent": "",
+          "geometry": "CylinderGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": 25,
+            "bucket": -8,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 2,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              0.8657015023612489,
+              1.2466161056018277,
+              0.10154551754891852
+            ],
+            [
+              -0.14658056106578338,
+              1.031131563117849,
+              0.10154551754891865
+            ],
+            [
+              0.8644562580884632,
+              1.2524658915186997,
+              0.10850000030547359
+            ]
+          ]
+        },
+        "arm / arm / mesh 212": {
+          "count": 135,
+          "name": "",
+          "parent": "",
+          "geometry": "CylinderGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": 25,
+            "bucket": -8,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 5,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              0.08720947403547216,
+              1.0647153813805874,
+              0.11367376216873518
+            ],
+            [
+              0.08720947403547219,
+              1.0647153813805874,
+              0.12232623783126463
+            ],
+            [
+              0.3410262178602609,
+              1.2417477835473985,
+              0.12232623783126458
+            ]
+          ]
+        },
+        "loader-left / gripper / mesh 268": {
+          "count": 1,
+          "name": "",
+          "parent": "Широкая губка -1",
+          "geometry": "ExtrudeGeometry",
+          "firstPose": {
+            "yaw": -90,
+            "arm": 25,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 1,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.09706128769901146,
+              0.7753820197340802,
+              -0.7801725156535495
+            ],
+            [
+              -0.09706128769901157,
+              0.9339858797644862,
+              -0.8541307101986714
+            ],
+            [
+              0.033809546478368147,
+              1.0144010471973073,
+              -0.7999898992308462
+            ]
+          ]
+        },
+        "loader-left / gripper / mesh 269": {
+          "count": 1,
+          "name": "",
+          "parent": "Широкая губка -1",
+          "geometry": "BoxGeometry",
+          "firstPose": {
+            "yaw": -90,
+            "arm": 25,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 6,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.10353998389496238,
+              0.7891611050622908,
+              -0.7506231781555572
+            ],
+            [
+              0.06256632382603705,
+              0.67854430014496,
+              -0.9878416818254291
+            ],
+            [
+              -0.1035399838949625,
+              0.9477649650926969,
+              -0.8245813727006791
+            ]
+          ]
+        }
+      },
+      "examples": [
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        }
+      ]
+    },
+    "mobile": {
+      "poses": 405,
+      "addedSlabs": 405,
+      "unchangedOrReduced": 810,
+      "meshInstancesBroadphase": 1272,
+      "triangleTests": 161220,
+      "hitSlabs": 405,
+      "hitInstances": 542,
+      "distinctMeshPairWitnesses": 6,
+      "hits": {
+        "loader-left / bucket / mesh 164": {
+          "count": 135,
+          "name": "",
+          "parent": "Фронтальный погрузчик и ковш",
+          "geometry": "ExtrudeGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 1,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.3068519123131867,
+              0.9651267495412984,
+              -0.8654999996125697
+            ],
+            [
+              0.13873660049832442,
+              0.8638799897840832,
+              -0.8654999996125697
+            ],
+            [
+              0.3564445747253524,
+              0.6871648674230016,
+              -0.8654999996125697
+            ]
+          ]
+        },
+        "loader-right / bucket / mesh 168": {
+          "count": 135,
+          "name": "",
+          "parent": "Фронтальный погрузчик и ковш",
+          "geometry": "ExtrudeGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 1,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.3068519123131867,
+              0.9651267495412984,
+              0.8045000003874302
+            ],
+            [
+              0.13873660049832442,
+              0.8638799897840832,
+              0.8045000003874302
+            ],
+            [
+              0.3564445747253524,
+              0.6871648674230016,
+              0.8045000003874302
+            ]
+          ]
+        },
+        "arm / arm / mesh 211": {
+          "count": 135,
+          "name": "",
+          "parent": "",
+          "geometry": "CylinderGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": 25,
+            "bucket": -8,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 2,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              0.8657015023612489,
+              1.2466161056018277,
+              0.10154551754891852
+            ],
+            [
+              -0.14658056106578338,
+              1.031131563117849,
+              0.10154551754891865
+            ],
+            [
+              0.8644562580884632,
+              1.2524658915186997,
+              0.10850000030547359
+            ]
+          ]
+        },
+        "arm / arm / mesh 212": {
+          "count": 135,
+          "name": "",
+          "parent": "",
+          "geometry": "CylinderGeometry",
+          "firstPose": {
+            "yaw": -180,
+            "arm": 25,
+            "bucket": -8,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 5,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              0.08720947403547216,
+              1.0647153813805874,
+              0.11367376216873518
+            ],
+            [
+              0.08720947403547219,
+              1.0647153813805874,
+              0.12232623783126463
+            ],
+            [
+              0.3410262178602609,
+              1.2417477835473985,
+              0.12232623783126458
+            ]
+          ]
+        },
+        "loader-left / gripper / mesh 268": {
+          "count": 1,
+          "name": "",
+          "parent": "Широкая губка -1",
+          "geometry": "ExtrudeGeometry",
+          "firstPose": {
+            "yaw": -90,
+            "arm": 25,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 1,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.09706128769901146,
+              0.7753820197340802,
+              -0.7801725156535495
+            ],
+            [
+              -0.09706128769901157,
+              0.9339858797644862,
+              -0.8541307101986714
+            ],
+            [
+              0.033809546478368147,
+              1.0144010471973073,
+              -0.7999898992308462
+            ]
+          ]
+        },
+        "loader-left / gripper / mesh 269": {
+          "count": 1,
+          "name": "",
+          "parent": "Широкая губка -1",
+          "geometry": "BoxGeometry",
+          "firstPose": {
+            "yaw": -90,
+            "arm": 25,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "firstTriangle": 6,
+          "firstInstance": 0,
+          "firstWorldTriangle": [
+            [
+              -0.10353998389496238,
+              0.7891611050622908,
+              -0.7506231781555572
+            ],
+            [
+              0.06256632382603705,
+              0.67854430014496,
+              -0.9878416818254291
+            ],
+            [
+              -0.1035399838949625,
+              0.9477649650926969,
+              -0.8245813727006791
+            ]
+          ]
+        }
+      },
+      "examples": [
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": -18,
+            "bucket": 36,
+            "wrist": 115,
+            "tip": 25,
+            "claw": 24,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 55,
+            "tip": -25,
+            "claw": 0,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-left / bucket / mesh 164",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        },
+        {
+          "key": "loader-right / bucket / mesh 168",
+          "pose": {
+            "yaw": -180,
+            "arm": 0,
+            "bucket": 36,
+            "wrist": 90,
+            "tip": 0,
+            "claw": 4,
+            "track": 0,
+            "tool": "gripper"
+          },
+          "instance": 0
+        }
+      ]
+    }
+  }
+}
