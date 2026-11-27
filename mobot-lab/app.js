@@ -116,6 +116,11 @@ function makeJoints() {
   });
   sync();
 }
+function labelView(live) {
+  const shownCode=live?def.code:(def.posterCode||def.code);
+  $('sceneId').textContent=def.short+' / '+year+' · '+shownCode;
+  $('renderMode').textContent=live?'3D-РЕКОНСТРУКЦИЯ':'ОБЗОРНЫЙ ВИД';
+}
 function setYear(next) {
   stopDemo();clearTimeout(auditTimer);
   if(def)saved.set(year,{pose:{...pose},tool,partId,photoIndex,marks});
@@ -123,9 +128,9 @@ function setYear(next) {
   const prev=saved.get(year);
   pose={...(prev?.pose||def.initial)};tool=prev?.tool||'gripper';
   partId=prev?.partId||inspections[year][0].id;photoIndex=prev?.photoIndex??0;marks=prev?.marks??false;
-  $('poster').src='./media/'+year+'-overview.webp';$('poster').alt='Обзорная реконструкция '+def.title;
+  $('poster').src='./media/'+year+'-overview.webp';$('poster').alt='Обзорная реконструкция '+def.title+' · '+(def.posterCode||def.code);
   $('poster').hidden=!!viewer?.xr?.active;
-  $('modelTitle').textContent=def.title;$('sceneId').textContent=def.short+' / '+year;
+  $('modelTitle').textContent=def.title;labelView(false);
   all('[data-year]').forEach(b=>press(b,Number(b.dataset.year)===year));
   $('toolRow').hidden=year!==1987;$('extra').open=false;$('poseNotice').hidden=true;tell('');
   if(viewer){if(!cache.has(year))cache.set(year,def.create(T));model=cache.get(year)}
@@ -252,12 +257,12 @@ const callbacks={
   },
   contextLost(){
     ready=false;stopDemo();markerVisibility();
-    $('poster').hidden=false;$('renderMode').textContent='ОБЗОРНЫЙ ВИД';
+    $('poster').hidden=false;labelView(false);
     $('graphicsStatus').textContent='3D временно недоступно. Пока можно смотреть обзорный вид, узлы и фотоархив.';
   },
   drawn(){
     if(!ready){
-      $('poster').hidden=true;$('renderMode').textContent='3D-РЕКОНСТРУКЦИЯ';ready=true;
+      $('poster').hidden=true;labelView(true);ready=true;
       if($('graphicsStatus').textContent.startsWith('3D временно')){
         $('graphicsStatus').textContent='3D снова доступно.';
       }
@@ -276,7 +281,7 @@ if(initial.camera && viewer){
   const c=initial.camera;viewer.frame(c.view,{...c,node:c.detail?part().anchor(model):null});
 }
 initialising=false;
-$('renderMode').textContent=viewer?'3D-РЕКОНСТРУКЦИЯ':'ОБЗОРНЫЙ ВИД';
+labelView(ready);
 if(!viewer){
   $('hint').textContent='Доступны обзорные виды, описания узлов и фотоархив.';
   for(const b of [...all('[data-view]'),$('demo'),$('reset'),$('in'),$('out'),$('fit'),$('tool')])b.disabled=true;
@@ -306,7 +311,9 @@ $('passport').onclick=()=>{
   const data=evidence[year];
   openModal('ПАСПОРТ РЕКОНСТРУКЦИИ  /  '+year,'<h2>'+h(def.title)+'</h2><dl class="facts">'+
     data.facts.map(f=>'<div><dt>'+h(f.label)+'</dt><dd>'+h(f.value)+'</dd></div>').join('')+'</dl><h3>Границы реконструкции</h3><p>'+h(data.note)+'</p>'+
-    '<div class="source-links"><a href="'+h(data.reference)+'" target="_blank" rel="noopener">Публикация разработчиков ↗</a> <a href="'+def.original+'" target="_blank" rel="noopener">Инженерная версия '+def.code+' ↗</a></div>',def.title);
+    (def.passport?'<p><strong>v23:</strong> в цифровой модели уточнено движение гусениц. Форма траков и контакт с поверхностью остаются гипотезой (класс C), а не историческим обмером.</p>':'')+
+    '<div class="source-links"><a href="'+h(data.reference)+'" target="_blank" rel="noopener">Публикация разработчиков ↗</a> <a href="'+def.original+'" target="_blank" rel="noopener">Инженерная версия '+def.code+' ↗</a>'+
+    (def.passport?' <a href="'+def.passport+'" target="_blank" rel="noopener">Подробный паспорт v23 ↗</a> <a href="'+def.previous+'" target="_blank" rel="noopener">Архив v22 ↗</a>':'')+'</div>',def.title);
 };
 const overview=[
   {year:1986, photo:1, detail:'Грейфер для отдельных обломков и фронтальный ковш для сбора материала. На снимке видно, как грейфер расположен над ковшом.'},

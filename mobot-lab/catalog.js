@@ -1,5 +1,5 @@
 import {makeMobot1986} from './models/mobot-ch-hv-1986-research-v7-model.js';
-import {makeMobot} from './models/mobot-engineering-v22-model.js';
+import {makeMobot} from './models/mobot-engineering-v23-model.js';
 
 // Presentation paths are defined per tool. In particular the loader-mounted
 // breaker needs a raised loader at both ends of its demonstration.
@@ -28,11 +28,13 @@ export const machines = {
     original:'https://step3dlab.github.io/vr_anapa/mobot-ch-hv-1986-research-v7.html'
   },
   1987:{
-    title:'Мобот-Ч-ХВ-2',short:'Ч-ХВ-2',code:'v22',ground:.14,side:-1,
+    title:'Мобот-Ч-ХВ-2',short:'Ч-ХВ-2',code:'v23',posterCode:'v22',ground:.14,side:-1,
     create:T=>makeMobot(T,'mobile'),pose:(m,p)=>m.mechanisms.setPose(p),
     initial:demonstrations.gripper.start,
     joints:[['yaw','Поворот опоры',-180,180],['arm','Наклон стрелы',-18,25],['claw','Раскрытие схвата',0,24],['wrist','Наклон головки',55,115],['bucket','Подъём погрузчика',-8,36],['tip','Наклон ковша',-25,25],['track','Прокрутка гусениц',0,100]],
     groups:m=>({yaw:m.mechanisms.turntable,arm:m.mechanisms.arm,claw:m.mechanisms.fingerHead,wrist:m.mechanisms.gripper,bucket:m.mechanisms.bucketLift,tip:m.mechanisms.bucketTilt,track:m.parts.tracks,camera:m.mechanisms.cameras,tool:m.root.userData.activeWorkTool==='breaker-loader'?m.mechanisms.breakerLoader:m.mechanisms.breakerArm}),
-    original:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v22.html'
+    original:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v23.html',
+    passport:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v23-passport.json',
+    previous:'https://step3dlab.github.io/vr_anapa/mobot-engineering-v22.html'
   }
 };

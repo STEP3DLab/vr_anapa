@@ -14,6 +14,13 @@ const ctx={fillRect(){}, fillText(){}, clearRect(){}};
 globalThis.document={createElement:()=>({getContext:()=>null})};
 const models=Object.fromEntries(Object.entries(machines).map(([year,def])=>[year,def.create(T)]));
 
+test('The common exhibit uses the released models and labels experimental geometry',()=>{
+  assert.equal(machines[1986].code,'v7');
+  assert.equal(machines[1987].code,'v23');
+  assert.equal(models[1987].root.userData.version,'v23-research');
+  assert.equal(models[1987].root.userData.trackExperiment.evidenceClass,'C');
+  assert.equal(models[1987].root.userData.trackExperiment.physicalContactVerified,false);
+});
 test('Every registered photograph restores the intended tool, joints and landmarks',()=>{
   let matched=0;
   for(const [id,doc] of Object.entries(evidence)) {

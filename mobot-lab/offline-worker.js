@@ -1,13 +1,13 @@
 // The cache and the fetch handler are confined to this laboratory's directory.
 const prefix='mobot-lab:'+self.registration.scope+':';
-const cacheName=prefix+'2026-11-25.3';
+const cacheName=prefix+'2026-11-27.1';
 const files=[
   'index.html','style.css','app.js','catalog.js','evidence.js','inspection.js','registrations.js',
   'scene-link.js','archive.js','presentation.js','viewer.js','xr.js','icons.js','mark.svg',
   'engine/three.core.min.js','engine/three.module.min.js','engine/controls/OrbitControls.js',
   'engine/orthographic-raster.js','engine/qr.js',
   'models/mobot-ch-hv-1986-research-v6-model.js','models/mobot-ch-hv-1986-research-v7-model.js',
-  'models/mobot-engineering-v22-model.js','models/mobot-kinematics-v15.js',
+  'models/mobot-engineering-v23-model.js','models/mobot-kinematics-v15.js',
   'media/inter.woff','media/sktbpr.png','media/rgsu.png','media/1986-overview.webp','media/1987-overview.webp',
   'media/1986-fig6.webp','media/1986-fig9.webp','media/1987-before-dispatch.webp','media/1987-front.webp',
   'media/1987-snow-side.webp','media/1987-breaker.webp','media/archive/1986-operator.webp',

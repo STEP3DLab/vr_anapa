@@ -423,6 +423,8 @@ async function exercise(browser, width, height, software) {
     await page.locator('#photoSelect').selectOption('2');
     await page.waitForFunction(()=>document.querySelector('#photoEnlarge img').naturalWidth>800);
     assert.deepEqual(errors,[]);
+    await page.waitForFunction(()=>document.querySelector('#sceneId').textContent.endsWith('v23'));
+    assert.match(await page.locator('#poster').getAttribute('alt'),/v22$/);
     console.log(width+'×'+height+' · '+(software?'software rasterizer':'WebGL2')+' · views, tool motion, archive, links and offline navigation passed');
   } finally {await context.close()}
 }
