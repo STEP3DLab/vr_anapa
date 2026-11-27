@@ -2,10 +2,12 @@ import * as T from './engine/three.module.min.js';
 import {machines, demonstrations} from './catalog.js';
 import {createViewer} from './viewer.js';
 import {escapeHTML as h} from './archive.js';
+import {orientComparisonCamera} from './scene-link.js';
+import {putQR} from './presentation.js';
 
 // Both panes use the very same accepted factories as the main laboratory.
 // Their geometry and control state remain independent.
-export function openDual({openModal, onModalCleanup, select}) {
+export function openDual({openModal, onModalCleanup, select, shareURL}) {
   const years=[1986,1987], viewers=new Map(), models=new Map();
   let syncing=false, disposed=false, animation=0;
   openModal('ДВЕ МАШИНЫ', '<h2>Два робота рядом</h2><p>Поверните любую модель. При связанных ракурсах вторая повторит направление осмотра.</p>'+
@@ -14,9 +16,18 @@ export function openDual({openModal, onModalCleanup, select}) {
     '<div class="dual-grid">'+years.map(year=>'<article class="dual-card"><div class="dual-heading"><div><span class="mini">'+year+' · '+machines[year].code+'</span><h3>'+h(machines[year].title)+'</h3></div></div>'+
       '<div id="dual-'+year+'" class="dual-surface" aria-label="Модель '+year+' года"></div><button class="secondary" data-dual-open="'+year+'">Управлять этой машиной</button></article>').join('')+'</div>'+
     '<div class="dual-actions"><button class="secondary" id="dualMotion" aria-pressed="false">Движение обоих роботов</button><p id="dualStatus" role="status"></p></div>'+
-    '<p class="evidence-note">Каждая машина вписана в своё окно. Размеры на экране не задают общий физический масштаб. Для подробного осмотра выберите машину и откройте её узлы.</p>', 'Два робота рядом');
+    '<p class="evidence-note">Каждая машина вписана в своё окно. Размеры на экране не задают общий физический масштаб. Для подробного осмотра выберите машину и откройте её узлы.</p>'+
+    '<details id="dualShare"><summary>Ссылка на обе модели и QR-код</summary><div class="transfer"><canvas id="dualQR" aria-label="QR-код сравнения"></canvas><p>На другом устройстве ссылка откроет обе машины в исходных положениях. Она не сохраняет индивидуальные позы сравнения.</p></div><label class="select-title" for="dualURL">Адрес сравнения</label><input id="dualURL" class="url-field" type="url" readonly value="'+h(shareURL)+'"><button id="dualCopy" class="modal-action">Скопировать ссылку</button><p id="dualCopyStatus" role="status"></p></details>', 'Два робота рядом');
   const dialog=document.getElementById('dialog');dialog.classList.add('dual-dialog');
   const status=document.getElementById('dualStatus'), motion=document.getElementById('dualMotion');
+  const share=document.getElementById('dualShare'),input=document.getElementById('dualURL'),copy=document.getElementById('dualCopy'),copyStatus=document.getElementById('dualCopyStatus');
+  let qrStarted=false,attempt=0;
+  share.ontoggle=()=>{if(share.open&&!qrStarted&&!disposed){qrStarted=true;putQR(shareURL,document.getElementById('dualQR'));}};
+  copy.onclick=async()=>{
+    const id=++attempt,current=()=>!disposed&&dialog.open&&copy.isConnected&&id===attempt;
+    try{await navigator.clipboard.writeText(shareURL);if(current())copyStatus.textContent='Ссылка скопирована.';}
+    catch{if(current()){if(document.activeElement===copy){input.focus({preventScroll:true});input.select();}copyStatus.textContent='Скопируйте адрес вручную.';}}
+  };
   function stop() {
     cancelAnimationFrame(animation);animation=0;
     motion.textContent='Движение обоих роботов';motion.setAttribute('aria-pressed','false');
@@ -27,8 +38,7 @@ export function openDual({openModal, onModalCleanup, select}) {
     if(!target)return;
     syncing=true;
     // The accepted scenes have opposite longitudinal orientations.
-    const sign=machines[other].side/machines[year].side;
-    target.frame(null,{direction:state.direction.map((v,i)=>i===1?v:v*sign),up:state.up,zoom:state.zoom});
+    target.frame(null,orientComparisonCamera(state,machines[year].side,machines[other].side));
     syncing=false;
   }
   for(const year of years) {

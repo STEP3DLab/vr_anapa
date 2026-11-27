@@ -504,6 +504,47 @@ async function exercise(browser, width, height, software) {
     console.log(width+'×'+height+' · '+(software?'software rasterizer':'WebGL2')+' · views, tool motion, archive, links and offline navigation passed');
   } finally {await context.close()}
 }
+async function directComparison(browser) {
+  const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true,reducedMotion:'reduce'});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  try {
+    await page.goto(base+'?compare=1&model=1987&tool=breaker-loader&pose=12,0,4,90,36,0,0&view=side&z=1.4');
+    const dialog=page.locator('#dialog');
+    await dialog.waitFor({state:'visible'});
+    assert.equal(await dialog.locator('.dual-surface canvas').count(),2);
+    await page.locator('#dualShare summary').click();
+    const address=new URL(await page.locator('#dualURL').inputValue());
+    assert.equal(address.pathname,'/vr_anapa/mobot-lab/');
+    assert.equal(address.search,'?compare=1');
+    await page.waitForFunction(()=>document.querySelector('#dualQR')?.width>100&&document.querySelector('#dualQR')?.width===document.querySelector('#dualQR')?.height);
+    assert(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1));
+    await dialog.locator('[data-dual-open="1987"]').click();
+    await page.locator('.dual-surface canvas').first().waitFor({state:'detached',timeout:3000});
+    assert(await page.locator('#tab-drive').evaluate(el=>el===document.activeElement));
+    assert.equal(await page.locator('#tool').inputValue(),'breaker-loader');
+    assert.equal(await page.locator('#j-yaw').inputValue(),'12');
+    assert.equal(await page.locator('#j-bucket').inputValue(),'36');
+    await page.waitForFunction(()=>!new URL(location.href).searchParams.has('compare'));
+    const viewState=()=>page.evaluate(()=>{const p=new URL(location.href).searchParams;return [p.get('view'),p.get('z')]});
+    assert.deepEqual(await viewState(),['side','1.400']);
+    await page.locator('[data-year="1986"]').click();
+    await page.locator('[data-view="top"]').click();
+    await page.locator('#in').click();
+    await page.waitForFunction(()=>new URL(location.href).searchParams.get('view')==='top'&&new URL(location.href).searchParams.get('z')==='1.220');
+    await page.locator('[data-year="1987"]').click();
+    await page.waitForFunction(()=>new URL(location.href).searchParams.get('model')==='1987'&&new URL(location.href).searchParams.get('view')==='side');
+    assert.deepEqual(await viewState(),['side','1.400']);
+    assert.equal(await page.locator('#tool').inputValue(),'breaker-loader');
+    assert.equal(await page.locator('#j-yaw').inputValue(),'12');
+    await page.locator('[data-year="1986"]').click();
+    await page.waitForFunction(()=>new URL(location.href).searchParams.get('model')==='1986'&&new URL(location.href).searchParams.get('view')==='top');
+    assert.deepEqual(await viewState(),['top','1.220']);
+    for(const card of await page.locator('.download-card').all())assert.equal(await card.getAttribute('target'),'_blank');
+    assert.deepEqual(errors,[]);
+    console.log('Direct comparison, QR, return to controls, retained tool/pose and per-model camera states passed');
+  } finally {await page.close()}
+}
+
 async function staticRobots(browser) {
   for(const width of [320,1440]) {
     const context=await browser.newContext({javaScriptEnabled:false,viewport:{width,height:760}});
@@ -535,6 +576,7 @@ async function staticRobots(browser) {
 (async()=>{
   const browser=await chromium.launch({channel:process.env.MOBOT_CHROME_CHANNEL || undefined,args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
   try {
+    await directComparison(browser);
     await exercise(browser,1440,960,false);
     await exercise(browser,390,844,false);
     await exercise(browser,360,800,true);

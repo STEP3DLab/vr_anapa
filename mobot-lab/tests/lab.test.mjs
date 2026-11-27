@@ -6,7 +6,7 @@ import {machines, demonstrations} from '../catalog.js';
 import {inspections} from '../inspection.js';
 import {registrations,landmarkDifferences} from '../registrations.js';
 import {evidence} from '../evidence.js';
-import {readScene, sceneURL, photoKey} from '../scene-link.js';
+import {readScene, sceneURL, photoKey, comparisonURL, orientComparisonCamera} from '../scene-link.js';
 import {createXR} from '../xr.js';
 import {inspectSurfaces} from '../../research/mobot/1987/night-20261118/contact.js';
 
@@ -115,4 +115,15 @@ test('The photo report measures only paired points in the displayed image coordi
   assert(hanger.pixels>60 && hanger.pixels<75);
   assert(Math.abs(hanger.percentWidth-hanger.pixels*100/first.width)<1e-9);
   assert.deepEqual(landmarkDifferences(registrations['1987-breaker'].overlay),[]);
+});
+
+
+test('Comparison entry clears unrelated scene state and rotates the complete camera basis',()=>{
+  assert.equal(comparisonURL('https://example.org/mobot-lab/?model=1987#research'),'https://example.org/mobot-lab/?compare=1');
+  const state={direction:[.6,.8,0],up:[-.8,.6,0],zoom:1.7};
+  const transformed=orientComparisonCamera(state,1,-1);
+  assert.deepEqual(transformed.direction,[-.6,.8,-0]);
+  assert.deepEqual(transformed.up,[.8,.6,-0]);
+  assert.deepEqual(orientComparisonCamera(transformed,-1,1),state);
+  assert.deepEqual(orientComparisonCamera(state,1,1),state);
 });

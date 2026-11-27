@@ -5,7 +5,7 @@ import {inspections} from './inspection.js';
 import {registrations} from './registrations.js';
 import {evidence} from './evidence.js';
 import {createViewer} from './viewer.js';
-import {photoKey,readScene,sceneURL,tools as workTools} from './scene-link.js';
+import {photoKey,readScene,sceneURL,comparisonURL,tools as workTools} from './scene-link.js';
 import {createArchive,escapeHTML as h} from './archive.js';
 import {openModal,closeModal,setupPresentation,onModalCleanup} from './presentation.js';
 import {createIsolation} from './isolation.js';
@@ -34,12 +34,13 @@ const canUse=k=>year!==1987||k!=='claw'||tool==='gripper';
 function link(base=canonical) {
   return sceneURL(base,{year,def,mode,photo:photo(),part:partId,pose,tool,camera:viewer?.capture(),marks,isolated});
 }
-let urlTimer=0, initialising=true;
+let urlTimer=0, initialising=true, comparisonOpen=false;
 function storeView() {
   if(initialising) return;
   clearTimeout(urlTimer);
   urlTimer=setTimeout(()=>{
     const url=new URL(link(location.href));url.hash=location.hash;
+    if(comparisonOpen)url.searchParams.set('compare','1');
     history.replaceState(null,'',url);
   },180);
 }
@@ -129,7 +130,8 @@ function labelView(live) {
 function setYear(next) {
   stopDemo();clearTimeout(auditTimer);
   isolation?.restore();isolated=false;
-  if(def)saved.set(year,{pose:{...pose},tool,partId,photoIndex,marks});
+  if(def)saved.set(year,{pose:{...pose},tool,partId,photoIndex,marks,
+    driveCamera:mode==='drive'&&!viewer?.xr?.active?viewer?.capture():saved.get(year)?.driveCamera});
   year=next;def=machines[year];joint=0;ready=false;
   const prev=saved.get(year);
   pose={...(prev?.pose||def.initial)};tool=prev?.tool||'gripper';
@@ -143,7 +145,10 @@ function setYear(next) {
   else model=null;
   isolation=model?createIsolation(model.root):null;
   makeJoints();if(year===1987)setTool(tool);
-  if(model){def.pose(model,pose);viewer.select(model,def)}
+  if(model){
+    def.pose(model,pose);viewer.select(model,def);
+    if(mode==='drive'&&prev?.driveCamera)viewer.frame(prev.driveCamera.view,prev.driveCamera);
+  }
 }
 function selectYear(next) {
   if(next===year)return;
@@ -337,12 +342,20 @@ function openPassport(requestedYear=year) {
     '<div class="source-links"><a href="'+h(data.reference)+'" target="_blank" rel="noopener">Публикация разработчиков</a> <a href="'+definition.original+'" target="_blank" rel="noopener">Инженерная версия '+definition.code+'</a></div>',definition.title);
 }
 $('passport').onclick=()=>openPassport();
-$('compareModels').onclick=()=>{
+function enterControl(next) {
+  setMode('drive');selectYear(next);
+  $('workbench').scrollIntoView({block:'start'});$('tab-drive').focus({preventScroll:true});
+}
+function openComparison(){
   stopDemo();
-  openDual({openModal,onModalCleanup,select(next){closeModal();setMode('drive');selectYear(next);$('workbench').scrollIntoView({block:'start'});}});
-};
+  openDual({openModal,onModalCleanup,shareURL:comparisonURL(canonical),select(next){closeModal();enterControl(next);}});
+  comparisonOpen=true;
+  onModalCleanup(()=>{comparisonOpen=false;storeView();});
+  storeView();
+}
+$('compareModels').onclick=openComparison;
 $('compareModels').hidden=false;
-setupResearch({openModal,openPassport,selectModel:next=>{setMode('drive');selectYear(next);}});
+setupResearch({openModal,openPassport,selectModel:enterControl});
 $('about').onclick=()=>openModal('О ПРОЕКТЕ','<h2>Две машины для работ на ЧАЭС</h2><p>В 1986 году в МВТУ им. Н. Э. Баумана создали «Мобот-Ч-ХВ» для расчистки кровли. В 1987 году работы продолжили модернизированные комплексы «Мобот-Ч-ХВ-2» со сменным оснащением.</p><p>Технопарк РГСУ объединил исследовательские модели 1986 и 1987 годов. В разделе «Сверка» архивный снимок задаёт позу и ракурс, а разметка связывает модель с видимыми деталями. Углы движения и масштаб сцены условны.</p><p><a href="https://sktbpr.ru/node/23" target="_blank" rel="noopener">История комплексов в архиве СКТБ ПР ↗</a></p>');
 const presentation=setupPresentation({getLink:()=>link(),getState});
 let vrSupported=false,busy=false,vrCheck=0;
@@ -378,3 +391,6 @@ if('IntersectionObserver' in window) {
   },{rootMargin:'-10% 0px -65% 0px',threshold:0});
   for(const id of ['lab','archive','research'])navigation.observe($(id));
 }
+
+// Defer direct entry until the initial model and all modal actions exist.
+if(params.get('compare')==='1')openComparison();

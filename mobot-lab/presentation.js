@@ -108,7 +108,7 @@ function setupOffline() {
     if(reg?.active?.scriptURL===new URL('./offline-worker.js',location.href).href) button.innerHTML=icon('download')+'Обновить копию';
   }).catch(()=>{});
 }
-async function putQR(url,canvas) {
+export async function putQR(url,canvas) {
   try {
     const {default:QR}=await import('./engine/qr.js');
     if (!canvas.isConnected) return;

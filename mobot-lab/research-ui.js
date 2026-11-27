@@ -21,8 +21,8 @@ export function setupResearch({openModal,openPassport,selectModel}) {
       '<details><summary>Результаты проверок</summary><ul class="research-links">'+data.checks.map(item=>'<li>'+link(item.url,item.label)+'<p>'+h(item.scope)+'</p></li>').join('')+'</ul></details></article>';
   }).join('')+'</div>'+
     '<div class="download-panel"><div><p class="overline">РЕДАКТИРУЕМЫЕ ИСХОДНИКИ</p><h3>Материалы для дальнейшей работы</h3><p>Архивные фотографии, четыре Blender-сцены и автономная фотосверка. Исследовательские исходники сохранены отдельно от актуальных моделей на сайте.</p></div>'+
-    '<div class="download-grid"><a class="download-card" href="./downloads/?file=mobot-research-sources.zip"><strong>Модели и фотосверка</strong><span>4 файла Blender · HTML · пояснения</span><b>ZIP · 14,2 МБ</b></a>'+
-    '<a class="download-card" href="./downloads/?file=mobot-photo-archive-20261114.zip"><strong>Архив фотографий</strong><span>79 изображений · реестр · PDF-атлас</span><b>ZIP · 29,9 МБ</b></a></div>'+
+    '<div class="download-grid"><a class="download-card" href="./downloads/?file=mobot-research-sources.zip" target="_blank" rel="noopener"><strong>Модели и фотосверка</strong><span>4 файла Blender · HTML · пояснения</span><b>ZIP · 14,2 МБ</b></a>'+
+    '<a class="download-card" href="./downloads/?file=mobot-photo-archive-20261114.zip" target="_blank" rel="noopener"><strong>Архив фотографий</strong><span>79 изображений · реестр · PDF-атлас</span><b>ZIP · 29,9 МБ</b></a></div>'+
     '<p class="evidence-note">Blender-сцены относятся к более раннему этапу: их масштаб и часть механизмов условны. Для первого робота в них использованы отдельные решения второго. На сайте остаются принятые v7 и v23.</p>'+
     '<div class="source-links">'+link('./downloads/README-RU.txt','Состав и ограничения исходников')+' '+link('./downloads/manifest.json','Файлы и контрольные суммы')+'</div></div>'+
     '<details class="consolidation-details"><summary>Как объединены прежние проекты</summary><p>Основной проект — эта лаборатория. Полезные инструменты работают с актуальными моделями; архивные версии сохранены для прослеживания решений.</p><div class="version-list">'+

@@ -28,6 +28,19 @@ export function readScene(params, def, photos, parts) {
   return {mode,photo,part,pose,tool:tools.includes(params.get('tool')) ? params.get('tool') : 'gripper',camera,marks:params.get('marks')==='1',isolated:mode==='parts'&&params.get('isolate')==='1'};
 }
 
+// A direct comparison opens the two accepted models in their initial poses.
+export function comparisonURL(base) {
+  const url=new URL(base);url.search='';url.hash='';url.searchParams.set('compare','1');return url.href;
+}
+
+// The accepted longitudinal axes differ by a half-turn around Y. Rotate
+// the up vector too, preserving the camera basis at oblique/top views.
+export function orientComparisonCamera(state, fromSide, toSide) {
+  const sign=toSide/fromSide;
+  const rotate=v=>v.map((n,i)=>i===1?n:n*sign);
+  return {direction:rotate(state.direction),up:rotate(state.up),zoom:state.zoom};
+}
+
 export function sceneURL(base, {year,def,mode,photo,part,pose,tool,camera,marks,isolated}) {
   const url = new URL(base); url.search = ''; url.hash = '';
   const p = url.searchParams; p.set('model',year);
