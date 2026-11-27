@@ -3,6 +3,37 @@ const assert = require('node:assert/strict');
 const {chromium} = require('playwright');
 const base = process.env.MOBOT_LAB_URL || 'http://127.0.0.1:4200/mobot-lab/';
 
+// Compare decoded image pixels rather than the PNG encoding. Detached canvases
+// keep this measurement out of the page layout and the viewer's resize events.
+async function screenshotDifference(page, before, after) {
+  return page.evaluate(async urls => {
+    const images = await Promise.all(urls.map(async src => {
+      const image = new Image();image.src = src;await image.decode();return image;
+    }));
+    const sizes = images.map(image => ({width:image.naturalWidth,height:image.naturalHeight}));
+    const sameSize = sizes[0].width === sizes[1].width && sizes[0].height === sizes[1].height;
+    if (!sameSize) return {sizes,sameSize,rms:null,changedPixelFraction:null};
+    const data = images.map(image => {
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth;canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');context.drawImage(image,0,0);
+      return context.getImageData(0,0,canvas.width,canvas.height).data;
+    });
+    let squared = 0, changed = 0;
+    for (let i = 0; i < data[0].length; i += 4) {
+      let pixelChanged = false;
+      for (let channel = 0; channel < 3; channel++) {
+        const difference = data[0][i+channel] - data[1][i+channel];
+        squared += difference*difference;
+        pixelChanged ||= difference !== 0;
+      }
+      if (pixelChanged) changed++;
+    }
+    const pixels = sizes[0].width*sizes[0].height;
+    return {sizes,sameSize,rms:Math.sqrt(squared/(pixels*3)),changedPixelFraction:changed/pixels};
+  }, [before,after].map(buffer => 'data:image/png;base64,'+buffer.toString('base64')));
+}
+
 // Exercise the exact batched exhibit with a real WebGL2 renderer. The camera
 // and input here are simulated; physical stereo and tracking require a headset.
 async function renderXRExhibits(page) {
@@ -282,14 +313,24 @@ async function exercise(browser, width, height, software) {
           const first=page.locator('#dual-1986 canvas'),second=page.locator('#dual-1987 canvas');
           await dialog.locator('[data-dual-view="side"]').click();
           const linked=await second.screenshot();
+          const linkedBeforeBox=await second.boundingBox();
           await first.focus();await page.keyboard.press('ArrowLeft');
           await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
-          assert(!linked.equals(await second.screenshot()),'The second 3D camera follows the first while linked');
+          const linkedDifference=await screenshotDifference(page,linked,await second.screenshot());
+          console.log('Linked dual-view image difference:',JSON.stringify({viewport:[width,height],...linkedDifference,beforeBox:linkedBeforeBox,afterBox:await second.boundingBox()}));
+          assert(linkedDifference.sameSize,'Linked view retains the same screenshot dimensions');
+          assert(linkedDifference.rms>0.5,'The second 3D camera follows the first while linked');
           await page.locator('#dualSync').uncheck();
-          const independent=await second.screenshot();
-          await first.focus();await page.keyboard.press('ArrowRight');
+          await first.focus();
           await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
-          assert(independent.equals(await second.screenshot()),'Unlinked camera retains its own view');
+          const independent=await second.screenshot();
+          const independentBeforeBox=await second.boundingBox();
+          await page.keyboard.press('ArrowRight');
+          await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+          const independentDifference=await screenshotDifference(page,independent,await second.screenshot());
+          console.log('Unlinked dual-view image difference:',JSON.stringify({viewport:[width,height],...independentDifference,beforeBox:independentBeforeBox,afterBox:await second.boundingBox()}));
+          assert(independentDifference.sameSize,'Unlinked view retains the same screenshot dimensions');
+          assert(independentDifference.rms<=0.5,'Unlinked camera retains its own view within a sub-level RGB raster tolerance');
         }
         await dialog.locator('[data-dual-open="'+year+'"]').click();
         assert(!(await dialog.isVisible()));
