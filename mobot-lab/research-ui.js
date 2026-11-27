@@ -8,7 +8,7 @@ export function researchPassport(year) {
   const data=research[year];
   return '<h3>Что включено в модель</h3>'+list(data.changes)+
     '<h3>Что ещё требует подтверждения</h3>'+list(data.openQuestions)+
-    '<div class="source-links">'+link(data.passport,'Скачать подробный паспорт · '+data.version)+'</div>';
+    '<div class="source-links"><a href="'+h(data.passport)+'" download>Скачать подробный паспорт · JSON · '+h(data.version)+'</a></div>';
 }
 
 export function setupResearch({openModal,openPassport,selectModel}) {
@@ -29,6 +29,8 @@ export function setupResearch({openModal,openPassport,selectModel}) {
     projectVersions.map(item=>'<article><span class="mini">'+h(item.role)+'</span><h4>'+link(item.url,item.title)+'</h4><p>'+h(item.decision)+'</p></article>').join('')+'</div></details>';
   for(const button of host.querySelectorAll('[data-research-passport]'))button.onclick=()=>openPassport(+button.dataset.researchPassport);
   for(const button of host.querySelectorAll('[data-research-model]'))button.onclick=()=>{
-    selectModel(+button.dataset.researchModel);document.getElementById('workbench').scrollIntoView({block:'start'});
+    const year=+button.dataset.researchModel,workbench=document.getElementById('workbench');
+    selectModel(year);workbench.scrollIntoView({block:'start'});
+    workbench.querySelector('[data-year="'+year+'"]')?.focus({preventScroll:true});
   };
 }

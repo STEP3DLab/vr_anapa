@@ -119,6 +119,25 @@ export async function putQR(url,canvas) {
     for(let y=0;y<cells;y++)for(let x=0;x<cells;x++)if(qr.isDark(y,x))ctx.fillRect((x+quiet)*pixel,(y+quiet)*pixel,pixel,pixel);
   } catch {canvas.hidden=true}
 }
+export function setupLinkSharing(link,{canvas,input,copy,status}) {
+  input.value=link;
+  if(canvas)putQR(link,canvas);
+  let attempt=0;
+  copy.onclick=async()=>{
+    const id=++attempt;
+    const current=()=>dialog.open&&copy.isConnected&&id===attempt;
+    try {
+      await navigator.clipboard.writeText(link);
+      if(current())status.textContent='Ссылка скопирована.';
+    } catch {
+      if(!current())return;
+      if(document.activeElement===copy){
+        input.focus({preventScroll:true});input.select();
+        status.textContent='Адрес выделен. Скопируйте его вручную.';
+      } else status.textContent='Автокопирование недоступно. Скопируйте адрес вручную.';
+    }
+  };
+}
 export function setupPresentation({getLink,getState}) {
   fullscreen();setupOffline();
   function transfer(vr=false,error='') {
@@ -128,23 +147,7 @@ export function setupPresentation({getLink,getState}) {
       (error?'<p>'+h(error)+'</p>':'')+'<div class="transfer"><canvas id="qr" aria-label="QR-код ссылки на текущую сцену"></canvas><div><strong>'+h(state.name)+' · '+state.year+'</strong><p>'+text+'</p>'+(vr?'<p>Масштаб настольного экспоната можно изменить в пульте шлема.</p>':'')+'</div></div>'+
       '<label class="select-title" for="shareURL">Адрес сцены</label><input id="shareURL" class="url-field" type="url" readonly value="'+h(link)+'">'+
       '<button id="copyLink" class="modal-action">'+icon('link')+'Скопировать ссылку</button><p id="copyStatus" role="status"></p>', title);
-    putQR(link,$('qr'));
-    const copy=$('copyLink'), input=$('shareURL'), status=$('copyStatus');
-    let attempt=0;
-    copy.onclick=async()=>{
-      const id=++attempt;
-      const current=()=>dialog.open&&copy.isConnected&&id===attempt;
-      try {
-        await navigator.clipboard.writeText(link);
-        if(current())status.textContent='Ссылка скопирована.';
-      } catch {
-        if(!current())return;
-        if(document.activeElement===copy){
-          input.focus({preventScroll:true});input.select();
-          status.textContent='Адрес выделен. Скопируйте его вручную.';
-        } else status.textContent='Автокопирование недоступно. Скопируйте адрес вручную.';
-      }
-    };
+    setupLinkSharing(link,{canvas:$('qr'),input:$('shareURL'),copy:$('copyLink'),status:$('copyStatus')});
   }
   $('share').onclick=()=>transfer();
   return {vrHelp:error=>transfer(true,error)};
