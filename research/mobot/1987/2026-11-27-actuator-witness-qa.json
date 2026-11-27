@@ -1,0 +1,1085 @@
+{
+  "date": "2026-11-27",
+  "baselineBlob": "ff0b38f601ca365653f37a74edf8da796e3e13fd",
+  "candidateBlob": "acd056377fe0c4dc0a850e6b65e651d991a13017",
+  "threeBlob": "70c40977daa0f6e1e312c6b58e9bfe49cb5a87a4",
+  "physicalScaleKnown": false,
+  "fullCollisionClearanceVerified": false,
+  "threeRevision": "180",
+  "method": "clip actual target triangles against 16 planar side faces and two caps of actual actuator mesh; strict interior points verified independently against baseline housing and rod. Normalized-coordinate tolerance 1e-6; not real dimensions.",
+  "cases": [
+    {
+      "case": "loader-left-to-gripper",
+      "id": 268,
+      "pose": {
+        "yaw": -90,
+        "arm": 25,
+        "bucket": 36,
+        "wrist": 115,
+        "tip": 25,
+        "claw": 24,
+        "track": 0
+      },
+      "part": "gripper",
+      "geometry": "ExtrudeGeometry",
+      "parentChain": [
+        {
+          "name": "",
+          "part": "gripper",
+          "position": [
+            0,
+            0,
+            0.133
+          ]
+        },
+        {
+          "name": "Широкая губка -1",
+          "position": [
+            -0.31719895592460523,
+            -0.1045482850533552,
+            0
+          ]
+        },
+        {
+          "name": "Двупалый сменный схват",
+          "part": "gripper",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Сменная рабочая головка",
+          "part": "gripper",
+          "position": [
+            -1.052187479321944,
+            0.6852056832500253,
+            0
+          ]
+        },
+        {
+          "name": "Стрела манипулятора",
+          "part": "arm",
+          "position": [
+            -0.14,
+            1.18,
+            0
+          ]
+        },
+        {
+          "name": "",
+          "position": [
+            0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Поворот манипулятора",
+          "position": [
+            -0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Мобот-Ч-ХВ-2 / исследовательская реконструкция",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "candidateHousing": {
+        "strictInteriorWitnessCount": 1,
+        "best": {
+          "triangle": 1,
+          "world": [
+            -0.06832364935906426,
+            0.8679560703123774,
+            -0.8032176938811486
+          ],
+          "margin": 0.003279989154028884,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.22438662179854418,
+              0.4967200108459711,
+              0.9080658891100377
+            ],
+            "axialMargin": 0.003279989154028884,
+            "radialMargin": 0.04639196442504412
+          },
+          "priorSolids": []
+        }
+      },
+      "addedHousing": {
+        "strictInteriorWitnessCount": 1,
+        "best": {
+          "triangle": 1,
+          "world": [
+            -0.06832364935906426,
+            0.8679560703123774,
+            -0.8032176938811486
+          ],
+          "margin": 0.003279989154028884,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.22438662179854418,
+              0.4967200108459711,
+              0.9080658891100377
+            ],
+            "axialMargin": 0.003279989154028884,
+            "radialMargin": 0.04639196442504412
+          },
+          "priorSolids": [
+            {
+              "inside": false,
+              "local": [
+                0.22438662179854418,
+                0.5387645562418447,
+                0.9080658891100413
+              ],
+              "axialMargin": -0.038764556241844716,
+              "radialMargin": 0.04639196442504068
+            },
+            {
+              "inside": false,
+              "local": [
+                0.39267658814745243,
+                -0.0716643506916045,
+                1.5891153059425638
+              ],
+              "axialMargin": 0.4283356493083955,
+              "radialMargin": -0.6544030225585933
+            }
+          ]
+        }
+      },
+      "baselineHousing": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      },
+      "baselineRod": {
+        "strictInteriorWitnessCount": 26,
+        "best": {
+          "triangle": 12,
+          "world": [
+            -0.10146665801520047,
+            0.8727475939784807,
+            -0.8251948458458598
+          ],
+          "margin": 0.4420557171424726,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.23596508472522265,
+              -0.0020383905985718047,
+              0.49025770770700217
+            ],
+            "axialMargin": 0.4979616094014282,
+            "radialMargin": 0.4420557171424726
+          },
+          "priorSolids": []
+        }
+      },
+      "candidateRod": {
+        "strictInteriorWitnessCount": 13,
+        "best": {
+          "triangle": 12,
+          "world": [
+            -0.10146665801520036,
+            0.8727475939784808,
+            -0.8251948458458594
+          ],
+          "margin": 0.4420557171424372,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.23596508472524397,
+              0.018281879069041444,
+              0.4902577077070306
+            ],
+            "axialMargin": 0.48171812093095856,
+            "radialMargin": 0.4420557171424372
+          },
+          "priorSolids": []
+        }
+      }
+    },
+    {
+      "case": "loader-left-to-gripper",
+      "id": 269,
+      "pose": {
+        "yaw": -90,
+        "arm": 25,
+        "bucket": 36,
+        "wrist": 115,
+        "tip": 25,
+        "claw": 24,
+        "track": 0
+      },
+      "part": "gripper",
+      "geometry": "BoxGeometry",
+      "parentChain": [
+        {
+          "name": "",
+          "part": "gripper",
+          "position": [
+            -0.3175,
+            -0.025,
+            0
+          ]
+        },
+        {
+          "name": "Широкая губка -1",
+          "position": [
+            -0.31719895592460523,
+            -0.1045482850533552,
+            0
+          ]
+        },
+        {
+          "name": "Двупалый сменный схват",
+          "part": "gripper",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Сменная рабочая головка",
+          "part": "gripper",
+          "position": [
+            -1.052187479321944,
+            0.6852056832500253,
+            0
+          ]
+        },
+        {
+          "name": "Стрела манипулятора",
+          "part": "arm",
+          "position": [
+            -0.14,
+            1.18,
+            0
+          ]
+        },
+        {
+          "name": "",
+          "position": [
+            0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Поворот манипулятора",
+          "position": [
+            -0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Мобот-Ч-ХВ-2 / исследовательская реконструкция",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "candidateHousing": {
+        "strictInteriorWitnessCount": 3,
+        "best": {
+          "triangle": 6,
+          "world": [
+            -0.061361170335687776,
+            0.8436002313732037,
+            -0.8493425595996738
+          ],
+          "margin": 0.02414133242784766,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.4052268174048841,
+              0.47585866757215234,
+              -0.4097874171335363
+            ],
+            "axialMargin": 0.02414133242784766,
+            "radialMargin": 0.41492753818132444
+          },
+          "priorSolids": []
+        }
+      },
+      "addedHousing": {
+        "strictInteriorWitnessCount": 3,
+        "best": {
+          "triangle": 6,
+          "world": [
+            -0.061361170335687776,
+            0.8436002313732037,
+            -0.8493425595996738
+          ],
+          "margin": 0.009465768485108272,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.4052268174048841,
+              0.47585866757215234,
+              -0.4097874171335363
+            ],
+            "axialMargin": 0.02414133242784766,
+            "radialMargin": 0.41492753818132444
+          },
+          "priorSolids": [
+            {
+              "inside": false,
+              "local": [
+                -0.40522681740488764,
+                0.5170232209093227,
+                -0.4097874171335327
+              ],
+              "axialMargin": -0.017023220909322734,
+              "radialMargin": 0.41492753818132533
+            },
+            {
+              "inside": false,
+              "local": [
+                -0.7091469304585446,
+                -0.09775395309063076,
+                -0.7171279799836939
+              ],
+              "axialMargin": 0.40224604690936927,
+              "radialMargin": -0.009465768485108272
+            }
+          ]
+        }
+      },
+      "baselineHousing": {
+        "strictInteriorWitnessCount": 3,
+        "best": {
+          "triangle": 6,
+          "world": [
+            -0.05230469267549953,
+            0.835456441148399,
+            -0.8612910510260965
+          ],
+          "margin": 0.0016275363909022955,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.5705554488139306,
+              0.4983724636090977,
+              -0.7511728864598979
+            ],
+            "axialMargin": 0.0016275363909022955,
+            "radialMargin": 0.03922422807807613
+          },
+          "priorSolids": []
+        }
+      },
+      "baselineRod": {
+        "strictInteriorWitnessCount": 17,
+        "best": {
+          "triangle": 5,
+          "world": [
+            -0.10476449594869859,
+            0.8686898485733227,
+            -0.835
+          ],
+          "margin": 0.49733654036334873,
+          "inside": {
+            "inside": true,
+            "local": [
+              -7.105427357601003e-15,
+              0.002663459636651267,
+              -7.105427357601003e-15
+            ],
+            "axialMargin": 0.49733654036334873,
+            "radialMargin": 0.9807852804032205
+          },
+          "priorSolids": []
+        }
+      },
+      "candidateRod": {
+        "strictInteriorWitnessCount": 19,
+        "best": {
+          "triangle": 5,
+          "world": [
+            -0.1047644959486983,
+            0.8686898485733225,
+            -0.835
+          ],
+          "margin": 0.4772065805734379,
+          "inside": {
+            "inside": true,
+            "local": [
+              7.105427357601003e-15,
+              0.022793419426562104,
+              0
+            ],
+            "axialMargin": 0.4772065805734379,
+            "radialMargin": 0.9807852804032234
+          },
+          "priorSolids": []
+        }
+      }
+    },
+    {
+      "case": "loader-to-carrier",
+      "id": 164,
+      "pose": {
+        "yaw": 0,
+        "arm": -18,
+        "bucket": 36,
+        "wrist": 90,
+        "tip": 0,
+        "claw": 4,
+        "track": 0
+      },
+      "part": "bucket",
+      "geometry": "ExtrudeGeometry",
+      "parentChain": [
+        {
+          "name": "",
+          "part": "bucket",
+          "position": [
+            0,
+            0,
+            -0.8564999999999999
+          ]
+        },
+        {
+          "name": "Фронтальный погрузчик и ковш",
+          "part": "bucket",
+          "position": [
+            0.28,
+            0.65,
+            0
+          ]
+        },
+        {
+          "name": "Мобот-Ч-ХВ-2 / исследовательская реконструкция",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "candidateHousing": {
+        "strictInteriorWitnessCount": 32,
+        "best": {
+          "triangle": 19,
+          "world": [
+            0.25170183577674793,
+            0.7876409450549204,
+            -0.8249151544833229
+          ],
+          "margin": 0.4457795693078547,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.14351146171147278,
+              -0.05422043069214534,
+              0.28813844333362937
+            ],
+            "axialMargin": 0.4457795693078547,
+            "radialMargin": 0.6614762244111321
+          },
+          "priorSolids": []
+        }
+      },
+      "addedHousing": {
+        "strictInteriorWitnessCount": 1,
+        "best": {
+          "triangle": 1,
+          "world": [
+            -0.06828393883078848,
+            0.8764732021962915,
+            -0.8654999996125697
+          ],
+          "margin": 0.0000010000000000842668,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.46118005959295516,
+              0.4999989999999999,
+              -0.871428560359135
+            ],
+            "axialMargin": 0.0000010000000000842668,
+            "radialMargin": 0.0000010000000031373801
+          },
+          "priorSolids": [
+            {
+              "inside": false,
+              "local": [
+                0.4611800595929516,
+                0.5421818626834156,
+                -0.871428560359135
+              ],
+              "axialMargin": -0.042181862683415616,
+              "radialMargin": 0.0000010000000051357816
+            },
+            {
+              "inside": false,
+              "local": [
+                0.8070651042876735,
+                -0.06756358296171928,
+                -1.5249999806284937
+              ],
+              "axialMargin": 0.43243641703828073,
+              "radialMargin": -0.7355872103024248
+            }
+          ]
+        }
+      },
+      "baselineHousing": {
+        "strictInteriorWitnessCount": 33,
+        "best": {
+          "triangle": 19,
+          "world": [
+            0.2517018357767478,
+            0.7876409450549204,
+            -0.8249151544833229
+          ],
+          "margin": 0.46458384647131745,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.14351146171146922,
+              -0.03541615352868256,
+              0.2881384433336329
+            ],
+            "axialMargin": 0.46458384647131745,
+            "radialMargin": 0.6614762244111311
+          },
+          "priorSolids": []
+        }
+      },
+      "baselineRod": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      },
+      "candidateRod": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      }
+    },
+    {
+      "case": "loader-to-carrier",
+      "id": 168,
+      "pose": {
+        "yaw": 0,
+        "arm": -18,
+        "bucket": 36,
+        "wrist": 90,
+        "tip": 0,
+        "claw": 4,
+        "track": 0
+      },
+      "part": "bucket",
+      "geometry": "ExtrudeGeometry",
+      "parentChain": [
+        {
+          "name": "",
+          "part": "bucket",
+          "position": [
+            0,
+            0,
+            0.8135
+          ]
+        },
+        {
+          "name": "Фронтальный погрузчик и ковш",
+          "part": "bucket",
+          "position": [
+            0.28,
+            0.65,
+            0
+          ]
+        },
+        {
+          "name": "Мобот-Ч-ХВ-2 / исследовательская реконструкция",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "candidateHousing": {
+        "strictInteriorWitnessCount": 28,
+        "best": {
+          "triangle": 19,
+          "world": [
+            0.25170183577674793,
+            0.7876409450549204,
+            0.8450848455166771
+          ],
+          "margin": 0.4457795693078547,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.14351146171147278,
+              -0.05422043069214534,
+              0.2881384433336329
+            ],
+            "axialMargin": 0.4457795693078547,
+            "radialMargin": 0.6614762244111291
+          },
+          "priorSolids": []
+        }
+      },
+      "addedHousing": {
+        "strictInteriorWitnessCount": 1,
+        "best": {
+          "triangle": 1,
+          "world": [
+            -0.06828393883078848,
+            0.8764732021962915,
+            0.8045000003874302
+          ],
+          "margin": 0.0000010000000000842668,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.46118005959295516,
+              0.4999989999999999,
+              -0.871428560359135
+            ],
+            "axialMargin": 0.0000010000000000842668,
+            "radialMargin": 0.0000010000000031373801
+          },
+          "priorSolids": [
+            {
+              "inside": false,
+              "local": [
+                0.4611800595929516,
+                0.5421818626834156,
+                -0.8714285603591385
+              ],
+              "axialMargin": -0.042181862683415616,
+              "radialMargin": 0.0000010000000021381794
+            },
+            {
+              "inside": false,
+              "local": [
+                0.8070651042876735,
+                -0.06756358296171928,
+                -1.5249999806284795
+              ],
+              "axialMargin": 0.43243641703828073,
+              "radialMargin": -0.7355872103024128
+            }
+          ]
+        }
+      },
+      "baselineHousing": {
+        "strictInteriorWitnessCount": 26,
+        "best": {
+          "triangle": 19,
+          "world": [
+            0.2517018357767479,
+            0.7876409450549204,
+            0.845084845516677
+          ],
+          "margin": 0.4645838464713174,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.14351146171146922,
+              -0.03541615352868262,
+              0.2881384433336258
+            ],
+            "axialMargin": 0.4645838464713174,
+            "radialMargin": 0.661476224411137
+          },
+          "priorSolids": []
+        }
+      },
+      "baselineRod": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      },
+      "candidateRod": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      }
+    },
+    {
+      "case": "arm-to-internal-boom",
+      "id": 211,
+      "pose": {
+        "yaw": 0,
+        "arm": 25,
+        "bucket": 12,
+        "wrist": 90,
+        "tip": 0,
+        "claw": 4,
+        "track": 0
+      },
+      "part": "arm",
+      "geometry": "CylinderGeometry",
+      "parentChain": [
+        {
+          "name": "",
+          "part": "arm",
+          "position": [
+            -0.57,
+            -0.1345,
+            -0.118
+          ]
+        },
+        {
+          "name": "",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Стрела манипулятора",
+          "part": "arm",
+          "position": [
+            -0.14,
+            1.18,
+            0
+          ]
+        },
+        {
+          "name": "",
+          "position": [
+            0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Поворот манипулятора",
+          "position": [
+            -0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Мобот-Ч-ХВ-2 / исследовательская реконструкция",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "candidateHousing": {
+        "strictInteriorWitnessCount": 38,
+        "best": {
+          "triangle": 13,
+          "world": [
+            -0.36715018895319673,
+            1.0670269833420631,
+            -0.13532215644900714
+          ],
+          "margin": 0.2270932972529574,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.010842582860885132,
+              0.2729067027470426,
+              0.7207639905660131
+            ],
+            "axialMargin": 0.2270932972529574,
+            "radialMargin": 0.27175528482957534
+          },
+          "priorSolids": []
+        }
+      },
+      "addedHousing": {
+        "strictInteriorWitnessCount": 15,
+        "best": {
+          "triangle": 19,
+          "world": [
+            -0.4641415940511575,
+            1.0779426662587435,
+            -0.111763038422075
+          ],
+          "margin": 0.031947666572613054,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.1859277942477036,
+              0.46282958323544765,
+              0.9009153259384226
+            ],
+            "axialMargin": 0.03717041676455235,
+            "radialMargin": 0.0609080765816139
+          },
+          "priorSolids": [
+            {
+              "inside": false,
+              "local": [
+                -0.18592779424771066,
+                0.531947666572613,
+                0.9009153259384224
+              ],
+              "axialMargin": -0.031947666572613054,
+              "radialMargin": 0.06090807658161279
+            },
+            {
+              "inside": false,
+              "local": [
+                -0.3305383008848182,
+                -0.052362197649302514,
+                1.6016272461127525
+              ],
+              "axialMargin": 0.4476378023506975,
+              "radialMargin": -0.6545519708352026
+            }
+          ]
+        }
+      },
+      "baselineHousing": {
+        "strictInteriorWitnessCount": 45,
+        "best": {
+          "triangle": 13,
+          "world": [
+            -0.3532030182294862,
+            1.0641155322272333,
+            -0.13533967415181922
+          ],
+          "margin": 0.20032363348953308,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.0035092239615401866,
+              0.2996763665104669,
+              0.7680754424386977
+            ],
+            "axialMargin": 0.20032363348953308,
+            "radialMargin": 0.2267835765874735
+          },
+          "priorSolids": []
+        }
+      },
+      "baselineRod": {
+        "strictInteriorWitnessCount": 82,
+        "best": {
+          "triangle": 13,
+          "world": [
+            -0.5199481007906558,
+            1.0995805157537077,
+            -0.13533051607370067
+          ],
+          "margin": 0.4122905855047849,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.13957522771109868,
+              0.08770941449521509,
+              0.3486915671537379
+            ],
+            "axialMargin": 0.4122905855047849,
+            "radialMargin": 0.6115639478184771
+          },
+          "priorSolids": []
+        }
+      },
+      "candidateRod": {
+        "strictInteriorWitnessCount": 89,
+        "best": {
+          "triangle": 13,
+          "world": [
+            -0.5199480897149503,
+            1.0995805134416707,
+            -0.13533051608761176
+          ],
+          "margin": 0.3846760965884426,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.13957521735810016,
+              0.11532390341155738,
+              0.34869163394644426
+            ],
+            "axialMargin": 0.3846760965884426,
+            "radialMargin": 0.6115638843289436
+          },
+          "priorSolids": []
+        }
+      }
+    },
+    {
+      "case": "arm-to-internal-boom",
+      "id": 212,
+      "pose": {
+        "yaw": 0,
+        "arm": 25,
+        "bucket": 12,
+        "wrist": 90,
+        "tip": 0,
+        "claw": 4,
+        "track": 0
+      },
+      "part": "arm",
+      "geometry": "CylinderGeometry",
+      "parentChain": [
+        {
+          "name": "",
+          "part": "arm",
+          "position": [
+            -0.41,
+            -0.09771999999999999,
+            -0.118
+          ]
+        },
+        {
+          "name": "",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Стрела манипулятора",
+          "part": "arm",
+          "position": [
+            -0.14,
+            1.18,
+            0
+          ]
+        },
+        {
+          "name": "",
+          "position": [
+            0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Поворот манипулятора",
+          "position": [
+            -0.14,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "Мобот-Ч-ХВ-2 / исследовательская реконструкция",
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "candidateHousing": {
+        "strictInteriorWitnessCount": 57,
+        "best": {
+          "triangle": 9,
+          "world": [
+            -0.3737601446891765,
+            1.0553234854629965,
+            -0.13200000043213364
+          ],
+          "margin": 0.13383496234328385,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.268413932487043,
+              0.2815200108755586,
+              0.8101522049869632
+            ],
+            "axialMargin": 0.2184799891244414,
+            "radialMargin": 0.13383496234328385
+          },
+          "priorSolids": []
+        }
+      },
+      "addedHousing": {
+        "strictInteriorWitnessCount": 2,
+        "best": {
+          "triangle": 17,
+          "world": [
+            -0.4513626884541493,
+            1.0981210548138798,
+            -0.1102186126183086
+          ],
+          "margin": 0.015719051765627157,
+          "inside": {
+            "inside": true,
+            "local": [
+              0.2844107092604738,
+              0.44768793319131817,
+              0.8987329202178655
+            ],
+            "axialMargin": 0.052312066808681834,
+            "radialMargin": 0.04383548438527585
+          },
+          "priorSolids": [
+            {
+              "inside": false,
+              "local": [
+                0.28441070926046663,
+                0.5157190517656272,
+                0.8987329202178653
+              ],
+              "axialMargin": -0.015719051765627157,
+              "radialMargin": 0.0438354843852774
+            },
+            {
+              "inside": false,
+              "local": [
+                0.5056190386852749,
+                -0.07279823110995111,
+                1.597747413720651
+              ],
+              "axialMargin": 0.4272017688900489,
+              "radialMargin": -0.6849032458509099
+            }
+          ]
+        }
+      },
+      "baselineHousing": {
+        "strictInteriorWitnessCount": 51,
+        "best": {
+          "triangle": 9,
+          "world": [
+            -0.3737601446891766,
+            1.055323485462996,
+            -0.1320000004321337
+          ],
+          "margin": 0.1338349623432813,
+          "inside": {
+            "inside": true,
+            "local": [
+              -0.26841393248705714,
+              0.33762253013949994,
+              0.8101522049869629
+            ],
+            "axialMargin": 0.16237746986050006,
+            "radialMargin": 0.1338349623432813
+          },
+          "priorSolids": []
+        }
+      },
+      "baselineRod": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      },
+      "candidateRod": {
+        "strictInteriorWitnessCount": 0,
+        "best": null
+      }
+    }
+  ]
+}
