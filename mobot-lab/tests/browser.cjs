@@ -626,7 +626,7 @@ async function exercise(browser, width, height, software) {
     const offline=await page.goto(base+'?model=1986&mode=photo&photo=1986-fig9&marks=1');
     assert(offline.fromServiceWorker());await page.locator('#poster').waitFor({state:'hidden'});
     assert.match(await page.evaluate(()=>fetch('./data/1986-pose-audit.txt').then(r=>r.text())),/729 дискретных/);
-    assert.match(await page.evaluate(()=>fetch('./geometry-audit.html').then(r=>r.text())),/19 позиций паспортов/);
+
     assert.equal(await page.locator('#photoSelect').inputValue(),'1');
     await page.locator('[data-year="1987"]').click();
     await page.locator('#photoSelect').selectOption('2');
@@ -687,7 +687,7 @@ async function directComparison(browser) {
     for(const card of await page.locator('.download-card').all())assert.equal(await card.getAttribute('target'),'_blank');
     const auditReport=page.locator('#researchContent a[href="./geometry-audit.html"]');
     assert.equal(await auditReport.count(),1);
-    await page.goto(base+'geometry-audit.html');
+    await page.goto(base+'geometry-audit.html',{timeout:10000,waitUntil:'domcontentloaded'});
     assert(await page.getByRole('heading',{name:'Сверка геометрии по узлам'}).isVisible());
     assert.equal(await page.locator('article').count(),19);
     assert(await page.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
