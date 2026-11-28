@@ -13,7 +13,7 @@ export function researchPassport(year) {
 
 export function setupResearch({openModal,openPassport,selectModel}) {
   const host=document.getElementById('researchContent');
-  host.innerHTML='<div class="research-grid">'+[1986,1987].map(year=>{
+  host.innerHTML='<p class="source-links"><a href="./geometry-audit.html">Сверка геометрии: 19 узлов и архивные кадры</a></p><div class="research-grid">'+[1986,1987].map(year=>{
     const data=research[year];
     return '<article class="research-card"><p class="mini">'+year+' · '+data.version+'</p><h3>'+(year===1986?'Мобот-Ч-ХВ':'Мобот-Ч-ХВ-2')+'</h3><p>'+h(data.summary)+'</p>'+
       '<div class="research-actions"><button class="secondary" data-research-passport="'+year+'">Паспорт и достоверность</button><button class="text-btn" data-research-model="'+year+'">Открыть модель</button></div>'+

@@ -67,22 +67,22 @@ export const inspections = {
       selection: model => model.sections['Открытая ходовая']
     },
     {
-      id: 'camera', title: 'Верхняя телекамера', view: 'side',
-      description: 'На вершине стойки различимы цилиндрический корпус, кольцевой пояс и расширение у переднего торца. Корпус поворачивается вместе со стойкой в модели.',
+      id: 'camera', title: 'Телекамера и переднее оборудование', view: 'side',
+      description: 'На вершине стойки различимы цилиндрический корпус, кольцевой пояс и расширение у переднего торца. Корпус поворачивается вместе со стойкой. В осмотр также входят низкий цилиндрический корпус и два круглых элемента у ковша.',
       confidence: 'Две телекамеры упомянуты в описании комплекса. Наружный профиль верхнего корпуса виден на рис. 6; крепления и скрытая оптика приблизительны. Назначение светлых дисков у ковша не установлено.',
       source: article + '0074.jpg',
       anchor: model => model.sections['Верхний цилиндрический корпус камеры'].getObjectByName('Профилированный корпус верхней камеры'),
-      selection: model => model.sections['Верхний цилиндрический корпус камеры']
+      selection: model => [model.sections['Верхний цилиндрический корпус камеры'], model.root.getObjectByName('Оборудование на конце у ковша')]
     }
   ],
   1987: [
     {
       id: 'body', title: 'Рама и защитный кожух', view: 'side',
       description: 'Низкая рама соединяет гусеничные борта. На платформе расположен защитный кожух со скруглёнными плечами и уплощённой верхней частью.',
-      confidence: 'Обводы кожуха видны на фотографиях СКТБ № 2 и 4. Сечения, ширина, число поперечин и соединения рамы с бортами восстановлены приблизительно.',
+      confidence: 'Обводы кожуха видны на фотографиях СКТБ № 2 и 4. Сечения, ширина, число поперечин и соединения рамы с бортами восстановлены приблизительно. Осмотр корпуса включает наружный кабель; его точная трасса и внутренний барабан не установлены.',
       source: album + '1987-before-dispatch.jpg',
       anchor: model => model.parts.body.getObjectByName('Кожух с плоской вершиной и скруглёнными плечами'),
-      selection: model => model.parts.body
+      selection: model => [model.parts.body, ...partMeshes(model, 'cable')]
     },
     {
       id: 'turret', title: 'Поворотная опора', view: 'iso', joint: 'yaw',
@@ -110,7 +110,7 @@ export const inspections = {
         return [fingerHead, breakerArm, breakerLoader].find(part => part.visible);
       },
       selection: model => model.root.userData.activeWorkTool === 'breaker-loader'
-        ? model.mechanisms.breakerLoader : model.mechanisms.gripper
+        ? [model.mechanisms.breakerLoader,model.mechanisms.gripper] : model.mechanisms.gripper
     },
     {
       id: 'loader', title: 'Рычаги погрузчика', view: 'side', joint: 'bucket',
@@ -123,10 +123,10 @@ export const inspections = {
     {
       id: 'track', title: 'Гусеничная ходовая', view: 'side', joint: 'track',
       description: 'Семь нижних катков и два приподнятых колеса задают видимый профиль борта. При прокрутке можно проследить движение траков и фланцев катков.',
-      confidence: 'Наиболее полный боковой вид даёт фото № 2; на № 4 низ ленты закрыт снегом. Точный профиль траков, схема балансиров и невидимый борт условны. Материал траков именно Ч-ХВ-2 отдельно не установлен.',
+      confidence: 'Наиболее полный боковой вид даёт фото № 2; на № 4 низ ленты закрыт снегом. Точный профиль траков, схема балансиров и невидимый борт условны. Материал траков именно Ч-ХВ-2 отдельно не установлен. Крепления вдоль бортов в сцене условны.',
       source: album + '1987-before-dispatch.jpg',
       anchor: model => model.parts.tracks.getObjectByName('Вращающийся фланец опорного катка'),
-      selection: model => model.parts.tracks
+      selection: model => [model.parts.tracks, ...partMeshes(model, 'mechanics')]
     },
     {
       id: 'camera', title: 'Телевизионное наблюдение', view: 'iso',
