@@ -1,6 +1,6 @@
 import {registrations,landmarkDifferences} from '../registrations.js';
 
-const frames=[
+export const frames=[
  ['1986-fig6','1986','Рис. 6','Траверса грейфера'],
  ['1986-fig9','1986','Рис. 9','Траверса грейфера'],
  ['1987-before-dispatch','1987','Кадр № 2','Задний угол боковины ковша'],

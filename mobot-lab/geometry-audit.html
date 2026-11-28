@@ -17,13 +17,15 @@ small{color:var(--muted)}li+li{margin-top:.5em}
 .audit-crop{margin:0;min-width:0}.audit-crop svg{display:block;width:100%;height:auto;background:#d9e0d7;border:1px solid var(--line);border-radius:.45rem}
 .audit-crop figcaption{padding-top:.35rem;font-size:.9rem}.audit-crop a{display:inline-block;padding:.2rem 0}
 .audit-key{display:flex;gap:.3rem 1.2rem;flex-wrap:wrap}.audit-key span::before{content:'';display:inline-block;width:.8rem;height:.8rem;margin-right:.35rem;vertical-align:-.05rem;border:1px solid #222}
+.audit-align dl{display:grid;grid-template-columns:1fr auto;column-gap:.65rem;margin:.55rem 0 0;font-size:.94rem}
+.audit-align dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}.audit-align dt,.audit-align dd{padding:.2rem 0}
 .audit-key .photo-point::before{border-radius:50%;background:#ffcf66}.audit-key .model-point::before{background:#73efff}
 </style>
 <main>
 <p><a href="./?compare=1">← Открыть две модели</a></p>
 <h1>Сверка геометрии по узлам</h1>
 <p>28 ноября 2026 · Ч-ХВ 1986 года (v7) и Ч-ХВ-2 1987 года (v23)</p>
-<nav aria-label="Разделы отчёта"><a href="#measurements">Расхождения</a><a href="#y1986">1986: 7 узлов</a><a href="#y1987">1987: 12 узлов</a><a href="#published-schematic">Схема и габариты</a><a href="#published-photo">Фото Ч-ХВ-2</a><a href="#need">Чего не хватает</a></nav>
+<nav aria-label="Разделы отчёта"><a href="#measurements">Расхождения</a><a href="#registration-sensitivity">Проверка совмещения</a><a href="#y1986">1986: 7 узлов</a><a href="#y1987">1987: 12 узлов</a><a href="#published-schematic">Схема и габариты</a><a href="#published-photo">Фото Ч-ХВ-2</a><a href="#need">Чего не хватает</a></nav>
 <aside><strong>Состояние:</strong> сверены 19 позиций паспортов с доступными изображениями, техническими описаниями и результатами прежних фотопроверок. В 3D-проверке учтены все 325 объектов сетки v7 и 299 v23 (в том числе скрытые варианты оснастки). Все видимые объекты теперь доступны через «Узлы». Сетка и габариты в сцене — не заводские размеры. Ни одна из версий не объявлена точной копией.</aside>
 <section id="measurements"><h2>Где модель заметно расходится с фото</h2>
 <ul>
@@ -78,6 +80,23 @@ small{color:var(--muted)}li+li{margin-top:.5em}
 <!-- audit-crops:end -->
 </div>
 <p><small>Это увеличенные фрагменты прежних совмещений, не новый обмер. Пунктир соединяет две точки на изображении, а не показывает направление, в котором следует править модель.</small></p>
+</section>
+<section id="registration-sensitivity"><h2>Что меняется, если подправить совмещение</h2>
+<p>Проверили, исчезнут ли расхождения при общей поправке изображения. Траверса и угол боковины не участвовали в подгонке. В первом варианте сдвинули все точки модели одним вектором. Во втором совмещали опорные точки попарно, меняя сдвиг, угол поворота и единый масштаб. Для каждого кадра 1986 года взяли три пары из оголовка стрелы, верха кожуха и одного видимого катка. Для каждого кадра 1987-го доступна одна пара: палец оголовка и верх кожуха.</p>
+<p>Числа ниже — остаток на кадре в пикселях, не миллиметры детали.</p>
+<div class="grid audit-align">
+<!-- audit-sensitivity:start -->
+<article><h3><a href="#audit-1986-fig6">1986 · Рис. 6</a></h3>
+<dl><dt>Исходное совмещение</dt><dd>67,0</dd><dt>После общего сдвига</dt><dd>56,8</dd><dt>По парам опорных точек</dt><dd>62,8–84,1</dd></dl></article>
+<article><h3><a href="#audit-1986-fig9">1986 · Рис. 9</a></h3>
+<dl><dt>Исходное совмещение</dt><dd>124,2</dd><dt>После общего сдвига</dt><dd>109,8</dd><dt>По парам опорных точек</dt><dd>130,0–162,0</dd></dl></article>
+<article><h3><a href="#audit-1987-before-dispatch">1987 · Кадр № 2</a></h3>
+<dl><dt>Исходное совмещение</dt><dd>61,1</dd><dt>После общего сдвига</dt><dd>55,1</dd><dt>По парам опорных точек</dt><dd>52,5</dd></dl></article>
+<article><h3><a href="#audit-1987-snow-side">1987 · Кадр № 4</a></h3>
+<dl><dt>Исходное совмещение</dt><dd>113,8</dd><dt>После общего сдвига</dt><dd>115,4</dd><dt>По парам опорных точек</dt><dd>95,3</dd></dl></article>
+<!-- audit-sensitivity:end -->
+</div>
+<p><strong>Итог.</strong> Ни одна из проверенных поправок не убрала расхождение. Эти поправки недостаточны, но проверка не отделяет трёхмерный ракурс, положение оснастки и геометрию детали. Диапазон показывает результаты разных пар, а не доверительный интервал.</p>
 </section>
 <section id="y1986"><h2>Ч-ХВ · 1986</h2>
 <p>Основные кадры: <a href="../mobot-assets/archive/1986-fig6.png">рис. 6</a>, <a href="../mobot-assets/archive/1986-fig9.png">рис. 9</a> и <a href="../research/mobot/1986/v7/BATANOV.md">подборка Батанова</a>.</p>

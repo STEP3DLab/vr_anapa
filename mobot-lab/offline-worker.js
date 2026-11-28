@@ -1,6 +1,6 @@
 // The cache and the fetch handler are confined to this laboratory's directory.
 const prefix='mobot-lab:'+self.registration.scope+':';
-const cacheName=prefix+'2026-11-28.6-audit-crops';
+const cacheName=prefix+'2026-11-28.7-audit-sensitivity';
 const files=[
   'index.html','geometry-audit.html','style.css','app.js','catalog.js','evidence.js','inspection.js','registrations.js',
   'scene-link.js','archive.js','presentation.js','viewer.js','xr.js','icons.js','mark.svg',
