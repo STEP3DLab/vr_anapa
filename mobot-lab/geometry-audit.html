@@ -13,6 +13,11 @@ nav{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:1rem 0}nav a{display:in
 aside{border-left:4px solid var(--accent);padding:.8rem 1rem;background:#eaf1e5;margin:1.2rem 0}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:.75rem}.grid article{border:1px solid var(--line);padding:.9rem;border-radius:.45rem}
 small{color:var(--muted)}li+li{margin-top:.5em}
+.audit-crops{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:1rem;margin:1rem 0}
+.audit-crop{margin:0;min-width:0}.audit-crop svg{display:block;width:100%;height:auto;background:#d9e0d7;border:1px solid var(--line);border-radius:.45rem}
+.audit-crop figcaption{padding-top:.35rem;font-size:.9rem}.audit-crop a{display:inline-block;padding:.2rem 0}
+.audit-key{display:flex;gap:.3rem 1.2rem;flex-wrap:wrap}.audit-key span::before{content:'';display:inline-block;width:.8rem;height:.8rem;margin-right:.35rem;vertical-align:-.05rem;border:1px solid #222}
+.audit-key .photo-point::before{border-radius:50%;background:#ffcf66}.audit-key .model-point::before{background:#73efff}
 </style>
 <main>
 <p><a href="./?compare=1">← Открыть две модели</a></p>
@@ -25,7 +30,55 @@ small{color:var(--muted)}li+li{margin-top:.5em}
 <li><strong>1986: траверса грейфера.</strong> Расхождение 67,0 и 124,2 px на отображаемых кадрах [6 и 9]. Верх кожуха расходится на 7,2 и 26,4 px. Частично скрытый палец и глубина не позволяют перевести остаток в длину подвеса. Открытый участок подтверждён отдельными кадрами, но ещё одно удлинение не принимаем.</li>
 <li><strong>1987: задний угол боковины ковша.</strong> Расхождение 61,1 и 113,8 px на кадрах № 2 и 4. Опытный ковш улучшал комнатный кадр, но ухудшал контроль № 4. Нужна сверка экземпляра, позы и камеры, а не подгонка под один снимок.</li>
 <li><strong>1987: двупалый схват.</strong> Три контрольные точки на левой губке кадра № 3 дают 3,0–11,6 px; правая губка использована при совмещении. Оси и скрытый привод так не измеряются.</li>
-</ul><p><small>Расстояния рассчитаны по двумерным парам точек из существующих наложений лаборатории в размерах её WebP. Это не новый обмер, не эпюра деформаций и не статистика всего контура. У кадров разные ракурсы и масштабы. <a href="./?model=1986&amp;mode=photo&amp;photo=1986-fig9&amp;marks=1">Сверка 1986</a> · <a href="./?model=1987&amp;mode=photo&amp;photo=1987-before-dispatch&amp;marks=1">Сверка 1987</a>.</small></p></section>
+</ul><p><small>Расстояния рассчитаны по двумерным парам точек из существующих наложений лаборатории в размерах её WebP. Это не новый обмер, не эпюра деформаций и не статистика всего контура. У кадров разные ракурсы и масштабы. <a href="./?model=1986&amp;mode=photo&amp;photo=1986-fig9&amp;marks=1">Сверка 1986</a> · <a href="./?model=1987&amp;mode=photo&amp;photo=1987-before-dispatch&amp;marks=1">Сверка 1987</a>.</small></p>
+<h3>Точки расхождения крупным планом</h3>
+<p class="audit-key"><span class="photo-point">Круг: точка на снимке</span><span class="model-point">Квадрат: точка модели</span></p>
+<div class="audit-crops">
+<!-- audit-crops:start -->
+<figure class="audit-crop" id="audit-1986-fig6">
+<svg viewBox="92.10 264.63 300 230" role="img" aria-label="1986 · Рис. 6 · Траверса грейфера: точка на фото и её проекция из модели, разница 67,0 пикселя">
+<image href="./media/1986-fig6.webp" width="1277" height="1000"/>
+<path d="M 256.98 409.65 L 227.22 349.61" fill="none" stroke="#231d18" stroke-width="5"/>
+<path d="M 256.98 409.65 L 227.22 349.61" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 4"/>
+<circle cx="256.98" cy="409.65" r="7" fill="#ffcf66" stroke="#211906" stroke-width="2"/>
+<rect x="221.22" y="343.61" width="12" height="12" fill="#73efff" stroke="#002935" stroke-width="2"/>
+</svg>
+<figcaption><strong>1986 · Рис. 6: 67,0 px</strong><br>Траверса грейфера. <a href="./?model=1986&amp;mode=photo&amp;photo=1986-fig6&amp;marks=1">Открыть полный кадр</a></figcaption>
+</figure>
+<figure class="audit-crop" id="audit-1986-fig9">
+<svg viewBox="50.37 118.18 300 230" role="img" aria-label="1986 · Рис. 9 · Траверса грейфера: точка на фото и её проекция из модели, разница 124,2 пикселя">
+<image href="./media/1986-fig9.webp" width="738" height="1000"/>
+<path d="M 207.56 294.87 L 193.19 171.48" fill="none" stroke="#231d18" stroke-width="5"/>
+<path d="M 207.56 294.87 L 193.19 171.48" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 4"/>
+<circle cx="207.56" cy="294.87" r="7" fill="#ffcf66" stroke="#211906" stroke-width="2"/>
+<rect x="187.19" y="165.48" width="12" height="12" fill="#73efff" stroke="#002935" stroke-width="2"/>
+</svg>
+<figcaption><strong>1986 · Рис. 9: 124,2 px</strong><br>Траверса грейфера. <a href="./?model=1986&amp;mode=photo&amp;photo=1986-fig9&amp;marks=1">Открыть полный кадр</a></figcaption>
+</figure>
+<figure class="audit-crop" id="audit-1987-before-dispatch">
+<svg viewBox="776.37 480.10 300 230" role="img" aria-label="1987 · Кадр № 2 · Задний угол боковины ковша: точка на фото и её проекция из модели, разница 61,1 пикселя">
+<image href="./media/1987-before-dispatch.webp" width="1280" height="968"/>
+<path d="M 956.16 601.80 L 896.58 588.41" fill="none" stroke="#231d18" stroke-width="5"/>
+<path d="M 956.16 601.80 L 896.58 588.41" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 4"/>
+<circle cx="956.16" cy="601.80" r="7" fill="#ffcf66" stroke="#211906" stroke-width="2"/>
+<rect x="890.58" y="582.41" width="12" height="12" fill="#73efff" stroke="#002935" stroke-width="2"/>
+</svg>
+<figcaption><strong>1987 · Кадр № 2: 61,1 px</strong><br>Задний угол боковины ковша. <a href="./?model=1987&amp;mode=photo&amp;photo=1987-before-dispatch&amp;marks=1">Открыть полный кадр</a></figcaption>
+</figure>
+<figure class="audit-crop" id="audit-1987-snow-side">
+<svg viewBox="718.50 472.38 300 230" role="img" aria-label="1987 · Кадр № 4 · Задний угол боковины ковша: точка на фото и её проекция из модели, разница 113,8 пикселя">
+<image href="./media/1987-snow-side.webp" width="1280" height="917"/>
+<path d="M 920.32 610.91 L 816.68 563.85" fill="none" stroke="#231d18" stroke-width="5"/>
+<path d="M 920.32 610.91 L 816.68 563.85" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="5 4"/>
+<circle cx="920.32" cy="610.91" r="7" fill="#ffcf66" stroke="#211906" stroke-width="2"/>
+<rect x="810.68" y="557.85" width="12" height="12" fill="#73efff" stroke="#002935" stroke-width="2"/>
+</svg>
+<figcaption><strong>1987 · Кадр № 4: 113,8 px</strong><br>Задний угол боковины ковша. <a href="./?model=1987&amp;mode=photo&amp;photo=1987-snow-side&amp;marks=1">Открыть полный кадр</a></figcaption>
+</figure>
+<!-- audit-crops:end -->
+</div>
+<p><small>Это увеличенные фрагменты прежних совмещений, не новый обмер. Пунктир соединяет две точки на изображении, а не показывает направление, в котором следует править модель.</small></p>
+</section>
 <section id="y1986"><h2>Ч-ХВ · 1986</h2>
 <p>Основные кадры: <a href="../mobot-assets/archive/1986-fig6.png">рис. 6</a>, <a href="../mobot-assets/archive/1986-fig9.png">рис. 9</a> и <a href="../research/mobot/1986/v7/BATANOV.md">подборка Батанова</a>.</p>
 <div class="grid">

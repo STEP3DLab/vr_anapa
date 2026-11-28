@@ -4,6 +4,7 @@ import * as T from '../engine/three.module.min.js';
 import {machines} from '../catalog.js';
 import {inspections} from '../inspection.js';
 import {readFileSync} from 'node:fs';
+import {renderAuditCrops} from "./audit-crops.mjs";
 
 globalThis.document={createElement:()=>({getContext:()=>null})};
 for(const year of [1986,1987]) {
@@ -45,4 +46,15 @@ test('Archive audit covers every passport node and names both explicit limitatio
   assert.match(report,/не считываются/);
   assert.match(read('offline-worker.js'),/'geometry-audit.html'/);
   assert.match(read('research-ui.js'),/href="\.\/geometry-audit\.html"/);
+});
+
+test('The four audit crops are generated from the published photo registration points',()=>{
+ const report=readFileSync(new URL('../geometry-audit.html',import.meta.url),'utf8');
+ const actual=report.split('<!-- audit-crops:start -->\n')[1]?.split('\n<!-- audit-crops:end -->')[0];
+ assert.equal(actual,renderAuditCrops());
+ assert.equal((actual.match(/<figure/g)||[]).length,4);
+ for(const match of actual.matchAll(/<image href="\.\/([^"]+)"/g)){
+  assert(readFileSync(new URL('../'+match[1],import.meta.url)).length>0);
+  assert(readFileSync(new URL('../offline-worker.js',import.meta.url),'utf8').includes("'"+match[1]+"'"));
+ }
 });
