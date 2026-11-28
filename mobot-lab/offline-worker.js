@@ -1,11 +1,11 @@
 // The cache and the fetch handler are confined to this laboratory's directory.
 const prefix='mobot-lab:'+self.registration.scope+':';
-const cacheName=prefix+'2026-11-28.7-audit-sensitivity';
+const cacheName=prefix+'2026-11-28.8-camera-check';
 const files=[
   'index.html','geometry-audit.html','style.css','app.js','catalog.js','evidence.js','inspection.js','registrations.js',
   'scene-link.js','archive.js','presentation.js','viewer.js','xr.js','icons.js','mark.svg',
   'dual.js','isolation.js','research.js','research-ui.js','pose-check.js','engine/contact.js',
-  'data/1986-passport.json','data/1986-pose-audit.txt','data/1987-passport.json','data/release-data.json',
+  'data/1986-passport.json','data/1986-pose-audit.txt','data/chassis-camera-check.json','data/1987-passport.json','data/release-data.json',
   'downloads/README-RU.txt','downloads/manifest.json',
   'engine/three.core.min.js','engine/three.module.min.js','engine/controls/OrbitControls.js',
   'engine/orthographic-raster.js','engine/qr.js',

@@ -689,7 +689,11 @@ async function directComparison(browser) {
     assert.equal(await auditReport.count(),1);
     await page.goto(base+'geometry-audit.html',{timeout:10000,waitUntil:'domcontentloaded'});
     assert(await page.getByRole('heading',{name:'Сверка геометрии по узлам'}).isVisible());
-    assert.equal(await page.locator('article').count(),19);
+    assert.equal(await page.locator('#y1986 article, #y1987 article').count(),19);
+    assert.equal(await page.locator('#registration-sensitivity article').count(),4);
+    assert.equal(await page.locator('#chassis-camera li').count(),2);
+    const cameraData=await page.request.get(new URL(await page.locator('#chassis-camera a').getAttribute('href'),page.url()).href);
+    assert(cameraData.ok());assert.deepEqual(Object.keys((await cameraData.json()).views),['SKTB2','SKTB4']);
     assert(await page.locator('html').evaluate(el=>el.scrollWidth<=el.clientWidth+1));
     assert.deepEqual(errors,[]);
     console.log('Direct comparison, QR, return to controls, retained tool/pose and per-model camera states passed');
