@@ -128,3 +128,34 @@ export function inspectSurfaces(m,hood,tool,broad){
 
     return {ground:below?ground:null,envelopes,clearance:minY-broad.datum};
   }
+
+
+// General selected-pair inspection for assembled, non-instanced groups.
+// A disjoint group bound is a conservative certificate; an overlapping
+// bound alone is not a collision. Unresolved includes possible containment.
+export function inspectGroupPairs(pairs) {
+  const bounds=new Map(), meshes=new Map();
+  const box=root=>{if(!bounds.has(root))bounds.set(root,new T.Box3().setFromObject(root));return bounds.get(root)};
+  const list=root=>{if(!meshes.has(root))meshes.set(root,collect(root));return meshes.get(root)};
+  return pairs.map(({id,a,b})=>{
+    if(!a||!b)throw new Error('Missing group '+id);
+    const hits=[],separated=[],unresolved=[];
+    const aa=box(a),bb=box(b);
+    if(aa.isEmpty()||bb.isEmpty())throw new Error('Empty group '+id);
+    const broadOverlap=aa.intersectsBox(bb);
+    let meshBoxPairs=0;
+    if(broadOverlap)for(const x of list(a))for(const y of list(b)){
+      if(!x.box.intersectsBox(y.box))continue;
+      meshBoxPairs++;
+      const witness=contact(x,y);
+      if(witness)hits.push(witness);
+      else {
+        const certificate=separation(x,y);
+        if(certificate)separated.push(certificate);
+        else unresolved.push([x.name,y.name]);
+      }
+    }
+    return {id,broadOverlap,meshBoxPairs,hits,separated,unresolved,
+      status:hits.length?'confirmed':unresolved.length?'unresolved':'clear-in-checked-scope'};
+  });
+}

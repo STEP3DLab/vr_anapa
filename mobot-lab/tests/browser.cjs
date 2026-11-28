@@ -625,6 +625,7 @@ async function exercise(browser, width, height, software) {
     await context.setOffline(true);
     const offline=await page.goto(base+'?model=1986&mode=photo&photo=1986-fig9&marks=1');
     assert(offline.fromServiceWorker());await page.locator('#poster').waitFor({state:'hidden'});
+    assert.match(await page.evaluate(()=>fetch('./data/1986-pose-audit.txt').then(r=>r.text())),/729 дискретных/);
     assert.equal(await page.locator('#photoSelect').inputValue(),'1');
     await page.locator('[data-year="1987"]').click();
     await page.locator('#photoSelect').selectOption('2');
@@ -660,9 +661,17 @@ async function directComparison(browser) {
     assert.equal(await page.locator('#j-yaw').inputValue(),'12');
     assert.equal(await page.locator('#j-bucket').inputValue(),'36');
     await page.waitForFunction(()=>!new URL(location.href).searchParams.has('compare'));
+    assert.equal(await page.locator('#poseScope').isVisible(),false);
     const viewState=()=>page.evaluate(()=>{const p=new URL(location.href).searchParams;return [p.get('view'),p.get('z')]});
     assert.deepEqual(await viewState(),['side','1.400']);
     await page.locator('[data-year="1986"]').click();
+    const scope=page.locator('#poseScope');
+    assert(await scope.isVisible());
+    await scope.locator('summary').click();
+    assert.match(await scope.locator('p').innerText(),/не всей траектории/);
+    const audit=await page.request.get(new URL(await scope.locator('a').getAttribute('href'),page.url()).href);
+    assert(audit.ok());assert.match(await audit.text(),/729 дискретных/);
+    await scope.locator('summary').click();
     await page.locator('[data-view="top"]').click();
     await page.locator('#in').click();
     await page.waitForFunction(()=>new URL(location.href).searchParams.get('view')==='top'&&new URL(location.href).searchParams.get('z')==='1.220');

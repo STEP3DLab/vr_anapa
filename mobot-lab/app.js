@@ -11,7 +11,7 @@ import {openModal,closeModal,setupPresentation,onModalCleanup} from './presentat
 import {createIsolation} from './isolation.js';
 import {openDual} from './dual.js';
 import {researchPassport,setupResearch} from './research-ui.js';
-import {assessPose} from './pose-check.js';
+import {assessPose,assess1986Pose} from './pose-check.js';
 
 insertIcons();
 const $=id=>document.getElementById(id);
@@ -68,12 +68,7 @@ function sync() {
 function inspectPose() {
   clearTimeout(auditTimer);
   if(!model||mode!=='drive'||demoId||viewer?.xr?.active) return;
-  let notes;
-  if(year===1987) notes=assessPose(model,tool).messages;
-  else {
-    const {bucketClearance,grappleClearance}=model.auditPose();
-    notes=Math.min(bucketClearance,grappleClearance)<-.001?['Рабочий орган ниже плоскости опоры']:[];
-  }
+  const notes=year===1987?assessPose(model,tool).messages:assess1986Pose(model).messages;
   $('poseNotice').textContent=notes.join('. ');
   $('poseNotice').hidden=!notes.length;
 }
@@ -140,7 +135,7 @@ function setYear(next) {
   $('poster').hidden=!!viewer?.xr?.active;
   $('modelTitle').textContent=def.title;labelView(false);
   all('[data-year]').forEach(b=>press(b,Number(b.dataset.year)===year));
-  $('toolRow').hidden=year!==1987;$('extra').open=false;$('poseNotice').hidden=true;tell('');
+  $('toolRow').hidden=year!==1987;$('poseScope').hidden=year!==1986;$('poseScope').open=false;$('extra').open=false;$('poseNotice').hidden=true;tell('');
   if(viewer){if(!cache.has(year))cache.set(year,def.create(T));model=cache.get(year)}
   else model=null;
   isolation=model?createIsolation(model.root):null;
